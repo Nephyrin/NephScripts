@@ -222,6 +222,28 @@ export WINEPREFIX=/mnt/N/wine
 alias 'uphctags'='ctags -RV -f ~/.ctags_heavy --c++-kinds=+p --fields=+iaS --extra=+q `cat ~/.ctags_heavylist`'
 alias 'uplctags'='ctags -RV -f ~/.ctags_light --c++-kinds=+p --fields=+iaS --extra=+q `cat ~/.ctags_lightlist`'
 
+lcg()
+{
+  local cgroup=$1
+  if [ -z "$cgroup" ]; then
+    for x in /sys/fs/cgroup/*; do
+      [ -d "$x" ] && [ -f "$x"/tasks ] && lcg "$(basename "$x")"
+    done
+  else
+    if [ ! -d /sys/fs/cgroup/"$cgroup" ]; then
+      echo ":: cgroup $cgroup doesn't exist";
+      return
+    fi
+    echo ":: Tasks for $cgroup"
+    local tasks="$(cat /sys/fs/cgroup/"$cgroup"/tasks)"
+    if [ -z "$tasks" ]; then
+      echo " none"
+    else
+      ps -o pid= -o comm= -p "${tasks/$'\n'/ }"
+    fi
+  fi
+}
+
 alias y='yaourt'
 alias p='sudo pacman'
 
