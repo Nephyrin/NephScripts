@@ -106,6 +106,8 @@ alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
 alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
 
 alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
+alias fixvbox='sudo vboxbuild && sudo modprobe vboxdrv && sudo modprobe vboxnetflt && sudo modprobe vboxnetadp'
+alias resetswap='sudo swapoff LABEL=NephSwap && sudo swapon LABEL=NephSwap && echo ":: Done"'
 
 alias xg='x gedit'
 alias xk='x kate'
@@ -284,12 +286,8 @@ function rt
 
 function ipof { host "$@" | awk '{print $(NF)}'; }
 
-alias resetswap='sudo swapoff LABEL=NephSwap && sudo swapon LABEL=NephSwap && echo ":: Done"'
-
 function nb { nmblookup "$@" | tail -n+2 | head -n1 | grep -Eo "^[^ ]+"; }
 function service { sudo /etc/rc.d/$1 $2; }
-
-alias fixvbox='sudo vboxbuild && sudo modprobe vboxdrv && sudo modprobe vboxnetflt && sudo modprobe vboxnetadp'
 
 say()
 {
