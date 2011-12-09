@@ -1,15 +1,124 @@
 export PATH="$HOME/bin:$PATH"
+export BROWSER="firefox '%s' &"
+export EDITOR="nano -w"
+[ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
+
+export CCACHE_DIR=$HOME/.ccache
 
 # Machine specific
 if [ "$(hostname)" = "Neph" ]; then
   # BenQ left monitor
   export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
+  # Wine is on raid array
+  export WINEPREFIX=/mnt/N/wine
 fi
 
-[ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
+#
+# Interactive tweaks
+#
+if [[ $- == *i* ]] ; then
+    # Keychain
+    keyfile=~/".keychain/$(hostname)-sh"
+    if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
+      keychain ~/.ssh/id_rsa
+      . "$keyfile"
+    fi
+    unset keyfile
+    [ -f /proc/mdstat ] && cat /proc/mdstat
+    
+    
+    # Interactive shell options
+    # Bash won't get SIGWINCH if another process is in the foreground.
+    # Enable checkwinsize so that bash will check the terminal size when
+    # it regains control.  #65623
+    # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
+    shopt -s checkwinsize
+    shopt -s histappend
+    
+    # Change the window title of X terminals 
+    case ${TERM} in
+        xterm*|rxvt*|Eterm|aterm|kterm|gnome*|interix)
+            PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+            ;;
+        screen)
+            PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\033\\"'
+            ;;
+    esac
+    use_color=false
 
-export CCACHE_DIR=$HOME/.ccache
+    # Set colorful PS1 only on colorful terminals.
+    # dircolors --print-database uses its own built-in database
+    # instead of using /etc/DIR_COLORS.  Try to use the external file
+    # first to take advantage of user additions.  Use internal bash
+    # globbing instead of external grep binary.
+    safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
+    match_lhs=""
+    [[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
+    [[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
+    [[ -z ${match_lhs}    ]] \
+        && type -P dircolors >/dev/null \
+        && match_lhs=$(dircolors --print-database)
+    [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
+    if ${use_color} ; then
+        # Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
+        if type -P dircolors >/dev/null ; then
+            if [[ -f ~/.dir_colors ]] ; then
+                eval $(dircolors -b ~/.dir_colors)
+            elif [[ -f /etc/DIR_COLORS ]] ; then
+                eval $(dircolors -b /etc/DIR_COLORS)
+            fi
+        fi
+
+        if [[ ${EUID} == 0 ]] ; then
+            PS1='$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
+        else
+            PS1='$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
+        fi
+
+        alias ls='ls --color=auto'
+        alias grep='grep --colour=auto'
+    else
+        if [[ ${EUID} == 0 ]] ; then
+            # show root@ when we don't have colors
+            PS1='\u@\h \W \$ '
+        else
+            PS1='\u@\h \w \$ '
+        fi
+    fi
+
+    # Try to keep environment pollution down, EPA loves us.
+    unset use_color safe_term match_lhs
+
+fi
+
+#
+# Aliases & shorthand
+#
+alias rv='rsync -avy --partial --progress'
+alias ns1="ssh srcds@174.37.110.81"
+alias ns2="ssh srcds@74.55.49.243"
+alias nsw="ssh apaloma@173.193.9.83"
+alias ntf="ssh tf@nemu.pointysoftware.net"
+alias naf="ssh tfadmin@nemu.pointysoftware.net"
+alias nnf="ssh nemu.pointysoftware.net"
+alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
+alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
+
+alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
+
+alias xg='x gedit'
+alias xk='x kate'
+alias y='yaourt'
+alias p='sudo pacman'
+
+alias dir='x dolphin "$@"'
+
+alias rebash='source ~/.bashrc'
+
+#
+# Misc utility functions
+#
 qr()
 {
     derp=$(mktemp)
@@ -107,8 +216,6 @@ java_memanalyze()
 
 irctun() { ssh -T -f -L17079:127.0.0.1:17079 jschoenick@people.mozilla.org sleep 30 && echo ":: 30s to start IRC connection"; }
 
-alias rv='rsync -avy --partial --progress'
-
 # OR I COULD JUST PROPERLY FIX IT LOL
 function fixraid()
 {
@@ -119,100 +226,6 @@ function fixraid()
     sudo /etc/rc.d/deluged restart
     killall gnome-panel
 }
-
-
-if [[ $- == *i* ]] ; then
-    # Keychain
-    keyfile=~/".keychain/$(hostname)-sh"
-    if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
-      keychain ~/.ssh/id_rsa
-      . "$keyfile"
-    fi
-    unset keyfile
-    [ -f /proc/mdstat ] && cat /proc/mdstat
-    
-    
-    # Interactive shell options
-    # Bash won't get SIGWINCH if another process is in the foreground.
-    # Enable checkwinsize so that bash will check the terminal size when
-    # it regains control.  #65623
-    # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
-    shopt -s checkwinsize
-    shopt -s histappend
-    
-    # Change the window title of X terminals 
-    case ${TERM} in
-        xterm*|rxvt*|Eterm|aterm|kterm|gnome*|interix)
-            PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
-            ;;
-        screen)
-            PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\033\\"'
-            ;;
-    esac
-    use_color=false
-
-    # Set colorful PS1 only on colorful terminals.
-    # dircolors --print-database uses its own built-in database
-    # instead of using /etc/DIR_COLORS.  Try to use the external file
-    # first to take advantage of user additions.  Use internal bash
-    # globbing instead of external grep binary.
-    safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-    match_lhs=""
-    [[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
-    [[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
-    [[ -z ${match_lhs}    ]] \
-        && type -P dircolors >/dev/null \
-        && match_lhs=$(dircolors --print-database)
-    [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
-
-    if ${use_color} ; then
-        # Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-        if type -P dircolors >/dev/null ; then
-            if [[ -f ~/.dir_colors ]] ; then
-                eval $(dircolors -b ~/.dir_colors)
-            elif [[ -f /etc/DIR_COLORS ]] ; then
-                eval $(dircolors -b /etc/DIR_COLORS)
-            fi
-        fi
-
-        if [[ ${EUID} == 0 ]] ; then
-            PS1='$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
-        else
-            PS1='$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
-        fi
-
-        alias ls='ls --color=auto'
-        alias grep='grep --colour=auto'
-    else
-        if [[ ${EUID} == 0 ]] ; then
-            # show root@ when we don't have colors
-            PS1='\u@\h \W \$ '
-        else
-            PS1='\u@\h \w \$ '
-        fi
-    fi
-
-    # Try to keep environment pollution down, EPA loves us.
-    unset use_color safe_term match_lhs
-
-fi
-
-# Shit I do alot
-alias ns1="ssh srcds@174.37.110.81"
-alias ns2="ssh srcds@74.55.49.243"
-alias nsw="ssh apaloma@173.193.9.83"
-alias ntf="ssh tf@nemu.pointysoftware.net"
-alias naf="ssh tfadmin@nemu.pointysoftware.net"
-alias nnf="ssh nemu.pointysoftware.net"
-alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
-alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
-
-alias xg='x gedit'
-alias xk='x kate'
-
-export BROWSER="firefox '%s' &"
-export EDITOR="nano -w"
-export WINEPREFIX=/mnt/N/wine
 
 lcg()
 {
@@ -235,11 +248,6 @@ lcg()
     fi
   fi
 }
-
-alias y='yaourt'
-alias p='sudo pacman'
-
-alias dir='x dolphin "$@"'
 
 function ct
 {
@@ -363,7 +371,6 @@ function screencast_preview
 }
 
 alias screencast='(screencast_video $1 $2&screencast_audio&screencast_preview&)'
-alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
 
 function tf2
 {
@@ -387,8 +394,6 @@ function tf2
         eval "$c"
     fi
 }
-
-alias rebash='source ~/.bashrc'
 
 boost()
 {
