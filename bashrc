@@ -292,9 +292,14 @@ function service { sudo /etc/rc.d/$1 $2; }
 alias fixvbox='sudo vboxbuild && sudo modprobe vboxdrv && sudo modprobe vboxnetflt && sudo modprobe vboxnetadp'
 
 if [[ -z "$NEPH_NONINTERACTIVE" ]]; then
-keychain ~/.ssh/id_rsa
-. ~/.keychain/Neph-sh
-cat /proc/mdstat
+  keyfile="~/.keychain/$(hostname)-sh"
+  if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
+    keychain ~/.ssh/id_rsa
+    . "$keyfile"
+  fi
+  unset keyfile
+  
+  [ -f /proc/mdstat ] && cat /proc/mdstat
 fi
 
 say()
