@@ -1,7 +1,10 @@
 export PATH="$HOME/bin:$PATH"
 
-# BenQ left monitor
-export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
+# Machine specific
+if [ "$(hostname)" = "Neph" ]; then
+  # BenQ left monitor
+  export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
+fi
 
 [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
 
