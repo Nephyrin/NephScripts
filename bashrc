@@ -109,11 +109,6 @@ irctun() { ssh -T -f -L17079:127.0.0.1:17079 jschoenick@people.mozilla.org sleep
 
 alias rv='rsync -avy --partial --progress'
 
-#if [ "$PS1" ] ; then  
-#   mkdir -m 0700 /sys/fs/cgroup/user/$$
-#   echo $$ > /sys/fs/cgroup/user/$$/tasks
-#fi
-
 # OR I COULD JUST PROPERLY FIX IT LOL
 function fixraid()
 {
@@ -202,9 +197,6 @@ if [[ $- == *i* ]] ; then
 
 fi
 
-#export CFLAGS="-march=core2 -msse4 -mcx16 -msahf -O2 -pipe -msse4.1 -msse4.2 -ftree-vectorize"
-#export CXXFLAGS="${CFLAGS}"
-
 # Shit I do alot
 alias ns1="ssh srcds@174.37.110.81"
 alias ns2="ssh srcds@74.55.49.243"
@@ -221,9 +213,6 @@ alias xk='x kate'
 export BROWSER="firefox '%s' &"
 export EDITOR="nano -w"
 export WINEPREFIX=/mnt/N/wine
-
-alias 'uphctags'='ctags -RV -f ~/.ctags_heavy --c++-kinds=+p --fields=+iaS --extra=+q `cat ~/.ctags_heavylist`'
-alias 'uplctags'='ctags -RV -f ~/.ctags_light --c++-kinds=+p --fields=+iaS --extra=+q `cat ~/.ctags_lightlist`'
 
 lcg()
 {
@@ -422,7 +411,5 @@ unaff()
         taskset -p -c 0-7 $x
     done
 }
-
-alias 7zultra='7z -mx=9 -mfb=64 -md=32m -ms=on'
 
 ...() { echo ":-/"; }
