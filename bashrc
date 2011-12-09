@@ -10,13 +10,6 @@ fi
 
 export CCACHE_DIR=$HOME/.ccache
 
-# chroot + sudo causes bash to be started as us but with EUID 0
-# - so just drop down to a normal shell when that happens (then exit)
-if [[ ${EUID} == 0 ]]; then
-su - nephyrin
-exit 0
-fi
-
 qr()
 {
     derp=$(mktemp)
