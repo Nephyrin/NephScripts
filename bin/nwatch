@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -lt 2 ]; then
+    echo "!! Usage: <time> <command>"
+    exit
+fi
+
+time=$1
+shift
+
+while true; do
+    ret="$("$@")"
+    clear
+    echo "$ret"
+    sleep "$time"
+done

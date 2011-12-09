@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+procname=$1
+
+if [ -z "$procname" ]; then
+    echo "!! Need a process name..."
+    exit 1
+fi
+
+procs=$(pidof "$procname")
+
+if [ -z "$procs" ]; then
+    echo "!! No matching process"
+    exit 1
+fi
+
+cd /sys/fs/cgroup
+[ -d "$procname" ] || mkdir -v "$procname"
+cd "$procname"
+
+for x in $procs; do
+    echo "$x" > tasks
+done
+
+echo ":: $procname tasks:"
+for x in $(cat tasks); do echo -e '\t'$x; done
