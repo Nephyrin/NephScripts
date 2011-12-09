@@ -1,6 +1,3 @@
-[ -z "$BASH_PROFILED" ] && source /etc/profile
-unset BASH_PROFILED
-
 export PATH=$HOME/cmd:$PATH
 
 # BenQ left monitor
