@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd /sys/devices/platform/applesmc.768/
+
+if [ ! -z "$1" ]; then
+	for x in fan*_min; do
+		/bin/echo $1 > $x
+	done
+fi
+
+for x in fan*_input; do
+	speed=$(cat "$x")
+	fan=$(echo "$x" | grep -Eo '[0-9]+')
+	min=$(cat "fan${fan}_min")
+	echo "Fan $fan - ${speed} RPM / ${min} RPM"
+done

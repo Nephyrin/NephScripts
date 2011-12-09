@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+if ! mountpoint /mnt/Vault &>/dev/null; then
+  echo "!! /mnt/Vault is not mounted"
+  exit 1
+fi
+
+truecrypt -d /mnt/Vault
+
+echo ":: Vault unmounted"

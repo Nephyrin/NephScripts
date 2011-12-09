@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+if mountpoint /mnt/Vault &>/dev/null; then
+  echo "!! /mnt/Vault is already mounted"
+  exit 1
+fi
+
+truecrypt --mount /dev/sda8 /mnt/Vault
+
+echo ":: Vault mounted"

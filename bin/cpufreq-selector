@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+cpu=all
+
+useerror()
+{
+  echo >&2 "$1 -- valid options are [-c CPU] [-g GOV] [-f FREQ]"
+  exit 1
+}
+
+while [ $# -gt 1 ]; do
+  switch=$1
+  arg=$2
+  shift; shift
+  case "$switch" in
+    "-c")
+      cpu=$arg
+    ;;
+    "-g")
+      gov=$arg
+    ;;
+    "-f")
+      freq=$arg
+    ;;
+    *)
+      useerror "Unrecognized option '$1'"
+    ;;
+  esac
+done
+
+[ $# -gt 0 ] && useerror "Extraneous argument '$1'"
+
+[ ! -z "$freq" ] && [ ! -z "$gov" ] && [ "$gov" != "userspace" ] && useerror "Cannot set governor to non-userspace *and* set frequency"
+[ -z "$freq" ] && [ -z "$gov" ] && useerror "Must set a frequency or a governor for this to do anything"
+[ ! -z "$freq" ] && gov=userspace
+
+cpuset()
+{
+  local dir=$1
+  local gov=$2
+  local freq=$3
+  
+  cd $dir
+  # Bash's built in echo can have issues with sysfs stuff, specifically when it errors (google it)
+  /bin/echo "$gov" > scaling_governor
+  if [ ! -z "$freq" ]; then /bin/echo "$freq" > scaling_setspeed; fi
+}
+
+
+if [ "$cpu" = "all" ]; then
+  for dir in /sys/devices/system/cpu/cpu*/cpufreq; do cpuset $dir $gov $freq; done
+else
+  cpuset /sys/devices/system/cpu/cpu${cpu}/cpufreq $gov $freq
+fi
