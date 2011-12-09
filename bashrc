@@ -330,47 +330,6 @@ function xauthfix
             fi
             if [ -z "$DISPLAY" ]; then export DISPLAY=:0; fi
 }
-    
-    
-function screencast_video
-{
-    width=$1
-    height=$2
-    scale=$3
-    rate=$4
-    fps=$5
-    if [ -z "$width" ]; then width=3600; fi
-    if [ -z "$height" ]; then height=1200; fi
-    if [ -z "$scale" ]; then scale=0.3; fi
-    if [ -z "$rate" ]; then rate=1000; fi
-    if [ -z "$fps" ]; then fps=10; fi
-    vlc -vvv -I dummy screen:// :screen-fps=$fps :screen-width=$width :screen-height=$height --input-slave=alsa://hw:0 :sout="#transcode{vcodec=mp4v,vb=$rate,scale=$scale,fps=$fps,hurry-up,high-priority,acodec=mp3,ac=2,ab=64,samplerate=48000}:std{access=http,mux=ts,dst=127.0.0.1:12345}"
-}
-
-function screencast_rtpv
-{
-    width=$1
-    height=$2
-    scale=$3
-    rate=$4
-    if [ -z "$width" ]; then width=3600; fi
-    if [ -z "$height" ]; then height=1200; fi
-    if [ -z "$scale" ]; then scale=0.3; fi
-    if [ -z "$rate" ]; then rate=1200; fi
-    vlc -vvvv -I dummy screen:// :screen-fps=10 :screen-caching=400 :screen-width=$width :screen-height=$height :sout="#transcode{venc=ffmpeg,vcodec=mp4v,vb=$rate,pre-me,scale=$scale,fps=10,hurry-up,high-priority,acodec=none}:rtp{dst=nemu.doublezen.net,port=12345,mux=ts}"
-}
-                                                
-function screencast_rtpa
-        {
-vlc -vvvv -I dummy alsa://hw:0 :alsa-caching=400 :sout="#transcode{vcodec=none,acodec=mp3,ac=2,ab=64,samplerate=48000}:rtp{mux=ts,dst=nemu.doublezen.net,port=12346}"
-}
-
-function screencast_preview
-{
-    vlc -vvvv http://nemu.doublezen.net:12369/
-}
-
-alias screencast='(screencast_video $1 $2&screencast_audio&screencast_preview&)'
 
 function tf2
 {
