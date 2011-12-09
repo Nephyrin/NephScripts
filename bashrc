@@ -1,5 +1,5 @@
 export PATH="$HOME/bin:$PATH"
-export BROWSER="firefox '%s' &"
+export BROWSER="firefox '%s'"
 export EDITOR="nano -w"
 [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
 
