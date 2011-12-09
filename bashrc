@@ -131,6 +131,16 @@ function fixraid()
 
 
 if [[ $- == *i* ]] ; then
+    # Keychain
+    keyfile="~/.keychain/$(hostname)-sh"
+    if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
+      keychain ~/.ssh/id_rsa
+      . "$keyfile"
+    fi
+    unset keyfile
+    [ -f /proc/mdstat ] && cat /proc/mdstat
+    
+    
     # Interactive shell options
     # Bash won't get SIGWINCH if another process is in the foreground.
     # Enable checkwinsize so that bash will check the terminal size when
@@ -287,17 +297,6 @@ function nb { nmblookup "$@" | tail -n+2 | head -n1 | grep -Eo "^[^ ]+"; }
 function service { sudo /etc/rc.d/$1 $2; }
 
 alias fixvbox='sudo vboxbuild && sudo modprobe vboxdrv && sudo modprobe vboxnetflt && sudo modprobe vboxnetadp'
-
-if [[ -z "$NEPH_NONINTERACTIVE" ]]; then
-  keyfile="~/.keychain/$(hostname)-sh"
-  if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
-    keychain ~/.ssh/id_rsa
-    . "$keyfile"
-  fi
-  unset keyfile
-  
-  [ -f /proc/mdstat ] && cat /proc/mdstat
-fi
 
 say()
 {
