@@ -1,0 +1,15 @@
+# Don't symlink this file in
+# It makes the security panda cry
+
+Host *
+   ControlMaster auto
+   ControlPath ~/.ssh/master-%r@%h:%p
+   ConnectTimeout 10
+   ControlPersist 600
+   # Aggressively kill dead connections
+   ServerAliveInterval 5
+   ServerAliveCountMax 3
+   # Disable TCP Keep alive so connections are robust
+   # to wireless reconnects and such. ServerAlive
+   # Will make sure dead connections are killed
+   TCPKeepAlive no
