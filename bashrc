@@ -105,6 +105,9 @@ alias nnf="ssh nemu.pointysoftware.net"
 alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
 alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
 
+# Git's nicer diff can be used with --no-index to diff random things
+alias giff='git diff --no-index --color=auto'
+
 alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
 alias fixvbox='sudo vboxbuild && sudo modprobe -r vboxdrv vboxnetflt vboxnetadp && sudo modprobe -a vboxdrv vboxnetflt vboxnetadp'
 alias resetswap='sudo swapoff -a && sudo swapon -a && echo ":: Done"'
