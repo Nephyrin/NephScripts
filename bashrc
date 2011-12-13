@@ -101,7 +101,8 @@ alias ns2="ssh srcds@74.55.49.243"
 alias nsw="ssh apaloma@173.193.9.83"
 alias ntf="ssh tf@nemu.pointysoftware.net"
 alias naf="ssh tfadmin@nemu.pointysoftware.net"
-alias nnf="ssh nemu.pointysoftware.net"
+alias nnf="ssh nephyrin@nemu.pointysoftware.net"
+alias nsf="ssh nephyrin@sys.nephyrin.net"
 alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
 alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
 
