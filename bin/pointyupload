@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+echo ":: Uploading $file"
+
+onExit()
+{
+  echo "<Done, press enter to close>"
+  read
+}
+
+trap onExit EXIT
+
+file="$1"
+if [ ! -r "$file" ]; then
+  echo "File \"$file\" doesn't exist or isn't readable"
+  exit 1
+fi
+
+echo ":: Uploading"
+rsync -avz --progress --delete --delete-after --chmod=ugo+r "$file" nephyrin@nemu.pointysoftware.net:/www/nemu.pointysoftware.net/htdocs/sink/
+echo ""
+# If this is failing you need the perl-uri package
+encoded="http://nemu.pointysoftware.net/sink/$(perl -MURI::Escape -e 'print uri_escape($ARGV[0])' "$file")"
+echo "--------------"
+echo "$encoded"
+echo "--------------"
+echo ""
+
+# Put on clipboard
+echo "$encoded" | xclip -in -selection clipboard

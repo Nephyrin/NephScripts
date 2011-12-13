@@ -1,0 +1,18 @@
+# This goes in
+# ~/.kde4/share/kde4/services/ServiceMenus
+#
+# No the double kde4 isn't a mistake, and ~/.kde4/share/kde4
+# doesn't exist by default.
+# No, it doesn't go in ~/.kde4/share/services/ServiceMenus, that's not a thing.
+
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin,all/allfiles
+#MimeType=image/*;
+# MimeType=image/png;image/jpeg;audio/mpeg3;image/bmp;application/x-7z-compressed
+Actions=uploadFile;
+
+[Desktop Action uploadFile]
+Name=Pointy Upload
+Icon=repository
+Exec=konsole -e "$HOME/bin/pointyupload" %u
