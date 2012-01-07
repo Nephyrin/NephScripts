@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# For switching to windows
+set -e
+sudo echo -n
+
+while [ ! -z "$(pidof Steam)$(pidof Steam.exe)" ]; do
+  if [ -z "$steam" ]; then
+    echo ":: Stopping steam..."
+    killall Steam Steam.exe &>/dev/null || true
+    steam=1
+  fi
+  sleep 0.5
+done
+
+echo ":: Killing apps using shared drives"
+mountpoint /mnt/win7 &>/dev/null && sudo fuser -k -i -m /mnt/win7 || true
+mountpoint /mnt/Vault &>/dev/null && sudo fuser -k -i -m /mnt/Vault || true
+sleep 2
+
+echo ":: Force killing apps using shared drives"
+mountpoint /mnt/win7 &>/dev/null && sudo fuser -k -i -9 -m /mnt/win7 || true
+mountpoint /mnt/Vault &>/dev/null && sudo fuser -k -i -9 -m /mnt/Vault || true
+sleep 1
+
+echo ":: Unmounting win7"
+mountpoint /mnt/win7 &>/dev/null && sudo umount /mnt/win7
+echo ":: Unmounting vault"
+mountpoint /mnt/Vault &>/dev/null && sudo truecrypt -d /mnt/Vault
+
+echo ":: Hibernate-rebooting"
+cd /sys/power/tuxonice
+echo 1 | sudo tee reboot >/dev/null
+sudo pm-hibernate
+
+echo ":: Resumed, remounting win7"
+sudo mount /mnt/win7
+
+if [ ! -z "$steam" ]; then
+  echo ":: Relaunching steam"
+  (~/launch/Steam &>/dev/null &)
+fi
+
+echo ":: Revaulting"
+$HOME/bin/vault
