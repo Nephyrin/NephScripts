@@ -1,5 +1,5 @@
 #!/bin/bash
 
-export GTK2_RC_FILES=$HOME/scripts/cleangtkrc
+export GTK2_RC_FILES=$HOME/git/nephscripts/clearlooks.gtkrc
 
 "$@"
