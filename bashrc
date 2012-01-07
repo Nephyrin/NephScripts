@@ -11,6 +11,20 @@ if [ "$(hostname)" = "Neph" ]; then
   export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
   # Wine is on raid array
   export WINEPREFIX=/mnt/N/wine
+elif [ "$(hostname)" = "Johnbook" ]; then
+  #
+  # Graphics switcher helpers
+  #
+  alias gfx_igd='sudo screen -d -m -S gfx_switch /root/live_switch.sh igd'
+  alias gfx_discrete='sudo screen -d -m -S gfx_switch /root/live_switch.sh discrete'
+  gfx() {
+    local ret="$(cat /var/log/Xorg.0.log | grep "LoadModule: \"radeon\"")"
+    if [ -z "$ret" ]; then
+      echo ":: Intel Active"
+    else
+      echo ":: Radeon Active"
+    fi
+  }
 fi
 
 #
@@ -95,6 +109,9 @@ fi
 #
 # Aliases & shorthand
 #
+alias phone='mtpfs $HOME/phonemtp'
+alias unphone='fusermount -u $HOME/phonemtp'
+
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
 alias ns2="ssh srcds@74.55.49.243"
@@ -187,20 +204,65 @@ dcg()
     unset NEPH_CGROUP_PS1
 }
 
+# Add a process to a control group (or a new one)
+pcg()
+{
+  local procgrep="$1"
+  local cgroup="$2"
+  [ -z "$procgrep" ] && echo ":: Need a taskname" && return
+  local tasks=$(pgrep "$procgrep")
+  local threads
+  [ ! -z "$tasks" ] && for x in $tasks; do
+    threads="$threads $(ls /proc/$x/task)"
+  done
+  if [ -z "$threads" ]; then
+    echo ":: No matching tasks!"
+    return
+  fi
+  [ -z "$cgroup" ] && cgroup=$(_mcg "$procgrep")
+  if [ ! -d /sys/fs/cgroup/"$cgroup" ]; then
+    echo ":: cgroup $cgroup does not exist!"
+    return
+  fi
+  
+  for task in $threads; do
+    echo ":: Adding task $task to group '$cgroup'"
+    /bin/echo $task > /sys/fs/cgroup/"$cgroup"/tasks
+    /bin/echo $task > /sys/fs/cgroup/"$cgroup"/tasks
+  done
+}
+
+# Make a control group with prefix
+mcg()
+{
+  # Pretty version
+  local name=$(_mcg "$1")
+  echo ":: Created empty control group $name"
+}
+
+_mcg()
+{
+  local prefix="$1"
+  [ -z "$prefix" ] && echo ":: Need a name" && return
+  local i
+  local name
+  while [ -d /sys/fs/cgroup/$name ] && i=$(( $i + 1 )); do
+      name=${prefix}:$i
+  done
+  
+  mkdir /sys/fs/cgroup/$name
+  echo $name
+}
+
 cg()
 {
-    local shelldir
+    local name=$(_mcg "shell$$")
     local i
     
-    while [ -d /sys/fs/cgroup/$shelldir ] && i=$(( $i + 1 )); do
-        shelldir=shell$$:$i
-    done
-    
-    mkdir /sys/fs/cgroup/$shelldir
-    /bin/echo $$ > /sys/fs/cgroup/$shelldir/tasks
-    /bin/echo $$ > /sys/fs/cgroup/$shelldir/tasks
-    export NEPH_CGROUP=$shelldir
-    export NEPH_CGROUP_PS1="$(echo -e "\033[0;37m$shelldir ")"
+    /bin/echo $$ > /sys/fs/cgroup/$name/tasks
+    /bin/echo $$ > /sys/fs/cgroup/$name/tasks
+    export NEPH_CGROUP=$name
+    export NEPH_CGROUP_PS1="$(echo -e "\033[0;37m$name ")"
 }
 
 java_memanalyze()
