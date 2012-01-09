@@ -204,6 +204,20 @@ dcg()
     unset NEPH_CGROUP_PS1
 }
 
+lowprio()
+{
+  local group="$1"
+  if [ -z "$group" ]; then
+    [ -z "$NEPH_CGROUP" ] && cg
+    group=$NEPH_CGROUP
+  fi
+  group=/sys/fs/cgroup/"$NEPH_CGROUP"
+  [ ! -d "$group" ] && echo ":: '$group' is not a directory" && return
+  /bin/echo 10 > /sys/fs/cgroup/"$NEPH_CGROUP"/blkio.weight
+  /bin/echo 1 > /sys/fs/cgroup/"$NEPH_CGROUP"/cpu.shares
+  echo ":: Done"
+}
+
 # Add a process to a control group (or a new one)
 pcg()
 {
