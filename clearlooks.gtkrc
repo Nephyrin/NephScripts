@@ -1,0 +1,6 @@
+include "/usr/share/themes/Clearlooks/gtk-2.0/gtkrc"
+include "/home/johns/.themes/Clearlooks/gtk-2.0/gtkrc"
+#gtk-theme-name="Clearlooks"
+gtk-font-name="Sans Serif 9"
+gtk-icon-theme-name="gk4ico"
+gtk-icon-sizes = "panel-menu=16,16:panel=16,16:gtk-button=22,22:gtk-large-toolbar=22,22"
