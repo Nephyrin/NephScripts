@@ -299,7 +299,7 @@ java_memanalyze()
 irctun() { ssh -T -f -L17079:127.0.0.1:17079 jschoenick@people.mozilla.org sleep 30 && echo ":: 30s to start IRC connection"; }
 
 # OR I COULD JUST PROPERLY FIX IT LOL
-function fixraid()
+fixraid()
 {
     sudo mdadm --stop /dev/md*
     sudo mdadm --detail /dev/md*
@@ -331,7 +331,7 @@ lcg()
   fi
 }
 
-function ct
+ct()
 {
     dir=`mktemp -d`
     export NEPH_TEMP_DIR="$dir"
@@ -339,7 +339,7 @@ function ct
     touch .nephtemp
 }
 
-function clt
+clt()
 {
     for x in /tmp/tmp.*; do
         if [ -d "$x" ] && [ -f "$x/.nephtemp" ]; then
@@ -354,7 +354,7 @@ function clt
     [ ! -z "$NEPH_TEMP_DIR" ] && [ ! -d "$NEPH_TEMP_DIR" ] && unset NEPH_TEMP_DIR
 }
 
-function rt
+rt()
 {
     if [ ! -z "$NEPH_TEMP_DIR" ] && [ -d "$NEPH_TEMP_DIR" ]; then
         cd "$NEPH_TEMP_DIR"
@@ -364,28 +364,28 @@ function rt
     fi
 }
 
-function ipof { host "$@" | awk '{print $(NF)}'; }
+ipof() { host "$@" | awk '{print $(NF)}'; }
 
-function nb { nmblookup "$@" | tail -n+2 | head -n1 | grep -Eo "^[^ ]+"; }
-function service { sudo /etc/rc.d/$1 $2; }
+nb() { nmblookup "$@" | tail -n+2 | head -n1 | grep -Eo "^[^ ]+"; }
+service() { sudo /etc/rc.d/$1 $2; }
 
 say()
 {
     espeak --stdout "$*" | paplay
 }
 
-function videolength
+videolength()
 {
     ffmpeg -i "$*" 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,//
 }
 
-function stopkde
+stopkde()
 {
     kdeinit4_shutdown
     killall kded4 klauncher kdeinit4 knotify4
 }
 
-function van
+van()
 {
     yelp "man:$@" &>/dev/null &
 }
@@ -395,7 +395,7 @@ x() { ("$@" >/dev/null 2>/dev/null &) }
 pic() { x gwenview "$@"; }
 avant() { killall avant-window-navigator; x avant-window-navigator; }
 
-function xauthfix
+xauthfix()
 {
     pid=$(pgrep -o -u nephyrin gnome-session)
     [ -z "$pid" ] && pid=$(pgrep -o -u nephyrin xfce4-session)
@@ -409,7 +409,7 @@ function xauthfix
             if [ -z "$DISPLAY" ]; then export DISPLAY=:0; fi
 }
 
-function tf2
+tf2()
 {
     local host=$1
     local password=$2
