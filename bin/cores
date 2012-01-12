@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+
+cd /sys/devices/system/cpu
+
+requested="$1"
+[ -z "$requested" ] || requested=$(( requested + 0 ))
+
+num=0
+cpus=()
+changed=0
+
+coreset() {
+  if [ ! -f "$1"/online ] || [ $(cat "$1"/online) -eq $2 ]; then return; fi
+  if [ $2 -ne 0 ]; then
+    echo ":: Onlining $1"
+  else
+    echo ":: Offlining $x"
+  fi
+  changed=$(( changed + 1 ))
+  echo $2 | sudo tee "$1"/online >/dev/null
+}
+
+for x in cpu*; do
+  if [ -d "$x" ] && [ -e "$x/node0" ]; then
+    cpus[num++]="$x"
+    if [ ! -z "$requested" ]; then
+      if [ $requested -ge $num ]; then
+        coreset "$x" 1
+      else
+        coreset "$x" 0
+      fi
+    fi
+  fi
+done
+
+if [ $changed -gt 0 ]; then
+  sudo /etc/rc.d/irqbalance restart
+  sudo /etc/rc.d/laptop-mode restart
+fi
+
+echo ":: $num cores, online: $(cat online), offline: $(cat offline)"
