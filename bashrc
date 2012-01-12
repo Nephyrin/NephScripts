@@ -333,7 +333,7 @@ lcg()
 
 ct()
 {
-    dir=`mktemp -d`
+    dir=`mktemp -d -t nephtmp.XXXXXXX`
     export NEPH_TEMP_DIR="$dir"
     cd "$dir"
     touch .nephtemp
@@ -341,17 +341,15 @@ ct()
 
 clt()
 {
-    for x in /tmp/tmp.*; do
-        if [ -d "$x" ] && [ -f "$x/.nephtemp" ]; then
-            if [ -z "$(fuser "$x")" ]; then
-                echo ":: Removing $x"
-                rm -r $x
-            else
-                echo ":: Skipping $x (in use)"
-            fi
-        fi
-    done
-    [ ! -z "$NEPH_TEMP_DIR" ] && [ ! -d "$NEPH_TEMP_DIR" ] && unset NEPH_TEMP_DIR
+  for x in /tmp/nephtmp.*; do
+    if [ -z "$(fuser "$x")" ]; then
+      echo ":: Removing $x"
+      rm -r $x
+    else
+      echo ":: Skipping $x (in use)"
+    fi
+  done
+  [ ! -z "$NEPH_TEMP_DIR" ] && [ ! -d "$NEPH_TEMP_DIR" ] && unset NEPH_TEMP_DIR
 }
 
 rt()
