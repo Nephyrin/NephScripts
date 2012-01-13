@@ -85,9 +85,9 @@ if [[ $- == *i* ]] ; then
         fi
 
         if [[ ${EUID} == 0 ]] ; then
-            PS1='$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
+            PS1='\[\033[0;37m\]$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
         else
-            PS1='$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
+            PS1='\[\033[0;37m\]$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
         fi
 
         alias ls='ls --color=auto'
@@ -276,7 +276,7 @@ cg()
     /bin/echo $$ > /sys/fs/cgroup/$name/tasks
     /bin/echo $$ > /sys/fs/cgroup/$name/tasks
     export NEPH_CGROUP=$name
-    export NEPH_CGROUP_PS1="$(echo -e "\033[0;37m$name ")"
+    export NEPH_CGROUP_PS1=$NEPH_CGROUP" "
 }
 
 java_memanalyze()
