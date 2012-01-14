@@ -38,6 +38,8 @@ done
 if [ $changed -gt 0 ]; then
   sudo /etc/rc.d/irqbalance restart
   sudo /etc/rc.d/laptop-mode restart
+  # Fix user-level access to cores cpufreq
+  sudo /root/sys_perms.sh
 fi
 
 echo ":: $num cores, online: $(cat online), offline: $(cat offline)"
