@@ -1,0 +1,27 @@
+#!/bin/bash
+
+step=$2
+if [ -z "$step" ]; then step=100; fi
+step=$(( $step + 0 ))
+
+set -e
+cd '/sys/devices/virtual/backlight/acpi_video0'
+
+lvl=$1
+if [ -z "$lvl" ]; then exit; fi
+
+clvl=$(cat brightness)
+maxlvl=$(cat max_brightness)
+[ "$lvl" = "up" ] && lvl=$(( $clvl + $step ))
+[ "$lvl" = "down" ] && lvl=$(( $clvl - $step ))
+lvl=$(( $lvl + 0 ))
+
+[ "$lvl" -gt "$maxlvl" ] && lvl=$maxlvl
+[ "$lvl" -lt "0" ] && lvl=0
+
+# The value 0 is special and turns the light off,
+# so set it to fully dim before doing so. Prevents
+# flickering when it goes from 255->0->1
+if [ "$lvl" -eq 0 ]; then /bin/echo 1 > brightness; fi
+/bin/echo $lvl > brightness
+echo >&2 "Backlight set $clvl -> $lvl"
