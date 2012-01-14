@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+curl -# $(ffnightlyinfo "$@" | tail -n1) | tar xj
+echo ""
+echo ":: Nightly downloaded to ./firefox/"

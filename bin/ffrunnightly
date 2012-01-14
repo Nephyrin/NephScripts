@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+tempdir=$(mktemp -d)
+cd "$tempdir"
+ffgetnightly "$@"
+
+mkdir tempprofile
+firefox/firefox -profile tempprofile -no-remote
+cd
+rm -rf "$tempdir"
