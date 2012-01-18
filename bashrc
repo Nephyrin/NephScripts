@@ -112,6 +112,10 @@ fi
 alias phone='mtpfs $HOME/phonemtp'
 alias unphone='fusermount -u $HOME/phonemtp'
 
+# mozilla
+alias fmo='ffmake ff-opt'
+alias fmb='ffmake ff-dbg'
+
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
 alias ns2="ssh srcds@74.55.49.243"
