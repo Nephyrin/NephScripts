@@ -7,6 +7,6 @@ cd "$tempdir"
 ffgetnightly "$@"
 
 mkdir tempprofile
-firefox/firefox -profile tempprofile -no-remote
+cleangtk firefox/firefox -profile tempprofile -no-remote
 cd
 rm -rf "$tempdir"
