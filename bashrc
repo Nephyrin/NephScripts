@@ -342,6 +342,7 @@ ct()
 clt()
 {
   for x in /tmp/nephtmp.*; do
+    [ -d "$x" ] || continue
     if [ -z "$(fuser "$x")" ]; then
       echo ":: Removing $x"
       rm -r $x
