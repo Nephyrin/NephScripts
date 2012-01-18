@@ -2,6 +2,31 @@
 
 set -e
 
-curl -# $(ffnightlyinfo "$@" | tail -n1) | tar xj
+cachedir="$HOME/moz/nightlycache"
+
+while read -r inf; do
+  echo ":: $inf"
+  info[i++]="$inf"
+done < <(ffnightlyinfo "$@")
+
+timestamp=${info[0]}
+shortrev=${info[1]}
+url=${info[2]}
+
+if [ -d "$cachedir" ]; then
+  file="$cachedir"/"$shortrev".tar.bz2
+  if [ ! -f "$file" ]; then
+    echo ":: Not in cache, downloading $url"
+    curl -# "$url" > "$file"
+  else
+    echo ":: Found in cache: $file"
+  fi
+  echo ":: Extracting"
+  tar xjf "$file"
+else
+  echo ":: Not using cache directory"
+  curl -# "$url" | tar xj
+fi
+
 echo ""
 echo ":: Nightly downloaded to ./firefox/"
