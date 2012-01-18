@@ -11,6 +11,10 @@ num=0
 cpus=()
 changed=0
 
+if [ ! -z "$requested" ]; then
+  sudo /etc/rc.d/irqbalance stop
+fi
+
 coreset() {
   if [ ! -f "$1"/online ] || [ $(cat "$1"/online) -eq $2 ]; then return; fi
   if [ $2 -ne 0 ]; then
@@ -35,8 +39,11 @@ for x in cpu*; do
   fi
 done
 
+if [ ! -z "$requested" ]; then
+  sudo /etc/rc.d/irqbalance start
+fi
+
 if [ $changed -gt 0 ]; then
-  sudo /etc/rc.d/irqbalance restart
   sudo /etc/rc.d/laptop-mode restart
   # Fix user-level access to cores cpufreq
   sudo /root/sys_perms.sh
