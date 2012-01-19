@@ -115,6 +115,8 @@ alias unphone='fusermount -u $HOME/phonemtp'
 # mozilla
 alias fmo='ffmake ff-opt'
 alias fmb='ffmake ff-dbg'
+alias fro='x cleangtk ~/moz/ff-opt/dist/bin/firefox'
+alias frb='x cleangtk ~/moz/ff-dbg/dist/bin/firefox'
 
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
