@@ -396,7 +396,10 @@ van()
 }
 
 
-x() { ("$@" >/dev/null 2>/dev/null &) }
+x() {
+  [ ! -z "$NEPH_CGROUP" ] && echo ":: WARNING: In cgroup"
+  ("$@" >/dev/null 2>/dev/null &)
+}
 pic() { x gwenview "$@"; }
 avant() { killall avant-window-navigator; x avant-window-navigator; }
 
