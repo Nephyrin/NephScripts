@@ -1,0 +1,7 @@
+#!/bin/bash
+
+while read -d '' -r file; do
+  echo -n ":: $file - $(du -h "$file" | cut -f 1) ..."
+  sqlite3 "$file" VACUUM
+  echo " $(du -h "$file" | cut -f 1)"
+done < <(find . -iname "*sqlite" -print0)
