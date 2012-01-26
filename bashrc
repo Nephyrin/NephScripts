@@ -4,6 +4,7 @@ export EDITOR="nano -w"
 [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
 
 export CCACHE_DIR=$HOME/.ccache
+export CCACHE_COMPRESS=1
 
 # Machine specific
 if [ "$(hostname)" = "Neph" ]; then
