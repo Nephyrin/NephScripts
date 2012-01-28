@@ -110,8 +110,8 @@ fi
 #
 # Aliases & shorthand
 #
-alias phone='mtpfs $HOME/phonemtp'
-alias unphone='fusermount -u $HOME/phonemtp'
+alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
+alias unphone='fusermount -u $HOME/NephGalaxy'
 
 # mozilla
 alias fmo='ffmake ff-opt'
