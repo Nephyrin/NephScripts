@@ -134,7 +134,6 @@ alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
 alias giff='git diff --no-index --color=auto'
 
 alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
-alias fixvbox='sudo vboxbuild && sudo modprobe -r vboxdrv vboxnetflt vboxnetadp && sudo modprobe -a vboxdrv vboxnetflt vboxnetadp'
 alias resetswap='sudo swapoff -a && sudo swapon -a && echo ":: Done"'
 
 alias xg='x gedit'

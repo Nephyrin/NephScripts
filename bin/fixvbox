@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+sudo modprobe -r vboxnetflt vboxnetadp vboxdrv || true
+sudo vboxbuild
+sudo depmod -a
+sudo modprobe -a vboxdrv vboxnetflt vboxnetadp
