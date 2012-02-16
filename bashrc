@@ -401,7 +401,7 @@ x() {
   ("$@" >/dev/null 2>/dev/null &)
 }
 pic() { x gwenview "$@"; }
-avant() { killall avant-window-navigator; x avant-window-navigator; }
+avant() { pkill avant-window; x avant-window-navigator; }
 
 xauthfix()
 {
