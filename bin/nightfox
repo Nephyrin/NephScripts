@@ -1,5 +1,3 @@
 #!/bin/bash
 
-cd ~/moz/ff-dbg/dist/bin
-
-cleangtk ./run-mozilla.sh ./firefox "$@" -P default
+cleangtk ~/firefox-nightly/firefox -P default "$@"
