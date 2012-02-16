@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cleangtk ~/thunderbird-nightly/thunderbird "$@"
