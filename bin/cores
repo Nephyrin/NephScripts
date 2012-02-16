@@ -13,6 +13,12 @@ changed=0
 
 if [ ! -z "$requested" ]; then
   sudo /etc/rc.d/irqbalance stop
+  # Ban all but CPU0
+  sudo env IRQBALANCE_BANNED_CPUS=fffffe irqbalance --oneshot --debug --hintpolicy=exact
+  # Remove buggy modules
+  sudo modprobe -r b43 || true
+  [ -z "$(lsmod | grep -E '(bcma|b43)')" ]
+  sudo /etc/rc.d/laptop-mode stop
 fi
 
 coreset() {
@@ -40,11 +46,9 @@ for x in cpu*; do
 done
 
 if [ ! -z "$requested" ]; then
+  sudo modprobe b43
   sudo /etc/rc.d/irqbalance start
-fi
-
-if [ $changed -gt 0 ]; then
-  sudo /etc/rc.d/laptop-mode restart
+  sudo /etc/rc.d/laptop-mode start
   # Fix user-level access to cores cpufreq
   sudo /root/sys_perms.sh
 fi
