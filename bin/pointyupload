@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-echo ":: Uploading $file"
 
 onExit()
 {
@@ -17,7 +16,7 @@ if [ ! -r "$file" ]; then
   exit 1
 fi
 
-echo ":: Uploading"
+echo ":: Uploading $file"
 rsync -avz --progress --delete --delete-after --chmod=ugo+r "$file" nephyrin@nemu.pointysoftware.net:/www/nemu.pointysoftware.net/htdocs/sink/
 echo ""
 # If this is failing you need the perl-uri package
@@ -28,4 +27,4 @@ echo "--------------"
 echo ""
 
 # Put on clipboard
-echo "$encoded" | xclip -in -selection clipboard
+echo -n "$encoded" | xclip -in -selection clipboard
