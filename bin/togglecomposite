@@ -6,6 +6,6 @@ qdbus org.kde.kwin /KWin org.kde.KWin.toggleCompositing
 
 if [ "$RESULT" = "false" ]; then
   sleep 1
-  killall avant-window-navigator; (avant-window-navigator &>/dev/null &)
+  pkill avant-window; (avant-window-navigator &>/dev/null &)
   #killall plasma-desktop; (plasma-desktop &>/dev/null &)
 fi
