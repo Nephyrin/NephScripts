@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Run given firefox on clean profile
+
+set -e
+
+ff="$1"
+shift
+
+[ ! -z "$ff" ] || ff="$(which firefox)"
+
+prof="$(mktemp -d -t ffrun_profile.XXXXXXX)"
+
+trap "rm -rv '$prof'" EXIT
+
+cleangtk $ff -no-remote -profile "$prof" "$@"
