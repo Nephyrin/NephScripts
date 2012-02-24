@@ -4,13 +4,31 @@
 
 set -e
 
-ff="$1"
-shift
+if [ $# -gt 0 ]; then
+  ff="$1"
+  shift
+  if [ ! "$ff" = "-" ] && [ ! -x "$ff" ]; then
+    echo >&2 "\"$ff\" is not an executable target :("
+    exit 1
+  fi
+fi
 
-[ ! -z "$ff" ] || ff="$(which firefox)"
+if [ -z "$ff" ] || [ "$ff" = "-" ]; then
+  ff="$(which firefox)"
+  if [ -z "$ff" ]; then
+    echo >&2 "!! No firefox given and 'which firefox' returns naught :("
+    exit 1
+  fi
+fi
 
 prof="$(mktemp -d -t ffrun_profile.XXXXXXX)"
+echo >&2 ":: Temp profile is $prof"
 
-trap "rm -rv '$prof'" EXIT
+trap "rm -r '$prof'" EXIT
 
-cleangtk $ff -no-remote -profile "$prof" "$@"
+cmd="cleangtk '$ff' -no-remote -profile '$prof'"
+[ $# -eq 0 ] || cmd="$cmd '$@'"
+
+echo >&2 ":: Running command: $cmd"
+
+eval $cmd
