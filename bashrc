@@ -114,6 +114,7 @@ alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
 alias unphone='fusermount -u $HOME/NephGalaxy'
 
 # mozilla
+alias mq='hg -R $(hg root)/.hg/patches'
 alias fmo='ffmake ff-opt'
 alias fmb='ffmake ff-dbg'
 alias fro='x cleangtk ~/moz/ff-opt/dist/bin/firefox'
