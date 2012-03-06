@@ -114,7 +114,6 @@ alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
 alias unphone='fusermount -u $HOME/NephGalaxy'
 
 # mozilla
-alias mq='hg -R $(hg root)/.hg/patches'
 alias fmo='ffmake ff-opt'
 alias fmb='ffmake ff-dbg'
 alias fro='x cleangtk ~/moz/ff-opt/dist/bin/firefox'
@@ -302,8 +301,6 @@ java_memanalyze()
         )
     fi
 }
-
-irctun() { ssh -T -f -L17079:127.0.0.1:17079 jschoenick@people.mozilla.org sleep 30 && echo ":: 30s to start IRC connection"; }
 
 # OR I COULD JUST PROPERLY FIX IT LOL
 fixraid()
