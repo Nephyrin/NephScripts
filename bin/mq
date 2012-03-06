@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Run a command on the active MQ repository in an hq repo
+
+set -e
+
+root="$(hg root)"
+activequeue="$(hg qq --active)"
+
+if [ -z "$root" ] || [ -z "$activequeue" ]; then
+  echo "!! Couldn't find an active repo/queue"
+fi
+
+hg -R "$root/.hg/patches-$activequeue" "$@"
