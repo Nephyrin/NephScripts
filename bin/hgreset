@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Strips all revisions not present on the remote end
+
+set -e
+
+remote="$*"
+stripped=0
+while true; do
+  outrevs="$(hg -q out --template='{rev}\n' "$remote" || true)"
+  echo ":: $(echo -n "$outrevs" | wc -l) revisions not on remote"
+  outrev="$(echo "$outrevs" | head -n1)"
+  if [ ! -z "$outrev" ]; then
+    echo ":: Stripping $outrev"
+    hg strip "$outrev" || true
+    (( stripped++ )) || true
+  else
+    echo ":: Stripped $stripped revisions"
+    exit 0
+  fi
+done
