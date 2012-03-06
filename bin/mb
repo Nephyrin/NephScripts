@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname "$0")"
+
+source ~/.bashrc
+lowprio
+
+cfg=$1
+forceconfig=$2
+
+if [ -z "$cfg" ] || [ ! -f "m-${cfg}.mzc" ]; then
+  echo >&2 "No config for '$cfg'"
+  exit 1
+fi
+
+export PYTHON=python2
+export MOZCONFIG="$PWD/m-${cfg}.mzc"
+
+MAKE="eval time ionice -c3 make -j10"
+
+if [ "${cfg%-*}" = "tb" ]; then
+  dir="comm-central"
+elif [ "${cfg%-*}" = "ff192" ]; then
+  dir="mozilla-1.9.2"
+elif [ "${cfg%-*}" = "ff" ]; then
+  dir="mozilla-central"
+else
+  echo >&2 '!!'" Type ${cfg%-*} unknown"
+  exit 1
+fi
+
+
+trap "cpufreq-selector -c all -g ondemand" EXIT
+cpufreq-selector -c all -g performance
+
+if [ ! -z "$forceconfig" ]; then
+  # Remove objdir's config to force a reconfigure,
+  # make via source directory make -f client.mk
+  rm -rfv "$cfg"/config.*
+  cd "$dir"
+  MAKE="$MAKE -f client.mk"
+else
+  # Just cd objdir and make
+  cd "$cfg"
+fi
+
+if $MAKE; then
+  echo ":: Make succeeded"
+else
+  echo '!! Make failed'
+fi
