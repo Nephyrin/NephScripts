@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+# Run things in a python2 environment
+pyver="$(python -V 2>&1)"
+if [ "${pyver%%.*}" = "Python 3" ]; then
+  py2="$(which python2 2>/dev/null || true)"
+  if [ -z "$py2" ]; then
+    echo >&2 "!! No python2 found on this system"
+    exit 1
+  fi
+  tempdir="$(mktemp -d -t py2e_XXXXX)"
+  ln -s "$py2" "$tempdir"/python
+  export PATH="$tempdir:$PATH"
+  export PYTHON=python2
+  trap "rm -rf '$tempdir'" EXIT
+  "$@"
+else
+  # Python is already 2, just run
+  "$@"
+fi
