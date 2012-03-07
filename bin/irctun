@@ -4,7 +4,7 @@ set -ve
 
 # (re)starts IRC tunnel
 ssh -O stop jschoenick@people.mozilla.org &>/dev/null || true
-killall kvirc
+killall kvirc || true
 
 ssh -T -f -L17079:127.0.0.1:17079 jschoenick@people.mozilla.org sleep 30
 ( kvirc &>/dev/null & ) &>/dev/null
