@@ -119,6 +119,7 @@ alias fmb='ffmake ff-dbg'
 alias fro='x cleangtk ~/moz/ff-opt/dist/bin/firefox'
 alias frb='x cleangtk ~/moz/ff-dbg/dist/bin/firefox'
 
+alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
 alias ns2="ssh srcds@74.55.49.243"
