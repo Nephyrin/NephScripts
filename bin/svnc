@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ssh -L5900:localhost:5900 -f "$1" x11vnc -display :0 -localhost -timeout 10
+krdc vnc://:0
