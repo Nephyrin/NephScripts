@@ -1,0 +1,44 @@
+[web]
+cacerts = /etc/ssl/certs/ca-certificates.crt
+
+[ui]
+username = John Schoenick <jschoenick@mozilla.com>
+merge=internal:merge
+ignore = $HOME/.hgignore
+
+[defaults]
+diff = -U 8 -p
+qdiff=-U 8
+qref = -U
+qnew = -Ue
+
+[alias]
+try = push -f ssh://hg.mozilla.org/try
+new = incoming --stat
+
+[diff]
+showfunc = 1
+git = 1
+unified = 8
+
+[extensions]
+hgext.bookmarks =
+hggit =
+hgext.purge =
+hgext.mq =
+hgext.pager =
+hgext.parentrevspec =
+hgext.extdiff =
+hgext.graphlog =
+hgext.rebase =
+hgext.convert =
+hgext.transplant =
+hgext.color =
+# hgext.inotify =
+
+[extdiff]
+cmd.wdiff = diff
+opts.wdiff = -wprdNU 14
+
+[pager]
+pager = less -R
