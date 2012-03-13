@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo ":: Cleaning orphaned packages"
+while orphans="$(sudo pacman -Qdtq)" && [ ! -z "$orphans" ]; do
+  sudo pacman -R "$orphans"
+done
