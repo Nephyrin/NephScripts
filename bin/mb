@@ -24,6 +24,8 @@ elif [ "${cfg%-*}" = "ff192" ]; then
   dir="mozilla-1.9.2"
 elif [ "${cfg%-*}" = "ff" ]; then
   dir="mozilla-central"
+elif [ "${cfg%-*}" = "ffesr10" ]; then
+  dir="mozilla-esr10"
 else
   echo >&2 '!!'" Type ${cfg%-*} unknown"
   exit 1
