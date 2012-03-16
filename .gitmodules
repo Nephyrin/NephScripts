@@ -1,0 +1,3 @@
+[submodule "bin/ls--"]
+	path = bin/ls--
+	url = https://github.com/trapd00r/ls--.git
