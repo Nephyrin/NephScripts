@@ -40,5 +40,5 @@ hgext.color =
 cmd.wdiff = diff
 opts.wdiff = -wprdNU 14
 
-[pager]
-pager = less -R
+#[pager]
+#pager = less -R
