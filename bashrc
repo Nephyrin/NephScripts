@@ -123,8 +123,8 @@ alias unphone='fusermount -u $HOME/NephGalaxy'
 # mozilla
 alias fmo='ffmake ff-opt'
 alias fmb='ffmake ff-dbg'
-alias fro='x cleangtk ~/moz/ff-opt/dist/bin/firefox'
-alias frb='x cleangtk ~/moz/ff-dbg/dist/bin/firefox'
+alias fro='ffbrun ~/moz/ff-opt/dist/bin/firefox'
+alias frb='ffbrun ~/moz/ff-dbg/dist/bin/firefox'
 
 alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
