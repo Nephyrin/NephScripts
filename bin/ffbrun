@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Run given firefox on profile "<dirname firefox>/profile"
+# Used for build dirs
+
+set -e
+
+if [ "$1" = "-" ]; then
+  fresh=1
+  shift
+fi
+
+if [ $# -gt 0 ]; then
+  ff="$1"
+  shift
+  if [ ! "$ff" = "-" ] && [ ! -x "$ff" ]; then
+    echo >&2 "\"$ff\" is not an executable target :("
+    exit 1
+  fi
+fi
+
+if [ -z "$ff" ] || [ "$ff" = "-" ]; then
+  ff="./firefox"
+  if [ ! -x "$ff" ]; then
+    echo >&2 "!! No firefox given and ./firefox isn't here"
+    exit 1
+  fi
+fi
+
+cd "$(dirname "$ff")"
+if [ $fresh ]; then
+  rm -rf profile
+fi
+if [ ! -d "profile" ]; then
+  ":: Making fresh profile"
+  mkdir profile
+fi
+
+cleangtk "$ff" -no-remote -profile ./profile "$@"
