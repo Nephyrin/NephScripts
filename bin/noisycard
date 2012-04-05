@@ -5,22 +5,9 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-# Configures card for super super noisy environment,
-# prioritizing a steady signal above any sort of respectable speed
-
-# Fragment any large packets
-# smaller fragments will get through more successfully
+# Configures card for noisy environment
 sudo iwconfig "$1" frag 256
-
-# Check for a clear channel for any transmission
-# huge overhead, but more stable
 # sudo iwconfig "$1" rts 1
-
-# High retry send limit
-# sudo iwconfig "$1" retry 255
-
-# Negotiate 2mbit rate and don't try to go higher
-# sudo iwconfig "$1" rate 2M
 
 # Turn off any power management and make sure txpower is at maximum
 sudo iwconfig "$1" power off
