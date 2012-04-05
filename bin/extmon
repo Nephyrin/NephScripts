@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Auto-apply external monitor settings since KDE is bad at it
+
+state="$1"
+if [ "$state" != "off" ] && [ "$state" != "on" ]; then
+  if [ ! -z "$(xrandr -q | grep "DisplayPort-0 connected")" ]; then
+    state="on"
+  else
+    state="off"
+  fi
+fi
+
+if [ "$state" = "on" ]; then
+  # Connected
+  xrandr --output DisplayPort-0 --mode 1920x1200 --rotate left --pos 1680x-870
+elif [ "$state" = "off" ]; then
+  # Disconnected
+  xrandr --output DisplayPort-0 --off
+else
+  echo >&2 "!! Unknown state \"$state\""
+  exit 1
+fi
