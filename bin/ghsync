@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+# Sync an hg repo to its git mirror
+
+if [ ! -d "$1/.hg" ]; then
+  echo >&2 "$1" does not appear to be a hg repository
+  exit 1
+fi
+
+echo ":: Syncing $1"
+cd "$1"
+hg pull -u
+hg gexport -v
