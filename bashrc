@@ -138,6 +138,9 @@ alias nsf="ssh nephyrin@sys.nephyrin.net"
 alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
 alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
 
+# Random password
+alias rpass='pwgen -sync 24 1'
+
 # Git's nicer diff can be used with --no-index to diff random things
 alias giff='git diff --no-index --color=auto'
 
