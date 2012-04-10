@@ -126,6 +126,9 @@ alias fmb='ffmake ff-dbg'
 alias fro='ffbrun ~/moz/ff-opt/dist/bin/firefox'
 alias frb='ffbrun ~/moz/ff-dbg/dist/bin/firefox'
 
+# Hibernate-reboot with mount handling, for OS switching
+alias switchos='hib reboot mounts'
+
 alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
