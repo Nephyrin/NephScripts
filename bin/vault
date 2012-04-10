@@ -7,6 +7,6 @@ if mountpoint /mnt/Vault &>/dev/null; then
   exit 1
 fi
 
-truecrypt --mount /dev/sda8 /mnt/Vault
+sudo truecrypt --mount /dev/sda8 /mnt/Vault
 
 echo ":: Vault mounted"
