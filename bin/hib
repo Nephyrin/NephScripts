@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# For switching to windows
+set -e
+sudo echo -n
+
+reboot=""
+mounts=""
+
+while [ $# -gt 0 ]; do
+  arg="$1"
+  shift
+  case "$arg" in
+    "reboot")
+      reboot=1
+      echo >&2 ":: Will reboot after hibernate"
+    ;;
+    "mounts")
+      mounts=1
+      echo >&2 ":: Will unmount/remount shared mounts on hibernate/resume"
+    ;;
+    "")
+      # Pass
+    ;;
+    *)
+      echo >&2 "!! Unknown option \"$arg\""
+      exit 1
+    ;;
+  esac
+done
+
+if [ ! -z "$mounts" ]; then
+  #
+  # Handle unmounting shared stuff
+  #
+
+  # Kill apps using shared drives
+
+  # Steam first, then wait a few seconds, so wineserver can go away
+  while [ ! -z "$(pidof Steam)$(pidof Steam.exe)" ]; do
+    echo ":: Killing steam"
+    if [ -z "$steam" ]; then
+      echo ":: Stopping steam..."
+      killall Steam Steam.exe &>/dev/null || true
+      steam=1
+    fi
+    sleep 0.5
+  done
+
+  echo ":: Killing apps using shared drives"
+  mountpoint /mnt/win7 &>/dev/null && sudo fuser -k -i -m /mnt/win7 || true
+  mountpoint /mnt/Vault &>/dev/null && sudo fuser -k -i -m /mnt/Vault || true
+  sleep 2
+
+  echo ":: Force killing apps using shared drives"
+  mountpoint /mnt/win7 &>/dev/null && sudo fuser -k -i -9 -m /mnt/win7 || true
+  mountpoint /mnt/Vault &>/dev/null && sudo fuser -k -i -9 -m /mnt/Vault || true
+  sleep 1
+
+  echo ":: Unmounting win7"
+  mountpoint /mnt/win7 &>/dev/null && sudo umount /mnt/win7
+  echo ":: Unmounting vault"
+  mountpoint /mnt/Vault &>/dev/null && sudo truecrypt -d /mnt/Vault
+fi
+
+# Set /sys/power/tuxonice/reboot appropriately
+cd /sys/power/tuxonice
+if [ ! -z "$reboot" ]; then
+  echo ":: Hibernate-rebooting"
+  echo 1 | sudo tee reboot >/dev/null
+else
+  echo ":: Hibernating"
+  echo 0 | sudo tee reboot >/dev/null
+fi
+
+# Hibernate
+sudo pm-hibernate
+
+echo ":: Resumed"
+
+if [ ! -z "$mounts" ]; then
+echo ":: Remounting win7"
+  sudo mount /mnt/win7
+
+  if [ ! -z "$steam" ]; then
+    echo ":: Relaunching steam"
+    (~/launch/Steam &>/dev/null &)
+  fi
+
+  echo ":: Remounting Vault"
+  $HOME/bin/vault
+fi
