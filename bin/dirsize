@@ -10,4 +10,4 @@ source "$(dirname "$0")"/lib/util.sh
 while read -r line; do
   eval line=($line)
   echo "$(rightPad 10 "$(formatBytes "${line[0]}")")${line[1]}"
-done < <(du -sc "$dir"/* | sort -n)
+done < <(du --block-size=1 -sc "$dir"/* | sort -n)
