@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+dir="$1"
+
+[ ! -z "$dir" ] || dir=.
+
+source "$(dirname "$0")"/lib/util.sh
+
+while read -r line; do
+  eval line=($line)
+  echo "$(rightPad 10 "$(formatBytes "${line[0]}")")${line[1]}"
+done < <(du -sc "$dir"/* | sort -n)
