@@ -138,6 +138,14 @@ alias ntf="ssh tf@nemu.pointysoftware.net"
 alias naf="ssh tfadmin@nemu.pointysoftware.net"
 alias nnf="ssh nephyrin@nemu.pointysoftware.net"
 alias nsf="ssh nephyrin@sys.nephyrin.net"
+nalb() {
+  if host albus.mv.mozilla.com &>/dev/null; then
+    ssh -L8000:localhost:8000 johns@albus.mv.mozilla.com "$@"
+  else
+    ssh -L8000:albus:8000 -t jschoenick@office.mozilla.com ssh johns@albus "$@"
+  fi
+}
+
 alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
 alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
 
