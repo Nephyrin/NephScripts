@@ -117,6 +117,9 @@ fi
 #
 # Aliases & shorthand
 #
+
+alias please='eval sudo "$(fc -nl -1)"'
+
 alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
 alias unphone='fusermount -u $HOME/NephGalaxy'
 
