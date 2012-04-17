@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import sys
+
+if len(sys.argv) < 2:
+  sys.stderr.write("Need at least some text.\n");
+  sys.exit(1)
+
+text = " %s " % (" ".join(sys.argv[1:]),)
+
+colors = [ [ 0, 4 ], [ 1, 9 ], [ 0, 12 ], [ 1, 8 ] ]
+
+output = ""
+
+# IRC colors:
+# \x03AA,BB
+# AA is foreground, BB is background, both are 00-15. Can be single-digit,
+# but must pad with zeros to color an immediately-followed single digit to avoid
+# ambiguity
+# Bold: \x02
+
+for i in range(len(text)):
+  (bold, color) = colors[i % len(colors)]
+  char = text[i]
+  try:
+    if color < 10 and str(int(char)) == char:
+      color = "0%u" % (color,)
+  except ValueError: pass
+  output += "\x03%u,%s%s" % (bold, color, char)
+
+sys.stdout.write("\x02%s\x03\x02" % (output,))

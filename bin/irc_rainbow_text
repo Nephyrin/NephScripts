@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+"$(dirname "$0")"/irc_rainbow_text_raw "$@" | xclip -in -selection clipboard
+echo ":: Copied"
