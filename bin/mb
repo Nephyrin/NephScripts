@@ -18,36 +18,35 @@ export MOZCONFIG="$PWD/m-${cfg}.mzc"
 
 MAKE="eval time ionice -c3 make -j10"
 
-if [ "${cfg%-*}" = "tb" ]; then
-  dir="comm-central"
-elif [ "${cfg%-*}" = "ff192" ]; then
-  dir="mozilla-1.9.2"
-elif [ "${cfg%-*}" = "ff" ]; then
-  dir="mozilla-central"
-elif [ "${cfg%-*}" = "ffesr10" ]; then
-  dir="mozilla-esr10"
-else
-  echo >&2 '!!'" Type ${cfg%-*} unknown"
-  exit 1
-fi
+echo ":: Switching moz-build-tree to build/$cfg"
+(
+  cd moz-build-tree
+  git checkout build/"$cfg"
+  git reset --hard
+  git clean -xfd
+)
+
 
 
 trap "cpufreq-selector -c all -g ondemand" EXIT
 cpufreq-selector -c all -g performance
 
-if [ ! -z "$forceconfig" ]; then
-  # Remove objdir's config to force a reconfigure,
-  # make via source directory make -f client.mk
+if [ ! -f "$cfg/Makefile" ] || [ ! -z "$forceconfig" ]; then
+  echo ":: Reconfiguring build directory"
+  # Remove objdir's config to force a reconfigure
   rm -rfv "$cfg"/config.*
-  cd "$dir"
-  MAKE="$MAKE -f client.mk"
-else
-  # Just cd objdir and make
-  cd "$cfg"
+  (
+    cd moz-build-tree
+    $MAKE -f client.mk configure
+  )
 fi
 
-if $MAKE; then
-  echo ":: Make succeeded"
-else
-  echo '!! Make failed'
-fi
+
+cd "$cfg"
+
+# Work around bug 717947
+for x in {js/src/,}config; do
+  $MAKE -C $x DIRS+=mkdepend mkdepend/Makefile
+done
+
+$MAKE && echo ":: Make succeeded"
