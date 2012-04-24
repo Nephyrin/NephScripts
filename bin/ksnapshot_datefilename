@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+cat ~/.kde4/share/config/ksnapshotrc \
+  | sed -r 's/(filename\[\$e\]=)(.*)$/\1file:\/\/\$HOME\/Desktop\/snapshot-'"$(date +%s)"'.png/g' \
+  > ~/.kde4/share/config/ksnapshotrc2
+mv ~/.kde4/share/config/ksnapshotrc{2,}
+
+ksnapshot "$@"
