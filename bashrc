@@ -126,8 +126,8 @@ alias unphone='fusermount -u $HOME/NephGalaxy'
 # mozilla
 alias fmo='ffmake ff-opt'
 alias fmb='ffmake ff-dbg'
-alias fro='ffbrun ~/moz/ff-opt/dist/bin/firefox'
-alias frb='ffbrun ~/moz/ff-dbg/dist/bin/firefox'
+alias fro='ffbrun ~/moz/ff-opt/dist/bin/'
+alias frb='ffbrun ~/moz/ff-dbg/dist/bin/'
 
 # Hibernate-reboot with mount handling, for OS switching
 alias switchos='hib reboot mounts'
