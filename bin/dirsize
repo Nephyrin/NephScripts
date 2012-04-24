@@ -8,6 +8,7 @@ dir="$1"
 source "$(dirname "$0")"/lib/util.sh
 
 while read -r line; do
-  eval line=($line)
-  printf "%10s  %s\n" "$(formatBytes "${line[0]}")" "${line[1]}"
+  bytes="${line%$'\t'*}"
+  name="${line#*$'\t'}"
+  printf "%10s  %s\n" "$(formatBytes "$bytes")" "$name"
 done < <(du --block-size=1 -sc "$dir"/* | sort -n)
