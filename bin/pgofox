@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cleangtk ~/moz/ff-pgo/dist/firefox/firefox -P default "$@"
