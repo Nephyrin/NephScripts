@@ -146,7 +146,7 @@ nalb() {
   if host albus.mv.mozilla.com &>/dev/null; then
     ssh -L8000:localhost:8000 johns@albus.mv.mozilla.com "$@"
   else
-    ssh -L8000:albus:8000 -t jschoenick@office.mozilla.com ssh johns@albus "$@"
+    ssh -L8000:albus:8000 -t jschoenick@office.mozilla.org ssh johns@albus "$@"
   fi
 }
 
