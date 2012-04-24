@@ -3,9 +3,12 @@
 # ghsync all repos, then gc the git
 set -e
 cd ~/moz
-for x in mozilla-{central,inbound,aurora,beta,esr10}; do
+
+ghup
+
+for x in mozilla-{1.9.2,esr10,beta,aurora,central,inbound,birch}; do
   ghsync "$x"
 done
 
 cd moz-git
-git gc --aggressive
+git gc
