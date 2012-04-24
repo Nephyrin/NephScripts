@@ -5,35 +5,45 @@
 
 set -e
 
-if [ "$1" = "-" ]; then
-  fresh=1
+die() {
+  echo >&2 "$*"
+  exit 1
+}
+
+target="$1"; shift
+if [ -z "$target" ]; then
+  die "First argument must be a built firefox directory"
+fi
+
+args=()
+i=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    "-g")
+      exargs='-g'
+    ;;
+    "-x")
+      freshprofile=1
+    ;;
+    *)
+      args[i++]="$1"
+    ;;
+  esac
   shift
+done
+
+if [ ! -d "$target" ] || [ ! -x "$target/firefox" ] || [ ! -x "$target/run-mozilla.sh" ]; then
+  die "\"$target\" doesn't appear to contain a firefox build :("
 fi
 
-if [ $# -gt 0 ]; then
-  ff="$1"
-  shift
-  if [ ! "$ff" = "-" ] && [ ! -x "$ff" ]; then
-    echo >&2 "\"$ff\" is not an executable target :("
-    exit 1
-  fi
-fi
-
-if [ -z "$ff" ] || [ "$ff" = "-" ]; then
-  ff="./firefox"
-  if [ ! -x "$ff" ]; then
-    echo >&2 "!! No firefox given and ./firefox isn't here"
-    exit 1
-  fi
-fi
-
-cd "$(dirname "$ff")"
-if [ $fresh ]; then
+cd "$target"
+if [ $freshprofile ]; then
   rm -rf profile
 fi
+
 if [ ! -d "profile" ]; then
-  ":: Making fresh profile"
+  echo ":: Making fresh profile"
   mkdir profile
 fi
 
-cleangtk "$ff" -no-remote -profile ./profile "$@"
+cleangtk ./run-mozilla.sh $exargs "$target/firefox" -no-remote -profile ./profile "${args[@]}"
