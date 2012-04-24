@@ -239,6 +239,20 @@ dcg()
 
 lowprio()
 {
+  if [ ! -z "$NEPH_CGROUP" ]; then
+    echo >&2 '!! Warning, leaving old cgroup '"$NEPH_CGROUP"
+    dcg
+  fi
+  # Create and move into new low priority cgroup
+  lpcg
+  # Run command with minimal nice/ionice perms
+  time ionice -c3 nice -n20 "$@"
+  # Delete low prio group
+  dcg
+}
+
+lpcg()
+{
   local group="$1"
   if [ -z "$group" ]; then
     [ -z "$NEPH_CGROUP" ] && cg
