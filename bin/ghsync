@@ -8,22 +8,8 @@ if [ ! -d "$1/.hg" ]; then
   exit 1
 fi
 
-echo ":: Updating git"
-(
-  cd "moz-git"
-  git fetch --all
-  cd .git/map
-  git pull
-)
-(
-  echo ":: Syncing $1"
-  cd "$1"
-  hg pull -u
-  echo ":: Exporting"
-  hg gexport -v
-)
-echo ":: Fixing missing tags"
-(
-  cd moz-git
-  git fetch github $((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')
-)
+cd "$1"
+echo ":: Syncing $1"
+hg pull -u
+echo ":: Exporting"
+hg gexport -v
