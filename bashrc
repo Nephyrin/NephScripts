@@ -189,6 +189,7 @@ stoparch32()
 {
     # Stop mounts
     sudo umount /mnt/N/arch32/proc
+    sudo umount /mnt/N/arch32/dev/pts
     sudo umount /mnt/N/arch32/dev
     sudo umount /mnt/N/arch32/sys
     sudo umount /mnt/N/arch32/home
@@ -202,6 +203,7 @@ arch32()
         # Start mounts
         sudo mount /mnt/N/arch32/proc
         sudo mount /mnt/N/arch32/dev
+        sudo mount /mnt/N/arch32/dev/pts
         sudo mount /mnt/N/arch32/sys
         sudo mount /mnt/N/arch32/home
         sudo mount /mnt/N/arch32/mnt/N
