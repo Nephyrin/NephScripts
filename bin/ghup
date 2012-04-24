@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Update the git repo, syncing its map file with any local exports
+# and fixing missing tags
+set -e
+cd ~/moz/moz-git
+
+echo ":: Updating git"
+git fetch --all --tags
+(
+  cd .git/map
+  git commit -a -m "Locally imported revisions" || true
+  git pull --no-edit
+)
+
+echo ":: Fixing missing tags"
+git fetch github $((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')
