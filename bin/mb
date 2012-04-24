@@ -18,21 +18,11 @@ export MOZCONFIG="$PWD/m-${cfg}.mzc"
 
 MAKE="eval time ionice -c3 make -j10"
 
-echo ":: Switching moz-build-tree to build/$cfg"
-(
-  cd moz-build-tree
-  git checkout build/"$cfg"
-  git reset --hard
-  git clean -xfd
-)
-
-
-
 trap "cpufreq-selector -c all -g ondemand" EXIT
 cpufreq-selector -c all -g performance
 
 if [ ! -f "$cfg/Makefile" ] || [ ! -z "$forceconfig" ]; then
-  echo ":: Reconfiguring build directory"
+  echo ":: Reconfiguring build"
   # Remove objdir's config to force a reconfigure
   rm -rfv "$cfg"/config.*
   (
@@ -41,12 +31,13 @@ if [ ! -f "$cfg/Makefile" ] || [ ! -z "$forceconfig" ]; then
   )
 fi
 
-
-cd "$cfg"
-
 # Work around bug 717947
-for x in {js/src/,}config; do
-  $MAKE -C $x DIRS+=mkdepend mkdepend/Makefile
-done
+(
+  cd "$cfg"
+  for x in {js/src/,}config; do
+    $MAKE -C $x DIRS+=mkdepend mkdepend/Makefile
+  done
+)
 
-$MAKE && echo ":: Make succeeded"
+cd moz-build-tree
+$MAKE -f client.mk && echo ":: Make succeeded"
