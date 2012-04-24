@@ -141,6 +141,7 @@ alias ntf="ssh tf@nemu.pointysoftware.net"
 alias naf="ssh tfadmin@nemu.pointysoftware.net"
 alias nnf="ssh nephyrin@nemu.pointysoftware.net"
 alias nsf="ssh nephyrin@sys.nephyrin.net"
+alias relap='service laptop-mode restart'
 nalb() {
   if host albus.mv.mozilla.com &>/dev/null; then
     ssh -L8000:localhost:8000 johns@albus.mv.mozilla.com "$@"
@@ -164,6 +165,7 @@ alias resetswap='sudo swapoff -a && sudo swapon -a && echo ":: Done"'
 alias xg='x gedit'
 alias xk='x kate'
 alias y='yaourt'
+alias yclean='yaourt -Rs $(y -Qdtq)'
 alias p='sudo pacman'
 
 alias dir='x dolphin "$@"'
