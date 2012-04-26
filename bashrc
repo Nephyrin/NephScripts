@@ -444,18 +444,20 @@ x() {
 pic() { x gwenview "$@"; }
 avant() { pkill avant-window; x avant-window-navigator; }
 
-xauthfix()
+connectx()
 {
-    pid=$(pgrep -o -u nephyrin gnome-session)
-    [ -z "$pid" ] && pid=$(pgrep -o -u nephyrin xfce4-session)
-    [ -z "$pid" ] && pid=$(pgrep -o -u nephyrin kded4)
-    if [ ! -z "$pid" ]; then
-        echo "Stealing env from $pid"
-        export $(cat /proc/$pid/environ | grep -z XAUTHORITY)
-        else
-            export XAUTHORITY=$HOME/.Xauthority
-            fi
-            if [ -z "$DISPLAY" ]; then export DISPLAY=:0; fi
+  pid=$(pgrep -o -u $USER gnome-session)
+  [ -z "$pid" ] && pid=$(pgrep -o -u $USER xfce4-session)
+  [ -z "$pid" ] && pid=$(pgrep -o -u $USER kded4)
+  if [ ! -z "$pid" ]; then
+    echo "Stealing env from $pid"
+    export $(cat /proc/$pid/environ | grep -z XAUTHORITY)
+    export $(cat /proc/$pid/environ | grep -z DISPLAY)
+  else
+      export XAUTHORITY=$HOME/.Xauthority
+  fi
+  [ -z "$DISPLAY" ] && export DISPLAY=:0
+  [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
 }
 
 tf2()
