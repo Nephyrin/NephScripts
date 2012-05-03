@@ -3,13 +3,22 @@
 set -e
 # Sync an hg repo to its git mirror
 
-if [ ! -d "$1/.hg" ]; then
-  echo >&2 "$1" does not appear to be a hg repository
+repo="$(basename "$1")"
+repo="${repo#mozilla-}"
+
+echo ":: Updating $repo"
+cd ~/moz
+if [ ! -d "mozilla-$repo/.hg" ]; then
+  echo >&2 "mozilla-$repo" does not appear to be a hg repository
   exit 1
 fi
 
 cd "$1"
-echo ":: Syncing $1"
-hg pull -u
-echo ":: Exporting"
+echo ":: pulling"
+hg pull
+echo ":: updating"
+hg up -C
+echo ":: bookmarking"
+hg bookmark -vf $repo
+echo ":: exporting"
 hg gexport -v
