@@ -11,13 +11,16 @@ if [ "$state" != "off" ] && [ "$state" != "on" ]; then
   fi
 fi
 
-killall qsynergy synergys
+killall qsynergy synergys arcus_tunnel || true
 if [ "$state" = "on" ]; then
   # Connected
   xrandr --output DisplayPort-0 --mode 1920x1200 --pos 0x0
   xrandr --output LVDS --pos 240x1200 --primary
   gconftool-2 --type boolean -s /apps/instances/avant-window-navigator/panel-1/panel/monitor_force true
+  gconftool-2 --type int -s /apps/instances/avant-window-navigator/panel-1/panel/monitor_height 2250
   ( qsynergy &>/dev/null & )
+  screen -d -m -S arcus_tunnel arcus_tunnel
+  ssh arcus.mv.mozilla.com "killall synergyc; synergyc --display :0 -n arcus localhost:24800"
 elif [ "$state" = "off" ]; then
   # Disconnected
   xrandr --output DisplayPort-0 --off
