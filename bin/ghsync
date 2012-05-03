@@ -13,7 +13,7 @@ if [ ! -d "mozilla-$repo/.hg" ]; then
   exit 1
 fi
 
-cd "$1"
+cd "mozilla-$repo"
 echo ":: pulling"
 hg pull
 echo ":: updating"
