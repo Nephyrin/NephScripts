@@ -40,7 +40,8 @@ cpuset()
   local dir=$1
   local gov=$2
   local freq=$3
-  
+
+  [ -d "$dir" ] || return
   cd $dir
   # Bash's built in echo can have issues with sysfs stuff, specifically when it errors (google it)
   /bin/echo "$gov" > scaling_governor
@@ -49,7 +50,9 @@ cpuset()
 
 
 if [ "$cpu" = "all" ]; then
-  for dir in /sys/devices/system/cpu/cpu*/cpufreq; do cpuset $dir $gov $freq; done
+  for dir in /sys/devices/system/cpu/cpu*/cpufreq; do
+    cpuset $dir $gov $freq;
+  done
 else
   cpuset /sys/devices/system/cpu/cpu${cpu}/cpufreq $gov $freq
 fi
