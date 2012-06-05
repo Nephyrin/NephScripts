@@ -17,7 +17,7 @@ if [ ! -r "$file" ]; then
 fi
 
 echo ":: Uploading $file"
-rsync -avz --progress --delete --delete-after --chmod=ugo+r "$file" nephyrin@nemu.pointysoftware.net:/www/nemu.pointysoftware.net/htdocs/sink/
+rsync -avz --progress --inplace --partial --chmod=ugo+r "$file" nephyrin@nemu.pointysoftware.net:/www/nemu.pointysoftware.net/root/sink/
 echo ""
 # If this is failing you need the perl-uri package
 encoded="http://nemu.pointysoftware.net/sink/$(perl -MURI::Escape -e 'print uri_escape($ARGV[0])' "$(basename "$file")")"
