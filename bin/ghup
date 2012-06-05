@@ -5,6 +5,9 @@
 set -e
 cd ~/moz/moz-git
 
+echo ":: Prefetching arcus"
+git fetch arcus || true
+
 echo ":: Updating git"
 git fetch --all --tags
 (
