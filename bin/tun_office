@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+source "$(dirname "$0")"/lib/util.sh
+
+while true; do
+  echo ":: Launching SSH"
+  if try_keychain; then
+    ssh -T -L12340:albus:22 -L12341:arcus:22 -N jschoenick@office.mozilla.org -o "ExitOnForwardFailure=true" || true
+  else
+    echo "!! Keychain not running"
+  fi
+  echo ":: Died, retrying"
+  sleep 2
+done
