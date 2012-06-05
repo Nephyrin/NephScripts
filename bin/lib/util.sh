@@ -42,3 +42,18 @@ formatBytes() {
   fi
   echo
 }
+
+# Tries to connect to keychain, invalidates SSH_AGENT vars if it cannot.
+try_keychain() {
+  keyfile="$HOME/.keychain/$HOSTNAME-sh"
+  [ ! -f "$keyfile" ] || source "$keyfile"
+  if [ -z "$SSH_AUTH_SOCK" ] || \
+     [ -z "$SSH_AGENT_PID" ] || \
+     [ ! -e "$SSH_AUTH_SOCK" ] || \
+     [ -z "$(ps -p "$SSH_AGENT_PID" -o comm=)" ]; then
+    unset SSH_AUTH_SOCK
+    unset SSH_AGENT_PID
+    return 1
+  fi
+  return 0
+}
