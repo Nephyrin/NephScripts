@@ -9,7 +9,4 @@ Host *
    # Aggressively kill dead connections
    ServerAliveInterval 5
    ServerAliveCountMax 3
-   # Disable TCP Keep alive so connections are robust
-   # to wireless reconnects and such. ServerAlive
-   # Will make sure dead connections are killed
-   TCPKeepAlive no
+   TCPKeepAlive yes
