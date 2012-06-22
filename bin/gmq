@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Exports a git branch into a mq queue in the given repo
+set -e
+
+if [ $# -ne 2 ]; then
+  echo >&2 "!! Usage: $(basename $0) gitbranch targetrepo"
+  exit 1
+fi
+
+gitbranch="$1"
+targetrepo="$2"
+cd ~/moz/moz-git/.git/map/
+if [ ! -z "$(git status -s)" ]; then
+  echo >&2 "!! Git mapfile is dirty"
+  exit 1
+fi
+
+cd ~/moz/mozilla-"$targetrepo"
+
+if [ "$(hg qq --active)" != "$gitbranch" ]; then
+  if [ -z "$(hg qq -l | grep "^${gitbranch}\$")" ]; then
+    hg qq --create "$gitbranch"
+    # Deleting a queue doesn't get rid of its patches, so they 'reappear' when it is
+    # recreated. But since the recreation was successful, it's safe to assume they
+    # are trash
+    if [ ! -z "$(hg qu)" ]; then for x in $(hg qu); do hg qdel "$x"; done fi
+  else
+    hg qq "$gitbranch"
+  fi
+fi
+
+hg pull ../moz-git -r "$gitbranch"
+
+# Import patches that have gone past the bookmark, except ones already in a queue
+search="(bookmark(${targetrepo}): and not bookmark(${targetrepo}))"
+if [ ! -z "$(hg qa)" ]; then
+  search="$search and not qbase:"
+fi
+hg qimport -r "$search"
+
+# We're putting these in a queue, not the real stack, so nuke the remnants (ghsync will take care of them if committed)
+hg bookmark -d "$gitbranch"
+cd ~/moz/moz-git/.git/map/
+git reset --hard
