@@ -174,9 +174,25 @@ alias dir='x dolphin "$@"'
 
 alias rebash='source ~/.bashrc'
 
+
 #
 # Misc utility functions
 #
+
+# Records the current git tip in variable
+gm()
+{
+  local var="$1"
+  [ ! -z "$1" ] || var=m
+
+  local res="$(git log -n 1 --format="%H")"
+  if [ -z "$res" ]; then
+    echo >&2 "!! Failed to get git revision"
+  fi
+  eval $var="$res"
+  echo ":: $res -> $var"
+}
+
 qr()
 {
     derp=$(mktemp)
