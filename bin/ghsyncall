@@ -10,5 +10,7 @@ for x in mozilla-{1.9.2,esr10,beta,aurora,central,inbound,birch}; do
   ghsync "$x"
 done
 
+ghup
+
 cd moz-git
 git gc
