@@ -1,0 +1,3 @@
+# KDevelop 4 garbage - requires tons of code-completion rescanning if deleted
+*.kdev4
+.kdev_include_paths

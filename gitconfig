@@ -1,0 +1,24 @@
+[user]
+email = jschoenick@mozilla.com
+name = John Schoenick
+
+[color]
+diff = auto
+status = auto
+branch = auto
+log = auto
+
+[core]
+excludesfile = /home/johns/.gitignore
+[bz]
+	browser = firefox3
+	default-tracker = bugzilla.mozilla.org
+	default-product = Core
+	default-component = General
+[merge]
+  renamelimit = 9000
+  conflictstyle = diff3
+  tool = gitmerge
+
+[mergetool "gitmerge"]
+  cmd = $HOME/bin/gitmerge $BASE $LOCAL $REMOTE $MERGED
