@@ -193,6 +193,15 @@ gm()
   echo ":: $res -> $var"
 }
 
+d3prio()
+{
+    local dir="/sys/fs/cgroup/Diablo III"
+    [ -d "$dir" ] || mkdir "$dir"
+    pcg "Diablo III" "Diablo III"
+    echo 1024000 > "$dir"/cpu.shares
+    echo 1000 > "$dir"/blkio.weight
+}
+
 qr()
 {
     derp=$(mktemp)
@@ -327,11 +336,11 @@ _mcg()
   [ -z "$prefix" ] && echo ":: Need a name" && return
   local i
   local name
-  while [ -d /sys/fs/cgroup/$name ] && i=$(( $i + 1 )); do
-      name=${prefix}:$i
+  while [ -d /sys/fs/cgroup/"$name" ] && i=$(( $i + 1 )); do
+      name="${prefix}:$i"
   done
   
-  mkdir /sys/fs/cgroup/$name
+  mkdir /sys/fs/cgroup/"$name"
   echo $name
 }
 
@@ -503,8 +512,8 @@ tf2()
 
 boost()
 {
-    pid=`pidof -s $1`
-    for x in $(ls /proc/$pid/task); do
+    pid="$(pgrep "$1")"
+    for x in $(ls /proc/"$pid"/task); do
         # echo taskset -pc 0-7 $x
         taskset -pc 0-7 $x
         renice -10 $x
