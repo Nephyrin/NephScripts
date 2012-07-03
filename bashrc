@@ -379,8 +379,6 @@ fixraid()
     sudo mdadm --detail /dev/md*
     sudo mdadm --assemble --scan
     sudo mount /mnt/N
-    sudo /etc/rc.d/deluged restart
-    killall gnome-panel
 }
 
 lcg()
