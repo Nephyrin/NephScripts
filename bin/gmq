@@ -38,6 +38,7 @@ if [ ! -z "$(hg qa)" ]; then
   search="$search and not qbase:"
 fi
 hg qimport -r "$search"
+hg up
 
 # We're putting these in a queue, not the real stack, so nuke the remnants (ghsync will take care of them if committed)
 hg bookmark -d "$gitbranch"
