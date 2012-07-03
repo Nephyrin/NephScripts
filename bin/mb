@@ -61,8 +61,10 @@ export MOZCONFIG="$PWD/m-${cfg}.mzc"
 
 MAKE="eval lowprio make -j10"
 
-trap "cpufreq-selector -c all -g ondemand" EXIT
-cpufreq-selector -c all -g performance
+if [ "$HOSTNAME" = "Johnbook" ]; then
+  trap "cpufreq-selector -c all -g ondemand" EXIT
+  cpufreq-selector -c all -g performance
+fi
 
 #
 # Nuke/clobber
