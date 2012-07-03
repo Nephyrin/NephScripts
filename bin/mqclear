@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -ne 1 ]; then
+  echo >&2 "!! Usage: $(basename $0) queue"
+  exit 1
+fi
+
+queue="$1"
+
+if [ $(hg qq --active) != "$queue" ]; then
+  hg qq "$queue"
+fi
+
+hg qpop -a
+
+for x in $(hg qu); do
+  echo "Deleting $x"
+  hg qdel $x
+done
+
+hg qq patches
+hg qq --delete "$queue"
