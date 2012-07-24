@@ -10,17 +10,23 @@ die() {
   exit 1
 }
 
-target="$1"; shift
-if [ -z "$target" ]; then
-  die "First argument must be a built firefox directory"
-fi
-
 args=()
 i=0
 while [ $# -gt 0 ]; do
   case "$1" in
     "-g")
-      exargs='-g'
+      exargs="$exargs -g"
+    ;;
+    "-d")
+      exargs="$exargs -d '$2'"
+      shift
+    ;;
+    "-a")
+      exargs="$exargs -a '$2'"
+      shift
+    ;;
+    "-r")
+      exargs="$exargs -a '-ex run'"
     ;;
     "-x")
       freshprofile=1
@@ -31,6 +37,9 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+target="${args[0]}"
+args="${args[@]:1:${#args[@]}}"
 
 if [ ! -d "$target" ] || [ ! -x "$target/firefox" ] || [ ! -x "$target/run-mozilla.sh" ]; then
   die "\"$target\" doesn't appear to contain a firefox build :("
@@ -46,4 +55,4 @@ if [ ! -d "profile" ]; then
   mkdir profile
 fi
 
-cleangtk ./run-mozilla.sh $exargs "$target/firefox" -no-remote -profile ./profile "${args[@]}"
+eval cleangtk ./run-mozilla.sh "$exargs" "$target/firefox" -no-remote -profile ./profile "${args[@]}"
