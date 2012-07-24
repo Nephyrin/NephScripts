@@ -5,6 +5,13 @@
 set -e
 cd ~/moz/moz-git
 
+branch="$1"
+
+if [ ! -z "$branch" ] && [ ! -d "../mozilla-$branch" ]; then
+  echo >&2 "!! Branch $branch not found..."
+  exit 1
+fi
+
 echo ":: Prefetching arcus"
 git fetch arcus || true
 
@@ -15,6 +22,11 @@ git fetch --all --tags
   git commit -a -m "Locally imported revisions" || true
   git pull --no-edit
 )
+
+if [ ! -z "$branch" ]; then
+  echo ":: Syncing $branch"
+  ghsync "$branch"
+fi
 
 echo ":: Fixing missing tags"
 git fetch github $((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')
