@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ffrun ~/firefox-nightly/firefox "$@"
