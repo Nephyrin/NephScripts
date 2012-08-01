@@ -4,3 +4,6 @@
 [submodule "emacs.d/auto-complete-clang"]
 	path = emacs.d/auto-complete-clang
 	url = https://github.com/brianjcj/auto-complete-clang.git
+[submodule "bin/git-bz-moz"]
+	path = bin/git-bz-moz
+	url = https://github.com/jlebar/git-bz-moz.git
