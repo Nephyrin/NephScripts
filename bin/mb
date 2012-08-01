@@ -74,7 +74,7 @@ if [ -d "$cfg" ] && [ ! -z "$clobber" ]; then
   # even through ccache. The nuking-makefiles is necessary for when the build
   # tree has changed, just reconfiguring wont fix some makefiles sometimes due
   # to our odd makefile hacks
-  rm "$cfg"/config.*
+  rm -f "$cfg"/config.*
   find "$cfg" -name Makefile -delete
 fi
 if [ -d "$cfg" ] && [ ! -z "$nuke" ]; then
