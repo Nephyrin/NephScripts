@@ -56,12 +56,11 @@ if [[ $- == *i* ]] ; then
     # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
     shopt -s checkwinsize
     shopt -s histappend
-    [ -z "$PROMPT_COMMAND" ] || PROMPT_COMMAND="$PROMPT_COMMAND; "
-    export PROMPT_COMMAND="$PROMPT_COMMAND history -a; history -n"
+    export PROMPT_COMMAND="history -a; history -n"
     
     # Change the window title of X terminals 
     case ${TERM} in
-        xterm*|rxvt*|Eterm|aterm|kterm|gnome*|interix)
+        xterm*|rxvt*|aterm|kterm|gnome*|interix)
             PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
             ;;
         screen)
