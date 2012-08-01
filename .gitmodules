@@ -1,3 +1,6 @@
 [submodule "ls--"]
 	path = ls--
 	url = https://github.com/trapd00r/ls--.git
+[submodule "emacs.d/auto-complete-clang"]
+	path = emacs.d/auto-complete-clang
+	url = https://github.com/brianjcj/auto-complete-clang.git
