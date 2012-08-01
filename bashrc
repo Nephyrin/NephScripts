@@ -133,6 +133,8 @@ alias frb='ffbrun ~/moz/ff-dbg/dist/bin/'
 # Hibernate-reboot with mount handling, for OS switching
 alias switchos='hib reboot mounts'
 
+alias econ='env TERM=xterm-256color emacs -nw'
+
 alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
@@ -177,6 +179,18 @@ alias rebash='source ~/.bashrc'
 #
 # Misc utility functions
 #
+
+# Pass a file to running emacs, or spawn a new session unrelated to the shell
+xe()
+{
+  local xarg=""
+  if [ -z "$*" ]; then
+    xarg="-c -n"
+  else
+    xarg='-n "$@"'
+  fi
+  (eval emacsclient $xarg &>/dev/null || emacs "$@" &>/dev/null & ) &>/dev/null
+}
 
 # Records the current git tip in variable
 gm()
