@@ -22,3 +22,6 @@ echo ":: bookmarking"
 hg bookmark -vf $repo
 echo ":: exporting"
 hg gexport -v
+
+cd ~/moz/moz-git/.git/map
+git commit -a -m "Locally imported revisions" || true
