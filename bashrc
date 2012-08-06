@@ -135,6 +135,7 @@ alias switchos='hib reboot mounts'
 
 alias econ='env TERM=xterm-256color emacs -nw'
 
+alias hgreset="hg strip 'roots(outgoing())'"
 alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
