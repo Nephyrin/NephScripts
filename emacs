@@ -59,6 +59,11 @@
 (global-set-key (kbd "C-c C-j") 'term-line-mode)
 (global-set-key (kbd "C-c C-k") 'term-char-mode)
 
+; F3 inserts current filename into minibuffer
+(define-key minibuffer-local-map [f3]
+  (lambda () (interactive)
+     (insert (buffer-name (window-buffer (minibuffer-selected-window))))))
+
 ;;
 ;; Line-highlight
 
