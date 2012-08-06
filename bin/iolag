@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+if [ "$EUID" -ne 0 ]; then
+  echo '!! Run with sudo' >&2
+  exit 1
+fi
+
+cd "$HOME"
+
+trap "rm -fv IOLAG" EXIT
+
+while true; do
+  dd if=/dev/zero of=IOLAG bs=1024 count=102400
+  /bin/echo 3 > /proc/sys/vm/drop_caches &
+  sync &
+  rm IOLAG
+done
