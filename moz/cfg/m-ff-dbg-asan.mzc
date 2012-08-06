@@ -4,7 +4,7 @@ mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-asan
 
 # Setup asan
 ac_add_options --enable-address-sanitizer
-export BLACKLIST="-asan-blacklist=$topsrcdir/../asan-blacklist.txt"
+export BLACKLIST="-asan-blacklist=$topsrcdir/../cfg/asan-blacklist.txt"
 export CFLAGS="-faddress-sanitizer $BLACKLIST -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
 export CXXFLAGS="-faddress-sanitizer $BLACKLIST -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
 export LDFLAGS="-faddress-sanitizer"
