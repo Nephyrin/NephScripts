@@ -1,0 +1,24 @@
+#!/bin/bash
+
+h=$1
+
+if [ -d .hg ]; then
+   h=$(hg log -r "$h" --template {node})
+fi
+
+if [ ! -f .git/git-mapfile ]; then
+    cd "$HOME/moz/moz-git"
+fi
+
+r="$(basename "$PWD")"
+
+if [ -z "$h" ]; then
+    echo >&2 "!! Could not find hg commit"
+    exit 1
+fi
+
+g=$(cat .git/git-mapfile | grep -m 1 $h | cut -d ' ' -f 1)
+
+[ ! -z "$g" ] || g="<NOT FOUND>"
+
+echo ":: [$r] hg $h -> git $g"

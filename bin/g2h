@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ ! -f .git/git-mapfile ]; then
+    cd "$HOME/moz/moz-git"
+fi
+
+g=$1
+r="$(basename "$PWD")"
+
+g=$(git rev-parse "$g")
+
+if [ -z "$g" ]; then
+    echo >&2 "!! Could not find git commit"
+    exit 1
+fi
+
+h=$(cat .git/git-mapfile | grep -m 1 $g | cut -d ' ' -f 2)
+
+[ ! -z "$h" ] || h="<NOT FOUND>"
+
+echo ":: [$r] git $g -> hg $h"
