@@ -59,7 +59,7 @@ fi
 export PYTHON=python2
 export MOZCONFIG="$PWD/m-${cfg}.mzc"
 
-MAKE="eval lowprio make -j10"
+MAKE="eval lowprio make --silent -j10"
 
 if [ "$HOSTNAME" = "Johnbook" ]; then
   trap "cpufreq-selector -c all -g ondemand" EXIT
