@@ -1,0 +1,14 @@
+. $topsrcdir/../m-ff-opt-base.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-pgo
+
+ac_add_options --enable-profiling
+
+# Use best GCC available
+CC=gcc
+CXX=g++
+
+# PGO
+# (broken?)
+mk_add_options MOZ_PGO=1
+mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'

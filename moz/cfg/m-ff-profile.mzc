@@ -1,0 +1,10 @@
+. $topsrcdir/../m-ff-dbg.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-profile
+
+export CC="gcc"
+export CXX="g++"
+
+ac_add_options --enable-profiling
+ac_add_options --disable-debug
+ac_add_options --enable-optimize

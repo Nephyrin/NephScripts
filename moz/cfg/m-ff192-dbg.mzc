@@ -1,0 +1,29 @@
+
+# http://hg.mozilla.org/build/buildbot-configs/raw-file/cae853387e12/mozilla2/linux64/mozilla-1.9.2/debug/mozconfig
+ac_add_options --enable-application=browser
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff192-dbg
+
+ac_add_options --disable-optimize
+ac_add_options --enable-debug
+
+# Needs more curl headers or something
+ac_add_options --disable-crashreporter
+# Needed to enable breakpad in application.ini
+# export MOZILLA_OFFICIAL=1
+
+ac_add_options --enable-tests
+ac_add_options --enable-trace-malloc
+
+CC=/home/johns/moz/gcc-4.5.3/bin/gcc
+CXX=/home/johns/moz/gcc-4.5.3/bin/g++
+
+# For NSS symbols
+export MOZ_DEBUG_SYMBOLS=1
+ac_add_options --enable-debug-symbols="-gdwarf-2"
+
+# Enable parallel compiling
+mk_add_options MOZ_MAKE_FLAGS="-j10"
+
+#Use ccache
+ac_add_options --with-ccache=/usr/bin/ccache

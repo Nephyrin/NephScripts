@@ -1,0 +1,6 @@
+. $topsrcdir/../m-ff-dbg-base.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg
+
+export CC='clang -Qunused-arguments -fcolor-diagnostics'
+export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'

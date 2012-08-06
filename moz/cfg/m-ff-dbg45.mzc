@@ -1,0 +1,9 @@
+. $topsrcdir/../m-ff-dbg-base.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg45
+
+export CC=$HOME/moz/gcc-4.5.3/bin/gcc
+export CXX=$HOME/moz/gcc-4.5.3/bin/g++
+
+# Avoid dependency on libstdc++ 4.5
+ac_add_options --enable-stdcxx-compat

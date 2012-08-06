@@ -1,0 +1,15 @@
+. $topsrcdir/../m-ff-dbg-base.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../b2g-dbg
+
+export CC='clang -Qunused-arguments -fcolor-diagnostics'
+export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
+
+ac_add_options --enable-application=b2g
+ac_add_options --disable-libjpeg-turbo
+
+# turn on mozTelephony/mozSms interfaces
+# Only turn this line on if you actually have a dev phone
+# you want to forward to. If you get crashes at startup,
+# make sure this line is commented.
+#ac_add_options --enable-b2g-ril
