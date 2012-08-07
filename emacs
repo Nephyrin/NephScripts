@@ -9,6 +9,8 @@
 (setq inhibit-startup-message t)
 (setq load-path (cons "~/.emacs.d" load-path))
 
+(require 'ido)
+
 ; (global-ede-mode t)
 
 ; In gui mode, start server
@@ -20,6 +22,28 @@
 
 (global-auto-revert-mode t)
 (setq make-backup-files nil)
+
+(require 'speedbar)
+(speedbar-change-initial-expansion-list "buffers")
+
+(global-set-key  [f8] 'speedbar-get-focus)
+
+;;
+;; IswitchBuffers
+;;
+
+(iswitchb-mode 1)
+(setq iswitchb-buffer-ignore '("^\\*"))
+(defun iswitchb-local-keys ()
+  (mapc (lambda (K)
+	  (let* ((key (car K)) (fun (cdr K)))
+	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+	'(("<right>" . iswitchb-next-match)
+	  ("<left>"  . iswitchb-prev-match)
+	  ("<up>"    . ignore             )
+	  ("<down>"  . ignore             ))))
+
+(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 
 ;;
 ;; Tramp
