@@ -7,3 +7,6 @@
 [submodule "bin/git-bz-moz"]
 	path = bin/git-bz-moz
 	url = https://github.com/jlebar/git-bz-moz.git
+[submodule "emacs.d/fill-column-indicator"]
+	path = emacs.d/fill-column-indicator
+	url = https://github.com/alpaker/Fill-Column-Indicator.git
