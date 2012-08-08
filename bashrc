@@ -1,6 +1,8 @@
+# -*- mode: sh; -*-
+
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BROWSER="firefox '%s'"
-export EDITOR="nano -w"
+export EDITOR="ec"
 [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
 
 export CCACHE_DIR=$HOME/.ccache
@@ -132,8 +134,6 @@ alias frb='ffbrun ~/moz/ff-dbg/dist/bin/'
 
 # Hibernate-reboot with mount handling, for OS switching
 alias switchos='hib reboot mounts'
-
-alias econ='env TERM=xterm-256color emacs -nw'
 
 alias hgreset="hg strip 'roots(outgoing())'"
 alias vsf='svnc nephyrin@sys.nephyrin.net'
