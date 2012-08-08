@@ -1,3 +1,4 @@
+; -*- mode: Lisp; -*-
 ;;
 ;; Misc
 ;;
@@ -8,6 +9,11 @@
 
 (setq inhibit-startup-message t)
 (setq load-path (cons "~/.emacs.d" load-path))
+
+(global-auto-revert-mode t)
+(setq make-backup-files nil)
+
+(setq vc-follow-symlinks t)
 
 (require 'ido)
 
@@ -20,13 +26,18 @@
 (if (not window-system) (menu-bar-mode -1))
 (tool-bar-mode -1)
 
-(global-auto-revert-mode t)
-(setq make-backup-files nil)
-
 (require 'speedbar)
 (speedbar-change-initial-expansion-list "buffers")
 
 (global-set-key  [f8] 'speedbar-get-focus)
+
+
+; fci
+(require 'fill-column-indicator)
+(setq fci-rule-color "#444")
+(add-hook 'c-mode-common-hook (lambda () (fci-mode t)))
+(add-hook 'python-mode-hook (lambda () (fci-mode t)))
+(add-hook 'lisp-mode-hook (lambda () (fci-mode t)))
 
 ;;
 ;; IswitchBuffers
@@ -87,6 +98,13 @@
 (define-key minibuffer-local-map [f3]
   (lambda () (interactive)
      (insert (buffer-name (window-buffer (minibuffer-selected-window))))))
+
+(defun sudoize-buffer ()
+  "Reopens the current file with sudo"
+  (interactive)
+  (set-visited-file-name
+   (concat "/sudo:root@localhost:/" (buffer-file-name)))
+  (toggle-read-only 0))
 
 ;;
 ;; Line-highlight
