@@ -19,6 +19,7 @@ hg pull
 echo ":: updating"
 hg up -C
 echo ":: bookmarking"
+rm -fv .hg/bookmarks
 hg bookmark -vf $repo
 echo ":: exporting"
 hg gexport -v
