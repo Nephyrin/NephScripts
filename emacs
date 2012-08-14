@@ -3,6 +3,8 @@
 ;; Misc
 ;;
 
+(setq fill-column 80)
+
 ; Fix x clipboard
 (setq x-select-enable-clipboard t)
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
@@ -23,8 +25,13 @@
 (if window-system (server-start))
 
 ; Hide toolbar, hide menu in console mode
-(if (not window-system) (menu-bar-mode -1))
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
 (tool-bar-mode -1)
+
+
+(setq split-width-threshold 80)
+(setq split-height-threshold nil)
 
 (require 'speedbar)
 (speedbar-change-initial-expansion-list "buffers")
@@ -35,16 +42,21 @@
 ; fci
 (require 'fill-column-indicator)
 (setq fci-rule-color "#444")
-(add-hook 'c-mode-common-hook (lambda () (fci-mode t)))
-(add-hook 'python-mode-hook (lambda () (fci-mode t)))
-(add-hook 'lisp-mode-hook (lambda () (fci-mode t)))
+(setq fci-rule-column 80)
+(defun enable-fci-mode ()
+  (fci-mode t)
+  (setq fci-rule-column 80))
+(add-hook 'c-mode-common-hook 'enable-fci-mode)
+(add-hook 'python-mode-hook 'enable-fci-mode)
+(add-hook 'lisp-mode-hook 'enable-fci-mode)
 
 ;;
 ;; IswitchBuffers
 ;;
 
 (iswitchb-mode 1)
-(setq iswitchb-buffer-ignore '("^\\*"))
+(setq iswitchb-buffer-ignore '("^ " "^\*"))
+
 (defun iswitchb-local-keys ()
   (mapc (lambda (K)
 	  (let* ((key (car K)) (fun (cdr K)))
@@ -174,7 +186,7 @@
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers))
   (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
   (add-hook 'css-mode-hook 'ac-css-mode-setup):
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
