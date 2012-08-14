@@ -10,6 +10,9 @@ die() {
   exit 1
 }
 
+export XPCOM_MEM_LEAK_LOG=1
+export NSPR_LOG_MODULES="objlc:5"
+
 args=()
 i=0
 while [ $# -gt 0 ]; do
