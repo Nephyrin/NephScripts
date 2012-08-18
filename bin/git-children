@@ -1,0 +1,16 @@
+#!/bin/bash
+
+rev=$(git rev-parse "$1")
+if [ ! -z "$to" ]; then
+    to=$(git rev-parse "$2")
+else
+    to="--all"
+fi
+
+if [ -z "$rev" ]; then
+   echo >&2 "Usage: git children commit [branch]"
+   echo >&2 " .. If specified, only children reachable from the given branch are shown"
+   exit 1
+fi
+
+git log --no-walk $(git rev-list ^$rev^ $to --children | grep ^$rev | cut -d ' ' -f 2)
