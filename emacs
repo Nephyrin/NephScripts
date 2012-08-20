@@ -3,14 +3,13 @@
 ;; Misc
 ;;
 
-(setq fill-column 80)
-
 ; Fix x clipboard
 (setq x-select-enable-clipboard t)
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 (setq inhibit-startup-message t)
 (setq load-path (cons "~/.emacs.d" load-path))
+
 
 (global-auto-revert-mode t)
 (setq make-backup-files nil)
@@ -37,10 +36,11 @@
 (speedbar-change-initial-expansion-list "buffers")
 
 (global-set-key  [f8] 'speedbar-get-focus)
-
+(global-set-key (kbd "C-c C-f") 'find-dired)
 
 ; fci
 (require 'fill-column-indicator)
+(setq fill-column 80)
 (setq fci-rule-color "#444")
 (setq fci-rule-column 80)
 (defun enable-fci-mode ()
