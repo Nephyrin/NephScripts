@@ -32,6 +32,9 @@ while [ $# -gt 0 ]; do
     '-p') # make package when finished
       package=1
     ;;
+    '--cpufreq') # Jump to performance cpufreq
+      cpufreq=1
+    ;;
     *)
       if [ -z "$cfg" ]; then
         cfg="$arg"
@@ -61,9 +64,10 @@ export MOZCONFIG="$PWD/cfg/m-${cfg}.mzc"
 
 MAKE="eval lowprio make --silent -j10"
 
-if [ "$HOSTNAME" = "Johnbook" ]; then
-  trap "cpufreq-selector -c all -g ondemand" EXIT
-  cpufreq-selector -c all -g performance
+if [ ! -z "$cpufreq" ]; then
+    echo ":: Boosting cpufreq"
+    trap "cpufreq-selector -c all -g ondemand" EXIT
+    cpufreq-selector -c all -g performance
 fi
 
 #
