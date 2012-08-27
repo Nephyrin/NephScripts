@@ -41,6 +41,12 @@
 (global-set-key  [f8] 'speedbar-get-focus)
 (global-set-key (kbd "C-c C-f") 'find-dired)
 
+(setq desktop-path '("~/.emacs.d/"))
+(setq desktop-dirname "~/.emacs.d/")
+(setq desktop-base-file-name "emacs-desktop")
+
+(if window-system (desktop-save-mode 1))
+
 ; fci
 (require 'fill-column-indicator)
 (setq fill-column 80)
