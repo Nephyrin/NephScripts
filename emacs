@@ -55,6 +55,7 @@
 (defun enable-fci-mode ()
   (fci-mode t)
   (setq fci-rule-column 80))
+(add-hook 'js-mode-hook 'enable-fci-mode)
 (add-hook 'c-mode-common-hook 'enable-fci-mode)
 (add-hook 'python-mode-hook 'enable-fci-mode)
 (add-hook 'lisp-mode-hook 'enable-fci-mode)
