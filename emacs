@@ -49,7 +49,7 @@
 
 ; fci
 (require 'fill-column-indicator)
-(setq fill-column 80)
+(setq-default fill-column 80)
 (setq fci-rule-color "#444")
 (setq fci-rule-column 80)
 (defun enable-fci-mode ()
