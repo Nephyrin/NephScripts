@@ -5,7 +5,8 @@
 
 ; Fix x clipboard
 (setq x-select-enable-clipboard t)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+(setq mouse-drag-copy-region nil)
+; (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 (setq inhibit-startup-message t)
 (setq load-path (cons "~/.emacs.d" load-path))
