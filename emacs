@@ -11,6 +11,8 @@
 (setq inhibit-startup-message t)
 (setq load-path (cons "~/.emacs.d" load-path))
 
+(setq-default indent-tabs-mode nil)
+(setq js-indent-level 2)
 
 (global-auto-revert-mode t)
 (setq make-backup-files nil)
