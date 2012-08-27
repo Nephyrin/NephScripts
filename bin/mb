@@ -29,6 +29,9 @@ while [ $# -gt 0 ]; do
     '-f') # Explicitly reconfigure tree
       configure=1
     ;;
+    '-v')
+      verbose=1
+    ;;
     '-p') # make package when finished
       package=1
     ;;
@@ -62,7 +65,8 @@ fi
 export PYTHON=python2
 export MOZCONFIG="$PWD/cfg/m-${cfg}.mzc"
 
-MAKE="eval lowprio make --silent -j10"
+MAKE="eval lowprio make -j10"
+[ -z "$verbose" ] && MAKE="$MAKE --silent"
 
 if [ ! -z "$cpufreq" ]; then
     echo ":: Boosting cpufreq"
