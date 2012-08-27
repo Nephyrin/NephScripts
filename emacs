@@ -32,8 +32,8 @@
 (tool-bar-mode -1)
 
 
-(setq split-width-threshold 80)
-(setq split-height-threshold nil)
+(setq split-width-threshold 170)
+(setq split-height-threshold 50)
 
 (require 'speedbar)
 (speedbar-change-initial-expansion-list "buffers")
