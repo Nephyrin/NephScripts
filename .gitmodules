@@ -10,3 +10,6 @@
 [submodule "emacs.d/fill-column-indicator"]
 	path = emacs.d/fill-column-indicator
 	url = https://github.com/alpaker/Fill-Column-Indicator.git
+[submodule "bin/gti-git"]
+	path = bin/gti-git
+	url = https://github.com/rwos/gti.git
