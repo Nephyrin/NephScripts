@@ -120,16 +120,6 @@ else
   )
 fi
 
-if [ "${cfg%%-*}" = "ff" ]; then
-  # Work around bug 717947
-  (
-    cd "$cfg"
-    for x in {js/src/,}config; do
-      $MAKE -C $x DIRS+=mkdepend mkdepend/Makefile
-    done
-  )
-fi
-
 (
   cd "$tree"
   $MAKE -f client.mk && echo ":: Make succeeded"
