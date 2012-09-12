@@ -19,6 +19,9 @@ fi
 
 g=$(cat .git/git-mapfile | grep -m 1 $h | cut -d ' ' -f 1)
 
-[ ! -z "$g" ] || g="<NOT FOUND>"
+if [ -z "$g" ]; then
+    echo >&2 "!! No matching git commit"
+    exit 1
+fi
 
-echo ":: [$r] hg $h -> git $g"
+echo $g

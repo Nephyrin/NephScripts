@@ -16,6 +16,9 @@ fi
 
 h=$(cat .git/git-mapfile | grep -m 1 $g | cut -d ' ' -f 2)
 
-[ ! -z "$h" ] || h="<NOT FOUND>"
+if [ -z "$h" ]; then
+    echo >&2 "!! Not found"
+    exit 1
+fi
 
-echo ":: [$r] git $g -> hg $h"
+echo $h
