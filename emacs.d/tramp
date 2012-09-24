@@ -1,4 +1,4 @@
-;; -*- emacs-lisp -*- <12/08/07 16:43:03 /home/johns/.emacs.d/tramp>
+;; -*- emacs-lisp -*- <12/09/01 15:11:05 /home/nephyrin/.emacs.d/tramp>
 ;; Tramp connection history.  Don't change this file.
 ;; You can delete it, forcing Tramp to reapply the checks.
 
@@ -41,7 +41,9 @@
   ("local-encoding" base64-encode-region)
   ("local-decoding" base64-decode-region)
   ("remote-encoding" "base64")
-  ("remote-decoding" "base64 -d -i"))
+  ("remote-decoding" "base64 -d -i")
+  ("ls" "/bin/ls --color=never")
+  ("uid-integer" 500))
  (["ssh" "nephyrin" "sys.nephyrin.net" nil]
   ("uname" "Linux 3.5.0-1-ARCH")
   ("test" "test")
@@ -63,23 +65,21 @@
   ("remote-encoding" "base64")
   ("remote-decoding" "base64 -d -i"))
  (["sudo" "root" "localhost" nil]
-  ("uname" "Linux 3.5.0-2-neph")
+  ("uname" "Linux 3.5.3-1-ARCH")
   ("test" "test")
   ("remote-path"
    ("/bin" "/usr/bin" "/usr/sbin" "/usr/local/bin"))
   ("remote-shell" "/bin/sh")
   ("busybox" nil)
-  ("file-exists" "test -e")
-  ("ls" "/bin/ls --color=never")
-  ("ls-dired" t)
   ("stat" "\\stat")
+  ("file-exists" "test -e")
   ("id" "/usr/bin/id")
   ("gid-integer" 0)
-  ("readlink" "\\readlink")
-  ("uid-integer" 0)
   ("perl-file-spec" t)
   ("perl-cwd-realpath" t)
   ("perl" "\\perl")
+  ("uid-integer" 0)
+  ("readlink" "\\readlink")
   ("local-encoding" base64-encode-region)
   ("local-decoding" base64-decode-region)
   ("remote-encoding" "base64")
