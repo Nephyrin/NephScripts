@@ -190,7 +190,11 @@ xe()
   else
     xarg='-n "$@"'
   fi
-  (eval emacsclient $xarg &>/dev/null || emacs "$@" &>/dev/null & ) &>/dev/null
+  if ! eval emacsclient $xarg &>/dev/null; then
+      echo >&2 ":: Emacs isn't running, spawning now"
+      emacs --daemon
+      eval emacsclient $xarg &>/dev/null
+  fi
 }
 
 # Records the current git tip in variable

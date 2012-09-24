@@ -24,7 +24,8 @@
 ; (global-ede-mode t)
 
 ; In gui mode, start server
-(if window-system (server-start))
+; Nevermind, handled by aliases now
+; (if window-system (server-start))
 
 ; Hide toolbar, hide menu in console mode
 (menu-bar-mode -1)

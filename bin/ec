@@ -2,5 +2,8 @@
 
 # This could be an alias, but then it wouldn't play nice with $EDITOR
 export TERM=xterm-256color
-emacs -nw "$@"
-
+if ! emacsclient -t "$@"; then
+    echo >&2 ":: Spawning daemon"
+    emacs --daemon
+    emacsclient -t "$@"
+fi
