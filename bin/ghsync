@@ -14,6 +14,11 @@ if [ ! -d "mozilla-$repo/.hg" ]; then
 fi
 
 cd "mozilla-$repo"
+if [ ! -e .hg/git ] || [ ! -e .hg/git-mapfile ] || [ ! -e .hg/git-branch ]; then
+    echo >&2 "This repo lacks the necessary .hg/git* files for syncing"
+    exit 1
+fi
+
 echo ":: pulling"
 hg pull
 echo ":: updating"
