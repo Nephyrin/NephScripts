@@ -20,7 +20,7 @@ echo ":: updating"
 hg up -C
 echo ":: bookmarking"
 rm -fv .hg/bookmarks
-hg bookmark -vf $repo
+hg bookmark -v -r tip $(cat .hg/git-branch)
 echo ":: exporting"
 hg gexport -v
 
