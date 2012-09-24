@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd ~
+
+pack=$(ls -1 firefox*.tar.bz2 | tail -n1)
+
+if [ -z "$pack" ]; then
+  echo >&2 "Couldn't find a firefox to install"
+  exit 1
+fi
+
+[ ! -e firefox-nightly-old ] || rm firefox-nightly-old -rv
+[ ! -e firefox-nightly ] || mv firefox-nightly firefox-nightly-old
+tar xvjf "$pack"
+mv -v firefox firefox-nightly
+echo ":: Done"
