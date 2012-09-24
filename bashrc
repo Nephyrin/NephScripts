@@ -20,7 +20,6 @@ if [ "$(hostname)" = "Neph" ]; then
   # BenQ left monitor
   export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
   # Wine is on raid array
-  export WINEPREFIX=/mnt/N/wine
 elif [ "$(hostname)" = "Johnbook" ]; then
   #
   # Graphics switcher helpers
