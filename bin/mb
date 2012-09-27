@@ -110,9 +110,7 @@ fi
 [ ! -z "$tree" ] || die "No tree specified and build objdir isn't configured"
 [ -f "$tree/client.mk" ] || die "Tree \"$tree\" doesn't look buildable to me"
 
-if [ -z "$configure" ]; then
-  [ -f "$cfg/Makefile" ] || die "Build directory is not configured properly (no Makefile), use -f to force configure (or --nuke or --clobber)"
-else
+if [ ! -z "$configure" ]; then
   echo ":: Reconfiguring build"
   (
     cd "$tree"
@@ -122,7 +120,13 @@ fi
 
 (
   cd "$tree"
-  $MAKE -f client.mk && echo ":: Make succeeded"
+  if [ -f ./mach ]; then
+      echo ":: Building with mach"
+      py2e ./mach build
+  else
+      echo ":: No mach, building normally"
+      $MAKE -f client.mk && echo ":: Make succeeded"
+  fi
 )
 
 [ -z "$package" ] || ( cd "$cfg" && $MAKE package && echo ":: Package succeeded" )
