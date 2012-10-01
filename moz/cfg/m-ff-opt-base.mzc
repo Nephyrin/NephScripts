@@ -9,9 +9,8 @@ ac_add_options --enable-tests
 # Neph
 ac_add_options --enable-gstreamer
 # ac_add_options --disable-elf-hack # Bug 771569
+export MOZ_FLEXBOX=1
 export MOZ_PER_WINDOW_PRIVATE_BROWSING=1
-mk_add_options MOZ_PER_WINDOW_PRIVATE_BROWSING=1
-
 
 # ac_add_options --enable-default-toolkit=cairo-qt
 ac_add_options --disable-installer
