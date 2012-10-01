@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -f "Makefile" ]; then
+    tree="$(egrep '^topsrcdir' "Makefile" | awk '{ print $NF }')"
+fi
+
+if [ ! -z "$tree" ] && [ -x "$tree"/mach ]; then
+   py2e "$tree"/mach "$@"
+else
+   echo >&2 "!! No mach-enabled build for this directory"
+   exit 1
+fi
