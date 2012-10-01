@@ -59,6 +59,7 @@
 (add-hook 'js-mode-hook 'enable-fci-mode)
 (add-hook 'c-mode-common-hook 'enable-fci-mode)
 (add-hook 'python-mode-hook 'enable-fci-mode)
+(add-hook 'java-mode-hook 'enable-fci-mode)
 (add-hook 'lisp-mode-hook 'enable-fci-mode)
 
 ;;
