@@ -122,7 +122,7 @@ fi
   cd "$tree"
   if [ -f ./mach ]; then
       echo ":: Building with mach"
-      py2e ./mach build
+      eval lowprio py2e ./mach build
   else
       echo ":: No mach, building normally"
       $MAKE -f client.mk && echo ":: Make succeeded"
