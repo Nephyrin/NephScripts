@@ -1,0 +1,17 @@
+. $topsrcdir/../cfg/m-ff-opt-base.mzc
+
+# In-tree FFI breaks under LTO
+export MOZ_NATIVE_FFI=1
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto
+
+# Doesn't compile under LTO
+ac_add_options --disable-crashreporter
+
+# Actually enable LTO
+export LDFLAGS="$LDFLAGS -O4 -plugin /usr/lib/LLVMgold.so"
+export CFLAGS="$CFLAGS -O4"
+export CXXFLAGS="$CXXFLAGS -O4"
+
+export CC='clang -Qunused-arguments -fcolor-diagnostics'
+export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
