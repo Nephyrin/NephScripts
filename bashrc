@@ -212,7 +212,7 @@ gm()
 
 d3prio()
 {
-    local dir="/sys/fs/cgroup/Diablo III"
+    local dir="/sys/fs/cgroup/cpu/Diablo III"
     [ -d "$dir" ] || mkdir "$dir"
     pcg "Diablo III" "Diablo III"
     echo 1024000 > "$dir"/cpu.shares
@@ -278,7 +278,7 @@ rand63()
 
 dcg()
 {
-    /bin/echo $$ > /sys/fs/cgroup/tasks
+    /bin/echo $$ > /sys/fs/cgroup/cpu/tasks
     unset NEPH_CGROUP
     unset NEPH_CGROUP_PS1
 }
@@ -304,10 +304,10 @@ lpcg()
     [ -z "$NEPH_CGROUP" ] && cg
     group=$NEPH_CGROUP
   fi
-  group=/sys/fs/cgroup/"$NEPH_CGROUP"
+  group=/sys/fs/cgroup/cpu/"$NEPH_CGROUP"
   [ ! -d "$group" ] && echo ":: '$group' is not a directory" && return
-  /bin/echo 10 > /sys/fs/cgroup/"$NEPH_CGROUP"/blkio.weight
-  /bin/echo 1 > /sys/fs/cgroup/"$NEPH_CGROUP"/cpu.shares
+  /bin/echo 10 > /sys/fs/cgroup/cpu/"$NEPH_CGROUP"/blkio.weight
+  /bin/echo 1 > /sys/fs/cgroup/cpu/"$NEPH_CGROUP"/cpu.shares
   echo ":: Done"
 }
 
@@ -327,15 +327,15 @@ pcg()
     return
   fi
   [ -z "$cgroup" ] && cgroup=$(_mcg "$procgrep")
-  if [ ! -d /sys/fs/cgroup/"$cgroup" ]; then
+  if [ ! -d /sys/fs/cgroup/cpu/"$cgroup" ]; then
     echo ":: cgroup $cgroup does not exist!"
     return
   fi
   
   for task in $threads; do
     echo ":: Adding task $task to group '$cgroup'"
-    /bin/echo $task > /sys/fs/cgroup/"$cgroup"/tasks
-    /bin/echo $task > /sys/fs/cgroup/"$cgroup"/tasks
+    /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/tasks
+    /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/tasks
   done
 }
 
@@ -353,11 +353,11 @@ _mcg()
   [ -z "$prefix" ] && echo ":: Need a name" && return
   local i
   local name
-  while [ -d /sys/fs/cgroup/"$name" ] && i=$(( $i + 1 )); do
+  while [ -d /sys/fs/cgroup/cpu/"$name" ] && i=$(( $i + 1 )); do
       name="${prefix}:$i"
   done
   
-  mkdir /sys/fs/cgroup/"$name"
+  mkdir /sys/fs/cgroup/cpu/"$name"
   echo $name
 }
 
@@ -366,8 +366,8 @@ cg()
     local name=$(_mcg "shell$$")
     local i
     
-    /bin/echo $$ > /sys/fs/cgroup/$name/tasks
-    /bin/echo $$ > /sys/fs/cgroup/$name/tasks
+    /bin/echo $$ > /sys/fs/cgroup/cpu/$name/tasks
+    /bin/echo $$ > /sys/fs/cgroup/cpu/$name/tasks
     export NEPH_CGROUP=$name
     export NEPH_CGROUP_PS1=$NEPH_CGROUP" "
 }
@@ -402,16 +402,16 @@ lcg()
 {
   local cgroup=$1
   if [ -z "$cgroup" ]; then
-    for x in /sys/fs/cgroup/*; do
+    for x in /sys/fs/cgroup/cpu/*; do
       [ -d "$x" ] && [ -f "$x"/tasks ] && lcg "$(basename "$x")"
     done
   else
-    if [ ! -d /sys/fs/cgroup/"$cgroup" ]; then
+    if [ ! -d /sys/fs/cgroup/cpu/"$cgroup" ]; then
       echo ":: cgroup $cgroup doesn't exist";
       return
     fi
     echo ":: Tasks for $cgroup"
-    local tasks="$(cat /sys/fs/cgroup/"$cgroup"/tasks)"
+    local tasks="$(cat /sys/fs/cgroup/cpu/"$cgroup"/tasks)"
     if [ -z "$tasks" ]; then
       echo " none"
     else
