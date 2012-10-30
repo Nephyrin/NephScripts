@@ -65,7 +65,7 @@ fi
 export PYTHON=python2
 export MOZCONFIG="$PWD/cfg/m-${cfg}.mzc"
 
-MAKE="eval lowprio make -j10"
+MAKE="make -j10"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
 
 if [ ! -z "$cpufreq" ]; then
@@ -110,6 +110,8 @@ fi
 [ ! -z "$tree" ] || die "No tree specified and build objdir isn't configured"
 [ -f "$tree/client.mk" ] || die "Tree \"$tree\" doesn't look buildable to me"
 
+lpcg
+
 if [ ! -z "$configure" ]; then
   echo ":: Reconfiguring build"
   (
@@ -122,7 +124,7 @@ fi
   cd "$tree"
   if [ -f ./mach ]; then
       echo ":: Building with mach"
-      eval lowprio py2e ./mach build
+      py2e ./mach build
   else
       echo ":: No mach, building normally"
       $MAKE -f client.mk && echo ":: Make succeeded"
@@ -130,3 +132,5 @@ fi
 )
 
 [ -z "$package" ] || ( cd "$cfg" && $MAKE package && echo ":: Package succeeded" )
+
+dcg
