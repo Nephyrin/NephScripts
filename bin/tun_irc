@@ -6,7 +6,7 @@ source "$(dirname "$0")"/lib/util.sh
 while true; do
   echo ":: Launching SSH"
   if try_keychain; then
-    ssh -p 40007 -T -L17079:localhost:17079 -N johns@localhost -o "BatchMode=yes" -o "ExitOnForwardFailure=true" || true
+    ssh -p 40007 -T -L4242:localhost:4242 -N johns@localhost -o "BatchMode=yes" -o "ExitOnForwardFailure=true" || true
   else
     echo "!! Keychain not running"
   fi
