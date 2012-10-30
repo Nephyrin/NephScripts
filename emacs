@@ -86,6 +86,9 @@
 
 (require 'tramp)
 (setq tramp-default-method "ssh")
+; No auto-save
+(defun tramp-set-auto-save ()
+  (auto-save-mode -1))
 
 ;;
 ;; Custom binds
