@@ -529,8 +529,8 @@ boost()
 {
     pid="$(pgrep "$1")"
     for x in $(ls /proc/"$pid"/task); do
-        # echo taskset -pc 0-7 $x
-        taskset -pc 0-7 $x
+        # echo taskset -pc 0-3 $x
+        taskset -pc 0-3 $x
         renice -10 $x
         sudo ionice -c 1 -p $x
         sudo chrt -p -f 98 $x
