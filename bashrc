@@ -255,16 +255,20 @@ resteam()
 
 rand32()
 {
-    echo -n $(( $RANDOM << 17 | $RANDOM << 2 | $RANDOM & 0x3 )); 
+    let "r = $RANDOM << 17 | $RANDOM << 2 | $RANDOM & 0x3"
+    echo -n $r
 }
+
 rand64()
 {
-    echo -n $(( ($RANDOM << 49) | ($RANDOM << 34) | ($RANDOM << 19) | ($RANDOM << 4) | ($RANDOM & 15 ) ));
+    let "r = ($RANDOM << 49) | ($RANDOM << 34) | ($RANDOM << 19) | ($RANDOM << 4) | ($RANDOM & 15 )"
+    echo -n $r
 }
 # Max positive range
 rand63()
 {
-    echo -n $(( $(rand64) & ~(1 << 63) ));
+    let "r = $(rand64) & ~(1 << 63)"
+    echo -n $r
 }
 
 dcg()
