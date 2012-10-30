@@ -13,7 +13,7 @@ if [ ! -z "$branch" ] && [ ! -d "../mozilla-$branch" ]; then
 fi
 
 echo ":: Updating git"
-git fetch --all --tags
+git fetch arcus --tags || git fetch github --tags
 (
     cd .git/map
     git pull --no-edit
