@@ -27,3 +27,5 @@ deltaCacheSize = 1g
 
 [mergetool "gitmerge"]
   cmd = $HOME/bin/gitmerge $BASE $LOCAL $REMOTE $MERGED
+[push]
+	default = simple
