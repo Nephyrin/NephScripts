@@ -273,7 +273,8 @@ rand63()
 
 dcg()
 {
-    /bin/echo $$ > /sys/fs/cgroup/cpu/tasks
+    /bin/echo $$ > /sys/fs/cgroup/cpu/cgroup.procs
+    /bin/echo $$ > /sys/fs/cgroup/blkio/cgroup.procs
     unset NEPH_CGROUP
     unset NEPH_CGROUP_PS1
 }
@@ -301,7 +302,7 @@ lpcg()
   fi
   group=/sys/fs/cgroup/cpu/"$NEPH_CGROUP"
   [ ! -d "$group" ] && echo ":: '$group' is not a directory" && return
-  /bin/echo 10 > /sys/fs/cgroup/cpu/"$NEPH_CGROUP"/blkio.weight
+  /bin/echo 10 > /sys/fs/cgroup/blkio/"$NEPH_CGROUP"/blkio.weight
   /bin/echo 1 > /sys/fs/cgroup/cpu/"$NEPH_CGROUP"/cpu.shares
   echo ":: Done"
 }
@@ -313,24 +314,17 @@ pcg()
   local cgroup="$2"
   [ -z "$procgrep" ] && echo ":: Need a taskname" && return
   local tasks=$(pgrep "$procgrep")
-  local threads
-  [ ! -z "$tasks" ] && for x in $tasks; do
-    threads="$threads $(ls /proc/$x/task)"
-  done
-  if [ -z "$threads" ]; then
-    echo ":: No matching tasks!"
-    return
-  fi
+
   [ -z "$cgroup" ] && cgroup=$(_mcg "$procgrep")
   if [ ! -d /sys/fs/cgroup/cpu/"$cgroup" ]; then
     echo ":: cgroup $cgroup does not exist!"
     return
   fi
   
-  for task in $threads; do
-    echo ":: Adding task $task to group '$cgroup'"
-    /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/tasks
-    /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/tasks
+  for task in $tasks; do
+      echo ":: Adding task $task to group '$cgroup'"
+      /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/cgroup.procs
+      /bin/echo $task > /sys/fs/cgroup/blkio/"$cgroup"/cgroup.procs
   done
 }
 
@@ -353,6 +347,7 @@ _mcg()
   done
   
   mkdir /sys/fs/cgroup/cpu/"$name"
+  mkdir /sys/fs/cgroup/blkio/"$name"
   echo $name
 }
 
@@ -361,8 +356,8 @@ cg()
     local name=$(_mcg "shell$$")
     local i
     
-    /bin/echo $$ > /sys/fs/cgroup/cpu/$name/tasks
-    /bin/echo $$ > /sys/fs/cgroup/cpu/$name/tasks
+    /bin/echo $$ > /sys/fs/cgroup/cpu/$name/cgroup.procs
+    /bin/echo $$ > /sys/fs/cgroup/blkio/$name/cgroup.procs
     export NEPH_CGROUP=$name
     export NEPH_CGROUP_PS1=$NEPH_CGROUP" "
 }
