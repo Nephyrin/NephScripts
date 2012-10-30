@@ -13,33 +13,39 @@ die() {
 export XPCOM_MEM_LEAK_LOG=1
 export NSPR_LOG_MODULES="objlc:5"
 
+optspec="gd:a:rx"
+parseopts () {
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            "-g")
+                exargs="$exargs -g"
+                ;;
+            "-d")
+                exargs="$exargs -d '$2'"
+                shift
+                ;;
+            "-a")
+                exargs="$exargs -a '$2'"
+                shift
+                ;;
+            "-r")
+                exargs="$exargs -a '-ex run'"
+                ;;
+            "-x")
+                freshprofile=1
+                ;;
+            "--")
+                shift
+                args=("$@")
+                return
+                ;;
+        esac
+        shift
+    done
+}
 args=()
 i=0
-while [ $# -gt 0 ]; do
-  case "$1" in
-    "-g")
-      exargs="$exargs -g"
-    ;;
-    "-d")
-      exargs="$exargs -d '$2'"
-      shift
-    ;;
-    "-a")
-      exargs="$exargs -a '$2'"
-      shift
-    ;;
-    "-r")
-      exargs="$exargs -a '-ex run'"
-    ;;
-    "-x")
-      freshprofile=1
-    ;;
-    *)
-      args[i++]="$1"
-    ;;
-  esac
-  shift
-done
+eval parseopts $(getopt -n ffbrun -o "$optspec" -- "$@")
 
 target="${args[0]}"
 args="${args[@]:1:${#args[@]}}"
