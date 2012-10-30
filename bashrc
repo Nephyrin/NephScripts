@@ -210,15 +210,6 @@ gm()
   echo ":: $res -> $var"
 }
 
-d3prio()
-{
-    local dir="/sys/fs/cgroup/cpu/Diablo III"
-    [ -d "$dir" ] || mkdir "$dir"
-    pcg "Diablo III" "Diablo III"
-    echo 1024000 > "$dir"/cpu.shares
-    echo 1000 > "$dir"/blkio.weight
-}
-
 qr()
 {
     derp=$(mktemp)
