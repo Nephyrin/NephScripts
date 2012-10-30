@@ -10,6 +10,11 @@ log = auto
 
 [core]
 excludesfile = /home/johns/.gitignore
+deltaBaseCacheLimit = 128m
+[pack]
+deltaCacheLimit = 10
+deltaCacheSize = 1g
+
 [bz]
 	browser = firefox3
 	default-tracker = bugzilla.mozilla.org
