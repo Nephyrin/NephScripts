@@ -114,6 +114,10 @@ if [[ $- == *i* ]] ; then
     # Try to keep environment pollution down, EPA loves us.
     unset use_color safe_term match_lhs
 
+    # If we're in a 32bit chroot, advertise as such
+    if [ "$(uname -m)" = "i686" ]; then
+        PS1="(32bit) $PS1"
+    fi
 fi
 
 #
