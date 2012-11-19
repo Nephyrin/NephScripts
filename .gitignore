@@ -3,3 +3,4 @@ emacs.d/bookmarks
 emacs.d/.emacs.desktop*
 emacs.d/auto-save-list
 emacs.d/emacs-desktop
+emacs.d/ac-comphist.dat
