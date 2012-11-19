@@ -11,16 +11,14 @@ num=0
 cpus=()
 changed=0
 
-if [ ! -z "$requested" ]; then
+#if [ ! -z "$requested" ]; then
   # Ban all but CPU0
   # (Shouldn't be needed, kernel does this)
   # sudo env IRQBALANCE_BANNED_CPUS=fffffe irqbalance --oneshot --debug --hintpolicy=exact
   # Remove buggy modules
   #sudo modprobe -r b43 || true
   #[ -z "$(lsmod | grep -E '(bcma|b43)')" ]
-  sudo /etc/rc.d/laptop-mode stop
-  sudo /etc/rc.d/irqbalance stop
-fi
+#fi
 
 coreset() {
   if [ ! -f "$1"/online ] || [ $(cat "$1"/online) -eq $2 ]; then return; fi
@@ -48,10 +46,12 @@ done
 
 if [ ! -z "$requested" ]; then
   # sudo modprobe b43
-  sudo /etc/rc.d/irqbalance start
-  sudo /etc/rc.d/laptop-mode start
+  # sudo /etc/rc.d/irqbalance start
+  # sudo /etc/rc.d/laptop-mode start
   # Fix user-level access to cores cpufreq
   sudo /root/sys_perms.sh
+  sudo systemctl restart irqbalance
+  sudo systemctl restart laptop-mode
 fi
 
 echo ":: $num cores, online: $(cat online), offline: $(cat offline)"
