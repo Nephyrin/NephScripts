@@ -5,5 +5,3 @@ mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-gcc
 export CC=gcc
 export CXX=g++
 
-# Avoid dependency on libstdc++ 4.5
-# ac_add_options --enable-stdcxx-compat
