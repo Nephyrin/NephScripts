@@ -134,7 +134,7 @@ alias frb='ffbrun ~/moz/ff-dbg/dist/bin/'
 # Hibernate-reboot with mount handling, for OS switching
 alias switchos='hib reboot mounts'
 
-alias hgreset="hg strip 'roots(outgoing())'"
+alias hgreset="hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status"
 alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
