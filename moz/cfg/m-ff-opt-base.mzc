@@ -14,7 +14,7 @@ export MOZ_PER_WINDOW_PRIVATE_BROWSING=1
 ac_add_options --enable-profiling
 
 # Broken on new clang
-ac_add_options --disable-webrtc
+# ac_add_options --disable-webrtc
 
 # ac_add_options --enable-default-toolkit=cairo-qt
 ac_add_options --disable-installer
