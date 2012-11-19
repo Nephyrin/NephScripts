@@ -48,6 +48,11 @@
 
 (if window-system (desktop-save-mode 1))
 
+; Trailing spaces and whitespace
+(require 'whitespace)
+(global-whitespace-mode)
+(setq whitespace-style (quote (face trailing)))
+
 ; fci
 (require 'fill-column-indicator)
 (setq-default fill-column 80)
