@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+tempdir=$(mktemp -d)
+trap "cd; rm -rf '$tempdir'" EXIT
+
+cd "$tempdir"
+url="$1"
+
+shift
+
+curl -# "$url" | tar xj
+
+cd firefox
+ffbrun . "$@"
