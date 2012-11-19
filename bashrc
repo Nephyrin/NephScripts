@@ -162,6 +162,8 @@ alias rpass='pwgen -sync 24 1'
 # Git's nicer diff can be used with --no-index to diff random things
 alias giff='git diff --no-index --color=auto'
 
+alias gref='git commit --amend -a --no-edit'
+
 alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
 alias resetswap='sudo swapoff -a && sudo swapon -a && echo ":: Done"'
 
