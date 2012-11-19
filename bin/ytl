@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Use clive to get the media-stream URL of a youtube video.
+tdir="$(mktemp -d)"
+trap "cd; rm -rf '$tdir'" EXIT
+cd "$tdir"
+
+# Clive's --get-with command doesn't work outside of a config file, and it wont
+# otherwise give up the location of the media. What the hell.
+
+# Create a fake "downloader" that just echos the url to &2, then
+# a fake config file to use that downloader.
+# Invoke clive with |-q 2>&1| and the link pops out!
+echo '#!/bin/bash'$'\n''echo "$@" >&2' > get
+chmod +x get
+echo '--get-with "$PWD/get %u"' > config
+clive -f best -q --config-file $PWD/config "$@" 2>&1

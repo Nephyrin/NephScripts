@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Play a youtube video directly in vlc
+
+vlc "$(ytl $1)"
