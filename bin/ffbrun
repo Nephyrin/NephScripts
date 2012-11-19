@@ -10,8 +10,8 @@ die() {
   exit 1
 }
 
-export XPCOM_MEM_LEAK_LOG=1
-export NSPR_LOG_MODULES="objlc:5"
+[ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
+[ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5"
 
 optspec="gd:a:rx"
 parseopts () {
