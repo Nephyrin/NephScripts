@@ -110,7 +110,7 @@ fi
 [ ! -z "$tree" ] || die "No tree specified and build objdir isn't configured"
 [ -f "$tree/client.mk" ] || die "Tree \"$tree\" doesn't look buildable to me"
 
-if [ ! -f /sys/fs/cgroup/tasks ]; then
+if [ ! -f /sys/fs/cgroup/cpu/tasks ]; then
     echo >&2 "!! No cgroup"
     sleep 2
 else
