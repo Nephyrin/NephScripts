@@ -3,13 +3,16 @@
 # Exports a git branch into a mq queue in the given repo
 set -e
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 2 ] && [ $# -ne 3 ]; then
   echo >&2 "!! Usage: $(basename $0) gitbranch targetrepo"
   exit 1
 fi
 
 gitbranch="$1"
 targetrepo="$2"
+queuename="$3"
+[ ! -z "$queuename" ] || queuename="$gitbranch"
+
 cd ~/moz/moz-git/.git/map/
 if [ ! -z "$(git status -s)" ]; then
   echo >&2 "!! Git mapfile is dirty"
@@ -18,15 +21,15 @@ fi
 
 cd ~/moz/mozilla-"$targetrepo"
 
-if [ "$(hg qq --active)" != "$gitbranch" ]; then
-  if [ -z "$(hg qq -l | grep "^${gitbranch}\$")" ]; then
-    hg qq --create "$gitbranch"
+if [ "$(hg qq --active)" != "$queuename" ]; then
+  if [ -z "$(hg qq -l | grep "^${queuename}\$")" ]; then
+    hg qq --create "$queuename"
     # Deleting a queue doesn't get rid of its patches, so they 'reappear' when it is
     # recreated. But since the recreation was successful, it's safe to assume they
     # are trash
     if [ ! -z "$(hg qu)" ]; then for x in $(hg qu); do hg qdel "$x"; done fi
   else
-    hg qq "$gitbranch"
+    hg qq "$queuename"
   fi
 fi
 
