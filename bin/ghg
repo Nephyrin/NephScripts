@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+  echo >&2 "!! Usage: $(basename $0) gitbranch targetrepo"
+  exit 1
+fi
+
+gitbranch="$1"
+targetrepo="$2"
+
+cd ~/moz/moz-git/.git/map/
+if [ ! -z "$(git status -s)" ]; then
+  echo >&2 "!! Git mapfile is dirty"
+  exit 1
+fi
+
+cd ~/moz/mozilla-"$targetrepo"
+
+if [ ! -z "$(hg qa)" ]; then
+    echo >&2 "!! A queue is active"
+    exit
+fi
+
+echo ":: Checking for outgoing..."
+if [ ! -z "$(hg log -r 'outgoing()')" ]; then
+    echo >&2 "!! Repository has outgoing"
+    exit
+fi
+
+echo ":: Pulling..."
+rm -fv .hg/bookmarks{,.current}
+hg bookmark -r tip $(cat .hg/git-branch)
+hg pull ../moz-git -u -r "$gitbranch"
+rm -fv .hg/bookmarks{,.current}
+hg bookmark -r tip $(cat .hg/git-branch)
+
+echo ":: Cleaning up map"
+cd ~/moz/moz-git/.git/map
+git reset --hard
