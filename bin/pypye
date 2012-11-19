@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+# Run things in a pypy environment
+tempdir="$(mktemp -d -t pypye_XXXXX)"
+ln -s "$(which pypy)" "$tempdir"/python
+export PATH="$tempdir:$PATH"
+export PYTHON=pypy
+trap "rm -rf '$tempdir'" EXIT
+"$@"
+
