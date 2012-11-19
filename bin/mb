@@ -136,6 +136,6 @@ fi
   fi
 )
 
-[ -z "$package" ] || ( cd "$cfg" && $MAKE package && echo ":: Package succeeded" )
+[ -z "$package" ] || ( cd "$cfg" && $MAKE package && $MAKE package-tests && echo ":: Package succeeded" )
 
 dcg
