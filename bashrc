@@ -48,8 +48,8 @@ if [[ $- == *i* ]] ; then
     fi
     unset keyfile
     [ -f /proc/mdstat ] && cat /proc/mdstat
-    
-    
+
+
     # Interactive shell options
     # Bash won't get SIGWINCH if another process is in the foreground.
     # Enable checkwinsize so that bash will check the terminal size when
@@ -58,8 +58,8 @@ if [[ $- == *i* ]] ; then
     shopt -s checkwinsize
     shopt -s histappend
     export PROMPT_COMMAND="history -a; history -n"
-    
-    # Change the window title of X terminals 
+
+    # Change the window title of X terminals
     case ${TERM} in
         xterm*|rxvt*|aterm|kterm|gnome*|interix)
             PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
@@ -326,7 +326,7 @@ pcg()
     echo ":: cgroup $cgroup does not exist!"
     return
   fi
-  
+
   for task in $tasks; do
       echo ":: Adding task $task to group '$cgroup'"
       /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/cgroup.procs
@@ -351,7 +351,7 @@ _mcg()
   while [ -d /sys/fs/cgroup/cpu/"$name" ] && i=$(( $i + 1 )); do
       name="${prefix}:$i"
   done
-  
+
   mkdir /sys/fs/cgroup/cpu/"$name"
   mkdir /sys/fs/cgroup/blkio/"$name"
   echo $name
@@ -361,7 +361,7 @@ cg()
 {
     local name=$(_mcg "shell$$")
     local i
-    
+
     /bin/echo $$ > /sys/fs/cgroup/cpu/$name/cgroup.procs
     /bin/echo $$ > /sys/fs/cgroup/blkio/$name/cgroup.procs
     export NEPH_CGROUP=$name
