@@ -4,9 +4,18 @@
 ;;
 
 ; Fix x clipboard
+(setq x-select-enable-primary nil)
 (setq x-select-enable-clipboard t)
 (setq mouse-drag-copy-region nil)
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+;(global-set-key (kbd "C-{") 'clipboard-yank)
+;(global-set-key (kbd "C-}") 'clipboard-kill-ring-save)
+;(global-set-key (kbd "C-M-}") 'clipboard-kill-region)
+;(global-set-key "\C-w" 'clipboard-kill-region)
+;(global-set-key "\M-w" 'clipboard-kill-ring-save)
+;(global-set-key "\C-y" 'clipboard-yank)
+(setq yank-pop-change-selection t)
+(setq save-interprogram-paste-before-kill t)
 
 (setq inhibit-startup-message t)
 (setq load-path (cons "~/.emacs.d" load-path))
@@ -20,6 +29,10 @@
 (setq vc-follow-symlinks t)
 
 (require 'ido)
+
+; js2-mode
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ; (global-ede-mode t)
 
