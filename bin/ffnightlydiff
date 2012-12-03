@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -ne 2 ]; then
+  echo >&2 "Usage: $0 YYYY-MM-DD YYYY-MM-DD"
+  exit 1
+fi
+
+echo -n >&2 ":: Looking up $1 nightly rev..."
+revone=$(ffnightlyinfo 2>/dev/null "$1" | awk 'NR==2')
+echo "$revone"
+echo -n >&2 ":: Looking up $2 nightly rev..."
+revtwo=$(ffnightlyinfo 2>/dev/null "$2" | awk 'NR==2')
+echo "$revtwo"
+echo >&2
+link="https://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=$revone&tochange=$revtwo"
+echo $link
+
+[ -z "$DISPLAY" ] || xdg-open $link
