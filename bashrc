@@ -15,6 +15,8 @@ export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
 export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-thread-multi:$HOME/perl5/lib/perl5";
 export PATH="$HOME/perl5/bin:$PATH";
 
+export MOZPATH="$HOME/moz"
+
 # Machine specific
 if [ "$(hostname)" = "Neph" ]; then
   # BenQ left monitor
@@ -95,9 +97,9 @@ if [[ $- == *i* ]] ; then
         fi
 
         if [[ ${EUID} == 0 ]] ; then
-            PS1='$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
+            PS1='$MOZ_PS1$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
         else
-            PS1='$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
+            PS1='$MOZ_PS1$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
         fi
 
         alias ls='ls --color=auto'
@@ -475,6 +477,66 @@ van()
     yelp "man:$@" &>/dev/null &
 }
 
+# Sets the current moz config and target
+moz() {
+    if [ $# -eq 0 ]; then
+        echo >&2 ':: Clearing moz config'
+        unset MOZTREE
+        unset MOZCFG
+        unset MOZCONFIG
+        unset MOZ_PS1
+        return
+    fi
+    if [ $# -ne 2 ] && [ $# -ne 1 ]; then
+        echo >&2 "??"
+        return 1
+    fi
+    mozfile="$(readlink -f "$MOZPATH/cfg/m-$1.mzc")"
+    if [ ! -f "$mozfile" ]; then
+        echo >&2 "!! No config named $1"
+        return 1
+    fi
+    MOZCFG="$1"
+    if [ -f "$MOZPATH/$MOZCFG/Makefile" ]; then
+        # See if it has a tree
+        configured_tree="$(egrep '^topsrcdir' "$cfg/Makefile" | awk '{ print $NF }')"
+    fi
+    if [ ! -z "$2" ]; then
+        MOZTREE="$2"
+    elif [ ! -z "$configured_tree" ]; then
+        MOZTREE="$configured_tree"
+    else
+        MOZTREE="moz-git"
+    fi
+    if [ ! -z "$configured_tree" ] && [ "$configured_tree" != "$MOZTREE" ]; then
+        echo >&2 "!! WARNING: $MOZCFG is currently configured against tree $configured_tree"
+    fi
+    MOZCONFIG="$mozfile"
+    MOZ_PS1=$'\033'"[0;37m["$'\033'"[0;33m$MOZCFG"$'\033'"[0;37m] "
+    export MOZCONFIG MOZTREE MOZCFG
+}
+
+# cd to moz objdir
+mo() {
+    if [ -z "$MOZCFG" ]; then
+        echo >&2 "!! No moz config"
+        return 1
+    fi
+    if [ ! -d "$MOZPATH/$MOZTREE" ]; then
+        echo >&2 "!! The tree isn't built"
+        return 1
+    fi
+    cd "$MOZPATH/$MOZCFG"
+}
+
+# cd to moz tree
+mt() {
+    if [ -z "$MOZCFG" ]; then
+        echo >&2 "!! No moz config"
+        return 1
+    fi
+    cd "$MOZPATH/$MOZTREE"
+}
 
 x() {
   [ ! -z "$NEPH_CGROUP" ] && echo >&2 ":: WARNING: In cgroup"
