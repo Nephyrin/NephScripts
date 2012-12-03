@@ -29,6 +29,9 @@ trap "rm -r '$prof'" EXIT
 cmd="cleangtk '$ff' -no-remote -profile '$prof'"
 [ $# -eq 0 ] || cmd="$cmd '$@'"
 
-echo >&2 ":: Running command: $cmd"
-
-eval $cmd
+while true; do
+    echo >&2 ":: Running command: $cmd"
+    eval $cmd
+    echo >&2 ":: Exited. Press return to re-launch or ctrl-C to end"
+    read
+done
