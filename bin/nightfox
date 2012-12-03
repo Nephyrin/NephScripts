@@ -1,3 +1,4 @@
 #!/bin/bash
 
+#export MOZ_USE_OMTC=1
 cleangtk ~/firefox-nightly/firefox -P default "$@"
