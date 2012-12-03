@@ -28,6 +28,9 @@
 
 (setq vc-follow-symlinks t)
 
+(add-to-list 'load-path "~/.emacs.d/helm")
+(require 'helm-config)
+
 (require 'ido)
 
 ; js2-mode
