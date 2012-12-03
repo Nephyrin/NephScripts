@@ -64,10 +64,10 @@ if [[ $- == *i* ]] ; then
     # Change the window title of X terminals
     case ${TERM} in
         xterm*|rxvt*|aterm|kterm|gnome*|interix)
-            PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+            PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
             ;;
         screen)
-            PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\033\\"'
+            PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\e\\"'
             ;;
     esac
     use_color=false
@@ -97,9 +97,9 @@ if [[ $- == *i* ]] ; then
         fi
 
         if [[ ${EUID} == 0 ]] ; then
-            PS1='$MOZ_PS1$NEPH_CGROUP_PS1\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
+            PS1='\[\e[01;31m\]\h\[\e[01;34m\] \W \$\[\e[00m\] '
         else
-            PS1='$MOZ_PS1$NEPH_CGROUP_PS1\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
+            PS1='\[\e[01;32m\]\u@\h\[\e[01;34m\] \w \$\[\e[00m\] '
         fi
 
         alias ls='ls --color=auto'
@@ -120,7 +120,7 @@ if [[ $- == *i* ]] ; then
     [ "$(uname -m)" != "i686" ] || PS1="(32bit) $PS1"
 
     # If we're in a screen session
-    [ -z "$STY" ] || PS1="\[\033[0;37m\]{\[\033[0;36m\]${STY#*.}\[\033[0;37m\]} $PS1"
+    [ -z "$STY" ] || PS1="\[\e[0;37m\]{\[\e[0;36m\]${STY#*.}\[\e[0;37m\]} $PS1"
 fi
 
 #
@@ -188,6 +188,15 @@ alias rebash='source ~/.bashrc'
 #
 # Misc utility functions
 #
+
+# This is necessary so that NEPH_CGROUP_PS1 and MOZ_PS1 are expanded now, such
+# that \[\] escapes can be recognized, rather than literally in the prompt,
+# wherien they would not be after expansion.
+BASE_PS1="$PS1"
+_reprompt() {
+    PS1="$NEPH_CGROUP_PS1$MOZ_PS1$BASE_PS1"
+}
+_reprompt
 
 # Pass a file to running emacs, or spawn a new session unrelated to the shell
 xe()
@@ -286,6 +295,7 @@ dcg()
     /bin/echo $$ > /sys/fs/cgroup/blkio/cgroup.procs
     unset NEPH_CGROUP
     unset NEPH_CGROUP_PS1
+    _reprompt
 }
 
 lowprio()
@@ -368,7 +378,8 @@ cg()
     /bin/echo $$ > /sys/fs/cgroup/cpu/$name/cgroup.procs
     /bin/echo $$ > /sys/fs/cgroup/blkio/$name/cgroup.procs
     export NEPH_CGROUP=$name
-    export NEPH_CGROUP_PS1=$'\033'"[0;37m$NEPH_CGROUP "
+    NEPH_CGROUP_PS1=$'\[\e'"[0;37m\]$NEPH_CGROUP "
+    _reprompt
 }
 
 java_memanalyze()
@@ -485,6 +496,7 @@ moz() {
         unset MOZCFG
         unset MOZCONFIG
         unset MOZ_PS1
+        _reprompt
         return
     fi
     if [ $# -ne 2 ] && [ $# -ne 1 ]; then
@@ -512,7 +524,8 @@ moz() {
         echo >&2 "!! WARNING: $MOZCFG is currently configured against tree $configured_tree"
     fi
     MOZCONFIG="$mozfile"
-    MOZ_PS1=$'\033'"[0;37m["$'\033'"[0;33m$MOZCFG"$'\033'"[0;37m] "
+    MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG"$'\[\e'"[0;37m\]] "
+    _reprompt
     export MOZCONFIG MOZTREE MOZCFG
 }
 
