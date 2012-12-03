@@ -115,9 +115,10 @@ if [[ $- == *i* ]] ; then
     unset use_color safe_term match_lhs
 
     # If we're in a 32bit chroot, advertise as such
-    if [ "$(uname -m)" = "i686" ]; then
-        PS1="(32bit) $PS1"
-    fi
+    [ "$(uname -m)" != "i686" ] || PS1="(32bit) $PS1"
+
+    # If we're in a screen session
+    [ -z "$STY" ] || PS1="\[\033[0;37m\][\[\033[0;33m\]${STY#*.}\[\033[0;37m\]] $PS1"
 fi
 
 #
