@@ -24,5 +24,8 @@ if [ ! -z "$branch" ]; then
   ghsync "$branch"
 fi
 
-echo ":: Fixing missing tags"
-git fetch github $((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')
+missing="$((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')"
+if [ ! -z "$missing" ]; then
+    echo ":: Fixing missing tags"
+    git fetch arcus $missing || git fetch github $missing
+fi
