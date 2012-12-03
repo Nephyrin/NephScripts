@@ -19,15 +19,17 @@ if [ ! -e .hg/git ] || [ ! -e .hg/git-mapfile ] || [ ! -e .hg/git-branch ]; then
     exit 1
 fi
 
-echo ":: pulling"
+oldrev="$(hg log -r tip --template={rev})"
 hg pull
-echo ":: updating"
-hg up -C
-echo ":: bookmarking"
-rm -fv .hg/bookmarks
-hg bookmark -v -r tip $(cat .hg/git-branch)
-echo ":: exporting"
-hg gexport -v
-
-cd ~/moz/moz-git/.git/map
-git commit -a -m "Locally imported revisions" || true
+newrev="$(hg log -r tip --template={rev})"
+if [ "$newrev" != "$oldrev" ]; then
+    hg up -C
+    rm -f .hg/bookmarks
+    hg bookmark -v -r tip $(cat .hg/git-branch)
+    if ! h2g $newrev &>/dev/null; then
+        echo ":: Git is not up to date, exporting"
+        hg gexport -v
+        cd ~/moz/moz-git/.git/map
+        git commit -a -m "Locally imported revisions" || true
+    fi
+fi
