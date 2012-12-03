@@ -511,7 +511,7 @@ moz() {
     MOZCFG="$1"
     if [ -f "$MOZPATH/$MOZCFG/Makefile" ]; then
         # See if it has a tree
-        configured_tree="$(egrep '^topsrcdir' "$cfg/Makefile" | awk '{ print $NF }')"
+        configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZCFG/Makefile" | awk '{ print $NF }')"
     fi
     if [ ! -z "$2" ]; then
         MOZTREE="$2"
