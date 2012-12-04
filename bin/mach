@@ -5,10 +5,10 @@ die() {
     exit 1
 }
 
-[ ! -z "$MOZCFG" ] die "No moz config"
+[ ! -z "$MOZCFG" ] || die "No moz config"
 [ -d "$MOZPATH/$MOZCFG" ] || die "Not built"
 [ -f "$MOZPATH/$MOZTREE/mach" ] || die "No mach in this tree"
 
 (
-  cd "$MOZPATH/$MOZCFG" && py2e ./mach "$@"
+  cd "$MOZPATH/$MOZTREE" && py2e ./mach "$@"
 )
