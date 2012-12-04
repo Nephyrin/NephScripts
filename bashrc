@@ -510,6 +510,7 @@ moz() {
     if [ -f "$MOZPATH/$MOZCFG/Makefile" ]; then
         # See if it has a tree
         configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZCFG/Makefile" | awk '{ print $NF }')"
+        configured_tree="${configured_tree##*/}"
     fi
     if [ ! -z "$2" ]; then
         MOZTREE="$2"
@@ -533,7 +534,7 @@ mo() {
         echo >&2 "!! No moz config"
         return 1
     fi
-    if [ ! -d "$MOZPATH/$MOZTREE" ]; then
+    if [ ! -d "$MOZPATH/$MOZCFG" ]; then
         echo >&2 "!! The tree isn't built"
         return 1
     fi
