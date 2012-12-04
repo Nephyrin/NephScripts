@@ -10,6 +10,7 @@ die() {
   exit 1
 }
 
+[ ! -z "$MOZCFG" ] || die "No moz config"
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
 [ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5"
 
@@ -47,14 +48,11 @@ args=()
 i=0
 eval parseopts $(getopt -n ffbrun -o "$optspec" -- "$@")
 
-target="${args[0]}"
-args="${args[@]:1:${#args[@]}}"
-
-if [ ! -d "$target" ] || [ ! -x "$target/firefox" ] || [ ! -x "$target/run-mozilla.sh" ]; then
-  die "\"$target\" doesn't appear to contain a firefox build :("
+if [ ! -d "$MOZPATH/$MOZCFG" ] || [ ! -x "$MOZPATH/$MOZCFG/dist/bin/firefox" ]; then
+  die "Not built :("
 fi
 
-cd "$target"
+cd "$MOZPATH/$MOZCFG/dist/bin/"
 if [ $freshprofile ]; then
   rm -rf profile
 fi
@@ -64,4 +62,4 @@ if [ ! -d "profile" ]; then
   mkdir profile
 fi
 
-eval cleangtk ./run-mozilla.sh "$exargs" "$target/firefox" -no-remote -profile ./profile "${args[@]}"
+eval cleangtk ./run-mozilla.sh "$exargs" "./firefox" -no-remote -profile ./profile "${args[@]}"

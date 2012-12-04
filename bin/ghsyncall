@@ -2,7 +2,7 @@
 
 # ghsync all repos, then gc the git
 set -e
-cd ~/moz
+cd "$MOZPATH"
 
 ghup
 
@@ -11,6 +11,3 @@ for x in mozilla-{esr10,beta,aurora,central,inbound}; do
 done
 
 ghup
-
-cd moz-git
-git gc

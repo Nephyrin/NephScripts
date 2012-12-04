@@ -7,7 +7,7 @@ if [ -d .hg ]; then
 fi
 
 if [ ! -f .git/git-mapfile ]; then
-    cd "$HOME/moz/moz-git"
+    cd "$MOZPATH/moz-git"
 fi
 
 r="$(basename "$PWD")"

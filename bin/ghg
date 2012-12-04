@@ -8,13 +8,13 @@ fi
 gitbranch="$1"
 targetrepo="$2"
 
-cd ~/moz/moz-git/.git/map/
+cd $MOZPATH/moz-git/.git/map/
 if [ ! -z "$(git status -s)" ]; then
   echo >&2 "!! Git mapfile is dirty"
   exit 1
 fi
 
-cd ~/moz/mozilla-"$targetrepo"
+cd $MOZPATH/mozilla-"$targetrepo"
 
 if [ ! -z "$(hg qa)" ]; then
     echo >&2 "!! A queue is active"
@@ -35,5 +35,5 @@ rm -f .hg/bookmarks{,.current}
 hg bookmark -r tip $(cat .hg/git-branch)
 
 echo ":: Cleaning up map"
-cd ~/moz/moz-git/.git/map
+cd $MOZPATH/moz-git/.git/map
 git reset --hard

@@ -3,7 +3,7 @@
 # Update the git repo, syncing its map file with any local exports
 # and fixing missing tags
 set -e
-cd ~/moz/moz-git
+cd "$MOZPATH/moz-git"
 
 branch="$1"
 

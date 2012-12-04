@@ -2,7 +2,7 @@
 
 set -e
 
-cachedir="$HOME/moz/nightlycache"
+cachedir="$MOZPATH/nightlycache"
 
 while read -r inf; do
   echo ":: $inf"

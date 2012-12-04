@@ -7,7 +7,7 @@ repo="$(basename "$1")"
 repo="${repo#mozilla-}"
 
 echo ":: Updating $repo"
-cd ~/moz
+cd "$MOZPATH"
 if [ ! -d "mozilla-$repo/.hg" ]; then
   echo >&2 "mozilla-$repo" does not appear to be a hg repository
   exit 1
@@ -29,7 +29,7 @@ if [ "$newrev" != "$oldrev" ]; then
     if ! h2g $newrev &>/dev/null; then
         echo ":: Git is not up to date, exporting"
         hg gexport -v
-        cd ~/moz/moz-git/.git/map
+        cd "$MOZPATH/moz-git/.git/map"
         git commit -a -m "Locally imported revisions" || true
     fi
 fi

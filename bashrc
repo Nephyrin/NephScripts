@@ -133,10 +133,8 @@ alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
 alias unphone='fusermount -u $HOME/NephGalaxy'
 
 # mozilla
-alias fmo='ffmake ff-opt'
-alias fmb='ffmake ff-dbg'
-alias fro='ffbrun ~/moz/ff-opt/dist/bin/'
-alias frb='ffbrun ~/moz/ff-dbg/dist/bin/'
+alias fm='ffmake'
+alias fb='ffbrun'
 
 # Hibernate-reboot with mount handling, for OS switching
 alias switchos='hib reboot mounts'

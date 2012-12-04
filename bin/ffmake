@@ -1,3 +1,10 @@
 #!/bin/bash
 
-PYTHON=python2 python2 ~/moz/smartmake/smartmake.py "$@"
+die() {
+    echo >&2 '!!'" $*"
+    exit 1
+}
+
+[ ! -z "$MOZCFG" ] || die "No moz config"
+[ -d "$MOZPATH/$MOZCFG" ] || die "No initial build"
+py2e $MOZPATH/smartmake/smartmake.py "$MOZPATH/$MOZCFG" "$@"
