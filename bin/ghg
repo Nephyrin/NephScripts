@@ -28,10 +28,10 @@ if [ ! -z "$(hg log -r 'outgoing()')" ]; then
 fi
 
 echo ":: Pulling..."
-rm -fv .hg/bookmarks{,.current}
+rm -f .hg/bookmarks{,.current}
 hg bookmark -r tip $(cat .hg/git-branch)
 hg pull ../moz-git -u -r "$gitbranch"
-rm -fv .hg/bookmarks{,.current}
+rm -f .hg/bookmarks{,.current}
 hg bookmark -r tip $(cat .hg/git-branch)
 
 echo ":: Cleaning up map"
