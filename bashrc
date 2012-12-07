@@ -519,11 +519,19 @@ moz() {
     else
         MOZTREE="moz-git"
     fi
+    if [ ! -f "$MOZPATH/$MOZTREE/client.mk" ]; then
+        echo >&2 "!! $MOZTREE does not appear to exist"
+        MOZTREE="moz-git"
+    fi
     if [ ! -z "$configured_tree" ] && [ "$configured_tree" != "$MOZTREE" ]; then
-        echo >&2 "!! WARNING: $MOZCFG is currently configured against tree $configured_tree"
+        echo >&2 "!! $MOZCFG is currently configured against tree $configured_tree"
     fi
     MOZCONFIG="$mozfile"
-    MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG"$'\[\e'"[0;37m\]] "
+    local extraps1
+    if [ "$MOZTREE" != "moz-git" ]; then
+        extraps1=$'\['"\e[0m"$'\]'" -> "$'\['"\e[0;35m$MOZTREE"
+    fi
+    MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
     _reprompt
     export MOZCONFIG MOZTREE MOZCFG
 }
