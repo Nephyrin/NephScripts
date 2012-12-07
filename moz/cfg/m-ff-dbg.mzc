@@ -2,5 +2,5 @@
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg
 
-export CC='clang -Qunused-arguments -fcolor-diagnostics'
-export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
+export CC='clang -O0 -Qunused-arguments -fcolor-diagnostics'
+export CXX='clang++ -O0 -Qunused-arguments -fcolor-diagnostics'
