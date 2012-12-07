@@ -10,5 +10,5 @@ die() {
 [ -f "$MOZPATH/$MOZTREE/mach" ] || die "No mach in this tree"
 
 (
-  cd "$MOZPATH/$MOZTREE" && py2e ./mach "$@"
+  cd "$MOZPATH/$MOZTREE" && cleangtk py2e ./mach "$@"
 )
