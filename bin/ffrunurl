@@ -12,4 +12,4 @@ shift
 curl -# "$url" | tar xj
 
 cd firefox
-ffbrun . "$@"
+ffrun . "$@"
