@@ -18,7 +18,7 @@ export PATH="$HOME/perl5/bin:$PATH";
 export MOZPATH="$HOME/moz"
 
 # Machine specific
-if [ "$(hostname)" = "Neph" ]; then
+if [ "$(hostname)" = "neph" ]; then
   # BenQ left monitor
   export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
   # Wine is on raid array
