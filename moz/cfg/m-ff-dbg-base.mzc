@@ -11,6 +11,8 @@ ac_add_options --disable-crsahreporter
 # ac_add_options --enable-codesighs
 # ac_add_options --enable-trace-malloc
 
+ac_add_options --enable-dmd
+
 # This seems to just include CC=/hardcoded/buildbot/path/gcc-4.5
 # . $topsrcdir/build/unix/mozconfig.linux
 
