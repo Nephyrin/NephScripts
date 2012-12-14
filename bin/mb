@@ -10,42 +10,51 @@ die() {
   exit 1
 }
 
-while [ $# -gt 0 ]; do
-  arg="$1"
-  shift
-  case "$arg" in
-    '--nomach') # Don't use mach
-      nomach=1
-    ;;
-    '--clobber') # Nuke config in objdir to ensure a full rebuild
-      clobber=1
-      configure=1
-    ;;
-    '--nuke') # Delete objdir first
-      nuke=1
-      configure=1
-    ;;
-    '-f') # Explicitly reconfigure tree
-      configure=1
-    ;;
-    '-v')
-      verbose=1
-    ;;
-    '-p') # make package when finished
-      package=1
-    ;;
-    '--cpufreq') # Jump to performance cpufreq
-      cpufreq=1
-    ;;
-    *)
-      die "Unexpected argument: $arg"
-    ;;
-  esac
-done
+parseopts() {
+    while [ $# -gt 0 ]; do
+        arg="$1"
+        shift
+        case "$arg" in
+            '--nomach') # Don't use mach
+                nomach=1
+                ;;
+            '--no-cgroup') # Don't use cgroup hooks
+                nocgroup=1
+                ;;
+            '--clobber') # Try to make clobber the objdir
+                clobber=1
+                ;;
+            '--nuke') # Delete objdir first
+                nuke=1
+                ;;
+            '-f') # Explicitly reconfigure tree
+                configure=1
+                ;;
+            '-v')
+                verbose=1
+                ;;
+            '-p') # make package when finished
+                package=1
+                ;;
+            '--cpufreq') # Jump to performance cpufreq
+                cpufreq=1
+                ;;
+            '--')
+                ;;
+            *)
+                die "Unexpected argument: $arg"
+                ;;
+        esac
+    done
+}
+eval parseopts "$(getopt -n mb -l nomach,no-cgroup,clobber,nuke,cpufreq -o fvp -- "$@")"
 
 #
 # Defaults & Sanity
 #
+
+[ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
+
 if [ -z "$MOZCFG" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
     [ ! -d "$MOZTREE" ] || [ ! -f "$MOZCONFIG" ]; then
     die "moz environment is not properly configured :("
@@ -55,80 +64,92 @@ fi
 # Make environment
 #
 
-export PYTHON=python2
-
-MAKE="make -j10"
+MAKE="py2e make -j10"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
 
+#
+# Setup cpufreq and cgroup
+#
+
+trap=""
 if [ ! -z "$cpufreq" ]; then
     echo ":: Boosting cpufreq"
-    trap "cpufreq-selector -c all -g ondemand" EXIT
+    trap="cpufreq-selector -c all -g ondemand"
     cpufreq-selector -c all -g performance
 fi
 
+if [ ! -z "$nocgroup" ]; then
+    if [ ! -f /sys/fs/cgroup/cpu/tasks ]; then
+        echo >&2 "!! No cgroup"
+        sleep 2
+    else
+        lpcg
+        [ -z "$trap" ] || trap="$trap; "
+        trap="${trap}dcg"
+    fi
+fi
+
+[ -z "$trap" ] || trap "$trap" EXIT
+
 #
-# Nuke/clobber
+#
 #
 
-if [ -d "$MOZCFG" ] && [ ! -z "$clobber" ]; then
-  # This forces a full reconfigure and will ruin any hope of a partial build,
-  # even through ccache. The nuking-makefiles is necessary for when the build
-  # tree has changed, just reconfiguring wont fix some makefiles sometimes due
-  # to our odd makefile hacks
-  rm -f "$MOZCFG"/config.*
-  find "$MOZCFG" -name Makefile -delete
-fi
+#
+# Nuke
+#
 
 if [ -d "$MOZCFG" ] && [ ! -z "$nuke" ]; then
   dir="$(readlink -f "$MOZCFG")"
-  echo ":: Press enter to run 'rm -r $dir', or control-C"
+  echo ":: Nuke requested. Press enter to run 'rm -r $dir', or control-C to abort"
   read
   rm -r "$dir"
 fi
 
 #
-# Find build tree and check for builds against the wrong tree
+# Configure if requested
+#
+
+if [ ! -z "$configure" ]; then
+    echo ":: Configuring tree"
+    (
+        cd "$MOZTREE"
+        $MAKE -f client.mk configure
+    )
+fi
+
+#
+# Find build tree, maybe clobber it, check for builds against the wrong tree
 #
 
 if [ -f "$MOZCFG/Makefile" ]; then
+  if [ ! -z "$clobber" ]; then
+      echo ":: Clobbering build"
+      # make clobber almost never returns successfully, but if we make clean
+      # first and then let it get as far as it can, it's usually fine. I guess.
+      ( cd "$MOZCFG" && $MAKE clean && $MAKE clobber || true )
+  fi
   configured_tree="$(egrep '^topsrcdir' "$MOZCFG/Makefile" | awk '{ print $NF }')"
   if [ "$(readlink -f "$configured_tree")" != "$(readlink -f "$MOZTREE")" ]; then
     die "Build directory is configured against the wrong tree, use --clobber or --nuke"
   fi
+elif [ ! -z "$clobber" ]; then
+    die "Clobber requested but build directory isn't configured. Try with -f or just --nuke."
 fi
 
 #
-# Maybe configure tree
+# Do the build
 #
-
-[ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
-
-if [ ! -f /sys/fs/cgroup/cpu/tasks ]; then
-    echo >&2 "!! No cgroup"
-    sleep 2
-else
-    lpcg
-fi
-
-if [ ! -z "$configure" ]; then
-  echo ":: Reconfiguring build"
-  (
-    cd "$MOZTREE"
-    $MAKE -f client.mk configure
-  )
-fi
-
 (
   cd "$MOZTREE"
   if [ -f ./mach ] && [ -z "$nomach" ]; then
       echo ":: Building with mach"
       py2e ./mach build
   else
-      echo ":: Not using mach"
+      echo >&2 "!! Not using mach"
+      sleep 2
       $MAKE -f client.mk && echo ":: Make succeeded"
   fi
 )
 
 [ -z "$package" ] || ( cd "$MOZCFG" && $MAKE package && $MAKE package-tests && echo ":: Package succeeded" )
-
-dcg
