@@ -10,6 +10,7 @@ export CXXFLAGS="-faddress-sanitizer $BLACKLIST -Dxmalloc=myxmalloc -O0 -Qunused
 export LDFLAGS="-faddress-sanitizer"
 
 # Needed for asan to work
+ac_add_options --disable-dmd
 ac_add_options --disable-jemalloc
 ac_add_options --disable-crashreporter
 
