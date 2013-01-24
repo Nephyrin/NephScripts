@@ -5,7 +5,8 @@ if [ -z "$step" ]; then step=1000; fi
 step=$(( $step + 0 ))
 
 set -e
-cd '/sys/devices/virtual/backlight/acpi_video0'
+cd /sys/class/backlight/gmux_backlight
+#cd '/sys/devices/virtual/backlight/acpi_video0'
 
 lvl=$1
 if [ -z "$lvl" ]; then exit; fi
