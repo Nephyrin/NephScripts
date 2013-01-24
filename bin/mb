@@ -78,7 +78,7 @@ if [ ! -z "$cpufreq" ]; then
     cpufreq-selector -c all -g performance
 fi
 
-if [ ! -z "$nocgroup" ]; then
+if [ -z "$nocgroup" ]; then
     if [ ! -f /sys/fs/cgroup/cpu/tasks ]; then
         echo >&2 "!! No cgroup"
         sleep 2
