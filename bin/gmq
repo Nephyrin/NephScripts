@@ -13,7 +13,7 @@ targetrepo="$2"
 queuename="$3"
 [ ! -z "$queuename" ] || queuename="$gitbranch"
 
-cd $MOZPATH/moz-git/.git/map/
+cd $MOZPATH/moz-git/hg-git-map
 if [ ! -z "$(git status -s)" ]; then
   echo >&2 "!! Git mapfile is dirty"
   exit 1
@@ -45,5 +45,5 @@ hg up
 
 # We're putting these in a queue, not the real stack, so nuke the remnants (ghsync will take care of them if committed)
 hg bookmark -d "$gitbranch"
-cd $MOZPATH/moz-git/.git/map/
+cd $MOZPATH/hg-git-map
 git reset --hard

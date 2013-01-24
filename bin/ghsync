@@ -22,20 +22,22 @@ fi
 oldrev="$(hg log -r tip --template={rev})"
 hg pull
 newrev="$(hg log -r tip --template={rev})"
+newgit="$(h2g $newrev 2>/dev/null || true)"
+
 if [ "$newrev" != "$oldrev" ]; then
     hg up -C
     rm -f .hg/bookmarks
     hg bookmark -v -r tip $(cat .hg/git-branch)
-    newgit="$(h2g $newrev 2>/dev/null || true)"
-    if [ -z "$newgit" ]; then
-        echo ":: Git is not up to date, exporting"
-        hg gexport -v
-        cd "$MOZPATH/moz-git/.git/map"
-        git commit -a -m "Locally imported revisions" || true
-    elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$repo" ]; then
-        echo >&2 '!!'" $repo is currently checked out in the master git repo, not updating ref"
-    else
-        echo ":: Updating $repo ref to $newgit"
-        echo "$newgit" > "$MOZPATH/moz-git/.git/refs/heads/$repo"
-    fi
+fi
+
+if [ -z "$newgit" ]; then
+    echo ":: Git is not up to date, exporting"
+    hg gexport -v
+    cd "$MOZPATH/hg-git-map"
+    git commit -a -m "Locally imported revisions" || true
+elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$repo" ]; then
+    echo >&2 '!!'" $repo is currently checked out in the master git repo, not updating ref"
+else
+    echo ":: Updating $repo ref to $newgit"
+    echo "$newgit" > "$MOZPATH/moz-git/.git/refs/heads/$repo"
 fi

@@ -1,12 +1,9 @@
 #!/bin/bash
 
-if [ ! -f .git/git-mapfile ]; then
-    cd "$MOZPATH/moz-git"
-fi
-
 g=$1
 r="$(basename "$PWD")"
 
+map="$MOZPATH/hg-git-map/hg-git-mapfile"
 g=$(git rev-parse "$g")
 
 if [ -z "$g" ]; then
@@ -14,7 +11,7 @@ if [ -z "$g" ]; then
     exit 1
 fi
 
-h=$(cat .git/git-mapfile | grep -m 1 $g | cut -d ' ' -f 2)
+h=$(cat "$map" | grep -m 1 $g | cut -d ' ' -f 2)
 
 if [ -z "$h" ]; then
     echo >&2 "!! Not found"

@@ -13,9 +13,10 @@ if [ ! -z "$branch" ] && [ ! -d "../mozilla-$branch" ]; then
 fi
 
 echo ":: Updating git"
-git fetch arcus --tags || git fetch github --tags
+git fetch arcus
+echo ":: Updating git map"
 (
-    cd .git/map
+    cd "$MOZPATH/hg-git-map"
     git pull --no-edit
 )
 
@@ -27,5 +28,5 @@ fi
 missing="$((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')"
 if [ ! -z "$missing" ]; then
     echo ":: Fixing missing tags"
-    git fetch arcus $missing || git fetch github $missing
+    git fetch arcus $missing
 fi

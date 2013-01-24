@@ -6,9 +6,7 @@ if [ -d .hg ]; then
    h=$(hg log -r "$h" --template {node})
 fi
 
-if [ ! -f .git/git-mapfile ]; then
-    cd "$MOZPATH/moz-git"
-fi
+map="$MOZPATH/hg-git-map/hg-git-mapfile"
 
 r="$(basename "$PWD")"
 
@@ -17,7 +15,7 @@ if [ -z "$h" ]; then
     exit 1
 fi
 
-g=$(cat .git/git-mapfile | grep -m 1 $h | cut -d ' ' -f 1)
+g=$(cat "$map" | grep -m 1 $h | cut -d ' ' -f 1)
 
 if [ -z "$g" ]; then
     echo >&2 "!! No matching git commit"

@@ -8,7 +8,7 @@ fi
 gitbranch="$1"
 targetrepo="$2"
 
-cd $MOZPATH/moz-git/.git/map/
+cd $MOZPATH/hg-git-map
 if [ ! -z "$(git status -s)" ]; then
   echo >&2 "!! Git mapfile is dirty"
   exit 1
@@ -35,5 +35,5 @@ rm -f .hg/bookmarks{,.current}
 hg bookmark -r tip $(cat .hg/git-branch)
 
 echo ":: Cleaning up map"
-cd $MOZPATH/moz-git/.git/map
+cd $MOZPATH/hg-git-map
 git reset --hard
