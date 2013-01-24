@@ -127,6 +127,8 @@ fi
 # Aliases & shorthand
 #
 
+alias pidof='pgrep -x'
+
 alias please='eval sudo "$(fc -nl -1)"'
 
 alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
