@@ -21,6 +21,7 @@ export MOZPATH="$HOME/moz"
 if [ "$(hostname)" = "neph" ]; then
   # BenQ left monitor
   export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
+  alias ext='env PULSE_SINK=alsa_output.pci-0000_06_00.1.hdmi-stereo-extra1 DISPLAY=:0.1'
   # Wine is on raid array
 elif [ "$(hostname)" = "Johnbook" ]; then
   #
