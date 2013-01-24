@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+if [ "$#" -lt 2 ]; then
+    echo >&2 '!! Usage: '$0' <branch> <command>'
+    exit 1
+fi
+branch="$1"
+shift
+git checkout "$branch"
+git "$@"
+[ "$0" != "gbb" ] || git checkout @{-1}
