@@ -465,7 +465,17 @@ rt()
 ipof() { host "$@" | awk '{print $(NF)}'; }
 
 nb() { nmblookup "$@" | tail -n+2 | head -n1 | grep -Eo "^[^ ]+"; }
-service() { sudo /etc/rc.d/$1 $2; }
+service() {
+    if which systemctl &>/dev/null; then
+        sudo systemctl --system daemon-reload
+        sudo systemctl $2 $1
+    elif [ -d /etc/rc.d ]; then
+        sudo /etc/rc.d/$1 $2;
+    else
+        echo >&2 "!! Don't know how to modify services on this system"
+        return 1
+    fi
+}
 
 say()
 {
