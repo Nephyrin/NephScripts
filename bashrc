@@ -1,4 +1,4 @@
-# -*- mode: sh; -*-
+# -*- mode: sh; sh-basic-offset 2; sh-indentation 2; -*-
 
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BROWSER="firefox '%s'"
