@@ -42,10 +42,6 @@
 
 (require 'ido)
 
-; js2-mode
-(autoload 'js2-mode "js2-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
 ; (global-ede-mode t)
 
 ; In gui mode, start server
@@ -262,7 +258,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ede-project-directories (quote ("/home/johns/moz/moz-git")))
- '(safe-local-variable-values (quote ((js2-skip-preprocessor-directives . t) (js2-basic-offset . 2) (js-indent-level . 2)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
