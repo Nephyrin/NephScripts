@@ -41,5 +41,7 @@ elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$repo" ]; then
     echo >&2 '!!'" $repo is currently checked out in the master git repo, not updating ref"
 else
     echo ":: Updating $repo ref ($branch) to $newgit"
-    echo "$newgit" > "$MOZPATH/moz-git/.git/refs/heads/$branch"
+    target="$MOZPATH/moz-git/.git/refs/heads/$branch"
+    mkdir -pv "$(dirname "$target")"
+    echo "$newgit" > "$target"
 fi
