@@ -121,14 +121,12 @@
 ;;
 
 ;; Delete to beginning of line
-(defun backward-merge-line (arg)
-  "Merge line with previous"
+(defun merge-next-line (arg)
+  "Merge line with next"
   (interactive "p")
-  (move-end-of-line 1)
-  (back-to-indentation)
-  (kill-line 0)
-  (delete-backward-char 1))
-(global-set-key (kbd "C-M-k") 'backward-merge-line)
+  (next-line 1)
+  (delete-indentation))
+(global-set-key (kbd "C-M-k") 'merge-next-line)
 (global-set-key (kbd "C-M-a") 'back-to-indentation)
 
 (global-set-key (kbd "C-S-k") 'kill-whole-line)
