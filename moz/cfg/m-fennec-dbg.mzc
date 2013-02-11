@@ -1,0 +1,6 @@
+. $topsrcdir/../cfg/m-fennec-dbg-base.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../fennec-dbg
+
+#export CC='clang -O0 -Qunused-arguments -fcolor-diagnostics'
+#export CXX='clang++ -O0 -Qunused-arguments -fcolor-diagnostics'
