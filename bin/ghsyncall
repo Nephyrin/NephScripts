@@ -6,7 +6,7 @@ cd "$MOZPATH"
 
 ghup
 
-for x in mozilla-{esr10,beta,aurora,central,inbound}; do
+for x in mozilla-{esr17,beta,aurora,release,central,inbound}; do
   ghsync "$x"
 done
 
