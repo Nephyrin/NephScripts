@@ -53,12 +53,12 @@ eval parseopts "$(getopt -n mb -l nomach,no-cgroup,clobber,nuke,cpufreq -o fvp -
 # Defaults & Sanity
 #
 
-[ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
-
 if [ -z "$MOZCFG" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
     [ ! -d "$MOZTREE" ] || [ ! -f "$MOZCONFIG" ]; then
     die "moz environment is not properly configured :("
 fi
+
+[ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
 
 #
 # Make environment
