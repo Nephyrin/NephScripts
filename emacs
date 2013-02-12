@@ -120,6 +120,15 @@
 ;; Custom binds
 ;;
 
+(defun flyspell-toggle (arg)
+  "Toggle flyspell mode, and check the entire buffer when enabling"
+  (interactive "p")
+  (if (and (boundp 'flyspell-mode) flyspell-mode)
+      (flyspell-mode 0)
+    (flyspell-mode)
+    (flyspell-buffer)))
+(global-set-key (kbd "C-c C-l") 'flyspell-toggle)
+
 ;; Delete to beginning of line
 (defun merge-next-line (arg)
   "Merge line with next"
