@@ -60,7 +60,10 @@ if [[ $- == *i* ]] ; then
     # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
     shopt -s checkwinsize
     shopt -s histappend
-    export PROMPT_COMMAND="history -a; history -n"
+    export PROMPT_COMMAND="history -a"
+
+    # TMUX support
+    PROMPT_COMMAND="$PROMPT_COMMAND;"'[ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD"'
 
     # Change the window title of X terminals
     case ${TERM} in
