@@ -77,19 +77,29 @@
 (global-whitespace-mode)
 (setq whitespace-style (quote (face trailing)))
 
-; fci
+;;
+;; fci-mode
+;;
 (require 'fill-column-indicator)
 (setq-default fill-column 80)
 (setq fci-rule-color "#444")
 (setq fci-rule-column 80)
-(defun enable-fci-mode ()
+
+;;
+;; Neph mode. Aka enable defaults in programming modes
+;;
+
+(defun enable-neph-coding ()
   (fci-mode t)
-  (setq fci-rule-column 80))
-(add-hook 'js-mode-hook 'enable-fci-mode)
-(add-hook 'c-mode-common-hook 'enable-fci-mode)
-(add-hook 'python-mode-hook 'enable-fci-mode)
-(add-hook 'java-mode-hook 'enable-fci-mode)
-(add-hook 'lisp-mode-hook 'enable-fci-mode)
+  (set-fill-column 80)
+  (setq fci-rule-column 80)
+  (fic-mode t))
+(add-hook 'sh-mode-hook 'enable-neph-coding)
+(add-hook 'js-mode-hook 'enable-neph-coding)
+(add-hook 'c-mode-common-hook 'enable-neph-coding)
+(add-hook 'python-mode-hook 'enable-neph-coding)
+(add-hook 'java-mode-hook 'enable-neph-coding)
+(add-hook 'lisp-mode-hook 'enable-neph-coding)
 
 ;;
 ;; IswitchBuffers
