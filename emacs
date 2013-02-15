@@ -37,6 +37,9 @@
 
 (setq vc-follow-symlinks t)
 
+(add-to-list 'load-path "~/.emacs.d/fic-mode.git")
+(require 'fic-mode)
+
 (add-to-list 'load-path "~/.emacs.d/helm")
 (require 'helm-config)
 
