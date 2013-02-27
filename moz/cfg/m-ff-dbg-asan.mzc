@@ -4,10 +4,14 @@ mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-asan
 
 # Setup asan
 ac_add_options --enable-address-sanitizer
-export BLACKLIST="-asan-blacklist=$topsrcdir/../cfg/asan-blacklist.txt"
-export CFLAGS="-faddress-sanitizer $BLACKLIST -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
-export CXXFLAGS="-faddress-sanitizer $BLACKLIST -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
+export CFLAGS="-faddress-sanitizer -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
+export CXXFLAGS="-faddress-sanitizer -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
 export LDFLAGS="-faddress-sanitizer"
+
+# Avoid using ASan flags when building host tools like nsinstall
+export HOST_CFLAGS=" "
+export HOST_CXXFLAGS=" "
+export HOST_LDFLAGS=" "
 
 # Needed for asan to work
 ac_add_options --disable-dmd
@@ -17,6 +21,7 @@ ac_add_options --disable-crashreporter
 # Ensure we have proper symbols
 export MOZ_DEBUG_SYMBOLS=1
 ac_add_options --enable-debug-symbols
+ac_add_options --disable-install-strip
 
 ac_add_options --disable-elf-hack
 ac_add_options --disable-trace-malloc
