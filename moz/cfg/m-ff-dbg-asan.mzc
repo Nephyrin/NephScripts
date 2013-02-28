@@ -1,30 +1,31 @@
 . $topsrcdir/../cfg/m-ff-dbg-base.mzc
 
+# See browser/config/mozconfigs/linux64/debug-asan
+
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-asan
 
 # Setup asan
-ac_add_options --enable-address-sanitizer
-export CFLAGS="-faddress-sanitizer -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
-export CXXFLAGS="-faddress-sanitizer -Dxmalloc=myxmalloc -O0 -Qunused-arguments -fcolor-diagnostics"
-export LDFLAGS="-faddress-sanitizer"
+export CFLAGS="-fsanitize=address -Dxmalloc=myxmalloc -fPIC"
+export CXXFLAGS="-fsanitize=address -Dxmalloc=myxmalloc -fPIC"
+export LDFLAGS="-fsanitize=address"
 
 # Avoid using ASan flags when building host tools like nsinstall
 export HOST_CFLAGS=" "
 export HOST_CXXFLAGS=" "
 export HOST_LDFLAGS=" "
 
+# Use at least -O1 for optimization to avoid stack space exhaustions caused by
+# Clang function inlining, esp. on lin32
+ac_add_options --enable-optimize="-O1"
+
 # Needed for asan to work
+ac_add_options --enable-address-sanitizer
+ac_add_options --enable-valgrind
 ac_add_options --disable-dmd
 ac_add_options --disable-jemalloc
 ac_add_options --disable-crashreporter
-
-# Ensure we have proper symbols
-export MOZ_DEBUG_SYMBOLS=1
-ac_add_options --enable-debug-symbols
-ac_add_options --disable-install-strip
-
 ac_add_options --disable-elf-hack
 ac_add_options --disable-trace-malloc
 
-export CC='clang -O0 -Qunused-arguments -fcolor-diagnostics'
-export CXX='clang++ -O0 -Qunused-arguments -fcolor-diagnostics'
+export CC='clang -fgnu89-inline -Qunused-arguments -fcolor-diagnostics'
+export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
