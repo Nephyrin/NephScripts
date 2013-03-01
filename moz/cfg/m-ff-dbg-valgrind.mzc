@@ -1,0 +1,12 @@
+. $topsrcdir/../cfg/m-ff-dbg-base.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-valgrind
+
+# Valgrind will be way too slow without this
+ac_add_options --enable-optimize="-O1"
+
+ac_add_options --enable-valgrind
+ac_add_options --disable-jemalloc
+
+export CC='clang -Qunused-arguments -fcolor-diagnostics'
+export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
