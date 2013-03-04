@@ -1,0 +1,13 @@
+. $topsrcdir/../cfg/m-ff-dbg-gcc45.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-gcc45x32
+
+# See https://developer.mozilla.org/en-US/docs/Compiling_32-bit_Firefox_on_a_Linux_64-bit_OS
+export CROSS_COMPILE=1
+
+CC="$CC -m32"
+CXX="$CXX -m32"
+AR=ar
+
+ac_add_options --x-libraries=/usr/lib32
+ac_add_options --target=i686-pc-linux
