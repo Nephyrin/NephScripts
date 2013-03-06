@@ -22,3 +22,6 @@
 [submodule "emacs.d/fic-mode.git"]
 	path = emacs.d/fic-mode.git
 	url = https://github.com/lewang/fic-mode.git
+[submodule "emacs.d/git-gutter-fringe"]
+	path = emacs.d/git-gutter-fringe
+	url = https://github.com/syohex/emacs-git-gutter-fringe

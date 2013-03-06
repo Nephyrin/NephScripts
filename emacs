@@ -37,12 +37,6 @@
 
 (setq vc-follow-symlinks t)
 
-(add-to-list 'load-path "~/.emacs.d/fic-mode.git")
-(require 'fic-mode)
-
-(add-to-list 'load-path "~/.emacs.d/helm")
-(require 'helm-config)
-
 (require 'ido)
 
 ; (global-ede-mode t)
@@ -80,10 +74,25 @@
 ;;
 ;; fci-mode
 ;;
+
 (require 'fill-column-indicator)
 (setq-default fill-column 80)
 (setq fci-rule-color "#444")
 (setq fci-rule-column 80)
+
+;;
+;; Misc modes with no config
+;;
+
+(add-to-list 'load-path "~/.emacs.d/fic-mode.git")
+(require 'fic-mode)
+
+(add-to-list 'load-path "~/.emacs.d/helm")
+(require 'helm-config)
+
+(add-to-list 'load-path "~/.emacs.d/git-gutter-fringe")
+(require 'fringe-helper)
+(require 'git-gutter-fringe)
 
 ;;
 ;; Neph mode. Aka enable defaults in programming modes
@@ -93,7 +102,8 @@
   (fci-mode t)
   (set-fill-column 80)
   (setq fci-rule-column 80)
-  (fic-mode t))
+  (fic-mode t)
+  (git-gutter-mode t))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
 (add-hook 'js-mode-hook 'enable-neph-coding)
 (add-hook 'c-mode-common-hook 'enable-neph-coding)
