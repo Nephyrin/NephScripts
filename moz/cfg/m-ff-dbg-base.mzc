@@ -2,25 +2,21 @@
 
 ac_add_options --enable-application=browser
 ac_add_options --disable-optimize
-# ac_add_options --enable-update-channel=nightly
-# ac_add_options --enable-update-packaging
 ac_add_options --enable-debug
 ac_add_options --disable-install-strip
 ac_add_options --enable-tests
 ac_add_options --disable-crashreporter
+
+# Optional
+ac_add_options --enable-profiling
 # ac_add_options --enable-codesighs
 # ac_add_options --enable-trace-malloc
-
-ac_add_options --enable-profiling
-
 # ac_add_options --enable-dmd
+# ac_add_options --enable-js-diagnostics
+# ac_add_options --enable-warnings-as-errors
 
 # This seems to just include CC=/hardcoded/buildbot/path/gcc-4.5
 # . $topsrcdir/build/unix/mozconfig.linux
-
-# Mozilla-Central nightlies only since this has a cost in performance
-# ac_add_options --enable-js-diagnostics
-# ac_add_options --enable-warnings-as-errors
 
 # -Werror=unused-variable catches issues.
 export CFLAGS="$CFLAGS -ggdb"
@@ -35,12 +31,7 @@ ac_add_options --enable-debug-symbols="-ggdb"
 
 # export MOZ_TELEMETRY_REPORTING=1
 
-# PGO
-# mk_add_options MOZ_PGO=1
-# mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
-
 # Enable parallel compiling
 mk_add_options MOZ_MAKE_FLAGS="-j10"
 
-#Use ccache
 ac_add_options --with-ccache=/usr/bin/ccache
