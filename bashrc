@@ -188,6 +188,7 @@ alias dir='x dolphin "$@"'
 
 alias rebash='source ~/.bashrc'
 
+alias brusay='ntf toybox/brusay'
 
 #
 # Misc utility functions
