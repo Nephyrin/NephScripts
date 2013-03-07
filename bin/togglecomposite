@@ -1,8 +1,8 @@
 #!/bin/bash
 
-RESULT=`qdbus org.kde.kwin /KWin org.kde.KWin.compositingActive`
+RESULT=`qdbus-qt4 org.kde.kwin /KWin org.kde.KWin.compositingActive`
 
-qdbus org.kde.kwin /KWin org.kde.KWin.toggleCompositing
+qdbus-qt4 org.kde.kwin /KWin org.kde.KWin.toggleCompositing
 
 #if [ "$RESULT" = "false" ]; then
 #  sleep 1
