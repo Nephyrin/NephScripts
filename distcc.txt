@@ -41,7 +41,7 @@ echo ":: distcc configured with $MAKE_JOBS jobs"
 # enabled without switching mozconfigs. This assumes you're doing ./mach or make
 # -f client.mk, otherwise you need to specify -j manually anyway.
 [ ! -z "$MAKE_JOBS" ] || MAKE_JOBS="8"
-MOZ_MAKE_FLAGS="$MOZ_MAKE_FAGS -j$MAKE_JOBS"
+MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS -j$MAKE_JOBS"
 
 # Note that ccache needs to be disabled if you wish to use distcc's "pump" mode
 # (which doesn't work cross-platform)
