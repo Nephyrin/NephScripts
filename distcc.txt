@@ -37,6 +37,11 @@ echo ":: distcc configured with $MAKE_JOBS jobs"
 ## MOZCONFIG stuff
 ##
 
+# OS X users need to add this to their CC/CXX vars:
+# export CC="clang -ccc-host-triple x86_64-apple-darwin"
+# export CXX="clang++ -ccc-host-triple x86_64-apple-darwin"
+
+
 # Set in environment, so we can adaptively use more make jobs if distcc is
 # enabled without switching mozconfigs. This assumes you're doing ./mach or make
 # -f client.mk, otherwise you need to specify -j manually anyway.
