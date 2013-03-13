@@ -1,0 +1,63 @@
+
+##
+## Environment stuff.
+##
+# Put this in your .bashrc, or put it in a "enable-distcc.sh" file
+# and run "source ~/enable-distcc.sh" to use distcc in that shell.
+
+# Note if not using ccache your mozconfig needs additional tweaking, see below
+export CCACHE_PREFIX=distcc
+
+# --randomize means spread jobs out evenly over hosts. bangles is the only host
+# right now. It has 8 cores so send up to 16 jobs to it.
+DISTCC_HOSTS="--randomize bangles.mv.mozilla.com/16"
+
+# Also use localhost. We limit slots to six because the localhost also needs to
+# do all the pre-processing, so if it is overloaded it wont be able to send out jobs fast enough
+DISTCC_HOSTS="$DISTCC_HOSTS localhost/6 --localslots=6 --localslots_cpp=10"
+# Alternately: Don't use localhost at all except for preprocessing (do as much
+#              work as possible on other machines)
+#     DISTCC_HOSTS="$DISTCC_HOSTS --localslots_cpp=10"
+
+export DISTCC_HOSTS
+# Retry aggressively when no machines are available (default is 1000)
+export DISTCC_PAUSE_TIME_MSEC=10
+# If a compile fails, distcc defaults to just ignoring that machine for the rest
+# of the compile. Instead, make it actually print an error.
+export DISTCC_BACKOFF_PERIOD=0
+export DISTCC_FALLBACK=1
+export DISTCC_SKIP_LOCAL_RETRY=1
+
+# This is exported for the mozconfig to use. |distcc -j| looks at the vars we
+# just set and determines how many distcc jobs can run at once.
+export MAKE_JOBS=$(( $(distcc -j) * 2 ))
+echo ":: distcc configured with $MAKE_JOBS jobs"
+
+##
+## MOZCONFIG stuff
+##
+
+# Set in environment, so we can adaptively use more make jobs if distcc is
+# enabled without switching mozconfigs. This assumes you're doing ./mach or make
+# -f client.mk, otherwise you need to specify -j manually anyway.
+[ ! -z "$MAKE_JOBS" ] || MAKE_JOBS="8"
+MOZ_MAKE_FLAGS="$MOZ_MAKE_FAGS -j$MAKE_JOBS"
+
+# Note that ccache needs to be disabled if you wish to use distcc's "pump" mode
+# (which doesn't work cross-platform)
+ac_add_options --with-ccache=/usr/bin/ccache
+
+# Don't try to enable distcc if DISTCC_HOSTS isn't set
+if [ ! -z "$DISTCC_HOSTS" ]; then
+   # If you're not using ccache, use this instead. We set this only in
+   # MOZ_MAKE_FLAGS because other things look at CC and CXX to see if we're
+   # using clang/gcc/msvc/etc and we don't want to confuse them.
+   #  MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS CC='distcc $CC' CXX='distcc $CXX'"
+
+   # If using ccache just set CCACHE_PREFIX to achieve the same. Again, if you
+   # do |make| from the objdir directly this also needs to be set in your
+   # environment for distcc to work.
+   MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS CCACHE_PREFIX=distcc"
+fi
+
+mk_add_options MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS"
