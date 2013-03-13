@@ -28,3 +28,6 @@
 [submodule "vim-powerline-for-fontpatcher"]
 	path = vim-powerline-for-fontpatcher
 	url = https://github.com/Lokaltog/vim-powerline
+[submodule "emacs.d/git-gutter"]
+	path = emacs.d/git-gutter
+	url = https://github.com/syohex/emacs-git-gutter.git

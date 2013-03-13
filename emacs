@@ -91,6 +91,7 @@
 (require 'helm-config)
 
 (add-to-list 'load-path "~/.emacs.d/git-gutter-fringe")
+(add-to-list 'load-path "~/.emacs.d/git-gutter")
 (require 'fringe-helper)
 (require 'git-gutter-fringe)
 
