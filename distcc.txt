@@ -38,8 +38,8 @@ echo ":: distcc configured with $MAKE_JOBS jobs"
 ##
 
 # OS X users need to add this to their CC/CXX vars:
-# export CC="clang -ccc-host-triple x86_64-apple-darwin"
-# export CXX="clang++ -ccc-host-triple x86_64-apple-darwin"
+# export CC="clang -target x86_64-apple-darwin"
+# export CXX="clang++ -target x86_64-apple-darwin"
 
 
 # Set in environment, so we can adaptively use more make jobs if distcc is
