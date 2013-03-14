@@ -22,11 +22,6 @@ DISTCC_HOSTS="$DISTCC_HOSTS localhost/6 --localslots=6 --localslots_cpp=10"
 export DISTCC_HOSTS
 # Retry aggressively when no machines are available (default is 1000)
 export DISTCC_PAUSE_TIME_MSEC=10
-# If a compile fails, distcc defaults to just ignoring that machine for the rest
-# of the compile. Instead, make it actually print an error.
-export DISTCC_BACKOFF_PERIOD=0
-export DISTCC_FALLBACK=1
-export DISTCC_SKIP_LOCAL_RETRY=1
 
 # This is exported for the mozconfig to use. |distcc -j| looks at the vars we
 # just set and determines how many distcc jobs can run at once.
