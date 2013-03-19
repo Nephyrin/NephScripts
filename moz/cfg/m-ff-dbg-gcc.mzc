@@ -1,7 +1,8 @@
-. $topsrcdir/../cfg/m-ff-dbg-base.mzc
+. $topsrcdir/../cfg/inc-ff-dbg-base.mzc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-gcc
 
 export CC=gcc
 export CXX=g++
 
+. $topsrcdir/../cfg/inc-distcc.mzc

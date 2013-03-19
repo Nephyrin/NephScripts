@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/m-ff-dbg-base.mzc
+. $topsrcdir/../cfg/inc-ff-dbg-base.mzc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-valgrind
 
@@ -8,5 +8,5 @@ ac_add_options --enable-optimize="-O1"
 ac_add_options --enable-valgrind
 ac_add_options --disable-jemalloc
 
-export CC='clang -Qunused-arguments -fcolor-diagnostics'
-export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
+. $topsrcdir/../cfg/inc-clang.mzc
+. $topsrcdir/../cfg/inc-distcc.mzc

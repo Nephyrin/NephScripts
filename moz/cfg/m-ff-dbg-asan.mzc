@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/m-ff-dbg-base.mzc
+. $topsrcdir/../cfg/inc-ff-dbg-base.mzc
 
 # See browser/config/mozconfigs/linux64/debug-asan
 
@@ -27,5 +27,5 @@ ac_add_options --disable-crashreporter
 ac_add_options --disable-elf-hack
 ac_add_options --disable-trace-malloc
 
-export CC='clang -fgnu89-inline -Qunused-arguments -fcolor-diagnostics'
-export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
+. $topsrcdir/../cfg/inc-clang.mzc
+. $topsrcdir/../cfg/inc-distcc.mzc
