@@ -13,5 +13,5 @@ export LDFLAGS="$LDFLAGS -O4 -plugin /usr/lib/LLVMgold.so"
 export CFLAGS="$CFLAGS -O4"
 export CXXFLAGS="$CXXFLAGS -O4"
 
-export CC='clang -Qunused-arguments -fcolor-diagnostics'
-export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
+. $topsrcdir/../cfg/inc-clang.mzc
+. $topsrcdir/../cfg/inc-distcc.mzc
