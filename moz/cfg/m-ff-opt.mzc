@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/m-ff-opt-base.mzc
+. $topsrcdir/../cfg/inc-ff-opt.mzc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-opt
 

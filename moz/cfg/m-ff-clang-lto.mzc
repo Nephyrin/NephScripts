@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/m-ff-opt-base.mzc
+. $topsrcdir/../cfg/inc-ff-opt.mzc
 
 # In-tree FFI breaks under LTO
 export MOZ_NATIVE_FFI=1
