@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/inc-ff-dbg-base.mzc
+. $topsrcdir/../cfg/inc-ff-dbg.mzc
 
 # See browser/config/mozconfigs/linux64/debug-asan
 

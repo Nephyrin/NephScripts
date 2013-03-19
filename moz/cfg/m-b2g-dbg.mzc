@@ -1,4 +1,4 @@
-. $topsrcdir/../inc-ff-dbg-base.mzc
+. $topsrcdir/../inc-ff-dbg.mzc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../b2g-dbg
 
