@@ -12,6 +12,7 @@ log = auto
 excludesfile = /home/johns/.gitignore
 deltaBaseCacheLimit = 128m
 [pack]
+threads = 2
 deltaCacheLimit = 10
 deltaCacheSize = 1g
 
