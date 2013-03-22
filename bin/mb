@@ -130,7 +130,7 @@ fi
 
 
 #
-# Nuke
+# Nuke or clobber if requested
 #
 
 if [ -d "$MOZCFG" ] && [ ! -z "$nuke" ]; then
@@ -138,10 +138,29 @@ if [ -d "$MOZCFG" ] && [ ! -z "$nuke" ]; then
   echo ":: Nuke requested. Press enter to run 'rm -r $dir', or control-C to abort"
   read
   rm -r "$dir"
+elif [ ! -z "$clobber" ]; then
+      echo ":: Clobbering build"
+      # Force a full clobber build while preserving some intermediary files
+      (
+          cd "$MOZCFG"
+          rm -rf conf* CLOBBER
+          find . -name 'Makefile*' -exec rm -v {} \;
+      )
 fi
 
 #
-# Configure if requested
+# If configured at this point, check that it is against the right tree
+#
+
+if [ -f "$MOZCFG/Makefile" ]; then
+  configured_tree="$(egrep '^topsrcdir' "$MOZCFG/Makefile" | awk '{ print $NF }')"
+  if [ "$(readlink -f "$configured_tree")" != "$(readlink -f "$MOZTREE")" ]; then
+    die "Build directory is configured against the wrong tree, use --clobber or --nuke"
+  fi
+fi
+
+#
+# Explicit configure if requested
 #
 
 if [ ! -z "$configure" ]; then
@@ -150,25 +169,6 @@ if [ ! -z "$configure" ]; then
         cd "$MOZTREE"
         $MAKE -f client.mk configure
     )
-fi
-
-#
-# Find build tree, maybe clobber it, check for builds against the wrong tree
-#
-
-if [ -f "$MOZCFG/Makefile" ]; then
-  if [ ! -z "$clobber" ]; then
-      echo ":: Clobbering build"
-      # make clobber almost never returns successfully, but if we make clean
-      # first and then let it get as far as it can, it's usually fine. I guess.
-      ( cd "$MOZCFG" && $MAKE clean && $MAKE clobber || true )
-  fi
-  configured_tree="$(egrep '^topsrcdir' "$MOZCFG/Makefile" | awk '{ print $NF }')"
-  if [ "$(readlink -f "$configured_tree")" != "$(readlink -f "$MOZTREE")" ]; then
-    die "Build directory is configured against the wrong tree, use --clobber or --nuke"
-  fi
-elif [ ! -z "$clobber" ]; then
-    die "Clobber requested but build directory isn't configured. Try with -f or just --nuke."
 fi
 
 #
