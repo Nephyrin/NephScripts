@@ -21,6 +21,12 @@ parseopts() {
             '--no-cgroup') # Don't use cgroup hooks
                 nocgroup=1
                 ;;
+            '--no-distcc') # Don't use distcc
+                nodistcc=1
+                ;;
+            '--only-distcc') # Don't use local cpus
+                onlydistcc=1
+                ;;
             '--clobber') # Try to make clobber the objdir
                 clobber=1
                 ;;
@@ -47,11 +53,15 @@ parseopts() {
         esac
     done
 }
-eval parseopts "$(getopt -n mb -l nomach,no-cgroup,clobber,nuke,cpufreq -o fvp -- "$@")"
+eval parseopts "$(getopt -n mb -l no-mach,no-cgroup,no-distcc,clobber,nuke,cpufreq -o fvp -- "$@")"
 
 #
 # Defaults & Sanity
 #
+
+if [ ! -z "$nodistcc" ] && [ ! -z "$onlydistcc" ]; then
+    die "--no-distcc and --only-distcc are mutually exclusive"
+fi
 
 if [ -z "$MOZCFG" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
     [ ! -d "$MOZTREE" ] || [ ! -f "$MOZCONFIG" ]; then
@@ -93,8 +103,31 @@ fi
 [ -z "$trap" ] || trap "$trap" EXIT
 
 #
+# DistCC?
 #
-#
+
+if [ -z "$nodistcc" ]; then
+    #MACH="pump $MACH"
+    #MAKE="pump $MAKE"
+    # FIXME Figure out how we want this to work...
+    # FIXME DISTCC_POTENTIAL_HOSTS if we're using pump
+    DISTCC_HOSTS="--randomize bangles.mv.mozilla.com/16,lzo gandalf.mv.mozilla.com/16,lzo"
+    if [ -z "$onlydistcc" ]; then
+        DISTCC_HOSTS="$DISTCC_HOSTS --localslots=4 --localslots_cpp=16"
+    else
+        # We have to do some processing locally, limit it heavily
+        # (this is used when on battery and such)
+        DISTCC_HOSTS="$DISTCC_HOSTS --localslots_cpp=4"
+    fi
+    export DISTCC_HOSTS
+    export DISTCC_PAUSE_TIME_MSEC=10
+    export DISTCC_BACKOFF_PERIOD=0
+    export DISTCC_FALLBACK=1
+    export DISTCC_SKIP_LOCAL_RETRY=1
+    export MAKE_JOBS=$(( $(distcc -j) * 2 ))
+    echo ":: distcc configured with $MAKE_JOBS jobs"
+fi
+
 
 #
 # Nuke
