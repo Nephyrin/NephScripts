@@ -6,9 +6,6 @@ die() {
 }
 
 [ ! -z "$MOZCFG" ] || die "No moz config"
-[ -d "$MOZPATH/$MOZCFG" ] || die "Not built"
 [ -f "$MOZPATH/$MOZTREE/mach" ] || die "No mach in this tree"
 
-(
-  cd "$MOZPATH/$MOZTREE" && cleangtk py2e ./mach "$@"
-)
+cleangtk py2e "$MOZPATH/$MOZTREE"/mach "$@"
