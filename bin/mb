@@ -15,7 +15,7 @@ parseopts() {
         arg="$1"
         shift
         case "$arg" in
-            '--nomach') # Don't use mach
+            '--no-mach') # Don't use mach
                 nomach=1
                 ;;
             '--no-cgroup') # Don't use cgroup hooks
@@ -64,6 +64,7 @@ fi
 # Make environment
 #
 
+MACH="py2e ./mach"
 MAKE="py2e make -j10"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
 
@@ -144,7 +145,7 @@ fi
   cd "$MOZTREE"
   if [ -f ./mach ] && [ -z "$nomach" ]; then
       echo ":: Building with mach"
-      py2e ./mach build
+      $MACH build
   else
       echo >&2 "!! Not using mach"
       sleep 2
