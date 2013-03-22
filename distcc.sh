@@ -13,16 +13,19 @@
 export CCACHE_PREFIX=distcc
 
 # --randomize means spread jobs out evenly over hosts.
-# --localslots=6 means only fall back to six local jobs
-# --localslots_cpp=10 means allow up to ten local preprocessing jobs
+# --localslots=4 means only fall back to four local jobs for files that can't be
+#                compiled remotely.
+# --localslots_cpp=16 means allow up to sixteen local preprocessing jobs
 # /16 means send up to 16 jobs to that host, the values here are the max those
 # hosts allow.
+
+# NOTE: including localhost/8 will also do some compiling locally, but this will
+# usually be *slow*, as with 32+ remote jobs available, the localhost is usually
+# saturated just doing pre-processing to keep the distcc machines busy.
 export DISTCC_HOSTS="--randomize
-                     localhost/6 --localslots=6 --localslots_cpp=10
+                     --localslots=4 --localslots_cpp=16
                      bangles.mv.mozilla.com/16
                      gandalf.mv.mozilla.com/16"
-# To do as much work as possible remotely, remove localhost/localslots (but
-# leave localslots_cpp)
 
 # Retry aggressively when no machines are available (default is 1000)
 export DISTCC_PAUSE_TIME_MSEC=10
