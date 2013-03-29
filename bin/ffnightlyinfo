@@ -14,11 +14,14 @@ def fail(err):
   sys.exit(1)
 def stat(msg):
   sys.stderr.write("%s\n" % msg)
-  
-if len(sys.argv) != 2:
-  fail("Requires one argument: Date (YYYY-MM-DD)")
 
-ts = time.strptime(sys.argv[1], "%Y-%m-%d")
+if len(sys.argv) > 2:
+  fail("Accepts one argument: Date (YYYY-MM-DD)")
+elif len(sys.argv) == 2:
+  ts = time.strptime(sys.argv[1], "%Y-%m-%d")
+else:
+  ts = time.localtime()
+
 day = ts.tm_mday
 month = ts.tm_mon
 year = ts.tm_year
