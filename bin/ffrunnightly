@@ -2,11 +2,19 @@
 
 set -e
 
-tempdir=$(mktemp -d)
-cd "$tempdir"
-ffgetnightly "$@"
+date="$1"
+[ "$#" -lt 1 ] || shift
 
-mkdir tempprofile
-cleangtk firefox/firefox -profile tempprofile -no-remote
-cd
-rm -rf "$tempdir"
+tempdir=$(mktemp -d)
+trap "rm -rf '$tempdir'" EXIT
+
+cd "$tempdir"
+
+if [ "$#" -gt 0 ]; then
+    ffgetnightly "$1"
+    shift
+else
+    ffgetnightly
+fi
+
+ffrun ./firefox/firefox "$@"
