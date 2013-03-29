@@ -74,6 +74,9 @@ fi
 # Make environment
 #
 
+# We handle clobbering when desired, so disable mach/client.mk's autoclobber
+export NO_AUTOCLOBBER=1
+
 MACH="py2e ./mach"
 MAKE="py2e make -j10"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
