@@ -1,5 +1,7 @@
 # -*- mode: sh; sh-basic-offset 2; sh-indentation 2; -*-
 
+NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
+
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BROWSER="firefox '%s'"
 export EDITOR="ec"
@@ -302,8 +304,7 @@ rand63()
 
 dcg()
 {
-    /bin/echo $$ > /sys/fs/cgroup/cpu/cgroup.procs
-    /bin/echo $$ > /sys/fs/cgroup/blkio/cgroup.procs
+    echo $$ > "$NEPH_DEFAULT_CGROUP"/cgroup.procs
     unset NEPH_CGROUP
     unset NEPH_CGROUP_PS1
     _reprompt
@@ -330,10 +331,11 @@ lpcg()
     [ -z "$NEPH_CGROUP" ] && cg
     group=$NEPH_CGROUP
   fi
-  group=/sys/fs/cgroup/cpu/"$NEPH_CGROUP"
+  group="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
   [ ! -d "$group" ] && echo ":: '$group' is not a directory" && return
-  /bin/echo 10 > /sys/fs/cgroup/blkio/"$NEPH_CGROUP"/blkio.weight
-  /bin/echo 1 > /sys/fs/cgroup/cpu/"$NEPH_CGROUP"/cpu.shares
+  /bin/echo 10 > "$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
+  /bin/echo 1 > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
+  /bin/echo 256M > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
   echo ":: Done"
 }
 
@@ -346,15 +348,14 @@ pcg()
   local tasks=$(pgrep "$procgrep")
 
   [ -z "$cgroup" ] && cgroup=$(_mcg "$procgrep")
-  if [ ! -d /sys/fs/cgroup/cpu/"$cgroup" ]; then
+  if [ ! -d "$NEPH_DEFAULT_CGROUP"/"$cgroup" ]; then
     echo ":: cgroup $cgroup does not exist!"
     return
   fi
 
   for task in $tasks; do
       echo ":: Adding task $task to group '$cgroup'"
-      /bin/echo $task > /sys/fs/cgroup/cpu/"$cgroup"/cgroup.procs
-      /bin/echo $task > /sys/fs/cgroup/blkio/"$cgroup"/cgroup.procs
+      /bin/echo $task > "$NEPH_DEFAULT_CGROUP"/"$cgroup"/cgroup.procs
   done
 }
 
@@ -372,12 +373,11 @@ _mcg()
   [ -z "$prefix" ] && echo ":: Need a name" && return
   local i
   local name
-  while [ -d /sys/fs/cgroup/cpu/"$name" ] && i=$(( $i + 1 )); do
+  while [ -d "$NEPH_DEFAULT_CGROUP"/"$name" ] && i=$(( $i + 1 )); do
       name="${prefix}:$i"
   done
 
-  mkdir /sys/fs/cgroup/cpu/"$name"
-  mkdir /sys/fs/cgroup/blkio/"$name"
+  mkdir "$NEPH_DEFAULT_CGROUP"/"$name"
   echo $name
 }
 
@@ -386,8 +386,9 @@ cg()
     local name=$(_mcg "shell$$")
     local i
 
-    /bin/echo $$ > /sys/fs/cgroup/cpu/$name/cgroup.procs
-    /bin/echo $$ > /sys/fs/cgroup/blkio/$name/cgroup.procs
+    cat "$NEPH_DEFAULT_CGROUP"/cpuset.cpus > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.cpus
+    cat "$NEPH_DEFAULT_CGROUP"/cpuset.mems > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.mems
+    echo $$ > "$NEPH_DEFAULT_CGROUP"/"$name"/cgroup.procs
     export NEPH_CGROUP=$name
     NEPH_CGROUP_PS1=$'\[\e'"[0;37m\]$NEPH_CGROUP "
     _reprompt
@@ -423,16 +424,16 @@ lcg()
 {
   local cgroup=$1
   if [ -z "$cgroup" ]; then
-    for x in /sys/fs/cgroup/cpu/*; do
+    for x in "$NEPH_DEFAULT_CGROUP"/*; do
       [ -d "$x" ] && [ -f "$x"/tasks ] && lcg "$(basename "$x")"
     done
   else
-    if [ ! -d /sys/fs/cgroup/cpu/"$cgroup" ]; then
+    if [ ! -d "$NEPH_DEFAULT_CGROUP"/"$cgroup" ]; then
       echo ":: cgroup $cgroup doesn't exist";
       return
     fi
     echo ":: Tasks for $cgroup"
-    local tasks="$(cat /sys/fs/cgroup/cpu/"$cgroup"/tasks)"
+    local tasks="$(cat "$NEPH_DEFAULT_CGROUP"/"$cgroup"/tasks)"
     if [ -z "$tasks" ]; then
       echo " none"
     else
