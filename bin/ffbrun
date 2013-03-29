@@ -59,7 +59,9 @@ fi
 
 if [ ! -d "profile" ]; then
   echo ":: Making fresh profile"
-  mkdir profile
+  mkdir -vp profile/plugins
 fi
+
+cp -v ../plugins/*.so profile/plugins
 
 eval cleangtk ./run-mozilla.sh "$exargs" "./firefox" -no-remote -profile ./profile "${args[@]}"
