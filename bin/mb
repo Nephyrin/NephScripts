@@ -167,11 +167,16 @@ fi
 #
 
 if [ ! -z "$configure" ]; then
-    echo ":: Configuring tree"
-    (
-        cd "$MOZTREE"
-        $MAKE -f client.mk configure
-    )
+    if [ -z "$nomach" ]; then
+        echo ":: -f specified, nuking config.status to force reconfigure"
+        rm -vf "$MOZCFG"/config.status
+    else
+        echo ":: Not using mach, explicitly reconfiguring tree (-f)"
+        (
+            cd "$MOZTREE"
+            $MAKE -f client.mk configure
+        )
+    fi
 fi
 
 #
