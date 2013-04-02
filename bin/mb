@@ -68,6 +68,10 @@ if [ -z "$MOZCFG" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
     die "moz environment is not properly configured :("
 fi
 
+if [ ! -f "$MOZTREE/mach" ] && [ -z "$nomach" ]; then
+    die "This tree has no mach, but --no-mach was not specified"
+fi
+
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
 
 #
@@ -184,7 +188,7 @@ fi
 #
 (
   cd "$MOZTREE"
-  if [ -f ./mach ] && [ -z "$nomach" ]; then
+  if [ -z "$nomach" ]; then
       echo ":: Building with mach"
       $MACH build
   else
