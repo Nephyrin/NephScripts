@@ -44,5 +44,5 @@ fixedcmdline="$(echo "$cmdline" | tail -n1 | sed -r 's/--([a-zA-Z0-9]+)=(([^-]|(
 
 echo ":: Running $fixedcmdline"
 
-eval $fixedcmdline -b 500 | vlc -
+eval $fixedcmdline -b 500 | vlc -vv -
 
