@@ -6,7 +6,7 @@ source "$(dirname "$0")"/lib/util.sh
 while true; do
   echo ":: Launching SSH"
   if try_keychain; then
-    ssh -T -L7001:albus:8000 -L40006:albus:22 -L40007:arcus:22 -N jschoenick@office.mozilla.org -o "BatchMode=yes" -o "ExitOnForwardFailure=true" || true
+    ssh -T -L7001:arcus:8000 -L40006:albus:22 -L40007:arcus:22 -N jschoenick@office.mozilla.org -o "BatchMode=yes" -o "ExitOnForwardFailure=true" || true
   else
     echo "!! Keychain not running"
   fi
