@@ -31,7 +31,9 @@ cmd="cleangtk '$ff' -no-remote -profile '$prof'"
 
 while true; do
     echo >&2 ":: Running command: $cmd"
-    eval $cmd
+    if ! eval $cmd; then
+        echo >&2 "!! Non-zero return code $?"
+    fi
     echo >&2 ":: Exited. Press return to re-launch or ctrl-C to end"
     read
 done
