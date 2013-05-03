@@ -142,8 +142,7 @@ fi
 
 if [ -d "$MOZCFG" ] && [ ! -z "$nuke" ]; then
   dir="$(readlink -f "$MOZCFG")"
-  echo ":: Nuke requested. Press enter to run 'rm -r $dir', or control-C to abort"
-  read
+  echo ":: Nuking build directory"
   rm -r "$dir"
 elif [ ! -z "$clobber" ]; then
       echo ":: Clobbering build"
