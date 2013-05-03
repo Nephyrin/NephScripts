@@ -131,7 +131,7 @@ if [ -z "$nodistcc" ]; then
     export DISTCC_BACKOFF_PERIOD=0
     export DISTCC_FALLBACK=1
     export DISTCC_SKIP_LOCAL_RETRY=1
-    export MAKE_JOBS=$(( $(distcc -j) * 2 ))
+    export MAKE_JOBS=$(distcc -j)
     echo ":: distcc configured with $MAKE_JOBS jobs"
 fi
 
