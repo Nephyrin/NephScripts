@@ -10,6 +10,8 @@ url="$1"
 shift
 
 curl -# "$url" | tar xj
-
 cd firefox
-ffrun . "$@"
+
+echo ":: Downloaded to $PWD"
+
+ffrun ./firefox "$@"
