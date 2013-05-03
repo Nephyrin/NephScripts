@@ -151,7 +151,7 @@
       (flyspell-mode 0)
     (flyspell-mode)
     (flyspell-buffer)))
-(global-set-key (kbd "C-c C-l") 'flyspell-toggle)
+(global-set-key (kbd "C-c M-l") 'flyspell-toggle)
 
 ;; Delete to beginning of line
 (defun merge-next-line (arg)
