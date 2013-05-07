@@ -5,10 +5,12 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# First argument is stream name, rest are fed to vlc
 stream="$1"
 shift
 vlcargs=("$@")
 
+# Grab the 'persistent' (login cookie) from firefox's cookies db
 persistent=$(sqlite3 ~/.mozilla/firefox/*.default/cookies.sqlite 'select value from moz_cookies where name = "persistent" and baseDomain = "twitch.tv"')
 
 if [ -z "$persistent" ]; then
@@ -16,6 +18,8 @@ if [ -z "$persistent" ]; then
     exit 1
 fi
 
+# Use that cookie with twitch's API to establish a session and grab
+# _twitch_sesion_id
 session=$(curl 2>/dev/null www.twitch.tv/meta -i -b persistent=$persistent -I | sed -r 's/Set-Cookie: (_twitch_session_id=[a-f0-9]+).*/\1/;tx;d;:x')
 
 if [ -z "$session" ]; then
@@ -23,6 +27,7 @@ if [ -z "$session" ]; then
     exit 1
 fi
 
+# Use livestreamer with session cookie to list streams
 streams=$(livestreamer twitch.tv/$stream --jtv-cookie=$session | grep 'Found streams:')
 
 if [ -z "$streams" ]; then
@@ -30,12 +35,12 @@ if [ -z "$streams" ]; then
     exit 1
 fi
 
+# Use stream type 'live' if available, else 'best'
 type=best
 [ -z "$(echo "$streams" | grep live)" ] || type=live
 
 echo >&2 ":: Using stream type $type with cookie $session"
 
-cmdline="$(livestreamer -c --jtv-cookie=$session "twitch.tv/$stream" $type)"
 # Livestreamer has a few bugs here. It doesn't pass a sane buffer size to
 # rtmpdump, so you get a stream ~5s behind after a huge wait.  You can't hook
 # rtmpdump with a shell script because it uses a subprocess library replacement
@@ -44,6 +49,7 @@ cmdline="$(livestreamer -c --jtv-cookie=$session "twitch.tv/$stream" $type)"
 # blindly joins the array without quoting :(
 
 # So lets try to salvage that and then pass an actual buffer parameter.
+cmdline="$(livestreamer -c --jtv-cookie=$session "twitch.tv/$stream" $type)"
 fixedcmdline="$(echo "$cmdline" | tail -n1 | sed -r 's/--([a-zA-Z0-9]+)=(([^-]|(-[^-]))+)( |$)/--\1='\''\2'\'' /g')"
 
 echo ":: Running $fixedcmdline"
