@@ -538,7 +538,7 @@ moz() {
     fi
     MOZCFG="$1"
     MOZOBJ="$MOZCFG"
-    [ $# -lt 2 ] || MOZOBJ="$MOZOBJ-$3"
+    [ $# -lt 2 ] || MOZOBJ="$MOZOBJ-$2"
     if [ -f "$MOZPATH/$MOZOBJ/Makefile" ]; then
         # See if it has a tree
         configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZOBJ/Makefile" | awk '{ print $NF }')"
