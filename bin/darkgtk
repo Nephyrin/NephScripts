@@ -1,5 +1,6 @@
 #!/bin/bash
 
-export GTK2_RC_FILES=$HOME/git/nephscripts/dark_clearlooks.gtkrc
+nephscripts="$(readlink -f "$(dirname "$(readlink -f "$0")")"/..)"
+export GTK2_RC_FILES="$nephscripts"/dark_clearlooks.gtkrc
 
 "$@"
