@@ -63,7 +63,7 @@ if [ ! -z "$nodistcc" ] && [ ! -z "$onlydistcc" ]; then
     die "--no-distcc and --only-distcc are mutually exclusive"
 fi
 
-if [ -z "$MOZCFG" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
+if [ -z "$MOZOBJ" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
     [ ! -d "$MOZTREE" ] || [ ! -f "$MOZCONFIG" ]; then
     die "moz environment is not properly configured :("
 fi
@@ -140,15 +140,15 @@ fi
 # Nuke or clobber if requested
 #
 
-if [ -d "$MOZCFG" ] && [ ! -z "$nuke" ]; then
-  dir="$(readlink -f "$MOZCFG")"
+if [ -d "$MOZOBJ" ] && [ ! -z "$nuke" ]; then
+  dir="$(readlink -f "$MOZOBJ")"
   echo ":: Nuking build directory"
   rm -r "$dir"
 elif [ ! -z "$clobber" ]; then
       echo ":: Clobbering build"
       # Force a full clobber build while preserving some intermediary files
       (
-          cd "$MOZCFG"
+          cd "$MOZOBJ"
           rm -rf conf* CLOBBER
           find . -name 'Makefile*' -exec rm -v {} \;
       )
@@ -158,8 +158,8 @@ fi
 # If configured at this point, check that it is against the right tree
 #
 
-if [ -f "$MOZCFG/Makefile" ]; then
-  configured_tree="$(egrep '^topsrcdir' "$MOZCFG/Makefile" | awk '{ print $NF }')"
+if [ -f "$MOZOBJ/Makefile" ]; then
+  configured_tree="$(egrep '^topsrcdir' "$MOZOBJ/Makefile" | awk '{ print $NF }')"
   if [ "$(readlink -f "$configured_tree")" != "$(readlink -f "$MOZTREE")" ]; then
     die "Build directory is configured against the wrong tree, use --clobber or --nuke"
   fi
@@ -172,7 +172,7 @@ fi
 if [ ! -z "$configure" ]; then
     if [ -z "$nomach" ]; then
         echo ":: -f specified, nuking config.status to force reconfigure"
-        rm -vf "$MOZCFG"/config.status
+        rm -vf "$MOZOBJ"/config.status
     else
         echo ":: Not using mach, explicitly reconfiguring tree (-f)"
         (
@@ -197,4 +197,9 @@ fi
   fi
 )
 
-[ -z "$package" ] || ( cd "$MOZCFG" && $MAKE package && $MAKE package-tests && echo ":: Package succeeded" )
+if [ ! -z "$package" ]; then
+    cd "$MOZOBJ"
+    $MAKE package
+    $MAKE package-tests
+    echo ":: Package succeeded"
+fi

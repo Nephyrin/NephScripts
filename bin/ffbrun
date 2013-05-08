@@ -10,7 +10,7 @@ die() {
   exit 1
 }
 
-[ ! -z "$MOZCFG" ] || die "No moz config"
+[ ! -z "$MOZOBJ" ] || die "No moz config"
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
 [ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5"
 
@@ -48,11 +48,11 @@ args=()
 i=0
 eval parseopts $(getopt -n ffbrun -o "$optspec" -- "$@")
 
-if [ ! -d "$MOZPATH/$MOZCFG" ] || [ ! -x "$MOZPATH/$MOZCFG/dist/bin/firefox" ]; then
+if [ ! -d "$MOZPATH/$MOZOBJ" ] || [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
   die "Not built :("
 fi
 
-cd "$MOZPATH/$MOZCFG/dist/bin/"
+cd "$MOZPATH/$MOZOBJ/dist/bin/"
 if [ $freshprofile ]; then
   rm -rf profile
 fi

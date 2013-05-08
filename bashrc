@@ -512,18 +512,24 @@ van()
 
 # Sets the current moz config and target
 moz() {
+    if [ $# -gt 3 ]; then
+        echo >&2 "??"
+        return 1
+    fi
+    if [ "0$MOZGENCFG" -eq 1 ] && [ -f "$MOZCONFIG" ]; then
+        # MOZGENCFG means we're using a generated config file. Nuke it - we'll
+        # remake it if neede.
+        rm "$MOZCONFIG"
+    fi
     if [ $# -eq 0 ]; then
         echo >&2 ':: Clearing moz config'
         unset MOZTREE
         unset MOZCFG
         unset MOZCONFIG
         unset MOZ_PS1
+        unset MOZGENCFG
         _reprompt
         return
-    fi
-    if [ $# -ne 2 ] && [ $# -ne 1 ]; then
-        echo >&2 "??"
-        return 1
     fi
     mozfile="$(readlink -f "$MOZPATH/cfg/m-$1.mzc")"
     if [ ! -f "$mozfile" ]; then
@@ -531,9 +537,11 @@ moz() {
         return 1
     fi
     MOZCFG="$1"
-    if [ -f "$MOZPATH/$MOZCFG/Makefile" ]; then
+    MOZOBJ="$MOZCFG"
+    [ $# -lt 3 ] || MOZOBJ="$3"
+    if [ -f "$MOZPATH/$MOZOBJ/Makefile" ]; then
         # See if it has a tree
-        configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZCFG/Makefile" | awk '{ print $NF }')"
+        configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZOBJ/Makefile" | awk '{ print $NF }')"
         configured_tree="${configured_tree##*/}"
     fi
     if [ ! -z "$2" ]; then
@@ -548,16 +556,24 @@ moz() {
         MOZTREE="moz-git"
     fi
     if [ ! -z "$configured_tree" ] && [ "$configured_tree" != "$MOZTREE" ]; then
-        echo >&2 "!! $MOZCFG is currently configured against tree $configured_tree"
+        echo >&2 "!! $MOZOBJ is currently configured against tree $configured_tree"
     fi
     MOZCONFIG="$mozfile"
+    MOZGENCFG=0
     local extraps1
-    if [ "$MOZTREE" != "moz-git" ]; then
-        extraps1=$'\['"\e[0m"$'\]'" -> "$'\['"\e[0;35m$MOZTREE"
+    if [ "$MOZTREE" != "moz-git" ] || [ "$MOZCFG" != "$MOZOBJ" ]; then
+        extraps1=$'\['"\e[0m"$'\]'" / "$'\['"\e[0;37m$MOZTREE"
+    fi
+    if [ "$MOZCFG" != "$MOZOBJ" ]; then
+        extraps1="$extraps1"$'\['"\e[0m"$'\]'" -> "$'\['"\e[0;31m$MOZOBJ"
+        MOZCONFIG="$(mktemp -t mozcfg.XXXX)"
+        MOZGENCFG=1
+        echo ". $mozfile" >> "$MOZCONFIG"
+        echo "mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../$MOZOBJ" >> "$MOZCONFIG"
     fi
     MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
     _reprompt
-    export MOZCONFIG MOZTREE MOZCFG
+    export MOZCONFIG MOZTREE MOZCFG MOZOBJ MOZGENCFG
 }
 
 # cd to moz objdir

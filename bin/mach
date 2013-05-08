@@ -5,7 +5,7 @@ die() {
     exit 1
 }
 
-[ ! -z "$MOZCFG" ] || die "No moz config"
+[ ! -z "$MOZTREE" ] || die "No moz config"
 [ -f "$MOZPATH/$MOZTREE/mach" ] || die "No mach in this tree"
 
 export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
