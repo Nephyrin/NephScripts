@@ -1,4 +1,12 @@
 #!/bin/bash
 
-#export MOZ_USE_OMTC=1
-cleangtk ~/firefox-nightly/firefox -P default "$@"
+export MOZ_USE_OMTC=1
+
+if [ "$1" = "-g" ]; then
+    shift
+    cd ~/firefox-nightly
+    cleangtk gdb -ex "handle SIGPIPE nostop noprint pass" -ex run \
+        --args ./firefox -P default "$@"
+else
+    cleangtk ~/firefox-nightly/firefox -P default "$@"
+fi
