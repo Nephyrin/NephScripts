@@ -254,15 +254,16 @@
                             ))
 
 ;;
-;; Auto-complete-clang
+;; Auto-complete + Clang async
 ;;
 
 (add-to-list 'load-path (concat "~/.emacs.d/" "auto-complete"))
+(add-to-list 'load-path (concat "~/.emacs.d/" "clang-complete-async"))
 
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories (concat "~/.emacs.d/" "auto-complete/ac-dict"))
 
-(require 'auto-complete-clang)
+(require 'auto-complete-clang-async)
 
 (setq ac-auto-start nil)
 (setq ac-quick-help-delay 0.5)
@@ -278,7 +279,11 @@
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
   (global-auto-complete-mode t))
 (defun my-ac-cc-mode-setup ()
-  (setq ac-sources (append '(ac-source-clang ac-source-yasnippet) ac-sources)))
+  (setq ac-clang-complete-executable "~/.emacs.d/clang-complete-async/clang-complete")
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process)
+  (setq ac-clang-cflags (split-string (shell-command-to-string (concat "~/.emacs.d/moz_objdir.sh " (buffer-file-name)))))
+  (ac-clang-update-cmdlineargs))
 (add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup)
 ;; ac-source-gtags
 (my-ac-config)

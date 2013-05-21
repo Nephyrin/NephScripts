@@ -31,3 +31,9 @@
 [submodule "emacs.d/git-gutter"]
 	path = emacs.d/git-gutter
 	url = https://github.com/syohex/emacs-git-gutter.git
+[submodule "emacs.d/clang-complete-async.git"]
+	path = emacs.d/clang-complete-async.git
+	url = https://github.com/Golevka/emacs-clang-complete-async.git
+[submodule "emacs.d/clang-complete-async"]
+	path = emacs.d/clang-complete-async
+	url = https://github.com/Golevka/emacs-clang-complete-async.git

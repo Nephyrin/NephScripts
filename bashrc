@@ -510,6 +510,28 @@ van()
     yelp "man:$@" &>/dev/null &
 }
 
+_quote() {
+  echo \'${1//\'/\'\\\'\'}\'
+}
+
+_update_mozinfo() {
+  if [ -z "$MOZPATH" ]; then
+      echo >&1 "!! No mozconfig"
+      return 1
+  fi
+  eval mozinfo=($(cat "$MOZPATH"/neph.mozinfo))
+  local i=-2
+  while [ $(( i += 2 )) -lt ${#mozinfo[@]} ]; do
+    obj=${mozinfo[$(( i + 1 ))]}
+    tree=${mozinfo[$i]}
+    if [ "$obj" != "$MOZOBJ" ]; then
+      echo $(_quote "$tree") $(_quote "$obj") >> "$MOZPATH"/neph.mozinfo.new
+    fi
+  done
+  echo $(_quote "$tree") $(_quote "$obj") >> "$MOZPATH"/neph.mozinfo.new
+  mv "$MOZPATH"/neph.mozinfo.new "$MOZPATH"/neph.mozinfo
+}
+
 # Sets the current moz config and target
 moz() {
     if [ $# -gt 3 ]; then
@@ -573,6 +595,7 @@ moz() {
     fi
     MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
     _reprompt
+    _update_mozinfo
     export MOZCONFIG MOZTREE MOZCFG MOZOBJ MOZGENCFG
 }
 
