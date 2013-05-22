@@ -1,13 +1,12 @@
 #!/bin/bash
 
+set -e
+
 if [ "$EUID" -ne 0 ]; then
   echo ":: Escalating"
   sudo "$0" "$@"
   exit $?
 fi
-
-# FIXME make this generic
-swapname="LABEL=JohnbookSwap"
 
 # For switching to windows
 set -e
@@ -37,16 +36,6 @@ while [ $# -gt 0 ]; do
     ;;
   esac
 done
-
-# Is swap disabled? It needs to be enabled just for the duration of hibernate
-#if [ $(swapon -s | wc -l) -lt 2 ]; then
-#  echo ":: Temporarily allowing swap"
-#  enabled_swap=1
-#  sudo swapon $swapname
-#else
-echo ":: Resetting swap space"
-sudo swapoff -a && sudo swapon -a
-#fi
 
 if [ ! -z "$mounts" ]; then
   #
@@ -96,11 +85,6 @@ fi
 sudo pm-hibernate
 
 echo ":: Resumed"
-
-if [ ! -z "$enabled_swap" ]; then
-  echo ":: Re-disabling swap"
-  sudo swapoff $swapname
-fi
 
 if [ ! -z "$mounts" ]; then
 echo ":: Remounting win7"
