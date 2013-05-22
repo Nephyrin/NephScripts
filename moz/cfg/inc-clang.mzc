@@ -1,3 +1,2 @@
-
-export CC='clang -Qunused-arguments -fcolor-diagnostics'
-export CXX='clang++ -Qunused-arguments -fcolor-diagnostics'
+export CC="clang -Qunused-arguments -fcolor-diagnostics -B$topsrcdir/../cfg/goldpath"
+export CXX="clang++ -Qunused-arguments -fcolor-diagnostics -B$topsrcdir/../cfg/goldpath"
