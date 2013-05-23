@@ -34,8 +34,11 @@ parseopts() {
             '--nuke') # Delete objdir first
                 nuke=1
                 ;;
-            '-f') # Explicitly reconfigure tree
+            '-c') # Explicitly reconfigure tree
                 configure=1
+                ;;
+            '-f') # Override clobber check
+                force=1
                 ;;
             '-v')
                 verbose=1
@@ -157,6 +160,9 @@ elif [ ! -z "$clobber" ]; then
           rm -rf conf* CLOBBER
           find . -name 'Makefile*' -exec rm -v {} \;
       )
+elif [ -d "$MOZOBJ" ] && [ ! -z "$force" ]; then
+    echo ":: Overriding clobber"
+    touch "$MOZOBJ"/CLOBBER
 fi
 
 #
