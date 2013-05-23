@@ -10,6 +10,7 @@ die() {
   exit 1
 }
 
+args=()
 parseopts() {
     while [ $# -gt 0 ]; do
         arg="$1"
@@ -46,14 +47,18 @@ parseopts() {
                 cpufreq=1
                 ;;
             '--')
+                args=("${args[@]}" "$@")
+                break
                 ;;
             *)
-                die "Unexpected argument: $arg"
+                [ "${arg#-}" = "$arg" ] || die "Unexpected argument: $arg"
+                args[${#args[@]}]="$arg"
                 ;;
         esac
     done
 }
-eval parseopts "$(getopt -n mb -l no-mach,no-cgroup,no-distcc,clobber,nuke,cpufreq -o fvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,clobber,nuke,cpufreq -o cfvp -- "$@")"
+eval parseopts $parsed
 
 #
 # Defaults & Sanity
@@ -189,9 +194,10 @@ fi
   cd "$MOZTREE"
   if [ -z "$nomach" ]; then
       echo ":: Building with mach"
-      $MACH build
+      $MACH build "${args[@]}"
   else
       echo >&2 "!! Not using mach"
+      [ $# -eq 0 ] || die "Building directories not supported w/o mach"
       sleep 2
       $MAKE -f client.mk && echo ":: Make succeeded"
   fi
