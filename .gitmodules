@@ -37,3 +37,6 @@
 [submodule "emacs.d/clang-complete-async"]
 	path = emacs.d/clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
+[submodule "emacs.d/magit"]
+	path = emacs.d/magit
+	url = https://github.com/magit/magit

@@ -254,6 +254,20 @@
                             ))
 
 ;;
+;; Magit
+;;
+
+(add-to-list 'load-path (concat "~/.emacs.d/" "magit"))
+(require 'magit)
+; Part of magit, for git interactive rebase buffers
+(require 'rebase-mode)
+
+; Remove the C-i -> tab binding for terminals that can differentiate
+; See http://stackoverflow.com/questions/1792326/how-do-i-bind-a-command-to-c-i-without-changing-tab
+(setq local-function-key-map (delq '(kp-tab . [9]) local-function-key-map))
+(global-set-key (kbd "C-i") 'magit-status)
+
+;;
 ;; Auto-complete + Clang async
 ;;
 
