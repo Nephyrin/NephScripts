@@ -15,7 +15,7 @@ killall qsynergy synergys tun_bangles || true
 if [ "$state" = "on" ]; then
   # Connected
   xrandr --output DisplayPort-1 --mode 1920x1200 --pos 0x0
-  xrandr --output LVDS-1 --pos 240x1200 --primary
+  xrandr --output LVDS-1 --pos 0x1200 --primary
   gconftool-2 --type boolean -s /apps/instances/avant-window-navigator/panel-1/panel/monitor_force true
   gconftool-2 --type int -s /apps/instances/avant-window-navigator/panel-1/panel/monitor_height 2250
   ( qsynergy &>/dev/null & )
