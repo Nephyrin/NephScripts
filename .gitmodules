@@ -40,3 +40,6 @@
 [submodule "emacs.d/magit"]
 	path = emacs.d/magit
 	url = https://github.com/magit/magit
+[submodule "emacs.d/fringe-helper"]
+	path = emacs.d/fringe-helper
+	url = https://github.com/nschum/fringe-helper.el.git
