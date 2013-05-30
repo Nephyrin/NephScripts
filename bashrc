@@ -384,6 +384,10 @@ _mcg()
   done
 
   mkdir "$NEPH_DEFAULT_CGROUP"/"$name"
+
+  cat "$NEPH_DEFAULT_CGROUP"/cpuset.cpus > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.cpus
+  cat "$NEPH_DEFAULT_CGROUP"/cpuset.mems > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.mems
+
   echo $name
 }
 
@@ -392,8 +396,6 @@ cg()
     local name=$(_mcg "shell$$")
     local i
 
-    cat "$NEPH_DEFAULT_CGROUP"/cpuset.cpus > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.cpus
-    cat "$NEPH_DEFAULT_CGROUP"/cpuset.mems > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.mems
     echo $$ > "$NEPH_DEFAULT_CGROUP"/"$name"/cgroup.procs
     export NEPH_CGROUP=$name
     NEPH_CGROUP_PS1=$'\[\e'"[0;37m\]$NEPH_CGROUP "
