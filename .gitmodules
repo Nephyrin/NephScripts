@@ -43,3 +43,6 @@
 [submodule "emacs.d/fringe-helper"]
 	path = emacs.d/fringe-helper
 	url = https://github.com/nschum/fringe-helper.el.git
+[submodule "emacs.d/sunburst-theme"]
+	path = emacs.d/sunburst-theme
+	url = https://github.com/wfarr/sunburst-theme.el

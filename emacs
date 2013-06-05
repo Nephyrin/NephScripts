@@ -217,11 +217,9 @@
 ;; Theme
 ;;
 
-(require 'color-theme)
-(load-library "color-theme-sunburst")
-(color-theme-tm)
+(load-theme 'sunburst t)
 ; set a line highlight for this theme
-(set-face-background 'hl-line "#282828")
+(set-face-background 'hl-line "#303030")
 ; And a better font
 (set-default-font "Monospace-10")
 
