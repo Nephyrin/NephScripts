@@ -104,6 +104,7 @@
   (set-fill-column 80)
   (setq fci-rule-column 80)
   (fic-mode t)
+  (setq c-basic-offset 2)
   (git-gutter-mode t))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
 (add-hook 'js-mode-hook 'enable-neph-coding)
