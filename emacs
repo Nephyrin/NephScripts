@@ -218,6 +218,16 @@
 (global-hl-line-mode t)
 
 ;;
+;; Package
+;;
+
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" .
+               "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+;;
 ;; Theme
 ;;
 
