@@ -106,12 +106,15 @@
   (fic-mode t)
   (setq c-basic-offset 2)
   (git-gutter-mode t))
+(defun neph-ediff-mode ()
+  (git-gutter-mode -1))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
 (add-hook 'js-mode-hook 'enable-neph-coding)
 (add-hook 'c-mode-common-hook 'enable-neph-coding)
 (add-hook 'python-mode-hook 'enable-neph-coding)
 (add-hook 'java-mode-hook 'enable-neph-coding)
 (add-hook 'lisp-mode-hook 'enable-neph-coding)
+(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
 
 ;;
 ;; IswitchBuffers
