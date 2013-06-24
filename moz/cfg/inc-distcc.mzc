@@ -3,13 +3,13 @@
 MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS -j$MAKE_JOBS"
 
 # Note that ccache needs to be disabled if you wish to use distcc-pump mode
-ac_add_options --with-ccache=/usr/bin/ccache
+# ac_add_options --with-ccache=/usr/bin/ccache
 
 if [ ! -z "$DISTCC_HOSTS" ]; then
    # Non-ccache
-   # MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS CC='distcc $CC' CXX='distcc $CXX'"
+   MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS CC='distcc $CC' CXX='distcc $CXX'"
    # ccache
-   MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS CCACHE_PREFIX=distcc"
+   # MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS CCACHE_PREFIX=distcc"
 fi
 
 mk_add_options MOZ_MAKE_FLAGS="$MOZ_MAKE_FLAGS"
