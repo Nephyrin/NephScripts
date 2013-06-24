@@ -10,6 +10,11 @@ die() {
   exit 1
 }
 
+cmd() {
+  echo >&2 '+ '"$@"
+  "$@"
+}
+
 args=()
 parseopts() {
     while [ $# -gt 0 ]; do
@@ -24,6 +29,9 @@ parseopts() {
                 ;;
             '--no-distcc') # Don't use distcc
                 nodistcc=1
+                ;;
+            '--no-buildtree') # Build against current tree, without build-tree
+                nobuildtree=1 # magic
                 ;;
             '--only-distcc') # Don't use local cpus
                 onlydistcc=1
@@ -60,7 +68,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,clobber,nuke,cpufreq -o cfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq -o cfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -81,6 +89,14 @@ if [ ! -f "$MOZTREE/mach" ] && [ -z "$nomach" ]; then
 fi
 
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
+
+#
+# Handle --no-buildtree
+#
+
+if [ ! -z "$nobuildtree" ]; then
+  MOZBUILDTREE="$MOZTREE"
+fi
 
 #
 # Make environment
@@ -171,9 +187,39 @@ fi
 
 if [ -f "$MOZOBJ/Makefile" ]; then
   configured_tree="$(egrep '^topsrcdir' "$MOZOBJ/Makefile" | awk '{ print $NF }')"
-  if [ "$(readlink -f "$configured_tree")" != "$(readlink -f "$MOZTREE")" ]; then
+  configured_tree="$(readlink -f "$configured_tree")"
+  expected_tree="$(readlink -f "$MOZBUILDTREE")"
+  if [ "$configured_tree" != "$expected_tree" ]; then
     die "Build directory is configured against the wrong tree, use --clobber or --nuke"
   fi
+fi
+
+#
+# Setup build tree if needed
+#
+
+if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
+  branch="build/$MOZTREE"
+  [ -z "$MOZSUFFIX" ] || branch="$branch-$MOZSUFFIX"
+  (
+    echo ":: Saving working tree state"
+    cd "$MOZTREE"
+    echo "$(date)" > .nephbuildtree
+    cmd git stash save -u --keep-index
+    cmd git branch -f "$branch" stash@{0}
+    cmd git stash pop --index
+    rm .nephbuildtree
+  )
+  if [ ! -d "$MOZBUILDTREE" ]; then
+    echo ":: Creating $MOZBUILDTREE"
+    /usr/share/git/workdir/git-new-workdir "$MOZTREE" "$MOZBUILDTREE" "$branch"
+  fi
+  (
+    echo ":: Checking out build tree"
+    cd "$MOZBUILDTREE"
+    cmd git checkout --detach -f "$branch"
+    [ -z "$nuke" ] || cmd git clean -xfd
+  )
 fi
 
 #
@@ -183,12 +229,12 @@ fi
 if [ ! -z "$configure" ]; then
     if [ -z "$nomach" ]; then
         echo ":: -f specified, nuking config.status to force reconfigure"
-        rm -vf "$MOZOBJ"/config.status
+        cmd rm -vf "$MOZOBJ"/config.status
     else
         echo ":: Not using mach, explicitly reconfiguring tree (-f)"
         (
-            cd "$MOZTREE"
-            $MAKE -f client.mk configure
+            cd "$MOZBUILDTREE"
+            cmd $MAKE -f client.mk configure
         )
     fi
 fi
@@ -197,21 +243,21 @@ fi
 # Do the build
 #
 (
-  cd "$MOZTREE"
+  cd "$MOZBUILDTREE"
   if [ -z "$nomach" ]; then
       echo ":: Building with mach"
-      $MACH build "${args[@]}"
+      cmd $MACH build "${args[@]}"
   else
       echo >&2 "!! Not using mach"
-      [ $# -eq 0 ] || die "Building directories not supported w/o mach"
-      sleep 2
-      $MAKE -f client.mk && echo ":: Make succeeded"
+      [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
+      cmd sleep 2
+      cmd $MAKE -f client.mk && echo ":: Make succeeded"
   fi
 )
 
 if [ ! -z "$package" ]; then
     cd "$MOZOBJ"
-    $MAKE package
-    $MAKE package-tests
+    cmd $MAKE package
+    cmd $MAKE package-tests
     echo ":: Package succeeded"
 fi

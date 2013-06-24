@@ -558,6 +558,9 @@ moz() {
         unset MOZCONFIG
         unset MOZ_PS1
         unset MOZGENCFG
+        unset MOZBUILDTREE
+        unset MOZSUFFIX
+        unset MOZOBJ
         _reprompt
         return
     fi
@@ -566,13 +569,16 @@ moz() {
         echo >&2 "!! No config named $1"
         return 1
     fi
+    MOZSUFFIX=""
+    [ $# -lt 2 ] || MOZSUFFIX="$2"
     MOZCFG="$1"
     MOZOBJ="$MOZCFG"
-    [ $# -lt 2 ] || MOZOBJ="$MOZOBJ-$2"
+    [ -z "$MOZSUFFIX" ] || MOZOBJ="$MOZOBJ-$MOZSUFFIX"
     if [ -f "$MOZPATH/$MOZOBJ/Makefile" ]; then
         # See if it has a tree
         configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZOBJ/Makefile" | awk '{ print $NF }')"
         configured_tree="${configured_tree##*/}"
+        configured_tree="${configured_tree%-build*}"
     fi
     if [ $# -ge 3 ]; then
         MOZTREE="$3"
@@ -581,6 +587,8 @@ moz() {
     else
         MOZTREE="moz-git"
     fi
+    MOZBUILDTREE="$MOZTREE-build"
+    [ -z "$MOZSUFFIX" ] || MOZBUILDTREE="$MOZBUILDTREE-$MOZSUFFIX"
     if [ ! -f "$MOZPATH/$MOZTREE/client.mk" ]; then
         echo >&2 "!! $MOZTREE does not appear to exist"
         MOZTREE="moz-git"
@@ -591,11 +599,10 @@ moz() {
     MOZCONFIG="$mozfile"
     MOZGENCFG=0
     local extraps1
-    if [ "$MOZTREE" != "moz-git" ] || [ "$MOZCFG" != "$MOZOBJ" ]; then
-        extraps1=$'\['"\e[0m"$'\]'" / "$'\['"\e[0;37m$MOZTREE"
+    if [ ! -z "$MOZSUFFIX" ]; then
+        extraps1=$'\['"\e[0m"$'\]'" / "$'\['"\e[0;31m$MOZSUFFIX"
     fi
     if [ "$MOZCFG" != "$MOZOBJ" ]; then
-        extraps1="$extraps1"$'\['"\e[0m"$'\]'" -> "$'\['"\e[0;31m$MOZOBJ"
         MOZCONFIG="$(mktemp -t mozcfg.XXXX)"
         MOZGENCFG=1
         echo ". $mozfile" >> "$MOZCONFIG"
@@ -604,7 +611,7 @@ moz() {
     MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
     _reprompt
     _update_mozinfo
-    export MOZCONFIG MOZTREE MOZCFG MOZOBJ MOZGENCFG
+    export MOZCONFIG MOZTREE MOZCFG MOZOBJ MOZGENCFG MOZSUFFIX MOZBUILDTREE
 }
 
 # cd to moz objdir
