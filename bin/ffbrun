@@ -62,6 +62,8 @@ if [ ! -d "profile" ]; then
   mkdir -vp profile/plugins
 fi
 
-cp -v ../plugins/*.so profile/plugins
+if [ -e ../plugins/*.so ]; then
+    cp -v ../plugins/*.so profile/plugins
+fi
 
 eval cleangtk ./run-mozilla.sh "$exargs" "./firefox" -no-remote -profile ./profile "${args[@]}"
