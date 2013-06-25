@@ -6,7 +6,7 @@ cd "$MOZPATH"
 source ~/.bashrc
 
 die() {
-  echo >&2 '!!'" $1"
+  echo >&2 '!!'" $*"
   exit 1
 }
 
@@ -32,6 +32,9 @@ parseopts() {
                 ;;
             '--no-buildtree') # Build against current tree, without build-tree
                 nobuildtree=1 # magic
+                ;;
+            '-b') # Only sync buildtree, don't build anything
+                onlysyncbuild=1
                 ;;
             '--only-distcc') # Don't use local cpus
                 onlydistcc=1
@@ -68,7 +71,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq -o cfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq -o bcfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -204,26 +207,41 @@ fi
 if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   branch="build/$MOZTREE"
   [ -z "$MOZSUFFIX" ] || branch="$branch-$MOZSUFFIX"
-  (
-    echo ":: Saving working tree state"
-    cd "$MOZTREE"
-    echo "$(date)" > .nephbuildtree
-    cmd git stash save -u --keep-index
-    cmd git branch -f "$branch" stash@{0}
-    cmd git stash pop --index
-    rm .nephbuildtree
-  )
+  ref="$(cd "$MOZTREE" && git rev-parse HEAD)"
+  # Make sure build branch exists
   if [ ! -d "$MOZBUILDTREE" ]; then
-    echo ":: Creating $MOZBUILDTREE"
+    echo ":: Creating new $MOZBUILDTREE"
+    ( cd "$MOZTREE" && cmd git branch -f "$branch" HEAD )
     /usr/share/git/workdir/git-new-workdir "$MOZTREE" "$MOZBUILDTREE" "$branch"
   fi
   (
+    cd "$MOZTREE"
+    untracked=()
+    while IFS="" read -r file; do
+      untracked[${#untracked[@]}]="$file";
+    done < <(git ls-files -o --exclude-standard)
+    for file in "${untracked[@]}"; do
+      cmd git add "$file" >/dev/null
+    done
+    cmd git diff "$branch"
+    for file in "${untracked[@]}"; do
+      cmd git reset HEAD -- "$file" >/dev/null
+    done
+  ) | (
     echo ":: Checking out build tree"
     cd "$MOZBUILDTREE"
-    cmd git checkout --detach -f "$branch"
-    [ -z "$nuke" ] || cmd git clean -xfd
+    if [ "$(git rev-parse --abbrev-ref HEAD)" != "$branch" ] || \
+       [ ! -z "$(git status -s)" ]; then
+      die git build tree "$MOZBUILDTREE" is dirty. Why is it dirty?
+    fi
+    patch -Np1
+    cmd git reset "$ref"
+    cmd git add .
+    cmd git commit --allow-empty -m "NEPH - Build Commit @ $(date)"
   )
 fi
+
+[ -z "$onlysyncbuild" ] || exit 0
 
 #
 # Explicit configure if requested
