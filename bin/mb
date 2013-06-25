@@ -150,7 +150,7 @@ if [ -z "$nodistcc" ]; then
                               # gandalf.mv.mozilla.com/16" Needs clang update
 
     if [ -z "$onlydistcc" ]; then
-        DISTCC_HOSTS="$DISTCC_HOSTS localhost/16,lzo,cpp
+        DISTCC_HOSTS="$DISTCC_HOSTS localhost/8,lzo,cpp
                                     --localslots=8 --localslots_cpp=16"
     else
         # We have to do some processing locally, limit it heavily
