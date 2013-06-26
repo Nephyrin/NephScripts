@@ -10,9 +10,10 @@ export CXXFLAGS="-fsanitize=address -Dxmalloc=myxmalloc -fPIC"
 export LDFLAGS="-fsanitize=address"
 
 # Avoid using ASan flags when building host tools like nsinstall
-export HOST_CFLAGS=" "
-export HOST_CXXFLAGS=" "
-export HOST_LDFLAGS=" "
+# (No longer necessary?)
+# export HOST_CFLAGS=" "
+# export HOST_CXXFLAGS=" "
+# export HOST_LDFLAGS=" "
 
 # Use at least -O1 for optimization to avoid stack space exhaustions caused by
 # Clang function inlining, esp. on lin32
