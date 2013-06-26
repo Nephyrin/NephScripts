@@ -645,18 +645,13 @@ avant() { pkill avant-window; x avant-window-navigator; }
 
 connectx()
 {
-  pid=$(pgrep -o -u $USER gnome-session)
-  [ -z "$pid" ] && pid=$(pgrep -o -u $USER xfce4-session)
-  [ -z "$pid" ] && pid=$(pgrep -o -u $USER kded4)
-  if [ ! -z "$pid" ]; then
-    echo "Stealing env from $pid"
-    export $(cat /proc/$pid/environ | grep -z XAUTHORITY)
-    export $(cat /proc/$pid/environ | grep -z DISPLAY)
-  else
-      export XAUTHORITY=$HOME/.Xauthority
-  fi
-  [ -z "$DISPLAY" ] && export DISPLAY=:0
-  [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
+  eval $(
+    set -e
+    . ~/bin/lib/util.sh
+    get_x_session
+    sh_var DISPLAY
+    sh_var XAUTHORITY
+  )
 }
 
 tf2()

@@ -57,3 +57,28 @@ try_keychain() {
   fi
   return 0
 }
+# Tries to find the running session for this user and steals its
+# DISPLAY/XAUTHORITY env
+get_x_session()
+{
+  pid=$(pgrep -o -u $USER gnome-session || true)
+  [ -z "$pid" ] && pid=$(pgrep -o -u $USER xfce4-session || true)
+  [ -z "$pid" ] && pid=$(pgrep -o -u $USER kded4 || true)
+  if [ ! -z "$pid" ]; then
+    echo >&2 ":: Stealing env from $pid"
+    export $(cat /proc/$pid/environ | grep -z XAUTHORITY)
+    export $(cat /proc/$pid/environ | grep -z DISPLAY)
+  else
+      export XAUTHORITY=$HOME/.Xauthority
+  fi
+  [ ! -z "$DISPLAY" ] || export DISPLAY=:0
+  [ ! -z "$XAUTHORITY" ] || export XAUTHORITY=$HOME/.Xauthority
+}
+
+# Prints eval-able expression to set given variable, e.g.:
+# sh_var DISPLAY -> "DISPLAY=':0'"
+sh_var()
+{
+  eval local ret="\$$1"
+  echo $1=\'${ret//\'/\'\\\'\'}\';
+}
