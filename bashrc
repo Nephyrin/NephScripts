@@ -667,12 +667,12 @@ tf2()
             host="$1.game.doublezen.net";
         fi
     fi
-    if [ ! -z "$(pidof hl2.exe)" ]; then
+    if [ ! -z "$(pidof hl2_linux)" ]; then
         echo ":: TF2 already running"
     else
         [ ! -z "$password" ] && cmdpassword="+password ${password}"
         [ ! -z "$host" ] && cmd="+connect ${host} $cmdpassword"
-        c="~/Launch/Steam -applaunch 440 $cmd"
+        c="steam -applaunch 440 $cmd"
         echo "Running command $c"
         eval "$c"
     fi
