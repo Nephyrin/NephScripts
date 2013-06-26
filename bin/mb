@@ -55,6 +55,10 @@ parseopts() {
             '-f') # Override clobber check
                 force=1
                 ;;
+            '-j') # Make jobs
+                makejobs="$1"
+                shift
+                ;;
             '-v')
                 verbose=1
                 ;;
@@ -75,7 +79,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq,branch: -o bcfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq,branch: -o j:bcfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -169,6 +173,7 @@ if [ -z "$nodistcc" ]; then
     echo ":: distcc configured with $MAKE_JOBS jobs"
 fi
 
+[ -z "$makejobs" ] || export MAKE_JOBS="$makejobs"
 
 #
 # Nuke or clobber if requested
