@@ -45,6 +45,10 @@ parseopts() {
             '--nuke') # Delete objdir first
                 nuke=1
                 ;;
+            '--branch')
+                explicitbranch="$1"
+                shift
+                ;;
             '-c') # Explicitly reconfigure tree
                 configure=1
                 ;;
@@ -71,7 +75,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq -o bcfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq,branch: -o bcfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -216,17 +220,21 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   fi
   (
     cd "$MOZTREE"
-    untracked=()
-    while IFS="" read -r file; do
-      untracked[${#untracked[@]}]="$file";
-    done < <(git ls-files -o --exclude-standard)
-    for file in "${untracked[@]}"; do
-      cmd git add "$file" >/dev/null
-    done
-    cmd git diff "$branch"
-    for file in "${untracked[@]}"; do
-      cmd git reset HEAD -- "$file" >/dev/null
-    done
+    if [ -z "$explicitbranch" ]; then
+      untracked=()
+      while IFS="" read -r file; do
+        untracked[${#untracked[@]}]="$file";
+      done < <(git ls-files -o --exclude-standard)
+      for file in "${untracked[@]}"; do
+        cmd git add "$file" >/dev/null
+      done
+      cmd git diff "$branch"
+      for file in "${untracked[@]}"; do
+        cmd git reset HEAD -- "$file" >/dev/null
+      done
+    else
+      cmd git diff "$branch" "$explicitbranch"
+    fi
   ) | (
     echo ":: Checking out build tree"
     cd "$MOZBUILDTREE"
@@ -235,9 +243,13 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
       die git build tree "$MOZBUILDTREE" is dirty. Why is it dirty?
     fi
     patch -Np1
-    cmd git reset "$ref"
-    cmd git add .
-    cmd git commit --allow-empty -m "NEPH - Build Commit @ $(date)"
+    if [ -z "$explicitbranch" ]; then
+      cmd git reset "$ref"
+      cmd git add .
+      cmd git commit --allow-empty -m "NEPH - Build Commit @ $(date)"
+    else
+      cmd git reset "$explicitbranch"
+    fi
   )
 fi
 
