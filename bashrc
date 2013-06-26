@@ -52,7 +52,7 @@ if [[ $- == *i* ]] ; then
     # Keychain
     keyfile=~/".keychain/$(hostname)-sh"
     if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
-      keychain ~/.ssh/id_rsa
+      keychain --nogui ~/.ssh/id_rsa
       . "$keyfile"
     fi
     unset keyfile
