@@ -3,17 +3,8 @@
 set -e
 cd "$MOZPATH"
 
+source "$(dirname "$0")"/lib/util.sh
 source ~/.bashrc
-
-die() {
-  echo >&2 '!!'" $*"
-  exit 1
-}
-
-cmd() {
-  echo >&2 '+ '"$@"
-  "$@"
-}
 
 args=()
 parseopts() {
@@ -126,14 +117,14 @@ MAKE="py2e make -j10"
 
 trap=""
 if [ ! -z "$cpufreq" ]; then
-    echo ":: Boosting cpufreq"
+    estat "Boosting cpufreq"
     trap="cpufreq-selector -c all -g ondemand"
     cpufreq-selector -c all -g performance
 fi
 
 if [ -z "$nocgroup" ]; then
     if [ ! -f /sys/fs/cgroup/cpu/tasks ]; then
-        echo >&2 "!! No cgroup"
+        ewarn "No cgroup"
         sleep 2
     else
         lpcg
@@ -169,7 +160,7 @@ if [ -z "$nodistcc" ]; then
     export DISTCC_BACKOFF_PERIOD=0
     export DISTCC_FALLBACK=1
     export MAKE_JOBS=$(( $(distcc -j) * 2 ))
-    echo ":: distcc configured with $MAKE_JOBS jobs"
+    estat "distcc configured with $MAKE_JOBS jobs"
 fi
 
 [ -z "$makejobs" ] || export MAKE_JOBS="$makejobs"
@@ -180,10 +171,10 @@ fi
 
 if [ -d "$MOZOBJ" ] && [ ! -z "$nuke" ]; then
   dir="$(readlink -f "$MOZOBJ")"
-  echo ":: Nuking build directory"
+  estat "Nuking build directory"
   rm -r "$dir"
 elif [ ! -z "$clobber" ]; then
-      echo ":: Clobbering build"
+      estat "Clobbering build"
       # Force a full clobber build while preserving some intermediary files
       (
           cd "$MOZOBJ"
@@ -191,7 +182,7 @@ elif [ ! -z "$clobber" ]; then
           find . -name 'Makefile*' -exec rm -v {} \;
       )
 elif [ -d "$MOZOBJ" ] && [ ! -z "$force" ]; then
-    echo ":: Overriding clobber"
+    estat "Overriding clobber"
     touch "$MOZOBJ"/CLOBBER
 fi
 
@@ -218,7 +209,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   ref="$(cd "$MOZTREE" && git rev-parse HEAD)"
   # Make sure build branch exists
   if [ ! -d "$MOZBUILDTREE" ]; then
-    echo ":: Creating new $MOZBUILDTREE"
+    estat "Creating new $MOZBUILDTREE"
     _co=HEAD
     [ -z "$explicitbranch" ] || _co="$explicitbranch"
     ( cd "$MOZTREE" && cmd git branch -f "$branch" "$_co" )
@@ -242,7 +233,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
       cmd git diff "$branch" "$explicitbranch" --binary
     fi
   ) | (
-    echo ":: Checking out build tree"
+    estat "Checking out build tree"
     cd "$MOZBUILDTREE"
     if [ "$(git rev-parse --abbrev-ref HEAD)" != "$branch" ] || \
        [ ! -z "$(git status -s)" ]; then
@@ -267,10 +258,10 @@ fi
 
 if [ ! -z "$configure" ]; then
     if [ -z "$nomach" ]; then
-        echo ":: -f specified, nuking config.status to force reconfigure"
+        estat "-f specified, nuking config.status to force reconfigure"
         cmd rm -vf "$MOZOBJ"/config.status
     else
-        echo ":: Not using mach, explicitly reconfiguring tree (-f)"
+        estat "Not using mach, explicitly reconfiguring tree (-f)"
         (
             cd "$MOZBUILDTREE"
             cmd $MAKE -f client.mk configure
@@ -284,13 +275,13 @@ fi
 (
   cd "$MOZBUILDTREE"
   if [ -z "$nomach" ]; then
-      echo ":: Building with mach"
+      estat "Building with mach"
       cmd $MACH build "${args[@]}"
   else
-      echo >&2 "!! Not using mach"
+      ewarn "Not using mach"
       [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
       cmd sleep 2
-      cmd $MAKE -f client.mk && echo ":: Make succeeded"
+      cmd $MAKE -f client.mk && estat "Make succeeded"
   fi
 )
 
@@ -298,5 +289,5 @@ if [ ! -z "$package" ]; then
     cd "$MOZOBJ"
     cmd $MAKE package
     cmd $MAKE package-tests
-    echo ":: Package succeeded"
+    estat "Package succeeded"
 fi
