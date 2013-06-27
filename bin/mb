@@ -235,12 +235,12 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
       for file in "${untracked[@]}"; do
         cmd git add "$file" >/dev/null
       done
-      cmd git diff "$branch"
+      cmd git diff "$branch" --binary
       for file in "${untracked[@]}"; do
         cmd git reset HEAD -- "$file" >/dev/null
       done
     else
-      cmd git diff "$branch" "$explicitbranch"
+      cmd git diff "$branch" "$explicitbranch" --binary
     fi
   ) | (
     echo ":: Checking out build tree"
@@ -249,7 +249,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
        [ ! -z "$(git status -s)" ]; then
       die git build tree "$MOZBUILDTREE" is dirty. Why is it dirty?
     fi
-    patch -Np1
+    cmd git apply --whitespace=nowarn -
     if [ -z "$explicitbranch" ]; then
       cmd git reset "$ref"
       cmd git add .
