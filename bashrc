@@ -2,7 +2,30 @@
 
 NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
 
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+_path_contains() {
+  local s
+  IFS=":" s=($PATH)
+  for x in "${s[@]}"; do
+    [ "$1" != "$x" ] || return 0
+  done
+  return 1
+}
+
+_path_push() {
+  ! _path_contains "$1" || return
+  [ ! -z "$PATH" ] || PATH=":$PATH"
+  PATH="$1$PATH"
+}
+
+_if_path_push() {
+  [ -d "$1" ] || return
+  _path_push "$1"
+}
+
+_path_push "$HOME/bin"
+_path_push "$HOME/.local/bin"
+_if_path_push "$HOME/neph/priv/bin"
+
 export BROWSER="firefox '%s'"
 export EDITOR="ec"
 [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
@@ -15,7 +38,7 @@ export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
 export PERL_MB_OPT="--install_base $HOME/perl5";
 export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
 export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-thread-multi:$HOME/perl5/lib/perl5";
-export PATH="$HOME/perl5/bin:$PATH";
+_path_push "$HOME/perl5/bin"
 
 export MOZPATH="$HOME/moz"
 
