@@ -154,12 +154,11 @@ if [ -z "$nodistcc" ]; then
     # FIXME Figure out how we want this to work...
     # FIXME DISTCC_POTENTIAL_HOSTS if we're using pump
     DISTCC_HOSTS="--randomize bangles.mv.mozilla.com/16,lzo,cpp
-                              nephyrin@sys.nephyrin.net/16,lzo,cpp"
-                              # gandalf.mv.mozilla.com/16" Needs clang update
+                              nephyrin@sys.nephyrin.net/16,lzo,cpp
+                              gandalf.mv.mozilla.com/16,lzo,cpp"
 
     if [ -z "$onlydistcc" ]; then
-        DISTCC_HOSTS="$DISTCC_HOSTS localhost/8,lzo,cpp
-                                    --localslots=8 --localslots_cpp=16"
+        DISTCC_HOSTS="$DISTCC_HOSTS localhost/8,lzo,cpp"
     else
         # We have to do some processing locally, limit it heavily
         # (this is used when on battery and such)
