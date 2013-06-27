@@ -69,9 +69,27 @@ sh_c()
   echo -n -e "\e[$b${c}m"
 }
 
+prettyquote()
+{
+  local args=()
+  for arg in "$@"; do
+    if [ "$arg" != "$(printf '%q' "$arg")" ]; then
+      arg="'${arg//'/'\\''}'"
+    fi
+    args[${#args[@]}]="$arg"
+  done
+  echo "${args[@]}"
+}
+
 estat() { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
 ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
 eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
+
+cmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(prettyquote "$@")"; "$@"; }
+qcmd() { cmd "$@" >/dev/null; }
+xcmd() { cmd "$@" &>/dev/null; }
+
+die() { eerr "$*"; exit 1; }
 
 # Tries to find the running session for this user and steals its
 # DISPLAY/XAUTHORITY env
