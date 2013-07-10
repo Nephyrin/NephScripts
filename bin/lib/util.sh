@@ -116,3 +116,105 @@ sh_var()
   eval local ret="\$$1"
   echo $1=\'${ret//\'/\'\\\'\'}\';
 }
+
+parse_args()
+{
+  if [ "$#" -lt 3 ]; then
+    eerr "Internal error: incorrect usage of parse_args"
+    return
+  fi
+  [ "$#" -gt 3 ] || return
+
+  local app_name="$1"
+  local short_opts="$2"
+  local long_opts="$3"
+
+  shift; shift; shift
+
+  _parse_args_options=()
+  _parse_args_values=()
+  local args=()
+  local parsed
+
+  if ! parsed="$(getopt -n "$app_name" -o "$short_opts" -l "$long_opts" -- "$@")"; then
+    return 1
+  fi
+  eval parsed=("$parsed")
+  local i=0
+  while [ $i -lt ${#parsed[@]} ]; do
+    local arg="${parsed[$i]}"
+    local opt
+    local val
+    (( ++i ))
+    if [ ${#arg} -lt 2 ] || [ "${arg:0:1}" != "-" ]; then
+      eerr "Internal error: Unexpected arg \"$arg\" while parsing getopt output"
+      continue
+    fi
+    if [ "$arg" = "--" ]; then # end of options
+      args=("${parsed[@]:$i}")
+      break
+    elif [ "${arg:1:1}" = "-" ]; then # long opt
+      local opt_name="${arg:2}"
+      local IFS=","
+      for x in ${long_opts}; do
+        if [ "${x:$(( ${#x} - 1 ))}" = ":" ] &&
+           [ "${x:0:$(( ${#x} - 1 ))}" = "$opt_name" ]; then
+          # arg long opt
+          opt="$opt_name"
+          val="${parsed[$i]}"
+          (( ++i ))
+          opt_name=""
+          continue
+        elif [ "$x" = "$opt_name" ]; then
+          # boolean long opt
+          opt="$opt_name"
+          val=1
+          opt_name=""
+          continue
+        fi
+      done
+      if [ ! -z "$opt_name" ]; then
+        eerr "Internal error: Failed to find opt \"$opt_name\""
+      fi
+    elif [ ${#arg} -eq 2 ]; then # short opt
+      local shorts="$short_opts"
+      while [ ! -z "$shorts" ] && [ "${shorts:0:1}" != "${arg:1:1}" ]; do
+        shorts="${shorts:1}"
+      done
+      if [ -z "$shorts" ]; then
+        eerr "Internal error: Unfound short option $arg"
+      else
+        if [ "${shorts:1:1}" = ":" ]; then
+          # arg short opt
+          opt="${arg:1:1}"
+          val="${parsed[$i]}"
+          (( ++i ))
+        else
+          # bool short opt
+          opt="${arg:1:1}"
+          val=1
+        fi
+      fi
+    fi
+    _parse_args_options[${#_parse_args_options[@]}]="$opt"
+    _parse_args_values[${#_parse_args_values[@]}]="$val"
+  done
+  for x in "${args[@]}"; do
+    echo -n \'${x//\'/\'\\\'\'}\'' '
+  done
+}
+
+get_option()
+{
+  local opt_name="$1"
+  local default="$2"
+  local i=0
+  while [ $i -lt ${#_parse_args_options[@]} ]; do
+    if [ "${_parse_args_options[$i]}" = "$opt_name" ]; then
+      echo "${_parse_args_values[$i]}"
+      return
+    fi
+    (( ++i ))
+  done
+  echo "$default"
+}
