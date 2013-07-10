@@ -62,7 +62,7 @@ if [ ! -d "profile" ]; then
   mkdir -vp profile/plugins
 fi
 
-if [ -e ../plugins/*.so ]; then
+if [ -d ../plugins ]; then
     cp -v ../plugins/*.so profile/plugins
 fi
 
