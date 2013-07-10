@@ -4,7 +4,8 @@ NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
 
 _path_contains() {
   local s
-  IFS=":" s=($PATH)
+  local IFS=":"
+  s=($PATH)
   for x in "${s[@]}"; do
     [ "$1" != "$x" ] || return 0
   done
@@ -12,8 +13,8 @@ _path_contains() {
 }
 
 _path_push() {
-  ! _path_contains "$1" || return
-  [ ! -z "$PATH" ] || PATH=":$PATH"
+  ! _path_contains "$1" || return 0
+  [ -z "$PATH" ] || PATH=":$PATH"
   PATH="$1$PATH"
 }
 
