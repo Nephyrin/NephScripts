@@ -3,10 +3,19 @@
 set -e
 # Sync an hg repo to its git mirror
 
-repo="$(basename "$1")"
+. "$(dirname "$0")"/lib/util.sh
+
+eval args=("$(parse_args ghsync u "" "$@")")
+
+if [ ${#args[@]} -gt 1 ]; then
+  die "Unexpected argument"
+fi
+
+update="$(get_option u)"
+repo="$(basename "${args[0]}")"
 repo="${repo#mozilla-}"
 
-echo ":: Updating $repo"
+estat "Updating $repo"
 cd "$MOZPATH"
 if [ ! -d "mozilla-$repo/.hg" ]; then
   echo >&2 "mozilla-$repo" does not appear to be a hg repository
@@ -33,14 +42,18 @@ if [ "$newrev" != "$oldrev" ]; then
 fi
 
 if [ -z "$newgit" ]; then
-    echo ":: Git is not up to date, exporting"
-    hg gexport -v
-    cd "$MOZPATH/hg-git-map"
-    git commit -a -m "Locally imported revisions" || true
+    if [ "$update" -eq 1 ]; then
+        estat "Git is not up to date, exporting"
+        hg gexport -v
+        cd "$MOZPATH/hg-git-map"
+        git commit -a -m "Locally imported revisions" || true
+    else
+        ewarn "git is behind mercurial - specify -u to convert missing revisions locally"
+    fi
 elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$repo" ]; then
     echo >&2 '!!'" $repo is currently checked out in the master git repo, not updating ref"
 else
-    echo ":: Updating $repo ref ($branch) to $newgit"
+    estat "Updating $repo ref ($branch) to $newgit"
     target="$MOZPATH/moz-git/.git/refs/heads/$branch"
     mkdir -pv "$(dirname "$target")"
     echo "$newgit" > "$target"
