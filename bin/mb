@@ -70,7 +70,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,clobber,nuke,cpufreq,branch: -o j:bcfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: -o j:bcfvp -- "$@")"
 eval parseopts $parsed
 
 #
