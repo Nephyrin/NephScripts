@@ -46,3 +46,9 @@
 [submodule "emacs.d/sunburst-theme"]
 	path = emacs.d/sunburst-theme
 	url = https://github.com/wfarr/sunburst-theme.el
+[submodule "bin/git-imerge"]
+	path = bin/git-imerge
+	url = https://github.com/mhagger/git-imerge.git
+[submodule "bin/git-imerge.git"]
+	path = bin/git-imerge.git
+	url = https://github.com/mhagger/git-imerge.git
