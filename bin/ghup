@@ -14,8 +14,7 @@ update="$(get_option u)"
 branch="${args[0]}"
 
 if [ ! -z "$branch" ] && [ ! -d "../mozilla-$branch" ]; then
-  echo >&2 "!! Branch $branch not found..."
-  exit 1
+  die "Branch $branch not found"
 fi
 
 estat "Updating git"
