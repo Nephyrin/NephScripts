@@ -179,7 +179,23 @@
 
 (global-set-key (kbd "C-S-y") 'yank-and-indent)
 
-;; Behave like vi's o command
+(defun move-line-up ()
+  "Move the current line up."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+(global-set-key [(control shift up)] 'move-line-up)
+
+(defun move-line-down ()
+  "Move the current line down."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+(global-set-key [(control shift down)] 'move-line-down)
+
 (defun open-next-line (arg)
   "Move to the next line and then opens a line.
     See also `newline-and-indent'."
