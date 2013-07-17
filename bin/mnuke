@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+. "$(dirname "$0")"/lib/util.sh
+
+[ $# -eq 0 ] || die "This doesn't accept arguments"
+
+[ ! -z "$MOZOBJ" ] || die "No moz config"
+
+ifnuke() {
+  if [ -d "$1" ]; then
+    estat "Nuking $1"
+    cmd rm -rf "$1"
+  else
+    estat "$1 Doesn't exist, skipping"
+  fi
+}
+
+cd "$MOZPATH"
+ifnuke "$MOZOBJ"
+if [ ! -z "$MOZBUILDTREE" ] && [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
+  ifnuke "$MOZBUILDTREE"
+  if [ -d "$MOZTREE/.git" ]; then
+    estat "Removing branch build/$MOZTREE"
+    cmd cd "$MOZTREE"
+    cmd git branch -D "build/$MOZTREE"
+  fi
+fi
