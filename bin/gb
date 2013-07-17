@@ -1,11 +1,12 @@
 #!/bin/bash
 set -e
-if [ "$#" -lt 2 ]; then
-    echo >&2 '!! Usage: '$0' <branch> <command>'
-    exit 1
-fi
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+[ "$#" -ge 2 ] || die "Usage: $0 <branch> <command>"
+[ "$(basename "$0")" != "gbb" ] || gbb=1
 branch="$1"
 shift
-git checkout "$branch"
-git "$@"
-[ "$0" != "gbb" ] || git checkout @{-1}
+cmd git checkout "$branch"
+if ! cmd git "$@" && [ $gbb ]; then
+    die "git command failed, you are now on branch '$branch'"
+fi
+[ ! $gbb ] || git checkout @{-1}
