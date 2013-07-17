@@ -84,6 +84,7 @@ prettyquote()
 estat() { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
 ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
 eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
+eerrint() { eerr "$@"; return 1; }
 
 cmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(prettyquote "$@")"; "$@"; }
 qcmd() { cmd "$@" >/dev/null; }
@@ -121,9 +122,8 @@ parse_args()
 {
   if [ "$#" -lt 3 ]; then
     eerr "Internal error: incorrect usage of parse_args"
-    return
   fi
-  [ "$#" -gt 3 ] || return
+  [ "$#" -gt 3 ] || return 0
 
   local app_name="$1"
   local short_opts="$2"
@@ -133,7 +133,7 @@ parse_args()
 
   _parse_args_options=()
   _parse_args_values=()
-  local args=()
+  _parse_args_args=()
   local parsed
 
   if ! parsed="$(getopt -n "$app_name" -o "$short_opts" -l "$long_opts" -- "$@")"; then
@@ -151,7 +151,7 @@ parse_args()
       continue
     fi
     if [ "$arg" = "--" ]; then # end of options
-      args=("${parsed[@]:$i}")
+      _parse_args_args=("${parsed[@]:$i}")
       break
     elif [ "${arg:1:1}" = "-" ]; then # long opt
       local opt_name="${arg:2}"
@@ -199,9 +199,6 @@ parse_args()
     _parse_args_options[${#_parse_args_options[@]}]="$opt"
     _parse_args_values[${#_parse_args_values[@]}]="$val"
   done
-  for x in "${args[@]}"; do
-    echo -n \'${x//\'/\'\\\'\'}\'' '
-  done
 }
 
 get_option()
@@ -217,4 +214,15 @@ get_option()
     (( ++i ))
   done
   echo "$default"
+}
+
+get_arg()
+{
+  local i=$(($1))
+  echo "${_parse_args_args[$(($1))]}"
+}
+
+num_args()
+{
+  echo "${#_parse_args_args[@]}"
 }

@@ -7,11 +7,13 @@ cd "$MOZPATH/moz-git"
 
 . "$(dirname "$0")"/lib/util.sh
 
-eval args=("$(parse_args ghsync u "" "$@")")
-[ ${#args[@]} -le 1 ] || die "Unexpected argument"
+parse_args ghup u "" "$@"
+
+[ $(num_args) -le 1 ] || die "Unexpected argument"
+
 update="$(get_option u)"
 [ -z "$update" ] || update="-u"
-branch="${args[0]}"
+branch="$(get_arg 0)"
 
 if [ ! -z "$branch" ] && [ ! -d "../mozilla-$branch" ]; then
   die "Branch $branch not found"

@@ -5,14 +5,12 @@ set -e
 
 . "$(dirname "$0")"/lib/util.sh
 
-eval args=("$(parse_args ghsync u "" "$@")")
+parse_args ghsync u "" "$@"
 
-if [ ${#args[@]} -gt 1 ]; then
-  die "Unexpected argument"
-fi
+[[ $(num_args) -eq 1 ]] || die "Usage: $0 <branch>"
 
 update="$(get_option u)"
-repo="$(basename "${args[0]}")"
+repo="$(basename "$(get_arg 0)")"
 repo="${repo#mozilla-}"
 
 estat "Updating $repo"
