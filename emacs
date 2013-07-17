@@ -87,13 +87,18 @@
 (add-to-list 'load-path "~/.emacs.d/fic-mode.git")
 (require 'fic-mode)
 
-(add-to-list 'load-path "~/.emacs.d/helm")
-(require 'helm-config)
-
 (add-to-list 'load-path "~/.emacs.d/git-gutter-fringe")
 (add-to-list 'load-path "~/.emacs.d/git-gutter")
 (require 'fringe-helper)
 (require 'git-gutter-fringe)
+
+;;
+;; Helm
+;;
+(add-to-list 'load-path "~/.emacs.d/helm")
+(require 'helm-config)
+; Way too broken
+; (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 ;;
 ;; Neph mode. Aka enable defaults in programming modes
