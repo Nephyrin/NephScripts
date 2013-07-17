@@ -162,20 +162,15 @@
     (flyspell-buffer)))
 (global-set-key (kbd "C-c M-l") 'flyspell-toggle)
 
-;; Delete to beginning of line
+;; merge-next-line
 (defun merge-next-line (arg)
   "Merge line with next"
   (interactive "p")
   (next-line 1)
   (delete-indentation))
 (global-set-key (kbd "C-M-k") 'merge-next-line)
-(global-set-key (kbd "C-M-a") 'back-to-indentation)
 
-(global-set-key (kbd "C-S-k") 'kill-whole-line)
-; Make ret auto-indent, but S-RET bypass
-(define-key global-map (kbd "RET") 'newline-and-indent)
-(global-set-key (kbd "<C-return>") 'newline)
-
+;; yank-and-indent
 (defun yank-and-indent ()
   "Yank and then indent the newly formed region according to mode."
   (interactive)
@@ -193,10 +188,7 @@
   (open-line arg)
   (next-line 1)
   (indent-according-to-mode))
-
 (global-set-key (kbd "C-S-o") 'open-next-line)
-(global-set-key (kbd "C-c C-j") 'term-line-mode)
-(global-set-key (kbd "C-c C-k") 'term-char-mode)
 
 ; F3 inserts current filename into minibuffer
 (define-key minibuffer-local-map [f3]
@@ -209,6 +201,17 @@
   (set-visited-file-name
    (concat "/sudo:root@localhost:/" (buffer-file-name)))
   (toggle-read-only 0))
+
+;; Custom binds for existing commands
+(global-set-key (kbd "C-c C-j") 'term-line-mode)
+(global-set-key (kbd "C-c C-k") 'term-char-mode)
+(global-set-key (kbd "C-M-a") 'back-to-indentation)
+(global-set-key (kbd "C-S-k") 'kill-whole-line)
+; Make ret auto-indent, but S-RET bypass
+(define-key global-map (kbd "RET") 'newline-and-indent)
+(global-set-key (kbd "<C-return>") 'newline)
+;; Merge with previous line
+(global-set-key (kbd "C-M-S-k") 'delete-indentation)
 
 ;;
 ;; Line-highlight
