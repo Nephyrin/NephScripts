@@ -1,37 +1,16 @@
-# Based on http://hg.mozilla.org/build/buildbot-configs/file/tip/mozilla2/linux64/mozilla-central/debug/mozconfig
-# For maximal mimicry of tinderbox's debug builds
-
-ac_add_options --enable-application=browser
-ac_add_options --enable-jemalloc
-#ac_add_options --enable-tests
-# ac_add_options --enable-codesighs
-# Impossibly slow on windows
-# ac_add_options --enable-trace-malloc
-
-# This seems to just include CC=/hardcoded/buildbot/path/gcc-4.5
-# . $topsrcdir/build/unix/mozconfig.linux
-
-# Mozilla-Central nightlies only since this has a cost in performance
-# ac_add_options --enable-js-diagnostics
-# ac_add_options --enable-warnings-as-errors
+# Based on http://hg.mozilla.org/build/buildbot-configs/file/f6dc0dfbd478/mozilla2/win32/mozilla-central/nightly/mozconfig
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../win-ff-opt
-
-# For NSS symbols
-export MOZ_DEBUG_SYMBOLS=1
-#ac_add_options --enable-debug-symbols="-gdwarf-2"
-
-# Needed to enable breakpad in application.ini
-export MOZILLA_OFFICIAL=1
-
-# export MOZ_TELEMETRY_REPORTING=1
-
-# PGO
-# mk_add_options MOZ_PGO=1
-# mk_add_options PROFILE_GEN_SCRIPT='$(PYTHON) @MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
 
 # Enable parallel compiling
 mk_add_options MOZ_MAKE_FLAGS="-j10"
 
-#Use ccache
-#ac_add_options --with-ccache=/usr/bin/ccache
+ac_add_options --enable-application=browser
+ac_add_options --enable-jemalloc
+ac_add_options --enable-tests
+
+# Mozilla-Central nightlies only since this has a cost in performance
+# ac_add_options --enable-js-diagnostics
+
+# For NSS symbols
+export MOZ_DEBUG_SYMBOLS=1
