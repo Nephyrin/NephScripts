@@ -19,7 +19,7 @@ _path_push() {
 }
 
 _if_path_push() {
-  [ -d "$1" ] || return
+  [ -d "$1" ] || return 0
   _path_push "$1"
 }
 
