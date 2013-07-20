@@ -40,7 +40,7 @@ if [ "$newrev" != "$oldrev" ]; then
 fi
 
 if [ -z "$newgit" ]; then
-    if [ "$update" -eq 1 ]; then
+    if [[ $update -eq 1 ]]; then
         estat "Git is not up to date, exporting"
         hg gexport -v
         cd "$MOZPATH/hg-git-map"
