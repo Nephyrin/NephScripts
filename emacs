@@ -99,8 +99,14 @@
 ;;
 (add-to-list 'load-path "~/.emacs.d/helm")
 (require 'helm-config)
+(require 'helm-files)
 ; Way too broken
 ; (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(defun helm-find-moz ()
+  "Find files in moz dir"
+  (interactive)
+  (helm-find-1 "~/moz/moz-git"))
+(global-set-key (kbd "C-x M-f") 'helm-find-moz)
 
 ;;
 ;; Neph mode. Aka enable defaults in programming modes
