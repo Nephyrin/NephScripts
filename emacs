@@ -38,6 +38,8 @@
 (setq vc-follow-symlinks t)
 
 (require 'ido)
+(require 'uniquify)
+(setq uniquify-buffer-name-style "post-forward")
 
 ; (global-ede-mode t)
 
