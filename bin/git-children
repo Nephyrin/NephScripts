@@ -1,8 +1,16 @@
 #!/bin/bash
 
+set -e
+
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+
+if ! parse_args git-children '' '' "$@"; then
+  die "Usage: git-children <commit> [<on branch>] [-- git-log args]"
+fi
+
 rev=$(git rev-parse "$1")
 if [ ! -z "$to" ]; then
-    to=$(git rev-parse "$2")
+    to="$(git rev-parse "$2")"
 else
     to="--all"
 fi
@@ -13,4 +21,6 @@ if [ -z "$rev" ]; then
    exit 1
 fi
 
-git log --no-walk $(git rev-list ^$rev^ $to --children | grep ^$rev | cut -d ' ' -f 2)
+git log --no-walk \
+  $(git rev-list $to --not $rev^ --children | grep ^$rev | cut -d ' ' -f 2) \
+  $(get_args)
