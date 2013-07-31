@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+
+if [ ! -z "$(pgrep -o -u $USER kded4)" ]; then
+  locker=(/usr/lib/kde4/libexec/kscreenlocker --daemon --forcelock --showunlock)
+  [ -x "$locker" ] || locker=(${locker}_greet) # No args for newer _greet version
+  [ -x "$locker" ] || die "You appear to be running kde4, but couldn't find kscreenlocker :("
+else
+  die Unknown session type
+fi
+
+[ ! -z "$DISPLAY" ] || die "No display"
+
+"${locker[@]}"
