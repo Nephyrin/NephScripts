@@ -240,7 +240,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
       die git build tree "$MOZBUILDTREE" is dirty. Why is it dirty?
     fi
     if read -r firstline; then
-      cat <(echo "$firstline") - | cmd git apply --whitespace=nowarn -
+      ( echo "$firstline" && cat - ) | cmd git apply --whitespace=nowarn -
     fi
     if [ -z "$explicitbranch" ]; then
       cmd git reset "$ref"
