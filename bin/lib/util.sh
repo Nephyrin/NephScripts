@@ -226,3 +226,8 @@ num_args()
 {
   echo "${#_parse_args_args[@]}"
 }
+
+get_args()
+{
+  prettyquote "${_parse_args_args[@]}"
+}
