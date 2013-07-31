@@ -39,7 +39,7 @@
 
 (require 'ido)
 (require 'uniquify)
-(setq uniquify-buffer-name-style "post-forward")
+(setq uniquify-buffer-name-style (quote post-forward))
 
 ; (global-ede-mode t)
 
