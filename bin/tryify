@@ -1,3 +1,6 @@
 #!/bin/bash
 
-git commit --allow-empty -m "try: -b do -p all -u all -t none"
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+
+[ -z "$(git diff --cached)" ] || die "There are staged changes"
+cmd git commit -e --allow-empty -m "try: -b do -p linux64,macosx64,win32 -u mochitests -t none"
