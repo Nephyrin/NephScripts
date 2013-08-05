@@ -1,0 +1,20 @@
+. $topsrcdir/../cfg/inc-ff-opt.mzc
+
+# Try to do a GCC-LTO build
+
+# In-tree FFI breaks under LTO
+# export MOZ_NATIVE_FFI=1
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-gcc-lto
+
+# Doesn't compile under LTO
+ac_add_options --disable-crashreporter
+ac_add_options --enable-optimize=-O3
+
+# Actually enable LTO
+# export LDFLAGS="$LDFLAGS"
+export CFLAGS="$CFLAGS -flto"
+export CXXFLAGS="$CXXFLAGS -flto"
+
+. $topsrcdir/../cfg/inc-gcc.mzc
+. $topsrcdir/../cfg/inc-distcc.mzc
