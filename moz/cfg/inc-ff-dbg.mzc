@@ -21,8 +21,8 @@ ac_add_options --enable-profiling
 # . $topsrcdir/build/unix/mozconfig.linux
 
 # -Werror=unused-variable catches issues.
-export CFLAGS="$CFLAGS -ggdb"
-export CXXFLAGS="$CFLAGS -ggdb"
+# export CFLAGS="$CFLAGS"
+# export CXXFLAGS="$CXXFLAGS"
 
 # For NSS symbols
 export MOZ_DEBUG_SYMBOLS=1
@@ -31,5 +31,3 @@ ac_add_options --enable-debug-symbols="-ggdb"
 # Needed to enable breakpad in application.ini
 # export MOZILLA_OFFICIAL=1
 # export MOZ_TELEMETRY_REPORTING=1
-
-

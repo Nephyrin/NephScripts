@@ -4,16 +4,16 @@ ac_add_options --disable-debug
 ac_add_options --enable-tests
 #ac_add_options --enable-codesighs
 
-. $topsrcdir/build/unix/mozconfig.linux
+# . $topsrcdir/build/unix/mozconfig.linux
 
 # Neph
-ac_add_options --enable-gstreamer
+# ac_add_options --enable-gstreamer
 # Breaks gstreamer + clang-3.2
-ac_add_options --disable-warnings-as-errors
+# ac_add_options --disable-warnings-as-errors
 
 # ac_add_options --disable-elf-hack # Bug 771569
-export MOZ_FLEXBOX=1
-export MOZ_PER_WINDOW_PRIVATE_BROWSING=1
+# export MOZ_FLEXBOX=1
+# export MOZ_PER_WINDOW_PRIVATE_BROWSING=1
 ac_add_options --enable-profiling
 
 # Broken on new clang
@@ -30,11 +30,11 @@ ac_add_options --disable-install-strip
 # Mozilla-Central nightlies only since this has a cost in performance
 # ac_add_options --enable-js-diagnostics
 
-CC=gcc
-CXX=g++
+export CC=gcc
+export CXX=g++
 
-export CFLAGS="$CFLAGS -ggdb"
-export CXXFLAGS="$CXXFLAGS -ggdb"
+# export CFLAGS="$CFLAGS -ggdb"
+# export CXXFLAGS="$CXXFLAGS -ggdb"
 
 # For NSS symbols
 export MOZ_DEBUG_SYMBOLS=1
