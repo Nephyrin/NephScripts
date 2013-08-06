@@ -4,8 +4,7 @@ set -e
 
 . "$(dirname "$(readlink -f "$0")")"/lib/util.sh
 
-parse_args git-out '' '' "$@"
-[ $(num_args) -eq 0 ] || die "Takes no arguments"
+parse_args git-out '' '' -- "$@"
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 remote="$(git config "branch.$branch.remote" || true)"
@@ -15,4 +14,5 @@ upstream="$(git config "branch.$branch.merge" || true)"
 [ ! -z "$upstream" ] || die "This branch has no upstream"
 
 [[ "$remote" = "." || -z "$remote" ]] || cmd git fetch "$remote"
-cmd git log "$upstream"..
+eval args=("$(get_args)")
+git log "$upstream".. "${args[@]}"
