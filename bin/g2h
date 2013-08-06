@@ -1,21 +1,25 @@
 #!/bin/bash
 
-g=$1
-r="$(basename "$PWD")"
+set -e
+
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+parse_args g2h '' '' "$@"
+g="$(get_arg 1)"
+([ ! -z "$g" ] && [[ $(num_args) -eq 1 ]]) || die "Expect a single argument"
+
+if [[ ! "$g" =~ ^[a-Z0-9]{7,40}$ ]]; then
+  if [ -z "$MOZTREE" ]; then
+    die "This doesn't look like a hash, and we have no moz config to parse it"
+  fi
+  cd "$MOZPATH/$MOZTREE"
+  go="$(git rev-parse "$g")"
+  [ ! -z "$go" ] || die "Couldn't parse '$g' into any git has in $MOZTREE"
+  g="$go"
+fi
 
 map="$MOZPATH/hg-git-map/hg-git-mapfile"
-g=$(git rev-parse "$g")
+h="$(grep -E -m 1 ^$g "$map" | cut -d ' ' -f 2)"
 
-if [ -z "$g" ]; then
-    echo >&2 "!! Could not find git commit"
-    exit 1
-fi
-
-h=$(cat "$map" | grep -m 1 $g | cut -d ' ' -f 2)
-
-if [ -z "$h" ]; then
-    echo >&2 "!! Not found"
-    exit 1
-fi
+[ ! -z "$h" ] || die "git hash $g not found in map"
 
 echo $h

@@ -1,25 +1,25 @@
 #!/bin/bash
 
-h=$1
+set -e
+
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+parse_args h2g '' '' "$@"
+h="$(get_arg 1)"
+([ ! -z "$h" ] && [[ $(num_args) -eq 1 ]]) || die "Expect a single argument"
 
 if [ -d .hg ]; then
-   h=$(hg log -r "$h" --template {node})
+   ho=$(hg log -r "$h" --template {node})
+   [ ! -z "$h" ] || die "Could not map \"$h\" to an hg hash"
+   h="$ho"
+elif [[ ! "$h" =~ ^[a-Z0-9]{12,40}$ ]]; then
+  eerr "This doesn't look like a Hg hash, and the current directory is not an"
+  die  "Hg repository to attempt to resolve it to one"
 fi
 
 map="$MOZPATH/hg-git-map/hg-git-mapfile"
 
-r="$(basename "$PWD")"
+g=$(grep -E -m 1 " $h[a-z0-9]*$" "$map" | cut -d ' ' -f 1)
 
-if [ -z "$h" ]; then
-    echo >&2 "!! Could not find hg commit"
-    exit 1
-fi
-
-g=$(cat "$map" | grep -m 1 $h | cut -d ' ' -f 1)
-
-if [ -z "$g" ]; then
-    echo >&2 "!! No matching git commit"
-    exit 1
-fi
+[ ! -z "$g" ] || die No matching git commit
 
 echo $g
