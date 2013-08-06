@@ -118,6 +118,7 @@
   (setq fci-rule-column 80)
   (fic-mode t)
   (setq c-basic-offset 2)
+  (setq sh-basic-offset 2)
   (git-gutter-mode t))
 (defun neph-ediff-mode ()
   (git-gutter-mode -1))
