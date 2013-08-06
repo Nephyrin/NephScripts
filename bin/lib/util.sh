@@ -218,8 +218,9 @@ get_option()
 
 get_arg()
 {
-  local i=$(($1))
-  echo "${_parse_args_args[$(($1))]}"
+  # Args are 1-indexed, though we don't keep $0 around
+  local i=$(($1 - 1))
+  echo "${_parse_args_args[$i]}"
 }
 
 num_args()
