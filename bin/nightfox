@@ -2,6 +2,12 @@
 
 export MOZ_USE_OMTC=1
 
+export MOZ_PROFILER_NEW=1
+export MOZ_PROFILER_VERBOSE=1
+export MOZ_PROFILER_INTERVAL=10
+export MOZ_PROFILER_MODE=native
+export MOZ_PROFILER_STACK_SCAN=0
+
 if [ "$1" = "-g" ]; then
     shift
     cd ~/firefox-nightly
