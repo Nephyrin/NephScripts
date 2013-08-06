@@ -26,9 +26,9 @@ if [ ! -e .hg/git ] || [ ! -e .hg/git-mapfile ] || [ ! -e .hg/git-branch ]; then
     exit 1
 fi
 
-oldrev="$(hg log -r tip --template={rev})"
+oldrev="$(hg log -r tip --template={node})"
 hg pull
-newrev="$(hg log -r tip --template={rev})"
+newrev="$(hg log -r tip --template={node})"
 newgit="$(h2g $newrev 2>/dev/null || true)"
 
 branch="$(cat .hg/git-branch)"
