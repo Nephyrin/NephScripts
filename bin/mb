@@ -197,6 +197,11 @@ fi
 # Setup build tree if needed
 #
 
+gitdiff() {
+  PAGER="" cmd git diff --stat >&2 "$@"
+  cmd git diff --binary "$@"
+}
+
 if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   branch="build/$MOZTREE"
   [ -z "$MOZSUFFIX" ] || branch="$branch-$MOZSUFFIX"
@@ -219,19 +224,22 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
       for file in "${untracked[@]}"; do
         cmd git add "$file" >/dev/null
       done
-      cmd git diff "$branch" --binary
+      gitdiff "$branch"
       for file in "${untracked[@]}"; do
         cmd git reset HEAD -- "$file" >/dev/null
       done
     else
-      cmd git diff "$branch" "$explicitbranch" --binary
+      gitdiff "$branch" "$explicitbranch"
     fi
   ) | (
     estat "Checking out build tree"
     cd "$MOZBUILDTREE"
     if [ "$(git rev-parse --abbrev-ref HEAD)" != "$branch" ] || \
        [ ! -z "$(git status -s)" ]; then
-      die git build tree "$MOZBUILDTREE" is dirty. Why is it dirty?
+      ewarn git build tree "$MOZBUILDTREE" is dirty. Why is it dirty? Resetting
+      echo "ref: refs/heads/$branch" > .git/HEAD
+      cmd git reset --hard
+      cmd git clean -fd
     fi
     if read -r firstline; then
       ( echo "$firstline" && cat - ) | cmd git apply --whitespace=nowarn -
@@ -269,7 +277,7 @@ fi
 # Do the build
 #
 (
-  cd "$MOZBUILDTREE"
+  cmd cd "$MOZBUILDTREE"
   if [ -z "$nomach" ]; then
       estat "Building with mach"
       cmd $MACH build "${args[@]}"
@@ -282,7 +290,7 @@ fi
 )
 
 if [ ! -z "$package" ]; then
-    cd "$MOZOBJ"
+    cmd cd "$MOZOBJ"
     cmd $MAKE package
     cmd $MAKE package-tests
     estat "Package succeeded"
