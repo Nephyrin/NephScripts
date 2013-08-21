@@ -320,10 +320,9 @@
 
 (require 'auto-complete-clang-async)
 
-(setq ac-auto-start nil)
+(setq ac-auto-start t)
 (setq ac-quick-help-delay 0.5)
 ;; (ac-set-trigger-key "TAB")
-;; (define-key ac-mode-map  [(control tab)] 'auto-complete)
 (define-key ac-mode-map  [(control tab)] 'auto-complete)
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers))
