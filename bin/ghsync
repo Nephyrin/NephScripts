@@ -10,7 +10,7 @@ parse_args ghsync u "" "$@"
 [[ $(num_args) -eq 1 ]] || die "Usage: $0 <branch>"
 
 update="$(get_option u)"
-repo="$(basename "$(get_arg 0)")"
+repo="$(basename "$(get_arg 1)")"
 repo="${repo#mozilla-}"
 
 estat "Updating $repo"
