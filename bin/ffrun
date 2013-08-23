@@ -6,7 +6,7 @@ set -e
 
 . "$(dirname "$(readlink -f "$0")")"/lib/util.sh
 
-parse_args ffrun '' '' "$@"
+parse_args ffrun '' 'accel,omtc' "$@"
 
 eval args=("$(get_args)")
 
@@ -25,10 +25,33 @@ if [ -z "$ff" ] || [ "$ff" = "-" ]; then
   fi
 fi
 
+#
+# Prefs
+#
+
+prefs=()
+if [[ $(get_option omtc) ]]; then
+  estat "Enabling OMTC"
+  export MOZ_USE_OMTC=1
+  prefs[${#prefs[@]}]='user_pref("layers.offmainthreadcomposition.enabled", true);'
+  prefs[${#prefs[@]}]='user_pref("layers.offmainthreadcomposition.animate-opacity", true);'
+  prefs[${#prefs[@]}]='user_pref("layers.offmainthreadcomposition.animate-transform", true);'
+  prefs[${#prefs[@]}]='user_pref("layers.offmainthreadcomposition.async-animations", true);'
+fi
+
+if [[ $(get_option accel) ]]; then
+  estat "Enabling hardware acceleration"
+  prefs[${#prefs[@]}]='user_pref("layers.acceleration.force-enabled", true);'
+  prefs[${#prefs[@]}]='user_pref("layers.async-video.enabled", true);'
+fi
+
 prof="$(mktemp -d -t ffrun_profile.XXXXXXX)"
+trap "cmd rm -r '$prof'" EXIT
 estat "Temp profile is $prof"
 
-trap "cmd rm -r '$prof'" EXIT
+for pref in "${prefs[@]}"; do
+  echo "$pref" >> "$prof"/user.js
+done
 
 while true; do
   cmd cleangtk "$ff" -no-remote -profile "$prof" "${args[@]}" || ret=$?
