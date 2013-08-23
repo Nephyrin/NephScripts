@@ -4,36 +4,37 @@
 
 set -e
 
-if [ $# -gt 0 ]; then
-  ff="$1"
-  shift
+. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+
+parse_args ffrun '' '' "$@"
+
+eval args=("$(get_args)")
+
+if [[ ${#args[@]} -gt 0 ]]; then
+  ff="${args[0]}"
+  args=("${args[@]:1}")
   if [ ! "$ff" = "-" ] && [ ! -x "$ff" ]; then
-    echo >&2 "\"$ff\" is not an executable target :("
-    exit 1
+    die "\"$ff\" is not an executable target :("
   fi
 fi
 
 if [ -z "$ff" ] || [ "$ff" = "-" ]; then
   ff="$(which firefox)"
   if [ -z "$ff" ]; then
-    echo >&2 "!! No firefox given and 'which firefox' returns naught :("
-    exit 1
+    die "No firefox given and 'which firefox' returns naught :("
   fi
 fi
 
 prof="$(mktemp -d -t ffrun_profile.XXXXXXX)"
-echo >&2 ":: Temp profile is $prof"
+estat "Temp profile is $prof"
 
-trap "rm -r '$prof'" EXIT
-
-cmd="cleangtk '$ff' -no-remote -profile '$prof'"
-[ $# -eq 0 ] || cmd="$cmd '$@'"
+trap "cmd rm -r '$prof'" EXIT
 
 while true; do
-    echo >&2 ":: Running command: $cmd"
-    if ! eval $cmd; then
-        echo >&2 "!! Non-zero return code $?"
-    fi
-    echo >&2 ":: Exited. Press return to re-launch or ctrl-C to end"
-    read
+  cmd cleangtk "$ff" -no-remote -profile "$prof" "${args[@]}" || ret=$?
+  if [[ $ret -ne 0 ]]; then
+    ewarn "Non-zero return code $ret"
+  fi
+  estat "Exited. Press return to re-launch or ctrl-C to end"
+  read
 done
