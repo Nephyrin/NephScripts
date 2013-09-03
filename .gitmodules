@@ -49,3 +49,9 @@
 [submodule "bin/git-imerge.git"]
 	path = bin/git-imerge.git
 	url = https://github.com/mhagger/git-imerge.git
+[submodule "emacs.d/ace-jump-mode"]
+	path = emacs.d/ace-jump-mode
+	url = https://github.com/winterTTr/ace-jump-mode
+[submodule "emacs.d/purple-haze-theme"]
+	path = emacs.d/purple-haze-theme
+	url = https://github.com/jasonm23/emacs-purple-haze-theme.git

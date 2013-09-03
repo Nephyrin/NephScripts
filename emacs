@@ -3,6 +3,9 @@
 ;; Misc
 ;;
 
+; Clear suspend-frame binding to use C-z as a prefix
+(global-unset-key (kbd "C-z"))
+
 ; Fix x clipboard
 (setq x-select-enable-primary nil)
 (setq x-select-enable-clipboard t)
@@ -162,6 +165,14 @@
 ;; Custom binds
 ;;
 
+; Fast window nav
+(global-set-key (kbd "C-z C-b") (lambda ()
+                                  (interactive)
+                                  (other-window -1)))
+(global-set-key (kbd "C-z C-f") (lambda ()
+                                  (interactive)
+                                  (other-window 1)))
+
 (defun flyspell-toggle (arg)
   "Toggle flyspell mode, and check the entire buffer when enabling"
   (interactive "p")
@@ -251,6 +262,28 @@
 (global-hl-line-mode t)
 
 ;;
+;; ace-jump-mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/ace-jump-mode")
+(autoload
+  'ace-jump-mode
+  "ace-jump-mode"
+  "Emacs quick move minor mode"
+  t)
+
+(autoload
+  'ace-jump-mode-pop-mark
+  "ace-jump-mode"
+  "Ace jump back:-)"
+  t)
+(eval-after-load "ace-jump-mode"
+  '(ace-jump-mode-enable-mark-sync))
+
+(define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
+(define-key global-map (kbd "C-z C-x") 'ace-jump-mode)
+
+;;
 ;; Package
 ;;
 
@@ -264,7 +297,11 @@
 ;; Theme
 ;;
 
-(load-theme 'sunburst t)
+
+;(add-to-list 'load-path "~/.emacs.d/purple-haze-theme")
+;(require 'purple-haze-theme)
+(load-theme 'purple-haze t)
+;(load-theme 'sunburst t)
 ; set a line highlight for this theme
 (set-face-background 'hl-line "#303030")
 ; And a better font
@@ -306,7 +343,7 @@
 (require 'magit)
 ; Part of magit, for git interactive rebase buffers
 (require 'rebase-mode)
-(global-set-key (kbd "C-S-g") 'magit-status)
+(global-set-key (kbd "C-z g") 'magit-status)
 
 ;;
 ;; Auto-complete + Clang async
