@@ -234,28 +234,6 @@ _reprompt() {
 }
 _reprompt
 
-# Pass a file to running emacs, or spawn a new session unrelated to the shell
-xe()
-{
-  # Number of frames visible
-  local frames="$(emacsclient --eval '(list-length (visible-frame-list))' 2>/dev/null)"
-  if [ -z "$frames" ]; then
-    echo >&2 ":: Emacs isn't running, spawning now"
-    emacs --daemon
-  fi
-  echo ":: Currently $frames frames"
-  if [ "0$frames" -le 1 ]; then
-    # The 'eval' frame seems to count, so 1 means effectively none-visible, open
-    # a frame
-    emacsclient -c -n
-  fi
-
-  # And if we were passed paramaters, pass them
-  if [ ! -z "$*" ]; then
-    emacsclient -n "$@"
-  fi
-}
-
 # Records the current git tip in variable
 gm()
 {
