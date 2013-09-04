@@ -12,7 +12,7 @@ die() {
 
 [ ! -z "$MOZOBJ" ] || die "No moz config"
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
-[ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5"
+[ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5,IPCPlugins:5"
 
 optspec="gd:a:rx"
 parseopts () {
