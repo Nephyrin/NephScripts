@@ -58,3 +58,6 @@
 [submodule "emacs.d/powerline"]
 	path = emacs.d/powerline
 	url = https://github.com/milkypostman/powerline
+[submodule "moz/hacky.mk"]
+	path = moz/hacky.mk
+	url = https://github.com/bgirard/hacky.mk.git
