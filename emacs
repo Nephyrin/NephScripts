@@ -6,6 +6,8 @@
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
 
+(put 'upcase-region 'disabled nil)
+
 ; Fix x clipboard
 (setq x-select-enable-primary nil)
 (setq x-select-enable-clipboard t)
@@ -302,20 +304,6 @@
 (package-initialize)
 
 ;;
-;; Theme
-;;
-
-
-;(add-to-list 'load-path "~/.emacs.d/purple-haze-theme")
-;(require 'purple-haze-theme)
-(load-theme 'purple-haze t)
-;(load-theme 'sunburst t)
-; set a line highlight for this theme
-(set-face-background 'hl-line "#303030")
-; And a better font
-(set-default-font "Monospace-10")
-
-;;
 ;; Line numbers
 ;;
 
@@ -387,4 +375,16 @@
 ;; ac-source-gtags
 (my-ac-config)
 
-(put 'upcase-region 'disabled nil)
+;;
+;; Theme
+;;
+
+
+;(add-to-list 'load-path "~/.emacs.d/purple-haze-theme")
+;(require 'purple-haze-theme)
+(load-theme 'purple-haze t)
+;(load-theme 'sunburst t)
+; set a line highlight for this theme
+(set-face-background 'hl-line "#303030")
+; And a better font
+(set-default-font "Monospace-10")
