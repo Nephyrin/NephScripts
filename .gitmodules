@@ -55,3 +55,6 @@
 [submodule "emacs.d/purple-haze-theme"]
 	path = emacs.d/purple-haze-theme
 	url = https://github.com/jasonm23/emacs-purple-haze-theme.git
+[submodule "emacs.d/powerline"]
+	path = emacs.d/powerline
+	url = https://github.com/milkypostman/powerline

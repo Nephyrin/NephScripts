@@ -77,6 +77,14 @@
 (setq whitespace-style (quote (face trailing)))
 
 ;;
+;; Powerline
+;;
+
+(add-to-list 'load-path "~/.emacs.d/powerline")
+(require 'powerline)
+(powerline-default-theme)
+
+;;
 ;; fci-mode
 ;;
 
