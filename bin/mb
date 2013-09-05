@@ -197,60 +197,73 @@ fi
 # Setup build tree if needed
 #
 
-gitdiff() {
-  PAGER="" cmd git diff --stat >&2 "$@"
-  cmd git diff --binary "$@"
-}
-
 if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
-  branch="build/$MOZTREE"
+  # Create a commit via |git stash create| that represents our working tree
+  # state, and check it out in MOZBUILDTREE to build.
+
+  # MOZBUILDTREE will always be on this branch, which is our current branch + a
+  # working tree commit. This lets us do things like |git diff build/moz-git| to
+  # compare against our last build, and have a reflog of working directory
+  # changes we built at.
+  branch="build/$MOZBUILDTREE"
   [ -z "$MOZSUFFIX" ] || branch="$branch-$MOZSUFFIX"
-  ref="$(cd "$MOZTREE" && git rev-parse HEAD)"
+
+  # The ref our working tree is based on
+  if [ -z "$explicitbranch" ]; then
+    buildref=HEAD
+  else
+    buildref="$explicitbranch"
+    no_worktree=1
+  fi
+  buildref="$(cd "$MOZTREE" && git rev-parse "$buildref")"
+  [ ! -z "$buildref" ] || die "Failed to parse $buildref"
+
   # Make sure build branch exists
   if [ ! -d "$MOZBUILDTREE" ]; then
     estat "Creating new $MOZBUILDTREE"
-    _co=HEAD
-    [ -z "$explicitbranch" ] || _co="$explicitbranch"
-    ( cd "$MOZTREE" && cmd git branch -f "$branch" "$_co" )
+    ( cd "$MOZTREE" && cmd git branch -f "$branch" "$buildref" )
     /usr/share/git/workdir/git-new-workdir "$MOZTREE" "$MOZBUILDTREE" "$branch"
   fi
-  (
-    cd "$MOZTREE"
-    if [ -z "$explicitbranch" ]; then
-      untracked=()
+
+  # Make a staging tree or reset it. We use a staging tree so we can avoid
+  # touching all uncommited files every build by blowing away the previous build
+  # commit. It's possible to do this with two trees, but much uglier.
+  if [ ! -d "mb-staging" ]; then
+    estat "Creating mb-staging stage tree"
+    /usr/share/git/workdir/git-new-workdir "$MOZTREE" mb-staging "$buildref"
+  else
+    (
+      cd mb-staging
+      git checkout --detach -f "$buildref" 2>/dev/null
+    )
+  fi
+
+  if [[ ! "$no_worktree" ]]; then
+    # Copy working tree state to staging with |stash create| and hardlinking
+    # untracked files over
+    worktree_stash="$(cd "$MOZTREE" && cmd git stash create)"
+    (
+      cd mb-staging
+      if [ ! -z "$worktree_stash" ]; then
+        cmd git stash apply "$worktree_stash" >/dev/null
+      fi
       while IFS="" read -r file; do
-        untracked[${#untracked[@]}]="$file";
-      done < <(git ls-files -o --exclude-standard)
-      for file in "${untracked[@]}"; do
-        cmd git add "$file" >/dev/null
-      done
-      gitdiff "$branch"
-      for file in "${untracked[@]}"; do
-        cmd git reset HEAD -- "$file" >/dev/null
-      done
-    else
-      gitdiff "$branch" "$explicitbranch"
-    fi
-  ) | (
-    estat "Checking out build tree"
+        cmd mkdir -p "$(dirname "$file")"
+        cmd ln "$MOZPATH/$MOZTREE/$file" "$file"
+      done < <(cd "$MOZPATH/$MOZTREE" && git ls-files -o --exclude-standard)
+      git add -A
+      cmd git commit --allow-empty -m "BUILD @ $(date)" >/dev/null
+    )
+    buildref="$(cd mb-staging && git rev-parse HEAD)"
+  fi
+  (
+    # Finally update our build tree to this ref (keeps a helpful build/whatever
+    # reflog)
     cd "$MOZBUILDTREE"
-    if [ "$(git rev-parse --abbrev-ref HEAD)" != "$branch" ] || \
-       [ ! -z "$(git status -s)" ]; then
-      ewarn git build tree "$MOZBUILDTREE" is dirty. Why is it dirty? Resetting
-      echo "ref: refs/heads/$branch" > .git/HEAD
-      cmd git reset --hard
-      cmd git clean -fd
-    fi
-    if read -r firstline; then
-      ( echo "$firstline" && cat - ) | cmd git apply --whitespace=nowarn -
-    fi
-    if [ -z "$explicitbranch" ]; then
-      cmd git reset "$ref"
-      cmd git add -A
-      cmd git commit --allow-empty -m "NEPH - Build Commit @ $(date)"
-    else
-      cmd git reset "$explicitbranch"
-    fi
+    # Should already be on this branch, but we definitely don't want to reset
+    # another branch if we accidentally messed with this workdir
+    git checkout -f "$branch" 2>/dev/null
+    cmd git reset --hard "$buildref"
   )
 fi
 
