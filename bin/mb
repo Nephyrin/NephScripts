@@ -166,7 +166,7 @@ fi
 if [ -d "$MOZOBJ" ] && [ ! -z "$nuke" ]; then
   dir="$(readlink -f "$MOZOBJ")"
   estat "Nuking build directory"
-  rm -r "$dir"
+  rm -rf "$dir"
 elif [ ! -z "$clobber" ]; then
       estat "Clobbering build"
       # Force a full clobber build while preserving some intermediary files
@@ -297,8 +297,7 @@ fi
   else
       ewarn "Not using mach"
       [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
-      cmd sleep 2
-      cmd $MAKE -f client.mk && estat "Make succeeded"
+      time cmd $MAKE -f client.mk && estat "Make succeeded"
   fi
 )
 
