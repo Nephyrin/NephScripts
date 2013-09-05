@@ -3,8 +3,14 @@
 set -e
 
 . "$(dirname "$0")"/lib/util.sh
+. "$(dirname "$0")"/../bashrc
 
-[ $# -eq 0 ] || die "This doesn't accept arguments"
+parse_args mnuke '' '' "$@"
+[ $(num_args) -le 2 ] || die "Takes one or two arguments (moz config setup)"
+if [[ $(num_args) -ge 1 ]]; then
+  eval args=("$(get_args)")
+  moz "${args[@]}"
+fi
 
 [ ! -z "$MOZOBJ" ] || die "No moz config"
 
@@ -22,8 +28,8 @@ ifnuke "$MOZOBJ"
 if [ ! -z "$MOZBUILDTREE" ] && [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   ifnuke "$MOZBUILDTREE"
   if [ -d "$MOZTREE/.git" ]; then
-    estat "Removing branch build/$MOZTREE"
+    estat "Removing branch build/$MOZBUILDTREE"
     cmd cd "$MOZTREE"
-    cmd git branch -D "build/$MOZTREE"
+    cmd git branch -D "build/$MOZBUILDTREE"
   fi
 fi
