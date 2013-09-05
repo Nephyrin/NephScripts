@@ -153,7 +153,7 @@ if [ -z "$nodistcc" ]; then
       eerr "No DISTCC_HOSTS or DISTCC_POTENTIAL_HOSTS"
       die  "Set these or use --no-distcc"
     fi
-    export MAKE_JOBS=$(( $(distcc -j) * 2 ))
+    export MAKE_JOBS=$(( $(distcc -j) * 15 / 10 ))
     estat "distcc configured with $MAKE_JOBS jobs: "$DISTCC_HOSTS
 fi
 
