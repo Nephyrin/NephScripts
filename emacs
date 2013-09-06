@@ -335,10 +335,10 @@
 ;; Magit
 ;;
 
-(add-to-list 'load-path (concat "~/.emacs.d/" "magit"))
+(add-to-list 'load-path "~/.emacs.d/git-modes")
+(add-to-list 'load-path "~/.emacs.d/magit")
 (require 'magit)
-; Part of magit, for git interactive rebase buffers
-(require 'rebase-mode)
+(require 'git-rebase-mode)
 (global-set-key (kbd "C-z g") 'magit-status)
 
 ;;
