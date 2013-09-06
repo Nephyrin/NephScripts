@@ -6,6 +6,7 @@
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
 
+(ido-mode t)
 (put 'upcase-region 'disabled nil)
 
 ; Fix x clipboard
@@ -84,7 +85,71 @@
 
 (add-to-list 'load-path "~/.emacs.d/powerline")
 (require 'powerline)
-(powerline-default-theme)
+
+; Powerline component that is the filename with the path prepended but
+; de-emphasized
+(defpowerline powerline-buffer-path
+  (format-mode-line(replace-regexp-in-string
+                    "/[^/]*$"
+                    "/"
+                    (replace-regexp-in-string (regexp-quote (getenv "HOME"))
+                                              "~"
+                                              (buffer-file-name)))))
+; Based on default powerline-center-theme
+(defun powerline-neph-center-theme ()
+  "Setup a mode-line with major and minor modes centered."
+  (interactive)
+  (setq-default mode-line-format
+                '("%e"
+                  (:eval
+                   (let* ((active (powerline-selected-window-active))
+                          (mode-line (if active 'mode-line 'mode-line-inactive))
+                          (face1 (if active 'powerline-active1 'powerline-inactive1))
+                          (face2 (if active 'powerline-active2 'powerline-inactive2))
+                          (separator-left (intern (format "powerline-%s-%s"
+                                                          powerline-default-separator
+                                                          (car powerline-default-separator-dir))))
+                          (separator-right (intern (format "powerline-%s-%s"
+                                                           powerline-default-separator
+                                                           (cdr powerline-default-separator-dir))))
+                          (lhs (list (powerline-raw "%*" nil 'l)
+                                     (powerline-buffer-size nil 'l)
+                                     (funcall separator-left mode-line face1)
+                                     (powerline-buffer-path face1 'l)
+                                     (powerline-raw " " face1)
+                                     (funcall separator-left face1 mode-line)
+                                     (powerline-narrow nil 'l)
+                                     (powerline-buffer-id nil 'l)
+                                     (powerline-raw " " nil)
+                                     (funcall separator-left mode-line face1)
+                                     (powerline-vc face1)
+                                     (powerline-raw " " face1)
+                                     (funcall separator-left face1 face2)))
+                          (rhs (list (powerline-raw global-mode-string face1 'r)
+                                     (funcall separator-right face2 face1)
+                                     (powerline-raw " %4l" face1 'r)
+                                     (powerline-raw ":" face1)
+                                     (powerline-raw "%3c" face1 'r)
+                                     (funcall separator-right face1 mode-line)
+                                     (powerline-raw " ")
+                                     (powerline-raw "%6p" nil 'r)
+                                     (powerline-hud face2 face1)))
+                          (center (list (powerline-raw "|" face2)
+                                        (when (boundp 'erc-modified-channels-object)
+                                          (powerline-raw erc-modified-channels-object face2 'l))
+                                        (powerline-major-mode face2 'l)
+                                        (powerline-process face2)
+                                        (powerline-raw " :" face2)
+                                        (powerline-minor-modes face2 'l)
+                                        (powerline-raw " |" face2))))
+                     (concat (powerline-render lhs)
+                             (powerline-fill-center face2 (/ (- (powerline-width rhs) (powerline-width lhs)) 2.0))
+                             (powerline-render center)
+                             (powerline-fill face2 (powerline-width rhs))
+                             (powerline-render rhs)))))))
+(powerline-neph-center-theme)
+;(powerline-default-theme)
+;(powerline-center-theme)
 
 ;;
 ;; fci-mode
@@ -388,3 +453,4 @@
 (set-face-background 'hl-line "#19151D")
 ; And a better font
 (set-default-font "Monospace-10")
+(add-to-list 'default-frame-alist '(font . "Monospace-10"))
