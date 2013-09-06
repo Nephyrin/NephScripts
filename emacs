@@ -385,6 +385,6 @@
 (load-theme 'purple-haze t)
 ;(load-theme 'sunburst t)
 ; set a line highlight for this theme
-(set-face-background 'hl-line "#303030")
+(set-face-background 'hl-line "#19151D")
 ; And a better font
 (set-default-font "Monospace-10")
