@@ -380,7 +380,7 @@
 ;;
 
 
-;(add-to-list 'load-path "~/.emacs.d/purple-haze-theme")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 ;(require 'purple-haze-theme)
 (load-theme 'purple-haze t)
 ;(load-theme 'sunburst t)
