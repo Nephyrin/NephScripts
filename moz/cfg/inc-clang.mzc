@@ -1,3 +1,7 @@
-export CC="clang -Qunused-arguments -fcolor-diagnostics -B$topsrcdir/../cfg/goldpath"
-export CXX="clang++ -Qunused-arguments -fcolor-diagnostics -B$topsrcdir/../cfg/goldpath"
-export LDFLAGS="-Wl,--no-keep-memory"
+export CC="clang"
+export CXX="clang++"
+export CFLAGS="$CFLAGS -fcolor-diagnostics"
+export CXXFLAGS="$CXXFLAGS -fcolor-diagnostics"
+#export LDFLAGS="$LDFLAGS -Wl,--no-map-whole-files \
+#                         -Wl,--no-keep-files-mapped \
+#                         -Wl,--threads"
