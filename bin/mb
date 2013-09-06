@@ -52,6 +52,12 @@ parseopts() {
                 makejobs="$1"
                 shift
                 ;;
+            '-n') # Attempt a incremental build with ninja
+                ninja=1
+                ;;
+            '--no-hacky') # Don't apply hackymake to builds
+                nohacky=1
+                ;;
             '-v')
                 verbose=1
                 ;;
@@ -72,7 +78,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: -o j:bcfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,no-hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bcfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -94,6 +100,25 @@ fi
 
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
 
+if [ -d "$MOZOBJ" ] && [ ! -d "$MOZOBJ/.hacky" ] && [ -z "$nohacky" ] &&
+   [ -z "$nuke" ]; then
+  die "Current objdir built without hacky.mk, use --nuke or --no-hacky"
+fi
+
+if [ -d "$MOZOBJ/.hacky" ] && [ ! -z "$nohacky" ] && [ -z "$nuke" ]; then
+  die "Current objdir has hacky.mk, building without hacky.mk requires --nuke"
+fi
+
+if [ ! -z "$ninja" ]; then
+  [ -f "$MOZOBJ/Makefile" ] || die "Tree isn't fully built, can't ninja"
+  [ -f "$MOZOBJ/build.ninja" ] || die "No ninja - tree built without hacky.mk"
+  [ -z "$clobber" ] || die "Can't clobber and use ninja"
+  [ -z "$nuke" ] || die "Can't nuke and use ninja"
+  [ -z "$configure" ] || die "Can't reconfigure and use ninja"
+  [ -z "$force" ] || die "-f doesn't make sense when using ninja"
+  [ -z "$nohacky" ] || die "--no-hacky and ninja don't make sense"
+fi
+
 #
 # Handle --no-buildtree
 #
@@ -109,6 +134,7 @@ fi
 # We handle clobbering when desired, so disable mach/client.mk's autoclobber
 export NO_AUTOCLOBBER=1
 
+PYTHON="py2e python"
 MACH="py2e ./mach"
 MAKE="py2e make -j10"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
@@ -238,12 +264,13 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
     )
   fi
 
-  if [[ ! "$no_worktree" ]]; then
-    # Copy working tree state to staging with |stash create| and hardlinking
-    # untracked files over
-    worktree_stash="$(cd "$MOZTREE" && cmd git stash create)"
-    (
-      cd mb-staging
+  (
+    cd mb-staging
+    if [[ ! "$no_worktree" ]]; then
+      # Copy working tree state to staging with |stash create| and hardlinking
+      # untracked files over
+      worktree_stash="$(cd "$MOZPATH/$MOZTREE" && cmd git stash create)"
+
       if [ ! -z "$worktree_stash" ]; then
         cmd git stash apply "$worktree_stash" >/dev/null
       fi
@@ -252,18 +279,29 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
         cmd ln "$MOZPATH/$MOZTREE/$file" "$file"
       done < <(cd "$MOZPATH/$MOZTREE" && git ls-files -o --exclude-standard)
       git add -A
-      cmd git commit --allow-empty -m "BUILD @ $(date)" >/dev/null
-    )
-    buildref="$(cd mb-staging && git rev-parse HEAD)"
-  fi
+    fi
+    cmd git commit --allow-empty -m "BUILD @ $(date)" >/dev/null
+  )
+  buildref="$(cd mb-staging && git rev-parse HEAD)"
   (
     # Finally update our build tree to this ref (keeps a helpful build/whatever
     # reflog)
     cd "$MOZBUILDTREE"
     # Should already be on this branch, but we definitely don't want to reset
     # another branch if we accidentally messed with this workdir
-    git checkout -f "$branch" 2>/dev/null
-    cmd git reset --hard "$buildref"
+    cmd git checkout -f "$branch" 2>/dev/null
+    oldref="$(git rev-parse HEAD)"
+    if [ -z "$nohacky" ]; then
+      cmd git reset --hard "${buildref}^"
+      cmd "$MOZPATH/hacky.mk/hackify" "$PWD" >/dev/null
+      cmd git add -A
+      cmd git commit -m "HACKIFY FOR BUILD @ $(date)" >/dev/null
+      cmd git cherry-pick "$buildref" --allow-empty
+    else
+      ewarn Not applying hacky.mk
+      cmd git reset --hard "$buildref"
+    fi
+    cmd git diff "$oldref" --stat
   )
 fi
 
@@ -291,7 +329,12 @@ fi
 #
 (
   cmd cd "$MOZBUILDTREE"
-  if [ -z "$nomach" ]; then
+  if [ ! -z "$ninja" ]; then
+    (
+      cd "$MOZPATH/$MOZOBJ"
+      cmd ninja
+    )
+  elif [ -z "$nomach" ]; then
       estat "Building with mach"
       cmd $MACH build "${args[@]}"
   else
@@ -299,10 +342,16 @@ fi
       [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
       time cmd $MAKE -f client.mk && estat "Make succeeded"
   fi
+  if [ -z "$ninja$nohacky" ]; then
+    (
+      cmd cd "$MOZPATH/$MOZOBJ"
+      cmd $PYTHON "$MOZPATH/$MOZBUILDTREE/tools/hackymake/hackypost.py" "."
+    )
+  fi
 )
 
 if [ ! -z "$package" ]; then
-    cmd cd "$MOZOBJ"
+    cmd cd "$MOZPATH/$MOZOBJ"
     cmd $MAKE package
     cmd $MAKE package-tests
     estat "Package succeeded"
