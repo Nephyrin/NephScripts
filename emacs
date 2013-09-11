@@ -92,13 +92,14 @@
                                                  ,height ,width)
                           'face 'neph-modeline-hud)))
 (setq neph-modeline-path
-      '(:eval (let ((bufname (buffer-file-name)))
-                (if bufname
-                  (replace-regexp-in-string
-                   "/[^/]*$" "/"
-                   (replace-regexp-in-string
-                    (regexp-quote (getenv "HOME")) "~"
-                    bufname)) ""))))
+      '(:eval (propertize (let ((bufname (buffer-file-name)))
+                            (if bufname
+                                (replace-regexp-in-string
+                                 "/[^/]*$" "/"
+                                 (replace-regexp-in-string
+                                  (regexp-quote (getenv "HOME")) "~"
+                                  bufname)) ""))
+                          'face 'neph-modeline-path)))
 (setq neph-modeline-bufstat
       '(:eval (cond (buffer-read-only
                      (propertize " RO " 'face 'neph-modeline-stat-readonly))
@@ -107,90 +108,77 @@
                     (t (propertize " -- " 'face 'neph-modeline-stat-clean)))))
 
 (defface neph-modeline-hud
-  '((t (:inherit neph-modeline)))
+  '((t (:inherit mode-line)))
   "Neph modeline hud face")
 (defface neph-modeline-id
-  '((t (:inherit neph-modeline
-        )))
+  '((t (:inherit mode-line
+        :foreground "#FC0"
+        :weight bold)))
   "Neph modeline buffer id face")
+(defface neph-modeline-mode
+  '((t (:inherit mode-line
+        :foreground "#656")))
+  "Neph modeline mode face")
+(defface neph-modeline-misc
+  '((t (:inherit mode-line
+        :height 75
+        :foreground "#444"
+        :width condensed)))
+  "Neph modeline minor info face")
+(defface neph-modeline-path
+  '((t (:inherit mode-line
+        :foreground "#DFDDDD")))
+  "Neph modeline path face")
 (defface neph-modeline-id-inactive
-  '((t (:inherit neph-modeline-id)))
+  '((t (:inherit neph-modeline-id
+        :foreground "#CCCC44")))
   "Neph modeline buffer id inactive face")
 (defface neph-modeline-stat-readonly
-  '((t (:inherit neph-modeline)))
+  '((t (:inherit mode-line
+        :foreground "#6666EE"
+        :box (:line-width 2))))
   "Neph modeline readonly status face")
 (defface neph-modeline-stat-modified
-  '((t (:inherit neph-modeline)))
+  '((t (:inherit mode-line
+        :foreground "#FF5555"
+        :weight bold)))
   "Neph modeline modified status face")
 (defface neph-modeline-stat-clean
-  '((t (:inherit neph-modeline)))
+  '((t (:inherit mode-line
+        :foreground "#555")))
   "Neph modeline clean status face")
+(defface neph-modeline-which-func
+  '((t (:inherit mode-line
+        :foreground "#FF0000")))
+  "Neph modeline which-func-mode face")
 (set-face-attribute 'mode-line nil
-                    :background "222"
-                    :foreground "#555555"
+                    :background "#111"
+                    :foreground "#666"
+                    :box '(:line-width 1 :color "#333" :style nil))
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#111"
+                    :foreground "#666"
                     :box '(:line-width 1 :color "#333" :style nil))
 (setq-default mode-line-format
               '(:eval
                (list
-                (if (neph-modeline-active) "YES" "NO")
+                ;(if (neph-modeline-active) "YES" "NO")
                 neph-modeline-bufstat
-                vc-mode
-                '(:propertize "%4l:%3c ")
-                '(:propertize "%p ")
-                mode-line-process
-                global-mode-string
-                minor-mode-alist " "
+                '(:propertize " [%l:%2c]  ")
                 neph-modeline-path
                 '(:propertize "%b" face neph-modeline-id)
-                (neph-fill-to 10)
+                "   %["
+                '(:propertize mode-name face neph-modeline-mode)
+                "%] "
+                '(:propertize mode-line-process face neph-modeline-misc)
+                '(:propertize global-mode-string face neph-modeline-misc)
+                '(:propertize minor-mode-alist face neph-modeline-misc)
+                (when vc-mode '(:propertize (concat " /" vc-mode)
+                                            face neph-modeline-misc))
+                (neph-fill-to 13)
+                '(:propertize "%p ")
                 (neph-modeline-hud 1.5 10)
                 )))
-
-;              '("%e"
-;                (:eval
-;                 (let* ((active (powerline-selected-window-active))
-;                        (main (if active 'neph-modeline 'neph-modeline-inactive))
-;                        (height-face 'neph-modeline-height)
-;                        (face1 (if active 'neph-powerline-active1 'neph-powerline-inactive1))
-;                        (face2 (if active 'neph-powerline-active2 'neph-powerline-inactive2))
-;                        (id-face (if active 'neph-modeline-id-face 'neph-modeline-id-face-inactive))
-;                        (separator-left (intern (format "powerline-%s-%s"
-;                                                        powerline-default-separator
-;                                                        (car powerline-default-separator-dir))))
-;                        (separator-right (intern (format "powerline-%s-%s"
-;                                                         powerline-default-separator
-;                                                         (cdr powerline-default-separator-dir))))
-;                        (lhs (list (powerline-raw "%*" main 'l)
-;                                   (powerline-buffer-size main 'l)
-;                                   (powerline-raw mode-line-mule-info main 'l)
-;                                   (powerline-buffer-path main 'l)
-;                                   (powerline-buffer-id id-face 'l)
-;                                   (when (and (boundp 'which-func-mode) which-func-mode)
-;                                     (powerline-raw which-func-format main 'l))
-;                                   (powerline-raw " " height-face)
-;                                   (funcall separator-left main face1)
-;                                   (when (boundp 'erc-modified-channels-object)
-;                                     (powerline-raw erc-modified-channels-object face1 'l))
-;                                   (powerline-major-mode face1 'l)
-;                                   (powerline-process face1)
-;                                   (powerline-minor-modes face1 'l)
-;                                   (powerline-narrow face1 'l)
-;                                   (powerline-raw " " face1)
-;                                   (funcall separator-left face1 face2)))
-;                        (rhs (list (powerline-raw global-mode-string face2 'r)
-;                                   (powerline-vc face2 'r)
-;                                   (funcall separator-right face2 face1)
-;                                   (powerline-raw "%4l" face1 'l)
-;                                   (powerline-raw ":" face1 'l)
-;                                   (powerline-raw "%3c" face1 'r)
-;                                   (funcall separator-right face1 main)
-;                                   (powerline-raw " " main)
-;                                   (powerline-raw "%6p" main 'r)
-;                                   (powerline-hud face2 main))))
-;                   (concat (powerline-render lhs)
-;                           (powerline-fill face2 (powerline-width rhs))
-;                           (powerline-render rhs))))))
-
 
 ;;
 ;; fci-mode
