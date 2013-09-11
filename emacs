@@ -108,33 +108,33 @@
                     (t (propertize " -- " 'face 'neph-modeline-stat-clean)))))
 
 (defface neph-modeline-hud
-  '((t (:inherit mode-line)))
+  '((t (:inherit mode-line-face)))
   "Neph modeline hud face")
 (defface neph-modeline-id
-  '((t (:inherit mode-line
-        :foreground "#FC0"
+  '((t (:inherit mode-line-face
+        :foreground "#DD5"
         :weight bold)))
   "Neph modeline buffer id face")
 (defface neph-modeline-mode
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :foreground "#656")))
   "Neph modeline mode face")
 (defface neph-modeline-misc
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :height 75
         :foreground "#444"
         :width condensed)))
   "Neph modeline minor info face")
 (defface neph-modeline-path
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :foreground "#DFDDDD")))
   "Neph modeline path face")
 (defface neph-modeline-id-inactive
   '((t (:inherit neph-modeline-id
-        :foreground "#CCCC44")))
+        :foreground "#CC9")))
   "Neph modeline buffer id inactive face")
 (defface neph-modeline-stat-readonly
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :foreground "#6666EE"
         :box (:line-width 2))))
   "Neph modeline readonly status face")
@@ -144,41 +144,41 @@
         :weight bold)))
   "Neph modeline modified status face")
 (defface neph-modeline-stat-clean
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :foreground "#555")))
   "Neph modeline clean status face")
 (defface neph-modeline-which-func
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :foreground "#FF0000")))
   "Neph modeline which-func-mode face")
 (set-face-attribute 'mode-line nil
                     :background "#111"
                     :foreground "#666"
-                    :box '(:line-width 1 :color "#333" :style nil))
+                    :box '(:line-width 1 :color "#221" :style nil))
 (set-face-attribute 'mode-line-inactive nil
-                    :background "#111"
+                    :background "#333"
                     :foreground "#666"
                     :box '(:line-width 1 :color "#333" :style nil))
 (setq-default mode-line-format
               '(:eval
-               (list
-                ;(if (neph-modeline-active) "YES" "NO")
-                neph-modeline-bufstat
-                '(:propertize " [%l:%2c]  ")
-                neph-modeline-path
-                '(:propertize "%b" face neph-modeline-id)
-                "   %["
-                '(:propertize mode-name face neph-modeline-mode)
-                "%] "
-                '(:propertize mode-line-process face neph-modeline-misc)
-                '(:propertize global-mode-string face neph-modeline-misc)
-                '(:propertize minor-mode-alist face neph-modeline-misc)
-                (when vc-mode '(:propertize (concat " /" vc-mode)
-                                            face neph-modeline-misc))
-                (neph-fill-to 13)
-                '(:propertize "%p ")
-                (neph-modeline-hud 1.5 10)
-                )))
+                (list
+                 neph-modeline-bufstat
+                 '(:propertize " [%l:%2c]  ")
+                 neph-modeline-path
+                 `(:propertize "%b" face ,(if (neph-modeline-active)
+                                              'neph-modeline-id
+                                            'neph-modeline-id-inactive))
+                 "   %["
+                 '(:propertize mode-name face neph-modeline-mode)
+                 "%] "
+                 '(:propertize mode-line-process face neph-modeline-misc)
+                 '(:propertize global-mode-string face neph-modeline-misc)
+                 '(:propertize minor-mode-alist face neph-modeline-misc)
+                 (when vc-mode '(:propertize (concat " /" vc-mode)
+                                             face neph-modeline-misc))
+                 (neph-fill-to 13)
+                 '(:propertize "%p ")
+                 (neph-modeline-hud 1.5 10))))
 
 ;;
 ;; fci-mode
