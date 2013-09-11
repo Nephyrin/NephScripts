@@ -301,7 +301,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
       ewarn Not applying hacky.mk
       cmd git reset --hard "$buildref"
     fi
-    cmd git diff "$oldref" --stat
+    PAGER="" cmd git diff "$oldref" --stat
   )
 fi
 
