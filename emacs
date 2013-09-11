@@ -139,7 +139,7 @@
         :box (:line-width 2))))
   "Neph modeline readonly status face")
 (defface neph-modeline-stat-modified
-  '((t (:inherit mode-line
+  '((t (:inherit mode-line-face
         :foreground "#FF5555"
         :weight bold)))
   "Neph modeline modified status face")
@@ -473,7 +473,6 @@
 ;;
 ;; Theme
 ;;
-
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 ;(require 'purple-haze-theme)
