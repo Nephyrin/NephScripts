@@ -80,76 +80,117 @@
 (setq whitespace-style (quote (face trailing)))
 
 ;;
-;; Powerline
+;; Mode line
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/powerline")
-(require 'powerline)
+(require 'neph-modeline-util)
+(defun neph-fill-to (reserve)
+  `(:eval (propertize " " 'display '(space :align-to (- right-margin
+                                                        ,reserve)))))
+(defun neph-modeline-hud (height width)
+      `(:eval (propertize " " 'display (neph-hud "#0C0C0C" "#222222"
+                                                 ,height ,width)
+                          'face 'neph-modeline-hud)))
+(setq neph-modeline-path
+      '(:eval (let ((bufname (buffer-file-name)))
+                (if bufname
+                  (replace-regexp-in-string
+                   "/[^/]*$" "/"
+                   (replace-regexp-in-string
+                    (regexp-quote (getenv "HOME")) "~"
+                    bufname)) ""))))
+(setq neph-modeline-bufstat
+      '(:eval (cond (buffer-read-only
+                     (propertize " RO " 'face 'neph-modeline-stat-readonly))
+                    ((buffer-modified-p)
+                     (propertize " ** " 'face 'neph-modeline-stat-modified))
+                    (t (propertize " -- " 'face 'neph-modeline-stat-clean)))))
 
-; Powerline component that is the filename with the path prepended but
-; de-emphasized
-(defpowerline powerline-buffer-path
-  (format-mode-line(replace-regexp-in-string
-                    "/[^/]*$"
-                    "/"
-                    (replace-regexp-in-string (regexp-quote (getenv "HOME"))
-                                              "~"
-                                              (buffer-file-name)))))
-; Based on default powerline-center-theme
-(defun powerline-neph-center-theme ()
-  "Setup a mode-line with major and minor modes centered."
-  (interactive)
-  (setq-default mode-line-format
-                '("%e"
-                  (:eval
-                   (let* ((active (powerline-selected-window-active))
-                          (mode-line (if active 'mode-line 'mode-line-inactive))
-                          (face1 (if active 'powerline-active1 'powerline-inactive1))
-                          (face2 (if active 'powerline-active2 'powerline-inactive2))
-                          (separator-left (intern (format "powerline-%s-%s"
-                                                          powerline-default-separator
-                                                          (car powerline-default-separator-dir))))
-                          (separator-right (intern (format "powerline-%s-%s"
-                                                           powerline-default-separator
-                                                           (cdr powerline-default-separator-dir))))
-                          (lhs (list (powerline-raw "%*" nil 'l)
-                                     (powerline-buffer-size nil 'l)
-                                     (funcall separator-left mode-line face1)
-                                     (powerline-buffer-path face1 'l)
-                                     (powerline-raw " " face1)
-                                     (funcall separator-left face1 mode-line)
-                                     (powerline-narrow nil 'l)
-                                     (powerline-buffer-id nil 'l)
-                                     (powerline-raw " " nil)
-                                     (funcall separator-left mode-line face1)
-                                     (powerline-vc face1)
-                                     (powerline-raw " " face1)
-                                     (funcall separator-left face1 face2)))
-                          (rhs (list (powerline-raw global-mode-string face1 'r)
-                                     (funcall separator-right face2 face1)
-                                     (powerline-raw " %4l" face1 'r)
-                                     (powerline-raw ":" face1)
-                                     (powerline-raw "%3c" face1 'r)
-                                     (funcall separator-right face1 mode-line)
-                                     (powerline-raw " ")
-                                     (powerline-raw "%6p" nil 'r)
-                                     (powerline-hud face2 face1)))
-                          (center (list (powerline-raw "|" face2)
-                                        (when (boundp 'erc-modified-channels-object)
-                                          (powerline-raw erc-modified-channels-object face2 'l))
-                                        (powerline-major-mode face2 'l)
-                                        (powerline-process face2)
-                                        (powerline-raw " :" face2)
-                                        (powerline-minor-modes face2 'l)
-                                        (powerline-raw " |" face2))))
-                     (concat (powerline-render lhs)
-                             (powerline-fill-center face2 (/ (- (powerline-width rhs) (powerline-width lhs)) 2.0))
-                             (powerline-render center)
-                             (powerline-fill face2 (powerline-width rhs))
-                             (powerline-render rhs)))))))
-(powerline-neph-center-theme)
-;(powerline-default-theme)
-;(powerline-center-theme)
+(defface neph-modeline-hud
+  '((t (:inherit neph-modeline)))
+  "Neph modeline hud face")
+(defface neph-modeline-id
+  '((t (:inherit neph-modeline
+        )))
+  "Neph modeline buffer id face")
+(defface neph-modeline-id-inactive
+  '((t (:inherit neph-modeline-id)))
+  "Neph modeline buffer id inactive face")
+(defface neph-modeline-stat-readonly
+  '((t (:inherit neph-modeline)))
+  "Neph modeline readonly status face")
+(defface neph-modeline-stat-modified
+  '((t (:inherit neph-modeline)))
+  "Neph modeline modified status face")
+(defface neph-modeline-stat-clean
+  '((t (:inherit neph-modeline)))
+  "Neph modeline clean status face")
+(set-face-attribute 'mode-line nil
+                    :background "222"
+                    :foreground "#555555"
+                    :box '(:line-width 1 :color "#333" :style nil))
+(setq-default mode-line-format
+              '(:eval
+               (list
+                (if (neph-modeline-active) "YES" "NO")
+                neph-modeline-bufstat
+                vc-mode
+                '(:propertize "%4l:%3c ")
+                '(:propertize "%p ")
+                mode-line-process
+                global-mode-string
+                minor-mode-alist " "
+                neph-modeline-path
+                '(:propertize "%b" face neph-modeline-id)
+                (neph-fill-to 10)
+                (neph-modeline-hud 1.5 10)
+                )))
+
+;              '("%e"
+;                (:eval
+;                 (let* ((active (powerline-selected-window-active))
+;                        (main (if active 'neph-modeline 'neph-modeline-inactive))
+;                        (height-face 'neph-modeline-height)
+;                        (face1 (if active 'neph-powerline-active1 'neph-powerline-inactive1))
+;                        (face2 (if active 'neph-powerline-active2 'neph-powerline-inactive2))
+;                        (id-face (if active 'neph-modeline-id-face 'neph-modeline-id-face-inactive))
+;                        (separator-left (intern (format "powerline-%s-%s"
+;                                                        powerline-default-separator
+;                                                        (car powerline-default-separator-dir))))
+;                        (separator-right (intern (format "powerline-%s-%s"
+;                                                         powerline-default-separator
+;                                                         (cdr powerline-default-separator-dir))))
+;                        (lhs (list (powerline-raw "%*" main 'l)
+;                                   (powerline-buffer-size main 'l)
+;                                   (powerline-raw mode-line-mule-info main 'l)
+;                                   (powerline-buffer-path main 'l)
+;                                   (powerline-buffer-id id-face 'l)
+;                                   (when (and (boundp 'which-func-mode) which-func-mode)
+;                                     (powerline-raw which-func-format main 'l))
+;                                   (powerline-raw " " height-face)
+;                                   (funcall separator-left main face1)
+;                                   (when (boundp 'erc-modified-channels-object)
+;                                     (powerline-raw erc-modified-channels-object face1 'l))
+;                                   (powerline-major-mode face1 'l)
+;                                   (powerline-process face1)
+;                                   (powerline-minor-modes face1 'l)
+;                                   (powerline-narrow face1 'l)
+;                                   (powerline-raw " " face1)
+;                                   (funcall separator-left face1 face2)))
+;                        (rhs (list (powerline-raw global-mode-string face2 'r)
+;                                   (powerline-vc face2 'r)
+;                                   (funcall separator-right face2 face1)
+;                                   (powerline-raw "%4l" face1 'l)
+;                                   (powerline-raw ":" face1 'l)
+;                                   (powerline-raw "%3c" face1 'r)
+;                                   (funcall separator-right face1 main)
+;                                   (powerline-raw " " main)
+;                                   (powerline-raw "%6p" main 'r)
+;                                   (powerline-hud face2 main))))
+;                   (concat (powerline-render lhs)
+;                           (powerline-fill face2 (powerline-width rhs))
+;                           (powerline-render rhs))))))
+
 
 ;;
 ;; fci-mode
@@ -212,19 +253,20 @@
 ;; IswitchBuffers
 ;;
 
-(iswitchb-mode 1)
-(setq iswitchb-buffer-ignore '("^ " "^\*"))
+;; Disabled in favor of ido-mode
+;(iswitchb-mode 1)
+;(setq iswitchb-buffer-ignore '("^ " "^\*"))
 
-(defun iswitchb-local-keys ()
-  (mapc (lambda (K)
-	  (let* ((key (car K)) (fun (cdr K)))
-	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-	'(("<right>" . iswitchb-next-match)
-	  ("<left>"  . iswitchb-prev-match)
-	  ("<up>"    . ignore             )
-	  ("<down>"  . ignore             ))))
-
-(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
+;(defun iswitchb-local-keys ()
+;  (mapc (lambda (K)
+;	  (let* ((key (car K)) (fun (cdr K)))
+;	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+;	'(("<right>" . iswitchb-next-match)
+;	  ("<left>"  . iswitchb-prev-match)
+;	  ("<up>"    . ignore             )
+;	  ("<down>"  . ignore             ))))
+;
+;(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 
 ;;
 ;; Tramp
