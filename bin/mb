@@ -232,7 +232,6 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   # compare against our last build, and have a reflog of working directory
   # changes we built at.
   branch="build/$MOZBUILDTREE"
-  [ -z "$MOZSUFFIX" ] || branch="$branch-$MOZSUFFIX"
 
   # The ref our working tree is based on
   if [ -z "$explicitbranch" ]; then
