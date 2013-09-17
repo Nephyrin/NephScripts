@@ -480,9 +480,7 @@
 ;(load-theme 'sunburst t)
 ; set a line highlight for this theme
 (set-face-background 'hl-line "#19151D")
-(set-face-attribute 'cursor nil
-                    :background "#D96E26"
-                    :foreground "#FFFFFF")
 ; And a better font
 (set-default-font "Monospace-10")
 (add-to-list 'default-frame-alist '(font . "Monospace-10"))
+(add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
