@@ -50,10 +50,6 @@
 
 ; (global-ede-mode t)
 
-; In gui mode, start server
-; Nevermind, handled by aliases now
-; (if window-system (server-start))
-
 ; Hide toolbar, hide menu in console mode
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
@@ -476,12 +472,8 @@
 ;;
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
-;(require 'purple-haze-theme)
 (load-theme 'purple-haze t)
-;(load-theme 'sunburst t)
-; set a line highlight for this theme
 (set-face-background 'hl-line "#19151D")
-; And a better font
 (set-default-font "Monospace-10")
 (add-to-list 'default-frame-alist '(font . "Monospace-10"))
 (add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
