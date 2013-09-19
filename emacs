@@ -1,4 +1,5 @@
-; -*- mode: Lisp; -*-
+; -*- mode: Emacs-Lisp; -*-
+
 ;;
 ;; Misc
 ;;
