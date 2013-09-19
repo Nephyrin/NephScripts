@@ -54,7 +54,7 @@
 	url = https://github.com/winterTTr/ace-jump-mode
 [submodule "emacs.d/purple-haze-theme"]
 	path = emacs.d/purple-haze-theme
-	url = https://github.com/nephyrin/emacs-purple-haze-theme.git
+	url = https://github.com/Nephyrin/emacs-purple-haze-theme.git
 [submodule "emacs.d/powerline"]
 	path = emacs.d/powerline
 	url = https://github.com/milkypostman/powerline
