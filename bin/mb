@@ -344,6 +344,8 @@ fi
   if [ -z "$ninja$nohacky" ]; then
     (
       cmd cd "$MOZPATH/$MOZOBJ"
+      # Also provided by nephscripts
+      cmd $PYTHON hacky_purge_missing_deps
       cmd $PYTHON "$MOZPATH/$MOZBUILDTREE/tools/hackymake/hackypost.py" "."
     )
   fi

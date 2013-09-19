@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import json
+import sys
+import os
+import fnmatch
+
+# also delete these files from .hacky for missing things (in addition to the
+# file itself, passed as %s without an ext)
+alsodelete = [ "ninja/%s.ninja", "make/%s.mk", "pp/%s.hacky.pp" ]
+
+def die(msg):
+    sys.stderr.write("!! %s\n", msg);
+    sys.exit(1)
+
+if not os.path.exists(".hacky"):
+    die("No .hacky here")
+
+def nuke(f):
+    print("Nuking: %s" % f)
+    os.remove(f)
+
+for path, dirs, files in os.walk(".hacky/hacky"):
+    for filename in fnmatch.filter(files, "*.hacky"):
+        hacky = os.path.join(path, filename)
+        dat = json.load(open(hacky, "r"))
+        for dep in dat["depfiles"]:
+            if not os.path.exists(dep):
+                nuke(hacky)
+                for x in alsodelete:
+                    nuke(os.path.join(".hacky", x % os.path.splitext(filename)[0]))
