@@ -177,7 +177,6 @@ alias fb='ffbrun'
 alias switchos='hib reboot mounts'
 
 alias hgreset="hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status"
-alias vsf='svnc nephyrin@sys.nephyrin.net'
 alias rv='rsync -avy --partial --progress'
 alias ns1="ssh srcds@174.37.110.81"
 alias ns2="ssh srcds@74.55.49.243"
@@ -185,7 +184,6 @@ alias nsw="ssh apaloma@173.193.9.83"
 alias ntf="ssh tf@nemu.pointysoftware.net"
 alias naf="ssh tfadmin@nemu.pointysoftware.net"
 alias nnf="ssh nephyrin@nemu.pointysoftware.net"
-alias nsf="ssh nephyrin@sys.nephyrin.net"
 alias relap='service laptop-mode restart'
 nalb() {
   if host albus.mv.mozilla.com &>/dev/null; then
