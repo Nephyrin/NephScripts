@@ -700,4 +700,6 @@ unaff()
     done
 }
 
+[ ! -f ~/neph/priv/bashrc ] || . ~/neph/priv/bashrc
+
 ...() { echo ":-/"; }
