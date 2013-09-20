@@ -4,17 +4,31 @@ set -e
 
 . "$(dirname "$(readlink -f "$0")")"/lib/util.sh
 
-parse_args git-out '' '' -- "$@"
+bin="$(basename "$0")"
+if [[ "$bin" != "git-out" ]] && [[ "$bin" != "git-in" ]]; then
+  die "This should be invoked as git-out or git-in"
+fi
+
+parse_args $bin '' '' -- "$@"
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 remote="$(git config "branch.$branch.remote" || true)"
 upstream="$(git config "branch.$branch.merge" || true)"
 
 [[ "$branch" != "HEAD" ]] || die "Not on a branch"
-[ ! -z "$upstream" ] || die "This branch has no upstream"
+if [[ -z "$remote" ]] || [[ -z "$upstream" ]]; then
+  die "This branch has no upstream"
+fi
 
-remoteref="$remote/${upstream#refs/heads/}"
+spec="${upstream#refs/heads/}"
+[[ "$remote" = "." ]] || spec="$remote/$spec"
+
+if [ "$bin" = "git-out" ]; then
+  spec="$spec.."
+else
+  spec="..$spec"
+fi
 
 [[ "$remote" = "." || -z "$remote" ]] || cmd git fetch "$remote"
 eval args=("$(get_args)")
-git log "$remoteref".. "${args[@]}"
+git log "$spec" "${args[@]}"
