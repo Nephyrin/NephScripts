@@ -650,8 +650,8 @@ connectx()
     set -e
     . ~/bin/lib/util.sh
     get_x_session
-    sh_var DISPLAY
-    sh_var XAUTHORITY
+    echo -n "export " && sh_var DISPLAY
+    echo -n "export " && sh_var XAUTHORITY
   )
 }
 
