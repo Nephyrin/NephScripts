@@ -13,6 +13,8 @@ upstream="$(git config "branch.$branch.merge" || true)"
 [[ "$branch" != "HEAD" ]] || die "Not on a branch"
 [ ! -z "$upstream" ] || die "This branch has no upstream"
 
+remoteref="$remote/${upstream#refs/heads/}"
+
 [[ "$remote" = "." || -z "$remote" ]] || cmd git fetch "$remote"
 eval args=("$(get_args)")
-git log "$upstream".. "${args[@]}"
+git log "$remoteref".. "${args[@]}"
