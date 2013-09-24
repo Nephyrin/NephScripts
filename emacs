@@ -186,6 +186,23 @@
 (global-set-key (kbd "C-z C-z") 'god-local-mode)
 
 ;;
+;; Scrolling
+;;
+
+; For scrolling when moving the cursor offscreen
+(setq scroll-margin 1
+      scroll-conservatively 0
+      scroll-up-aggressively 0.01
+      scroll-down-aggressively 0.01)
+(setq-default scroll-up-aggressively 0.01
+              scroll-down-aggressively 0.01)
+
+(setq mouse-wheel-scroll-amount '(10 ((shift) . 10)))
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse 't)
+(setq scroll-step 1)
+
+;;
 ;; fci-mode
 ;;
 
@@ -274,6 +291,17 @@
 ;;
 ;; Custom binds
 ;;
+
+; Scroll window
+(global-set-key (kbd "s-n") (lambda ()
+                              (interactive)
+                              (scroll-up 5)))
+(global-set-key (kbd "s-p") (lambda ()
+                              (interactive)
+                              (scroll-down 5)))
+(global-set-key (kbd "s-l") (lambda ()
+                              (interactive)
+                              (move-to-window-line nil)))
 
 ; Fast window nav
 (global-set-key (kbd "C-z C-b") (lambda ()
