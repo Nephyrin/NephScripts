@@ -31,3 +31,6 @@ ac_add_options --enable-debug-symbols="-ggdb"
 # Needed to enable breakpad (pre bug 717538)
 # export MOZILLA_OFFICIAL=1
 # export MOZ_TELEMETRY_REPORTING=1
+
+# Experimental build speedup. Makes builds slower.
+export MOZ_PSEUDO_DERECURSE=1
