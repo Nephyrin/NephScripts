@@ -1,0 +1,8 @@
+#
+# ~/.bash_profile
+#
+
+# Bash reads this file for login shells, and .bashrc for subsequent interactive
+# shells. Since the distinction is usually not important, just load .bashrc here
+# so that it is sourced in all interactive shells.
+[[ -f ~/.bashrc ]] && . ~/.bashrc
