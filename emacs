@@ -178,6 +178,14 @@
                  (neph-modeline-hud 1.5 10))))
 
 ;;
+;; God mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/god-mode")
+(require 'god-mode)
+(global-set-key (kbd "C-z C-z") 'god-local-mode)
+
+;;
 ;; fci-mode
 ;;
 
