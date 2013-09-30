@@ -510,6 +510,7 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 (load-theme 'purple-haze t)
 (set-face-background 'hl-line "#19151D")
+(set-face-attribute 'vertical-border nil :foreground "#222")
 (set-default-font "Monospace-10")
 (add-to-list 'default-frame-alist '(font . "Monospace-10"))
 (add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
