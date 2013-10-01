@@ -136,7 +136,8 @@ export NO_AUTOCLOBBER=1
 
 PYTHON="py2e python"
 MACH="py2e ./mach"
-MAKE="py2e make -j10"
+MAKE="py2e make"
+NINJA="py2e ninja"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
 
 #
@@ -331,7 +332,7 @@ fi
   if [ ! -z "$ninja" ]; then
     (
       cd "$MOZPATH/$MOZOBJ"
-      cmd ninja
+      cmd $NINJA
     )
   elif [ -z "$nomach" ]; then
       estat "Building with mach"
