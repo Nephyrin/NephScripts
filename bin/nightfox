@@ -11,8 +11,9 @@ export MOZ_PROFILER_STACK_SCAN=0
 if [ "$1" = "-g" ]; then
     shift
     cd ~/firefox-nightly
-    cleangtk gdb -ex "handle SIGPIPE nostop noprint pass" -ex run \
-        --args ./firefox -P default "$@"
+    cleangtk gdb -ex "handle SIGPIPE nostop noprint pass" \
+                 -ex "source $BIN/firefox-gdb.gdb" -ex run \
+                 --args ./firefox -P default "$@"
 else
     cleangtk ~/firefox-nightly/firefox -P default "$@"
 fi
