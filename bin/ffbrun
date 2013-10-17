@@ -5,65 +5,57 @@
 
 set -e
 
-die() {
-  echo >&2 "$*"
-  exit 1
-}
+. "$(dirname "$0")"/lib/util.sh
 
 [ ! -z "$MOZOBJ" ] || die "No moz config"
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
-[ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5,IPCPlugins:5"
+[ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
+# see also IPCPlugins:5 (VERY spammy)
 
-optspec="gd:a:rx"
-parseopts () {
-    while [ $# -gt 0 ]; do
-        case "$1" in
-            "-g")
-                exargs="$exargs -g"
-                ;;
-            "-d")
-                exargs="$exargs -d '$2'"
-                shift
-                ;;
-            "-a")
-                exargs="$exargs -a '$2'"
-                shift
-                ;;
-            "-r")
-                exargs="$exargs -a '-ex run'"
-                ;;
-            "-x")
-                freshprofile=1
-                ;;
-            "--")
-                shift
-                args=("$@")
-                return
-                ;;
-        esac
-        shift
-    done
-}
-args=()
-i=0
-eval parseopts $(getopt -n ffbrun -o "$optspec" -- "$@")
+parse_args ffbrun 'gd:a:rx' '' "$@"
 
+dbgargs=($(get_option a))
+debugger="$(get_option d)"
+ffargs=(./firefox -no-remote -profile ./profile "$(get_args)")
+
+[ -z "$debugger$(get_option g)" ] || dbg=1
+[ ! -z "$debugger" ] || debugger="gdb"
+[[ -z "$(get_option r)" ]] || dbgargs=("${dbgargs[@]}" -ex run)
+
+# Sanity check
 if [ ! -d "$MOZPATH/$MOZOBJ" ] || [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
   die "Not built :("
 fi
 
+# Don't cause non-gdb spew if running gdb in emacs
+if [ "$EMACS" = "t" ] && [ -n "$dbg" ]; then
+  cmd() { "$@"; }
+fi
+
 cd "$MOZPATH/$MOZOBJ/dist/bin/"
-if [ $freshprofile ]; then
-  rm -rf profile
-fi
 
-if [ ! -d "profile" ]; then
+# Nuke profile with -x
+[ -z "$(get_option x)" ] || rm -rf profile
+
+# Make profile if necessary
+if [[ ! -d "profile" ]]; then
   echo ":: Making fresh profile"
-  mkdir -vp profile/plugins
+  cmd mkdir -p profile/plugins
 fi
 
-if [ -d ../plugins ]; then
-    cp -v ../plugins/*.so profile/plugins
+# Copy plugins into profile
+if [[ -d ../plugins ]]; then
+    cmd cp ../plugins/*.so profile/plugins
 fi
 
-eval cleangtk ./run-mozilla.sh "$exargs" "./firefox" -no-remote -profile ./profile "${args[@]}"
+if [ -n "$dbg" ] && [ "$EMACS" = "t" ]; then
+  # Don't use run-mozilla.sh as it'll include unwanted spew.
+  cleangtk $debugger -i=mi "${dbgargs[@]}" --args "${ffargs[@]}"
+else
+  [ -z "$dbg" ] || dbgarg="-g"
+  cmd cleangtk ./run-mozilla.sh $dbgarg -d "$debugger" \
+                                "${ffargs[@]}"
+fi
+
+# FIXME -a "$(prettyquote "${dbgargs[@]}")" \
+# Needs quoting with double escaping or something
