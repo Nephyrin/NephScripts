@@ -42,6 +42,9 @@ parseopts() {
                 explicitbranch="$1"
                 shift
                 ;;
+            '--no-ramdisk') # Don't put build tree / objdir in ramdisks
+                noramdisk=1
+                ;;
             '-c') # Explicitly reconfigure tree
                 configure=1
                 ;;
@@ -84,6 +87,8 @@ eval parseopts $parsed
 #
 # Defaults & Sanity
 #
+
+[ ! -z "$noramdisk" ] || ramdisk="/tmp/mb-ramdisk-$USER"
 
 if [ ! -z "$nodistcc" ] && [ ! -z "$onlydistcc" ]; then
     die "--no-distcc and --only-distcc are mutually exclusive"
@@ -180,7 +185,7 @@ if [ -z "$nodistcc" ]; then
       eerr "No DISTCC_HOSTS or DISTCC_POTENTIAL_HOSTS"
       die  "Set these or use --no-distcc"
     fi
-    export MAKE_JOBS=$(( $(distcc -j) * 15 / 10 ))
+    export MAKE_JOBS=$(( $(distcc -j) * 2 ))
     estat "distcc configured with $MAKE_JOBS jobs: "$DISTCC_HOSTS
 fi
 
@@ -190,21 +195,49 @@ fi
 # Nuke or clobber if requested
 #
 
-if [ -d "$MOZOBJ" ] && [ ! -z "$nuke" ]; then
-  dir="$(readlink -f "$MOZOBJ")"
-  estat "Nuking build directory"
-  rm -rf "$dir"
-elif [ ! -z "$clobber" ]; then
-      estat "Clobbering build"
-      # Force a full clobber build while preserving some intermediary files
-      (
-          cd "$MOZOBJ"
-          rm -rf conf* CLOBBER
-          find . -name 'Makefile*' -exec rm -v {} \;
-      )
+if [ ! -z "$nuke" ]; then
+  estat "Nuking build"
+  [ -z "$ramdisk" ] || cmd rm -rf "$ramdisk"
+  cmd rm -rf "$MOZOBJ"
+  # If we're using a ramdisk, --nuke should kill the (potentially-non-ramdisk)
+  # build tree
+  [ -z "$ramdisk" ] || cmd rm -rf "$MOZBUILDTREE"
 elif [ -d "$MOZOBJ" ] && [ ! -z "$force" ]; then
-    estat "Overriding clobber"
-    touch "$MOZOBJ"/CLOBBER
+  estat "Overriding clobber"
+  touch "$MOZOBJ"/CLOBBER
+fi
+
+#
+# Setup ramdisk maybe
+#
+
+# Kill dead ramdisk symlinks
+[ ! -L "$MOZBUILDTREE" ] || [ -d "$MOZBUILDTREE" ] || rm "$MOZBUILDTREE"
+[ ! -L "$MOZOBJ" ] || [ -d "$MOZOBJ" ] || rm "$MOZOBJ"
+
+if [ ! -z "$ramdisk" ]; then
+  # Check for existing, non-ramdisk directories
+  if [ -e "$MOZOBJ" ] && [ ! -L "$MOZOBJ" ]; then
+    die "Non-ramdisk objdir exists. Use --no-ramdisk or --nuke"
+  fi
+  if [ -e "$MOZBUILDTREE" ] && [ ! -L "$MOZBUILDTREE" ]; then
+    die "Non-ramdisk build tree exists, use --nuke or --no-ramdisk"
+  fi
+
+  # Setup ramdisk
+  if [ ! -d "$ramdisk" ]; then
+    ( umask 077 && cmd mkdir "$ramdisk" )
+    ( cd "$ramdisk" && ln -s "$MOZPATH/cfg" )
+  fi
+  if [ ! -d "$MOZOBJ" ]; then
+    cmd mkdir "$ramdisk/$MOZOBJ"
+    cmd ln -s "$ramdisk/$MOZOBJ"
+  fi
+else
+  # Not using a ramdisk, make sure one isn't setup
+  if [ -L "$MOZBUILDTREE" ] || [ -L "$MOZOBJ" ]; then
+    die "--no-ramdisk given, but current build is on a ramdisk. Use --nuke"
+  fi
 fi
 
 #
@@ -248,7 +281,13 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   if [ ! -d "$MOZBUILDTREE" ]; then
     estat "Creating new $MOZBUILDTREE"
     ( cd "$MOZTREE" && cmd git branch -f "$branch" "$buildref" )
-    /usr/share/git/workdir/git-new-workdir "$MOZTREE" "$MOZBUILDTREE" "$branch"
+    if [ -z "$ramdisk" ]; then
+      /usr/share/git/workdir/git-new-workdir "$MOZTREE" "$MOZBUILDTREE" "$branch"
+    else
+      /usr/share/git/workdir/git-new-workdir "$MOZTREE" \
+                                             "$ramdisk/$MOZBUILDTREE" "$branch"
+      cmd ln -s "$ramdisk/$MOZBUILDTREE"
+    fi
   fi
 
   # Make a staging tree or reset it. We use a staging tree so we can avoid
@@ -332,7 +371,7 @@ fi
   if [ ! -z "$ninja" ]; then
     (
       cd "$MOZPATH/$MOZOBJ"
-      cmd $NINJA
+      time cmd $NINJA
     )
   elif [ -z "$nomach" ]; then
       estat "Building with mach"
