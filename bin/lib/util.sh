@@ -69,18 +69,6 @@ sh_c()
   echo -n -e "\e[$b${c}m"
 }
 
-prettyquote()
-{
-  local args=()
-  for arg in "$@"; do
-    if [ "$arg" != "$(printf '%q' "$arg")" ]; then
-      arg="'${arg//'/'\\''}'"
-    fi
-    args[${#args[@]}]="$arg"
-  done
-  echo "${args[@]}"
-}
-
 estat() { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
 ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
 eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
@@ -108,6 +96,18 @@ get_x_session()
   fi
   [ ! -z "$DISPLAY" ] || export DISPLAY=:0
   [ ! -z "$XAUTHORITY" ] || export XAUTHORITY=$HOME/.Xauthority
+}
+
+prettyquote()
+{
+  local args=()
+  for arg in "$@"; do
+    if [ "$arg" != "$(printf '%q' "$arg")" ]; then
+      arg=\'${arg//\'/\'\\\'\'}\'
+    fi
+    args[${#args[@]}]="$arg"
+  done
+  echo "${args[@]}"
 }
 
 # Prints eval-able expression to set given variable, e.g.:
