@@ -17,6 +17,9 @@ fi
 ifnuke() {
   if [ -d "$1" ]; then
     estat "Nuking $1"
+    if [ -L "$1" ]; then
+      ifnuke "$(readlink -f "$1")"
+    fi
     cmd rm -rf "$1"
   else
     estat "$1 Doesn't exist, skipping"
@@ -25,6 +28,7 @@ ifnuke() {
 
 cd "$MOZPATH"
 ifnuke "$MOZOBJ"
+ifnuke "mb-staging"
 if [ ! -z "$MOZBUILDTREE" ] && [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   ifnuke "$MOZBUILDTREE"
   if [ -d "$MOZTREE/.git" ]; then
