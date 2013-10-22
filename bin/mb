@@ -17,8 +17,8 @@ parseopts() {
             '--no-mach') # Don't use mach
                 nomach=1
                 ;;
-            '--no-cgroup') # Don't use cgroup hooks
-                nocgroup=1
+            '--cgroup') # Use cgroup hooks
+                cgroup=1
                 ;;
             '--no-distcc') # Don't use distcc
                 nodistcc=1
@@ -81,7 +81,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,no-cgroup,no-distcc,no-buildtree,no-hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bcfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-buildtree,no-hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bcfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -156,7 +156,7 @@ if [ ! -z "$cpufreq" ]; then
     cpufreq-selector -c all -g performance
 fi
 
-if [ -z "$nocgroup" ]; then
+if [ ! -z "$cgroup" ]; then
     if [ ! -f /sys/fs/cgroup/cpu/tasks ]; then
         ewarn "No cgroup"
         sleep 2
