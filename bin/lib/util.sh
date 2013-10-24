@@ -74,7 +74,7 @@ ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
 eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
 eerrint() { eerr "$@"; return 1; }
 
-cmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(prettyquote "$@")"; "$@"; }
+cmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(sh_quote "$@")"; "$@"; }
 qcmd() { cmd "$@" >/dev/null; }
 xcmd() { cmd "$@" &>/dev/null; }
 
@@ -98,7 +98,7 @@ get_x_session()
   [ ! -z "$XAUTHORITY" ] || export XAUTHORITY=$HOME/.Xauthority
 }
 
-prettyquote()
+sh_quote()
 {
   local args=()
   for arg in "$@"; do
@@ -230,5 +230,5 @@ num_args()
 
 get_args()
 {
-  prettyquote "${_parse_args_args[@]}"
+  sh_quote "${_parse_args_args[@]}"
 }

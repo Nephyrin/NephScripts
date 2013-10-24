@@ -57,5 +57,5 @@ else
                                 "${ffargs[@]}"
 fi
 
-# FIXME -a "$(prettyquote "${dbgargs[@]}")" \
+# FIXME -a "$(sh_quote "${dbgargs[@]}")" \
 # Needs quoting with double escaping or something
