@@ -176,6 +176,7 @@ fi
 if [ -z "$nodistcc" ]; then
     MACH="pump $MACH"
     MAKE="pump $MAKE"
+    NINJA="pump $NINJA"
     if [ -f "$nephbin/../priv/distcc.conf" ]; then
       [ -z "$onlydistcc" ] || export NEPH_DISTCC_NOLOCAL=1
       estat "Found distcc.conf"
