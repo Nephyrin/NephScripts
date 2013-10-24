@@ -42,6 +42,7 @@ export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-thread-multi:$HOME/perl5/lib
 _path_push "$HOME/perl5/bin"
 
 export MOZPATH="$HOME/moz"
+[ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
 
 # Machine specific
 if [ "$(hostname)" = "neph" ]; then
@@ -521,120 +522,6 @@ van()
 
 _quote() {
   echo \'${1//\'/\'\\\'\'}\'
-}
-
-_update_mozinfo() {
-  if [ -z "$MOZPATH" ]; then
-      echo >&1 "!! No mozconfig"
-      return 1
-  fi
-  eval mozinfo=($(cat "$MOZPATH"/neph.mozinfo))
-  local i=-2
-  while [ $(( i += 2 )) -lt ${#mozinfo[@]} ]; do
-    obj=${mozinfo[$(( i + 1 ))]}
-    tree=${mozinfo[$i]}
-    if [ "$obj" != "$MOZOBJ" ]; then
-      echo $(_quote "$tree") $(_quote "$obj") >> "$MOZPATH"/neph.mozinfo.new
-    fi
-  done
-  echo $(_quote "$tree") $(_quote "$obj") >> "$MOZPATH"/neph.mozinfo.new
-  mv "$MOZPATH"/neph.mozinfo.new "$MOZPATH"/neph.mozinfo
-}
-
-# Sets the current moz config and target
-moz() {
-    if [ $# -gt 3 ]; then
-        echo >&2 "??"
-        return 1
-    fi
-    if [ "0$MOZGENCFG" -eq 1 ] && [ -f "$MOZCONFIG" ]; then
-        # MOZGENCFG means we're using a generated config file. Nuke it - we'll
-        # remake it if neede.
-        rm "$MOZCONFIG"
-    fi
-    if [ $# -eq 0 ]; then
-        echo >&2 ':: Clearing moz config'
-        unset MOZTREE
-        unset MOZCFG
-        unset MOZCONFIG
-        unset MOZ_PS1
-        unset MOZGENCFG
-        unset MOZBUILDTREE
-        unset MOZSUFFIX
-        unset MOZOBJ
-        _reprompt
-        return
-    fi
-    mozfile="$(readlink -f "$MOZPATH/cfg/m-$1.mzc")"
-    if [ ! -f "$mozfile" ]; then
-        echo >&2 "!! No config named $1"
-        return 1
-    fi
-    MOZSUFFIX=""
-    [ $# -lt 2 ] || MOZSUFFIX="$2"
-    MOZCFG="$1"
-    MOZOBJ="$MOZCFG"
-    [ -z "$MOZSUFFIX" ] || MOZOBJ="$MOZOBJ-$MOZSUFFIX"
-    if [ -f "$MOZPATH/$MOZOBJ/Makefile" ]; then
-        # See if it has a tree
-        configured_tree="$(egrep '^topsrcdir' "$MOZPATH/$MOZOBJ/Makefile" | awk '{ print $NF }')"
-        configured_tree="${configured_tree##*/}"
-        configured_tree="${configured_tree%-build*}"
-    fi
-    if [ $# -ge 3 ]; then
-        MOZTREE="$3"
-    elif [ ! -z "$configured_tree" ]; then
-        MOZTREE="$configured_tree"
-    else
-        MOZTREE="moz-git"
-    fi
-    MOZBUILDTREE="$MOZTREE-build"
-    [ -z "$MOZSUFFIX" ] || MOZBUILDTREE="$MOZBUILDTREE-$MOZSUFFIX"
-    if [ ! -f "$MOZPATH/$MOZTREE/client.mk" ]; then
-        echo >&2 "!! $MOZTREE does not appear to exist"
-        MOZTREE="moz-git"
-    fi
-    if [ ! -z "$configured_tree" ] && [ "$configured_tree" != "$MOZTREE" ]; then
-        echo >&2 "!! $MOZOBJ is currently configured against tree $configured_tree"
-    fi
-    MOZCONFIG="$mozfile"
-    MOZGENCFG=0
-    local extraps1
-    if [ ! -z "$MOZSUFFIX" ]; then
-        extraps1=$'\['"\e[0m"$'\]'" / "$'\['"\e[0;31m$MOZSUFFIX"
-    fi
-    if [ "$MOZCFG" != "$MOZOBJ" ]; then
-        MOZCONFIG="$(mktemp -t mozcfg.XXXX)"
-        MOZGENCFG=1
-        echo ". $mozfile" >> "$MOZCONFIG"
-        echo "mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../$MOZOBJ" >> "$MOZCONFIG"
-    fi
-    MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
-    _reprompt
-    _update_mozinfo
-    export MOZCONFIG MOZTREE MOZCFG MOZOBJ MOZGENCFG MOZSUFFIX MOZBUILDTREE
-}
-
-# cd to moz objdir
-mo() {
-    if [ -z "$MOZCFG" ]; then
-        echo >&2 "!! No moz config"
-        return 1
-    fi
-    if [ ! -d "$MOZPATH/$MOZCFG" ]; then
-        echo >&2 "!! The tree isn't built"
-        return 1
-    fi
-    cd "$MOZPATH/$MOZCFG"
-}
-
-# cd to moz tree
-mt() {
-    if [ -z "$MOZCFG" ]; then
-        echo >&2 "!! No moz config"
-        return 1
-    fi
-    cd "$MOZPATH/$MOZTREE"
 }
 
 x() {
