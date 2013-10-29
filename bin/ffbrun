@@ -12,7 +12,7 @@ set -e
 [ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
 # see also IPCPlugins:5 (VERY spammy)
 
-parse_args ffbrun 'gd:a:rx' '' "$@"
+parse_args ffbrun 'gd:a:rx' 'moz:' "$@"
 
 dbgargs=($(get_option a))
 debugger="$(get_option d)"
@@ -30,6 +30,12 @@ fi
 # Don't cause non-gdb spew if running gdb in emacs
 if [ "$EMACS" = "t" ] && [ -n "$dbg" ]; then
   cmd() { "$@"; }
+fi
+
+moz="$(get_option moz)"
+if [ ! -z "$moz" ]; then
+  . "$(dirname "$0")"/lib/moz.sh
+  cmd moz $moz
 fi
 
 cd "$MOZPATH/$MOZOBJ/dist/bin/"
@@ -53,9 +59,8 @@ if [ -n "$dbg" ] && [ "$EMACS" = "t" ]; then
   cleangtk $debugger -i=mi "${dbgargs[@]}" --args "${ffargs[@]}"
 else
   [ -z "$dbg" ] || dbgarg="-g"
+  [ ${#dbgargs[@]} -eq 0 ] || dbgargs=(-a "$(sh_quote "${dbgargs[@]}")")
   cmd cleangtk ./run-mozilla.sh $dbgarg -d "$debugger" \
-                                "${ffargs[@]}"
+                                        "${dbgargs[@]}" \
+                                        "${ffargs[@]}"
 fi
-
-# FIXME -a "$(sh_quote "${dbgargs[@]}")" \
-# Needs quoting with double escaping or something
