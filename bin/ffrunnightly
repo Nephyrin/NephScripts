@@ -2,7 +2,7 @@
 
 set -e
 
-. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
+. "$(dirname "$0")"/lib/util.sh
 
 date="$1"
 [ "$#" -lt 1 ] || shift
@@ -12,10 +12,6 @@ trap "rm -rf '$tempdir'" EXIT
 
 cd "$tempdir"
 
-if [ "$#" -gt 0 ]; then
-    ffgetnightly "$date"
-else
-    ffgetnightly
-fi
+cmd ffgetnightly "$date"
 
 cmd ffrun ./firefox/firefox "$@"

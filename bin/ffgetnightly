@@ -2,31 +2,46 @@
 
 set -e
 
-cachedir="$MOZPATH/nightlycache"
+. "$(dirname "$0")"/lib/util.sh
+
+[ -z "$MOZPATH" ] || cachedir="$MOZPATH/nightlycache"
 
 while read -r inf; do
-  echo ":: $inf"
   info[i++]="$inf"
-done < <(ffnightlyinfo "$@")
+done < <(ffnightlyinfo "$@" 2>/dev/null)
 
 timestamp=${info[0]}
 shortrev=${info[1]}
 url=${info[2]}
+gitrev="$(h2g $shortrev 2>/dev/null)"
+if [ ! -z "$gitrev" ] && [ ! -z "$MOZTREE" ] && [ -d "$MOZPATH/$MOZTREE" ]; then
+  gitrev="${gitrev:0:12}"
+  gitmsg="$(cd "$MOZPATH/$MOZTREE" &&
+            git log --pretty="%s" --no-walk "$gitrev" 2>/dev/null || true)"
+  [ -z "$gitmsg" ] || gitrev="$gitrev ($gitmsg)"
+fi
+
+estat "Nightly info:"
+estat "  timestamp: $timestamp ($(date --date="@$timestamp"))"
+estat "  rev:       $shortrev"
+if [ ! -z "$gitrev" ]; then
+  estat "  gitrev:    $gitrev"
+fi
+estat "  url:       $url"
 
 if [ -d "$cachedir" ]; then
   file="$cachedir"/"$shortrev".tar.bz2
   if [ ! -f "$file" ]; then
-    echo ":: Not in cache, downloading $url"
+    estat "Not in cache, downloading $url"
     curl -# "$url" > "$file"
   else
-    echo ":: Found in cache: $file"
+    estat "Found in cache: $file"
   fi
-  echo ":: Extracting"
+  estat "Extracting"
   tar xjf "$file"
 else
-  echo ":: Not using cache directory"
+  estat "Not using cache directory"
   curl -# "$url" | tar xj
 fi
 
-echo ""
-echo ":: Nightly downloaded to ./firefox/"
+estat "Nightly downloaded to ./firefox/"
