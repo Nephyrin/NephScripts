@@ -2,7 +2,7 @@
 
 set -e
 
-mozinfo="$HOME/moz/neph.mozinfo"
+mozinfo="$HOME/moz/mozinfo"
 mozdir="$(dirname "$mozinfo")"
 file="$(readlink -f "$1")"
 objdir="$2"
