@@ -481,7 +481,7 @@
 
 (require 'auto-complete-clang-async)
 
-(setq ac-auto-start t)
+(setq ac-auto-start nil)
 (setq ac-quick-help-delay 0.5)
 ;; (ac-set-trigger-key "TAB")
 (define-key ac-mode-map  [(control tab)] 'auto-complete)
