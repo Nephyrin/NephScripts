@@ -67,3 +67,6 @@
 [submodule "emacs.d/god-mode"]
 	path = emacs.d/god-mode
 	url = https://github.com/chrisdone/god-mode
+[submodule "powerline.git"]
+	path = powerline.git
+	url = https://github.com/Lokaltog/powerline

@@ -2,30 +2,30 @@
 
 NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
 
-_path_contains() {
+_list_contains() {
   local s
   local IFS=":"
-  s=($PATH)
+  eval s=(\$$1)
   for x in "${s[@]}"; do
-    [ "$1" != "$x" ] || return 0
+    [ "$2" != "$x" ] || return 0
   done
   return 1
 }
 
-_path_push() {
-  ! _path_contains "$1" || return 0
-  [ -z "$PATH" ] || PATH=":$PATH"
-  PATH="$1$PATH"
+_list_push() {
+  ! _list_contains "$1" "$2" || return 0
+  [ -z "$(eval echo \$$1)" ] || eval $1=":\$$1"
+  eval $1="\$2\$$1"
 }
 
-_if_path_push() {
-  [ -d "$1" ] || return 0
-  _path_push "$1"
+_if_dir_list_push() {
+  [ -d "$2" ] || return 0
+  _list_push "$1" "$2"
 }
 
-_path_push "$HOME/bin"
-_path_push "$HOME/.local/bin"
-_if_path_push "$HOME/neph/priv/bin"
+_list_push PATH "$HOME/bin"
+_list_push PATH "$HOME/.local/bin"
+_list_push PATH "$HOME/neph/priv/bin"
 
 export BROWSER="firefox '%s'"
 export EDITOR="ec"
@@ -39,7 +39,12 @@ export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
 export PERL_MB_OPT="--install_base $HOME/perl5";
 export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
 export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-thread-multi:$HOME/perl5/lib/perl5";
-_path_push "$HOME/perl5/bin"
+_list_push PATH "$HOME/perl5/bin"
+
+# Powerline
+export PYTHONPATH
+_list_push PATH "$HOME/neph/powerline/bin"
+_list_push PYTHONPATH "$HOME/neph/powerline/lib/python-latest/site-packages/"
 
 export MOZPATH="$HOME/moz"
 [ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
