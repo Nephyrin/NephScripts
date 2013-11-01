@@ -50,7 +50,7 @@ _list_push PYTHONPATH "$HOME/neph/powerline/lib/python-latest/site-packages/"
 # tmux shell can use it to see if its appropriate to update TERM
 if [[ "${TERM/256color/}" != "$TERM" ]]; then
   export NEPH_256COLOR_TERM=1
-elif [[ "$NEPH_256COLOR_TERM" -gt 0 -a "$TERM" = "screen" -a -n "$TMUX" ]]; then
+elif [[ "$NEPH_256COLOR_TERM" -gt 0 && "$TERM" = "screen" && -n "$TMUX" ]]; then
   export TERM=screen-256color
 fi
 
