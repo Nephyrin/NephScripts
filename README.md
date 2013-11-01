@@ -11,7 +11,7 @@ particular bit.
 Most ~/bin/ stuff *should* be path agnostic, but the bashrc assumes ~/bin
 exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
 
-## Symlinks on my systems:
+## Setup / symlinks for various things:
         # Scripts/bash
         ln -sv $repo/bin            ~/bin
         ln -sv $repo/bashrc         ~/.bashrc
@@ -29,12 +29,15 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
         ln -sv $repo/hgrc           ~/.hgrc
         ln -sv $repo/hgignore       ~/.hgignore
 
-## Other
-        # tmux-powerline
-        cp -v $repo/DejaVuSansMono-Powerline.ttf ~/.fonts/
+        # Powerline (needs the PYTHONPATH and PATH additions in bashrc)
+        ( cd "$repo" && ./build-powerline.sh )
+        mkdir -v ~/.fonts.conf.d/
+        mkdir -v ~/.fonts/
+        ln -sv $repo/powerline.git/font/10-powerline-symbols.conf ~/.fonts.conf.d/
+        ln -sv $repo/powerline.git/font/PowerlineSymbols.otf ~/.fonts/
         fc-cache -vf
 
-        # ssh (does not want this file symlinked/insecure)
+        # ssh config (does not want this file symlinked/insecure)
         cp -v $repo/sshconfig ~/.ssh/config
         chown -v $USER ~/.ssh/config
         chmod -v 600 ~/.ssh/config
