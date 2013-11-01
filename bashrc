@@ -46,6 +46,14 @@ export PYTHONPATH
 _list_push PATH "$HOME/neph/powerline/bin"
 _list_push PYTHONPATH "$HOME/neph/powerline/lib/python-latest/site-packages/"
 
+# tmux blows away TERM, so set NEPH_256COLOR_TERM if we see one, then the nested
+# tmux shell can use it to see if its appropriate to update TERM
+if [[ "${TERM/256color/}" != "$TERM" ]]; then
+  export NEPH_256COLOR_TERM=1
+elif [[ "$NEPH_256COLOR_TERM" -gt 0 -a "$TERM" = "screen" -a -n "$TMUX" ]]; then
+  export TERM=screen-256color
+fi
+
 export MOZPATH="$HOME/moz"
 [ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
 
