@@ -58,6 +58,11 @@ parseopts() {
             '-n') # Attempt a incremental build with ninja
                 ninja=1
                 ;;
+            '-i') # Use 'binaries' target to do an incremental build, skipping
+                  # some steps
+                incremental=1
+                args[${#args[@]}]="binaries"
+                ;;
             '--no-hacky') # Don't apply hackymake to builds
                 nohacky=1
                 ;;
@@ -81,7 +86,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,no-hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bcfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,no-hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bicfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -114,11 +119,17 @@ if [ -d "$MOZOBJ/.hacky" ] && [ ! -z "$nohacky" ] && [ -z "$nuke" ]; then
   die "Current objdir has hacky.mk, building without hacky.mk requires --nuke"
 fi
 
+if [ ! -z "$ninja$incremental" ]; then
+  if [ ! -z "$clobber$nuke" ]; then
+    die "Doing an incremental build with --clobber or --nuke doesn't make sense"
+  fi
+  if [ ! -f "$MOZOBJ/Makefile" ]; then
+    die "Can't do an incremental/ninja build without a already-built tree"
+  fi
+fi
+
 if [ ! -z "$ninja" ]; then
-  [ -f "$MOZOBJ/Makefile" ] || die "Tree isn't fully built, can't ninja"
   [ -f "$MOZOBJ/build.ninja" ] || die "No ninja - tree built without hacky.mk"
-  [ -z "$clobber" ] || die "Can't clobber and use ninja"
-  [ -z "$nuke" ] || die "Can't nuke and use ninja"
   [ -z "$configure" ] || die "Can't reconfigure and use ninja"
   [ -z "$force" ] || die "-f doesn't make sense when using ninja"
   [ -z "$nohacky" ] || die "--no-hacky and ninja don't make sense"
