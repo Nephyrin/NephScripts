@@ -63,8 +63,8 @@ parseopts() {
                 incremental=1
                 args[${#args[@]}]="binaries"
                 ;;
-            '--no-hacky') # Don't apply hackymake to builds
-                nohacky=1
+            '--hacky') # Apply hacky.mk to builds, allowing use of ninja
+                hacky=1
                 ;;
             '-v')
                 verbose=1
@@ -86,7 +86,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,no-hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bicfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bicfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -110,12 +110,12 @@ fi
 
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
 
-if [ -d "$MOZOBJ" ] && [ ! -d "$MOZOBJ/.hacky" ] && [ -z "$nohacky" ] &&
+if [ -d "$MOZOBJ" ] && [ ! -d "$MOZOBJ/.hacky" ] && [ -n "$hacky" ] &&
    [ -z "$nuke" ]; then
-  die "Current objdir built without hacky.mk, use --nuke or --no-hacky"
+  die "Current objdir built without hacky.mk, use --nuke or drop --hacky"
 fi
 
-if [ -d "$MOZOBJ/.hacky" ] && [ ! -z "$nohacky" ] && [ -z "$nuke" ]; then
+if [ -d "$MOZOBJ/.hacky" ] && [ -z "$hacky" ] && [ -z "$nuke" ]; then
   die "Current objdir has hacky.mk, building without hacky.mk requires --nuke"
 fi
 
@@ -132,7 +132,7 @@ if [ ! -z "$ninja" ]; then
   [ -f "$MOZOBJ/build.ninja" ] || die "No ninja - tree built without hacky.mk"
   [ -z "$configure" ] || die "Can't reconfigure and use ninja"
   [ -z "$force" ] || die "-f doesn't make sense when using ninja"
-  [ -z "$nohacky" ] || die "--no-hacky and ninja don't make sense"
+  [ -n "$hacky" ] || die "ninja builds require a tree built with --hacky"
 fi
 
 #
@@ -342,7 +342,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
     # another branch if we accidentally messed with this workdir
     cmd git checkout -f "$branch" 2>/dev/null
     oldref="$(git rev-parse HEAD)"
-    if [ -z "$nohacky" ]; then
+    if [ -n "$hacky" ]; then
       cmd git reset --hard "${buildref}^"
       cmd "$MOZPATH/hacky.mk/hackify" "$PWD" >/dev/null
       cmd git add -A
@@ -393,7 +393,7 @@ fi
       [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
       time cmd $MAKE -f client.mk && estat "Make succeeded"
   fi
-  if [ -z "$ninja$nohacky" ]; then
+  if [ -n "$hacky" ]; then
     (
       cmd cd "$MOZPATH/$MOZOBJ"
       # Also provided by nephscripts
