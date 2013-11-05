@@ -1,19 +1,26 @@
 #!/bin/bash
 
+source "$(dirname "$0")"/lib/util.sh
+
+neph="$(dirname "$(readlink -f "$0")")/.."
+
+parse_args nightfox 'g' '' "$@"
+eval app_args=("$(get_args)")
+
 export MOZ_USE_OMTC=1
 
-export MOZ_PROFILER_NEW=1
-export MOZ_PROFILER_VERBOSE=1
-export MOZ_PROFILER_INTERVAL=10
-export MOZ_PROFILER_MODE=native
-export MOZ_PROFILER_STACK_SCAN=0
+# export MOZ_PROFILER_NEW=1
+# export MOZ_PROFILER_VERBOSE=1
+# export MOZ_PROFILER_INTERVAL=10
+# export MOZ_PROFILER_MODE=combined
+# export MOZ_PROFILER_STACK_SCAN=0
 
-if [ "$1" = "-g" ]; then
-    shift
-    cd ~/firefox-nightly
-    cleangtk gdb -ex "handle SIGPIPE nostop noprint pass" \
-                 -ex "source $BIN/firefox-gdb.gdb" -ex run \
-                 --args ./firefox -P default "$@"
+if [ -n "$(get_option g)" ]; then
+  cmd cd ~/firefox-nightly
+  cmd cleangtk gdb -ex "handle SIGPIPE nostop noprint pass" \
+                   -ex run \
+                   -ex "source $neph/firefox-gdb.gdb" \
+                   --args ./firefox "${app_args[@]}"
 else
-    cleangtk ~/firefox-nightly/firefox -P default "$@"
+  cmd cleangtk ~/firefox-nightly/firefox "${app_args[@]}"
 fi
