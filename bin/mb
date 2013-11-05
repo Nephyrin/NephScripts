@@ -55,16 +55,10 @@ parseopts() {
                 makejobs="$1"
                 shift
                 ;;
-            '-n') # Attempt a incremental build with ninja
-                ninja=1
-                ;;
             '-i') # Use 'binaries' target to do an incremental build, skipping
                   # some steps
                 incremental=1
                 args[${#args[@]}]="binaries"
-                ;;
-            '--hacky') # Apply hacky.mk to builds, allowing use of ninja
-                hacky=1
                 ;;
             '-v')
                 verbose=1
@@ -86,7 +80,7 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,hacky,only-distcc,clobber,nuke,cpufreq,branch: -o nj:bicfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: -o j:bicfvp -- "$@")"
 eval parseopts $parsed
 
 #
@@ -110,29 +104,18 @@ fi
 
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
 
-if [ -d "$MOZOBJ" ] && [ ! -d "$MOZOBJ/.hacky" ] && [ -n "$hacky" ] &&
-   [ -z "$nuke" ]; then
-  die "Current objdir built without hacky.mk, use --nuke or drop --hacky"
-fi
-
-if [ -d "$MOZOBJ/.hacky" ] && [ -z "$hacky" ] && [ -z "$nuke" ]; then
-  die "Current objdir has hacky.mk, building without hacky.mk requires --nuke"
-fi
-
-if [ ! -z "$ninja$incremental" ]; then
-  if [ ! -z "$clobber$nuke" ]; then
+if [ -n "$incremental" ]; then
+  if [[ -n "$clobber" || -n "$nuke" ]]; then
     die "Doing an incremental build with --clobber or --nuke doesn't make sense"
   fi
   if [ ! -f "$MOZOBJ/Makefile" ]; then
-    die "Can't do an incremental/ninja build without a already-built tree"
+    die "Can't do an incremental build without a already-built tree"
   fi
 fi
 
-if [ ! -z "$ninja" ]; then
-  [ -f "$MOZOBJ/build.ninja" ] || die "No ninja - tree built without hacky.mk"
-  [ -z "$configure" ] || die "Can't reconfigure and use ninja"
-  [ -z "$force" ] || die "-f doesn't make sense when using ninja"
-  [ -n "$hacky" ] || die "ninja builds require a tree built with --hacky"
+if [ -d "$MOZOBJ/.hacky" ]; then
+  eerr "mb no longer supports hacky.mk, trying to build this tree will fail."
+  die  "switch to an older version of mb, or use --nuke"
 fi
 
 #
@@ -153,7 +136,6 @@ export NO_AUTOCLOBBER=1
 PYTHON="py2e python"
 MACH="py2e ./mach"
 MAKE="py2e make"
-NINJA="py2e ninja"
 [ -z "$verbose" ] && MAKE="$MAKE --silent"
 
 #
@@ -187,7 +169,6 @@ fi
 if [ -z "$nodistcc" ]; then
     MACH="pump $MACH"
     MAKE="pump $MAKE"
-    NINJA="pump $NINJA"
     if [ -f "$nephbin/../priv/distcc.conf" ]; then
       [ -z "$onlydistcc" ] || export NEPH_DISTCC_NOLOCAL=1
       estat "Found distcc.conf"
@@ -342,16 +323,7 @@ if [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
     # another branch if we accidentally messed with this workdir
     cmd git checkout -f "$branch" 2>/dev/null
     oldref="$(git rev-parse HEAD)"
-    if [ -n "$hacky" ]; then
-      cmd git reset --hard "${buildref}^"
-      cmd "$MOZPATH/hacky.mk/hackify" "$PWD" >/dev/null
-      cmd git add -A
-      cmd git commit -m "HACKIFY FOR BUILD @ $(date)" >/dev/null
-      cmd git cherry-pick "$buildref" --allow-empty
-    else
-      ewarn Not applying hacky.mk
-      cmd git reset --hard "$buildref"
-    fi
+    cmd git reset --hard "$buildref"
     PAGER="" cmd git diff "$oldref" --stat
   )
 fi
@@ -380,26 +352,13 @@ fi
 #
 (
   cmd cd "$MOZBUILDTREE"
-  if [ ! -z "$ninja" ]; then
-    (
-      cd "$MOZPATH/$MOZOBJ"
-      time cmd $NINJA
-    )
-  elif [ -z "$nomach" ]; then
+  if [ -z "$nomach" ]; then
       estat "Building with mach"
       cmd $MACH build "${args[@]}"
   else
       ewarn "Not using mach"
       [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
       time cmd $MAKE -f client.mk && estat "Make succeeded"
-  fi
-  if [ -n "$hacky" ]; then
-    (
-      cmd cd "$MOZPATH/$MOZOBJ"
-      # Also provided by nephscripts
-      cmd hacky_purge_missing_deps
-      cmd $PYTHON "$MOZPATH/$MOZBUILDTREE/tools/hackymake/hackypost.py" "."
-    )
   fi
 )
 
