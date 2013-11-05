@@ -113,7 +113,7 @@ if [ -n "$incremental" ]; then
   fi
 fi
 
-if [ -d "$MOZOBJ/.hacky" ]; then
+if [ -z "$nuke" ] && [ -d "$MOZOBJ/.hacky" ]; then
   eerr "mb no longer supports hacky.mk, trying to build this tree will fail."
   die  "switch to an older version of mb, or use --nuke"
 fi
