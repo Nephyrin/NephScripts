@@ -17,9 +17,8 @@ export MOZ_USE_OMTC=1
 
 if [ -n "$(get_option g)" ]; then
   cmd cd ~/firefox-nightly
-  cmd cleangtk gdb -ex "handle SIGPIPE nostop noprint pass" \
+  cmd cleangtk gdb -x "$neph/firefox-gdb.gdb" \
                    -ex run \
-                   -ex "source $neph/firefox-gdb.gdb" \
                    --args ./firefox "${app_args[@]}"
 else
   cmd cleangtk ~/firefox-nightly/firefox "${app_args[@]}"
