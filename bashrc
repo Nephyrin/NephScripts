@@ -55,6 +55,7 @@ elif [[ "$NEPH_256COLOR_TERM" -gt 0 && "$TERM" = "screen" && -n "$TMUX" ]]; then
 fi
 
 export MOZPATH="$HOME/moz"
+export MOZDEFAULTTREE=moz-git
 [ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
 
 # Machine specific

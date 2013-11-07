@@ -128,17 +128,20 @@ moz() {
         configured_tree="${configured_tree%-build*}"
     fi
     if [ $# -ge 3 ]; then
-        MOZTREE="$3"
+      MOZTREE="$3"
     elif [ ! -z "$configured_tree" ]; then
-        MOZTREE="$configured_tree"
+      MOZTREE="$configured_tree"
+    elif [ ! -z "$MOZDEFAULTTREE" ]; then
+      MOZTREE="$MOZDEFAULTTREE"
     else
-        MOZTREE="moz-git"
+      eerr "MOZDEFAULTTREE isn't set in your env, and no tree was specified"
+      return 1
     fi
     MOZBUILDTREE="$MOZTREE-build"
     [ -z "$MOZSUFFIX" ] || MOZBUILDTREE="$MOZBUILDTREE-$MOZSUFFIX"
     if [ ! -f "$MOZPATH/$MOZTREE/client.mk" ]; then
-        ewarn "$MOZTREE does not appear to exist"
-        MOZTREE="moz-git"
+        eerr "$MOZTREE does not appear to exist"
+        return 1
     fi
     if [ ! -z "$configured_tree" ] && [ "$configured_tree" != "$MOZTREE" ]; then
         ewarn "$MOZOBJ is currently configured against tree $configured_tree"
@@ -176,9 +179,15 @@ mo() {
 
 # cd to moz tree
 mt() {
-    if [ -z "$MOZCFG" ]; then
-        eerr "No moz config"
-        return 1
-    fi
-    cd "$MOZPATH/$MOZTREE"
+  if [ -z "$MOZPATH" ]; then
+    eerr "No MOZPATH set in your env"
+    return 1
+  fi
+  if [ -n "$MOZTREE" ]; then
+    cmd cd "$MOZPATH/$MOZTREE"
+  elif [ -n "$MOZDEFAULTTREE" ]; then
+    cmd cd "$MOZPATH/$MOZDEFAULTTREE"
+  else
+    eerr "No moz config select, and MOZDEFAULTTREE isn't set in your env"
+  fi
 }
