@@ -25,7 +25,6 @@ define hook-stop
             silent
             check-asmjsfaulthandler
         end
-        check-asmjsfaulthandler
     end
 end
 
