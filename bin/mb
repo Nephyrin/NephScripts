@@ -214,7 +214,14 @@ if [ ! -z "$ramdisk" ]; then
     die "Non-ramdisk objdir exists. Use --no-ramdisk or --nuke"
   fi
   if [ -e "$MOZBUILDTREE" ] && [ ! -L "$MOZBUILDTREE" ]; then
-    die "Non-ramdisk build tree exists, use --nuke or --no-ramdisk"
+    # Build tree isn't ramdisk
+    if [ -n "$nuke" ]; then
+      # With nuke, just delete build tree to remake on ramdisk below
+      estat "Switching to ramdisk build tree, nuking existing"
+      cmd rm -rf "$MOZBUILDTREE"
+    else
+      die "Non-ramdisk build tree exists, use --nuke or --no-ramdisk"
+    fi
   fi
 
   # Setup ramdisk
@@ -229,7 +236,13 @@ if [ ! -z "$ramdisk" ]; then
 else
   # Not using a ramdisk, make sure one isn't setup
   if [ -L "$MOZBUILDTREE" ] || [ -L "$MOZOBJ" ]; then
-    die "--no-ramdisk given, but current build is on a ramdisk. Use --nuke"
+    if [ -n "$nuke" ]; then
+      # --nuke was given, just delete existing build tree
+      cmd rm -rf "$ramdisk/$MOZBUILDTREE"
+      cmd rm -f "$MOZBUILDTREE"
+    else
+      die "--no-ramdisk given, but current build is on a ramdisk. Use --nuke"
+    fi
   fi
 fi
 
