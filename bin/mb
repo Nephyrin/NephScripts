@@ -42,8 +42,8 @@ parseopts() {
                 explicitbranch="$1"
                 shift
                 ;;
-            '--no-ramdisk') # Don't put build tree / objdir in ramdisks
-                noramdisk=1
+            '--ramdisk') # Try to put build tree / objdir in ramdisks
+                ramdisk=1
                 ;;
             '-c') # Explicitly reconfigure tree
                 configure=1
@@ -80,14 +80,14 @@ parseopts() {
         esac
     done
 }
-parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,no-ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: -o j:bicfvp -- "$@")"
+parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: -o j:bicfvp -- "$@")"
 eval parseopts $parsed
 
 #
 # Defaults & Sanity
 #
 
-[ ! -z "$noramdisk" ] || ramdisk="/tmp/mb-ramdisk-$USER"
+[ -z "$ramdisk" ] || ramdisk="/tmp/mb-ramdisk-$USER"
 
 if [ ! -z "$nodistcc" ] && [ ! -z "$onlydistcc" ]; then
     die "--no-distcc and --only-distcc are mutually exclusive"
@@ -211,7 +211,7 @@ fi
 if [ ! -z "$ramdisk" ]; then
   # Check for existing, non-ramdisk directories
   if [ -e "$MOZOBJ" ] && [ ! -L "$MOZOBJ" ]; then
-    die "Non-ramdisk objdir exists. Use --no-ramdisk or --nuke"
+    die "Non-ramdisk objdir exists. Drop --ramdisk or use --nuke"
   fi
   if [ -e "$MOZBUILDTREE" ] && [ ! -L "$MOZBUILDTREE" ]; then
     # Build tree isn't ramdisk
@@ -220,7 +220,7 @@ if [ ! -z "$ramdisk" ]; then
       estat "Switching to ramdisk build tree, nuking existing"
       cmd rm -rf "$MOZBUILDTREE"
     else
-      die "Non-ramdisk build tree exists, use --nuke or --no-ramdisk"
+      die "Non-ramdisk build tree exists, use --nuke or drop --ramdisk"
     fi
   fi
 
@@ -241,7 +241,7 @@ else
       cmd rm -rf "$ramdisk/$MOZBUILDTREE"
       cmd rm -f "$MOZBUILDTREE"
     else
-      die "--no-ramdisk given, but current build is on a ramdisk. Use --nuke"
+      die "--ramdisk not given, but current build is on a ramdisk. Use --nuke"
     fi
   fi
 fi
