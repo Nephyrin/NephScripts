@@ -8,80 +8,45 @@ nephbin="$(dirname "$(readlink -f "$0")")"
 
 cd "$MOZPATH"
 
-args=()
-parseopts() {
-    while [ $# -gt 0 ]; do
-        arg="$1"
-        shift
-        case "$arg" in
-            '--no-mach') # Don't use mach
-                nomach=1
-                ;;
-            '--cgroup') # Use cgroup hooks
-                cgroup=1
-                ;;
-            '--no-distcc') # Don't use distcc
-                nodistcc=1
-                ;;
-            '--no-buildtree') # Build against current tree, without build-tree
-                nobuildtree=1 # magic
-                ;;
-            '-b') # Only sync buildtree, don't build anything
-                onlysyncbuild=1
-                ;;
-            '--only-distcc') # Don't use local cpus
-                onlydistcc=1
-                ;;
-            '--clobber') # Try to make clobber the objdir
-                clobber=1
-                ;;
-            '--nuke') # Delete objdir first
-                nuke=1
-                ;;
-            '--branch')
-                explicitbranch="$1"
-                shift
-                ;;
-            '--ramdisk') # Try to put build tree / objdir in ramdisks
-                ramdisk=1
-                ;;
-            '-c') # Explicitly reconfigure tree
-                configure=1
-                ;;
-            '-f') # Override clobber check
-                force=1
-                ;;
-            '-j') # Make jobs
-                makejobs="$1"
-                shift
-                ;;
-            '-i') # Use 'binaries' target to do an incremental build, skipping
-                  # some steps
-                incremental=1
-                args[${#args[@]}]="binaries"
-                ;;
-            '-v')
-                verbose=1
-                ;;
-            '-p') # make package when finished
-                package=1
-                ;;
-            '--cpufreq') # Jump to performance cpufreq
-                cpufreq=1
-                ;;
-            '--')
-                args=("${args[@]}" "$@")
-                break
-                ;;
-            *)
-                [ "${arg#-}" = "$arg" ] || die "Unexpected argument: $arg"
-                args[${#args[@]}]="$arg"
-                ;;
-        esac
-    done
-}
-parsed="$(getopt -n mb -l no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: -o j:bicfvp -- "$@")"
-eval parseopts $parsed
+parse_args mb j:bicfvp \
+  no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: \
+  "$@"
+
+eval args=("$(get_args)")
+
+# Don't use mach
+nomach="$(get_option no-mach)"
+# Use cgroup hooks
+cgroup="$(get_option cgroup)"
+# Don't use distcc
+nodistcc="$(get_option no-distcc)"
+# Build against current tree, without build-tree
+nobuildtree="$(get_option no-buildtree)"
+# Only sync buildtree, don't build anything
+onlysyncbuild="$(get_option b)"
+# Don't use local cpus
+onlydistcc="$(get_option only-distcc)"
+# Try to make clobber the objdir
+clobber="$(get_option clobber)"
+# Delete objdir first
+nuke="$(get_option nuke)"
+explicitbranch="$(get_option branch)"
+# Try to put build tree / objdir in ramdisks
+ramdisk="$(get_option ramdisk)"
+# Explicitly reconfigure tree
+configure="$(get_option c)"
+# Override clobber check
+force="$(get_option f)"
+# Make jobs
+makejobs="$(get_option j)"
+# Use 'binaries' target to do an incremental build, skipping some steps
+incremental="$(get_option i)"
+[ -z "$incremental" ] || args[${#args[@]}]="binaries"
+verbose="$(get_option v)"
+# make package when finished
+package="$(get_option p)"
+# Jump to performance cpufreq
+cpufreq="$(get_option cpufreq)"
 
 #
 # Defaults & Sanity
