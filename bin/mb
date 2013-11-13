@@ -44,7 +44,6 @@ force="$(get_option f)"
 makejobs="$(get_option j)"
 # Use 'binaries' target to do an incremental build, skipping some steps
 incremental="$(get_option i)"
-[ -z "$incremental" ] || args[${#args[@]}]="binaries"
 verbose="$(get_option v)"
 # make package when finished
 package="$(get_option p)"
@@ -60,6 +59,14 @@ cpufreq="$(get_option cpufreq)"
 #
 # Defaults & Sanity
 #
+
+if [[ "${#args[@]}" -eq 1 && "${args[0]}" = "binaries" ]; then
+  # mb -i is just shorthand for "mb binaries"
+  incremental=1
+elif [ -n "$incremental" ]; then
+  [ "${#args[@]}" -eq 0 ] || die "Cannot specify directories along with -i"
+  args=("binaries")
+fi
 
 [ -z "$ramdisk" ] || ramdisk="/tmp/mb-ramdisk-$USER"
 
