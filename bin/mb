@@ -10,7 +10,7 @@ nephbin="$(dirname "$(readlink -f "$0")")"
 cd "$MOZPATH"
 
 parse_args mb j:bicfvp \
-  no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: \
+  moz:,no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: \
   "$@"
 
 eval args=("$(get_args)")
