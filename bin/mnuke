@@ -34,6 +34,6 @@ if [ ! -z "$MOZBUILDTREE" ] && [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
   if [ -d "$MOZTREE/.git" ]; then
     estat "Removing branch build/$MOZBUILDTREE"
     cmd cd "$MOZTREE"
-    cmd git branch -D "build/$MOZBUILDTREE"
+    cmd git branch -D "build/$MOZBUILDTREE" || true
   fi
 fi
