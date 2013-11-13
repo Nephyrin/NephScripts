@@ -4,6 +4,7 @@ set -e
 
 nephbin="$(dirname "$(readlink -f "$0")")"
 . "$nephbin"/lib/util.sh
+. "$nephbin"/lib/moz.sh
 . ~/.bashrc
 
 cd "$MOZPATH"
@@ -14,6 +15,8 @@ parse_args mb j:bicfvp \
 
 eval args=("$(get_args)")
 
+# Select and use a specific moz config, string is passed to moz() as args
+mozconfig="$(get_option moz)"
 # Don't use mach
 nomach="$(get_option no-mach)"
 # Use cgroup hooks
@@ -47,6 +50,12 @@ verbose="$(get_option v)"
 package="$(get_option p)"
 # Jump to performance cpufreq
 cpufreq="$(get_option cpufreq)"
+
+#
+# mozconfig
+#
+
+[ -z "$mozconfig" ] || moz $mozconfig
 
 #
 # Defaults & Sanity
