@@ -158,6 +158,7 @@ moz() {
         echo ". $mozfile" >> "$MOZCONFIG"
         echo "mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../$MOZOBJ" >> "$MOZCONFIG"
     fi
+    # FIXME doesn't display non-default tree
     MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
     _reprompt 2>/dev/null || true
     _update_mozinfo
