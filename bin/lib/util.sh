@@ -102,10 +102,7 @@ sh_quote()
 {
   local args=()
   for arg in "$@"; do
-    if [ "$arg" != "$(printf '%q' "$arg")" ]; then
-      arg=\'${arg//\'/\'\\\'\'}\'
-    fi
-    args[${#args[@]}]="$arg"
+    args[${#args[@]}]="$(printf '%q' "$arg")"
   done
   echo "${args[@]}"
 }
