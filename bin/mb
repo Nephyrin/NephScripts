@@ -54,7 +54,7 @@ cpufreq="$(get_option cpufreq)"
 # mozconfig
 #
 
-[ -z "$mozconfig" ] || moz $mozconfig
+[ -z "$mozconfig" ] || cmd moz $mozconfig
 
 #
 # Defaults & Sanity
