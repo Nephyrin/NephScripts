@@ -60,7 +60,7 @@ cpufreq="$(get_option cpufreq)"
 # Defaults & Sanity
 #
 
-if [[ "${#args[@]}" -eq 1 && "${args[0]}" = "binaries" ]; then
+if [[ "${#args[@]}" -eq 1 && "${args[0]}" = "binaries" ]]; then
   # mb -i is just shorthand for "mb binaries"
   incremental=1
 elif [ -n "$incremental" ]; then
