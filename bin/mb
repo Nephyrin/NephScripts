@@ -362,11 +362,16 @@ fi
 )
 
 if [ ! -z "$package" ]; then
-  [ -n "$nomach_buildsymbols" ] || cmd $MACH buildsymbols
-  [ -n "$nomach_package" ] || cmd $MACH package
-  cmd cd "$MOZPATH/$MOZOBJ"
-  [ -z "$nomach_buildsymbols" ] || cmd $MAKE buildsymbols
-  [ -z "$nomach_package" ] || cmd $MAKE package
-  cmd $MAKE package-tests
+  (
+    cmd cd "$MOZBUILDTREE"
+    [ -n "$nomach_buildsymbols" ] || cmd $MACH buildsymbols
+    [ -n "$nomach_package" ] || cmd $MACH package
+  )
+  (
+    cmd cd "$MOZPATH/$MOZOBJ"
+    [ -z "$nomach_buildsymbols" ] || cmd $MAKE buildsymbols
+    [ -z "$nomach_package" ] || cmd $MAKE package
+    cmd $MAKE package-tests
+  )
   estat "Package succeeded"
 fi
