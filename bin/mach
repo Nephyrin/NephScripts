@@ -1,12 +1,10 @@
 #!/bin/bash
 
-die() {
-    echo >&2 '!!'" $*"
-    exit 1
-}
+. "$(dirname "$0")"/lib/util.sh
 
 [ ! -z "$MOZTREE" ] || die "No moz config"
 [ -f "$MOZPATH/$MOZTREE/mach" ] || die "No mach in this tree"
 
 export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
-cleangtk py2e "$MOZPATH/$MOZTREE"/mach "$@"
+cmd cd "$MOZPATH/$MOZBUILDTREE"
+cmd cleangtk py2e ./mach "$@"
