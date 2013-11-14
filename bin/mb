@@ -329,16 +329,16 @@ fi
 #
 
 if [ ! -z "$configure" ]; then
-    if [ -z "$nomach" ]; then
-        estat "-f specified, nuking config.status to force reconfigure"
-        cmd rm -vf "$MOZOBJ"/config.status
-    else
-        estat "Not using mach, explicitly reconfiguring tree (-f)"
-        (
-            cd "$MOZBUILDTREE"
-            cmd $MAKE -f client.mk configure
-        )
-    fi
+  if [ -z "$nomach" ]; then
+    estat "-f specified, nuking config.status to force reconfigure"
+    cmd rm -vf "$MOZOBJ"/config.status
+  else
+    estat "Not using mach, explicitly reconfiguring tree (-f)"
+    (
+      cd "$MOZBUILDTREE"
+      cmd $MAKE -f client.mk configure
+    )
+  fi
 fi
 
 #
@@ -347,18 +347,18 @@ fi
 (
   cmd cd "$MOZBUILDTREE"
   if [ -z "$nomach" ]; then
-      estat "Building with mach"
-      cmd $MACH build "${args[@]}"
+    estat "Building with mach"
+    cmd $MACH build "${args[@]}"
   else
-      ewarn "Not using mach"
-      [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
-      time cmd $MAKE -f client.mk && estat "Make succeeded"
+    ewarn "Not using mach"
+    [ "${#args[@]}" -eq 0 ] || die "Building directories not supported w/o mach"
+    time cmd $MAKE -f client.mk && estat "Make succeeded"
   fi
 )
 
 if [ ! -z "$package" ]; then
-    cmd cd "$MOZPATH/$MOZOBJ"
-    cmd $MAKE package
-    cmd $MAKE package-tests
-    estat "Package succeeded"
+  cmd cd "$MOZPATH/$MOZOBJ"
+  cmd $MAKE package
+  cmd $MAKE package-tests
+  estat "Package succeeded"
 fi
