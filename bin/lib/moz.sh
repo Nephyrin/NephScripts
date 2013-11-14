@@ -111,7 +111,7 @@ moz() {
         _reprompt 2>/dev/null || true
         return
     fi
-    mozfile="$(readlink -f "$MOZPATH/cfg/m-$1.mzc")"
+    mozfile="$(readlink -f "$MOZPATH/cfg/$1.mzc")"
     if [ ! -f "$mozfile" ]; then
       eerr "No config named $1"
       return 1

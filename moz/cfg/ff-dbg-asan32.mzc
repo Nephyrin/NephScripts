@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/m-ff-dbg-asan.mzc
+. $topsrcdir/../cfg/ff-dbg-asan.mzc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-asan32
 
