@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/base-ff-dbg.mzc
+. $topsrcdir/../cfg/base-ff-dbg.inc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../b2g-dbg
 
@@ -13,5 +13,5 @@ ac_add_options --disable-libjpeg-turbo
 
 ac_add_options --disable-warnings-as-errors
 
-. $topsrcdir/../cfg/inc-clang.mzc
-. $topsrcdir/../cfg/inc-distcc.mzc
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc

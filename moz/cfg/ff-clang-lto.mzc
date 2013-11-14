@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/base-ff-opt.mzc
+. $topsrcdir/../cfg/base-ff-opt.inc
 
 # In-tree FFI breaks under LTO
 # export MOZ_NATIVE_FFI=1
@@ -13,5 +13,5 @@ export LDFLAGS="$LDFLAGS -O4 -plugin /usr/lib/LLVMgold.so"
 export CFLAGS="$CFLAGS -O4"
 export CXXFLAGS="$CXXFLAGS -O4"
 
-. $topsrcdir/../cfg/inc-clang.mzc
-. $topsrcdir/../cfg/inc-distcc.mzc
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc

@@ -1,6 +1,6 @@
-. $topsrcdir/../cfg/base-ff-opt.mzc
+. $topsrcdir/../cfg/base-ff-opt.inc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-opt
 
-. $topsrcdir/../cfg/inc-clang.mzc
-. $topsrcdir/../cfg/inc-distcc.mzc
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc

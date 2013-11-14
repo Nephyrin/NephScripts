@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/base-ff-dbg.mzc
+. $topsrcdir/../cfg/base-ff-dbg.inc
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-valgrind
 
@@ -8,5 +8,5 @@ ac_add_options --enable-optimize="-O1"
 ac_add_options --enable-valgrind
 ac_add_options --disable-jemalloc
 
-. $topsrcdir/../cfg/inc-clang.mzc
-. $topsrcdir/../cfg/inc-distcc.mzc
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc

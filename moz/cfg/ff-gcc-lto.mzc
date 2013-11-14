@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/base-ff-opt.mzc
+. $topsrcdir/../cfg/base-ff-opt.inc
 
 # Try to do a GCC-LTO build
 
@@ -16,5 +16,5 @@ ac_add_options --enable-optimize=-O3
 export CFLAGS="$CFLAGS -flto"
 export CXXFLAGS="$CXXFLAGS -flto"
 
-. $topsrcdir/../cfg/inc-gcc.mzc
-. $topsrcdir/../cfg/inc-distcc.mzc
+. $topsrcdir/../cfg/gcc.inc
+. $topsrcdir/../cfg/distcc.inc

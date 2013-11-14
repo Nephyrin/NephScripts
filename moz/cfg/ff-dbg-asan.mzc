@@ -1,4 +1,4 @@
-. $topsrcdir/../cfg/base-ff-dbg.mzc
+. $topsrcdir/../cfg/base-ff-dbg.inc
 
 # See browser/config/mozconfigs/linux64/debug-asan
 
@@ -28,5 +28,5 @@ ac_add_options --disable-crashreporter
 ac_add_options --disable-elf-hack
 ac_add_options --disable-trace-malloc
 
-. $topsrcdir/../cfg/inc-clang.mzc
-. $topsrcdir/../cfg/inc-distcc.mzc
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc
