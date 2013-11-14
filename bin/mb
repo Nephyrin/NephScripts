@@ -57,6 +57,18 @@ cpufreq="$(get_option cpufreq)"
 [ -z "$mozconfig" ] || cmd moz $mozconfig
 
 #
+# Make environment
+#
+
+# We handle clobbering when desired, so disable mach/client.mk's autoclobber
+export NO_AUTOCLOBBER=1
+
+PYTHON="py2e python"
+MACH="py2e ./mach"
+MAKE="py2e make"
+[ -z "$verbose" ] && MAKE="$MAKE --silent"
+
+#
 # Defaults & Sanity
 #
 
@@ -79,8 +91,13 @@ if [ -z "$MOZOBJ" ] || [ -z "$MOZTREE" ] || [ -z "$MOZCONFIG" ] || \
     die "moz environment is not properly configured :("
 fi
 
-if [ ! -f "$MOZTREE/mach" ] && [ -z "$nomach" ]; then
+if [ -z "$nomach" ]; then
+  if [ ! -f "$MOZTREE/mach" ]; then
     die "This tree has no mach, but --no-mach was not specified"
+  fi
+  # See if mach this tree's revision of mach supports package/buildsymbols
+  ! $MACH help buildsymbols &>/dev/null || mach_buildsymbols=1
+  ! $MACH help package &>/dev/null || mach_package=1
 fi
 
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
@@ -106,18 +123,6 @@ fi
 if [ ! -z "$nobuildtree" ]; then
   MOZBUILDTREE="$MOZTREE"
 fi
-
-#
-# Make environment
-#
-
-# We handle clobbering when desired, so disable mach/client.mk's autoclobber
-export NO_AUTOCLOBBER=1
-
-PYTHON="py2e python"
-MACH="py2e ./mach"
-MAKE="py2e make"
-[ -z "$verbose" ] && MAKE="$MAKE --silent"
 
 #
 # Setup cpufreq and cgroup
@@ -357,8 +362,11 @@ fi
 )
 
 if [ ! -z "$package" ]; then
+  [ -n "$nomach_buildsymbols" ] || cmd $MACH buildsymbols
+  [ -n "$nomach_package" ] || cmd $MACH package
   cmd cd "$MOZPATH/$MOZOBJ"
-  cmd $MAKE package
+  [ -z "$nomach_buildsymbols" ] || cmd $MAKE buildsymbols
+  [ -z "$nomach_package" ] || cmd $MAKE package
   cmd $MAKE package-tests
   estat "Package succeeded"
 fi
