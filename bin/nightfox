@@ -17,8 +17,7 @@ export MOZ_USE_OMTC=1
 
 if [ -n "$(get_option g)" ]; then
   cmd cd ~/firefox-nightly
-  cmd cleangtk gdb -x "$neph/firefox-gdb.gdb" \
-                   -ex run \
+  cmd cleangtk gdb -ex run \
                    --args ./firefox "${app_args[@]}"
 else
   cmd cleangtk ~/firefox-nightly/firefox "${app_args[@]}"

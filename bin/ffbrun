@@ -21,7 +21,6 @@ ffargs=(./firefox -no-remote -profile ./profile "$(get_args)")
 
 [ -z "$debugger$(get_option g)" ] || dbg=1
 [ ! -z "$debugger" ] || debugger="gdb"
-[ "$debugger" != "gdb" ] || dbgargs=("${dbgargs[@]}" -x "$neph"/firefox-gdb.gdb)
 [ -z "$(get_option r)" ] || dbgargs=("${dbgargs[@]}" -ex run)
 
 # Sanity check
