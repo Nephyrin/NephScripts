@@ -295,10 +295,10 @@
 ; Scroll window
 (global-set-key (kbd "s-n") (lambda ()
                               (interactive)
-                              (scroll-up 5)))
+                              (scroll-up 1)))
 (global-set-key (kbd "s-p") (lambda ()
                               (interactive)
-                              (scroll-down 5)))
+                              (scroll-down 1)))
 (global-set-key (kbd "s-l") (lambda ()
                               (interactive)
                               (move-to-window-line nil)))
