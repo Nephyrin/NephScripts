@@ -10,11 +10,13 @@ nephbin="$(dirname "$(readlink -f "$0")")"
 cd "$MOZPATH"
 
 parse_args mb j:bicfvp \
-  moz:,no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,clobber,nuke,cpufreq,branch: \
+  autoclobber,moz:,no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,nuke,cpufreq,branch: \
   "$@"
 
 eval args=("$(get_args)")
 
+# Enable autoclobber in make system
+autoclobber="$(get_option autoclobber)"
 # Select and use a specific moz config, string is passed to moz() as args
 mozconfig="$(get_option moz)"
 # Don't use mach
@@ -29,8 +31,6 @@ nobuildtree="$(get_option no-buildtree)"
 onlysyncbuild="$(get_option b)"
 # Don't use local cpus
 onlydistcc="$(get_option only-distcc)"
-# Try to make clobber the objdir
-clobber="$(get_option clobber)"
 # Delete objdir first
 nuke="$(get_option nuke)"
 explicitbranch="$(get_option branch)"
@@ -72,6 +72,9 @@ MAKE="py2e make"
 # Defaults & Sanity
 #
 
+# If this is set, the build system clobbers if one is needed
+[ -z "$autoclobber" ] || export AUTOCLOBBER=1
+
 if [[ "${#args[@]}" -eq 1 && "${args[0]}" = "binaries" ]]; then
   # mb -i is just shorthand for "mb binaries"
   incremental=1
@@ -103,8 +106,8 @@ fi
 [ -f "$MOZTREE/client.mk" ] || die "Tree \"$MOZTREE\" doesn't have a client.mk..."
 
 if [ -n "$incremental" ]; then
-  if [[ -n "$clobber" || -n "$nuke" ]]; then
-    die "Doing an incremental build with --clobber or --nuke doesn't make sense"
+  if [ -n "$autoclobber$nuke" ]; then
+    die "Doing an incremental build with --autoclobber or --nuke doesn't make sense"
   fi
   if [ ! -f "$MOZOBJ/Makefile" ]; then
     die "Can't do an incremental build without a already-built tree"
@@ -171,7 +174,7 @@ fi
 [ -z "$makejobs" ] || export MAKE_JOBS="$makejobs"
 
 #
-# Nuke or clobber if requested
+# Nuke if requested
 #
 
 if [ ! -z "$nuke" ]; then
@@ -241,7 +244,7 @@ if [ -f "$MOZOBJ/Makefile" ]; then
   configured_tree="$(readlink -f "$configured_tree")"
   expected_tree="$(readlink -f "$MOZBUILDTREE")"
   if [ "$configured_tree" != "$expected_tree" ]; then
-    die "Build directory is configured against the wrong tree, use --clobber or --nuke"
+    die "Build directory is configured against the wrong tree, use --nuke"
   fi
 fi
 
