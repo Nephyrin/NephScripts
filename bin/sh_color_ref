@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+
+source "$(dirname "$0")"/lib/util.sh
+
+parse_args sh_color_ref 'a:b:' '' "$@"
+[ "$(num_args)" -eq 0 ] || die "Usage: sh_color_ref [-a start:stop] [-b start:stop]"
+
+as="$(get_option a)"
+[ "${as#*:}" = "$as" ] || ae="${as#*:}"
+as="${as%:*}"
+bs="$(get_option b)"
+[ "${bs#*:}" = "$bs" ] || be="${bs#*:}"
+bs="${bs%:*}"
+[ -n "$as" ] || as=1
+[ -n "$ae" ] || ae=64
+[ -n "$bs" ] || bs=1
+[ -n "$be" ] || be=8
+
+[ "$bs" -le "$be" ] || die "Invalid -b range"
+[ "$as" -le "$ae" ] || die "Invalid -b range"
+
+ai=$as
+while [[ $ai -le $ae ]]; do
+  bi=$bs
+  while [[ $bi -le $be ]]; do
+    echo -en "\e[${ai};${bi}mColor $ai;$bi\e[0m "
+    (( ++bi ))
+  done
+  echo ""
+  (( ++ai ))
+done
