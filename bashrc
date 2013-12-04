@@ -105,20 +105,22 @@ if [[ $- == *i* ]] ; then
     # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
     shopt -s checkwinsize
     shopt -s histappend
-    export PROMPT_COMMAND="history -a"
-
-    # TMUX support
-    PROMPT_COMMAND="$PROMPT_COMMAND;"'[ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD"'
+    [ -z "$PROMPT_COMMAND" ] || PROMPT_COMMAND="$PROMPT_COMMAND; "
+    PROMPT_COMMAND="${PROMPT_COMMAND}history -a"
 
     # Change the window title of X terminals
-    case ${TERM} in
+    if [ -z "$TMUX" ]; then # tmux.conf handles this
+      _bashrc_termtitle='${HOSTNAME%%.*} :: ${PWD/$HOME/~}'
+      case ${TERM} in
         xterm*|rxvt*|aterm|kterm|gnome*|interix)
-            PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
-            ;;
-        screen)
-            PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\e\\"'
-            ;;
-    esac
+          PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e]0;'"$_bashrc_termtitle"'\007"'
+          ;;
+        screen*)
+          PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e_'"$_bashrc_termtitle"'\e\\"'
+          ;;
+      esac
+      unset _bashrc_termtitle
+    fi
     use_color=false
 
     # Set colorful PS1 only on colorful terminals.
