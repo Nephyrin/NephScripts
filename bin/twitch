@@ -27,4 +27,4 @@ else
   cookie="--jtv-cookie=persistent=$persistent"
 fi
 
-echo livestreamer "${livestreamer_args[@]}" $cookie "twitch.tv/$stream" best
+livestreamer "${livestreamer_args[@]}" $cookie "twitch.tv/$stream" best
