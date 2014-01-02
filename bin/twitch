@@ -1,57 +1,30 @@
 #!/bin/bash
 
+# Helper script and shorthand to get your twitch cookie from firefox's database
+# and then launch livestreamer
+#
+# e.g. |twitch demuslim| executes
+# |livestreamer --jtv-cookie=persistent=<your_cookie> twitch.tv/demuslim best|
+
 if [ -z "$1" ]; then
-    echo >&2 "!! Requires stream name as argument"
+    echo >&2 "!! Usage: twitch <stream> [livestreamer args]"
     exit 1
 fi
 
-# First argument is stream name, rest are fed to vlc
 stream="$1"
 shift
-vlcargs=("$@")
+livestreamer_args=("$@")
 
 # Grab the 'persistent' (login cookie) from firefox's cookies db
-persistent=$(sqlite3 ~/.mozilla/firefox/*.default/cookies.sqlite 'select value from moz_cookies where name = "persistent" and baseDomain = "twitch.tv"')
+persistent=$(sqlite3 ~/.mozilla/firefox/*.default/cookies.sqlite \
+             'select value from moz_cookies where name = "persistent"
+                                                  and baseDomain = "twitch.tv"')
 
 if [ -z "$persistent" ]; then
-    echo >&2 "!! Couldn't get login cookie from firefox profile. Are you logged in to twitch?"
-    exit 1
+  echo >&2 "!! Couldn't get login cookie from firefox profile. Are you logged in to twitch?"
+  echo >&2 "!! Trying without login..."
+else
+  cookie="--jtv-cookie=persistent=$persistent"
 fi
 
-# Use that cookie with twitch's API to establish a session and grab
-# _twitch_sesion_id
-session=$(curl 2>/dev/null www.twitch.tv/meta -i -b persistent=$persistent -I | sed -r 's/Set-Cookie: (_twitch_session_id=[a-f0-9]+).*/\1/;tx;d;:x')
-
-if [ -z "$session" ]; then
-    echo >&2 "!! Couldn't get session ID from twitch, your login might be expired"
-    exit 1
-fi
-
-# Use livestreamer with session cookie to list streams
-streams=$(livestreamer twitch.tv/$stream --jtv-cookie=$session | grep 'Found streams:')
-
-if [ -z "$streams" ]; then
-    echo >&2 "!! Failed to get stream info from twitch :("
-    exit 1
-fi
-
-# Use stream type 'live' if available, else 'best'
-type=best
-[ -z "$(echo "$streams" | grep live)" ] || type=live
-
-echo >&2 ":: Using stream type $type with cookie $session"
-
-# Livestreamer has a few bugs here. It doesn't pass a sane buffer size to
-# rtmpdump, so you get a stream ~5s behind after a huge wait.  You can't hook
-# rtmpdump with a shell script because it uses a subprocess library replacement
-# that tries to execve() things for some reason. The -c argument claims to dump
-# the command, but just dumps it in along all the other debug output, and
-# blindly joins the array without quoting :(
-
-# So lets try to salvage that and then pass an actual buffer parameter.
-cmdline="$(livestreamer -c --jtv-cookie=$session "twitch.tv/$stream" $type)"
-fixedcmdline="$(echo "$cmdline" | tail -n1 | sed -r 's/--([a-zA-Z0-9]+)=(([^-]|(-[^-]))+)( |$)/--\1='\''\2'\'' /g')"
-
-echo ":: Running $fixedcmdline"
-
-eval $fixedcmdline -b 500 | vlc -vv - "${vlcargs[@]}"
+echo livestreamer "${livestreamer_args[@]}" $cookie "twitch.tv/$stream" best
