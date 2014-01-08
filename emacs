@@ -42,6 +42,8 @@
   kept-old-versions 2
   version-control t)
 
+(add-to-list 'auto-mode-alist '("/PKGBUILD$" . sh-mode))
+
 (setq vc-follow-symlinks t)
 
 (require 'ido)
