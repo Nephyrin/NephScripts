@@ -43,7 +43,7 @@ if [ -z "$newgit" ]; then
     if [[ $update -eq 1 ]]; then
         estat "Git is not up to date, exporting"
         hg gexport -v
-        cd "$MOZPATH/hg-git-map"
+        cd "$MOZPATH/moz-git-map"
         git commit -a -m "Locally imported revisions" || true
     else
         ewarn "git is behind mercurial - specify -u to convert missing revisions locally"

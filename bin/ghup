@@ -23,7 +23,7 @@ estat "Updating git"
 git fetch bangles
 estat "Updating git map"
 (
-    cd "$MOZPATH/hg-git-map"
+    cd "$MOZPATH/moz-git-map"
     git pull --no-edit
 )
 

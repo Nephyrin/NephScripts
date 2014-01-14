@@ -17,7 +17,7 @@ if [[ ! "$g" =~ ^[a-Z0-9]{7,40}$ ]]; then
   g="$go"
 fi
 
-map="$MOZPATH/hg-git-map/hg-git-mapfile"
+map="$MOZPATH/moz-git-map/hg-git-mapfile"
 h="$(grep -E -m 1 ^$g "$map" | cut -d ' ' -f 2)"
 
 [ ! -z "$h" ] || die "git hash $g not found in map"

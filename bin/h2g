@@ -16,7 +16,7 @@ elif [[ ! "$h" =~ ^[a-Z0-9]{12,40}$ ]]; then
   die  "Hg repository to attempt to resolve it to one"
 fi
 
-map="$MOZPATH/hg-git-map/hg-git-mapfile"
+map="$MOZPATH/moz-git-map/hg-git-mapfile"
 
 g=$(grep -E -m 1 " $h[a-z0-9]*$" "$map" | cut -d ' ' -f 1)
 
