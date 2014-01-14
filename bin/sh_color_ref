@@ -25,7 +25,7 @@ ai=$as
 while [[ $ai -le $ae ]]; do
   bi=$bs
   while [[ $bi -le $be ]]; do
-    echo -en "\e[${ai};${bi}mColor $ai;$bi\e[0m "
+    echo -en "\e[${bi};${ai}mColor $bi;$ai\e[0m "
     (( ++bi ))
   done
   echo ""
