@@ -30,8 +30,8 @@
 # ; Packs bigger than this size are just kept as is instead of unpacking,
 # ; leading to less efficient repo growth but faster fetch/receive. There's also
 # ; fetch.unpackLimit and receive.unpackLimit.
-# [transfer]
-#   unpackLimit = 1
+[transfer]
+  unpackLimit = 1
 
 [bz]
   browser = firefox3
