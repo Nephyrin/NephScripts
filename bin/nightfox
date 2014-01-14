@@ -2,13 +2,11 @@
 
 source "$(dirname "$0")"/lib/util.sh
 
-neph="$(dirname "$(readlink -f "$0")")/.."
-
-parse_args nightfox 'g' '' "$@"
+parse_args nightfox 'gr' 'no-omtc,slowscript' "$@"
 eval app_args=("$(get_args)")
 
-export MOZ_USE_OMTC=1
-export JS_DISABLE_SLOW_SCRIPT_SIGNALS=1
+[ -n "$(get_option no-omtc)" ] || export MOZ_USE_OMTC=1
+[ -n "$(get_option slowscript)" ] || export JS_DISABLE_SLOW_SCRIPT_SIGNALS=1
 
 # export MOZ_PROFILER_NEW=1
 # export MOZ_PROFILER_VERBOSE=1
@@ -17,9 +15,14 @@ export JS_DISABLE_SLOW_SCRIPT_SIGNALS=1
 # export MOZ_PROFILER_STACK_SCAN=0
 
 if [ -n "$(get_option g)" ]; then
+  if [ -n "$(get_option r)" ]; then
+    run="-ex run"
+  else
+    estat "Existing instances"
+    ps $(pgrep firefox)
+  fi
   cmd cd ~/firefox-nightly
-  cmd cleangtk gdb -ex run \
-                   --args ./firefox "${app_args[@]}"
+  cmd cleangtk gdb $run --args ./firefox "${app_args[@]}"
 else
   cmd cleangtk ~/firefox-nightly/firefox "${app_args[@]}"
 fi
