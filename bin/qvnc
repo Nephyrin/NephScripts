@@ -1,15 +1,17 @@
 #!/bin/bash
 
-if [ $# -gt 1 ] || ( [ $# -eq 1 ] && [ $(( "$1" + 0 )) != "$1" ] ); then
-    echo >&2 "!! Usage: qvnc [displaynum]"
-    exit 1
-fi
-
 set -e
 
-num="$1"
-[ ! -z "$num" ] || num=9
+. "$(dirname "$0")"/lib/util.sh
 
-vncserver :$num
-trap "vncserver -kill :$num" EXIT
-vncviewer :$num -viewonly -passwd ~/.vnc/passwd
+parse_args qvnc '' '' "$@"
+[ "$(num_args)" -ge 1 ] || die "Usage: qvnc display [vncviewer args...]]"
+
+eval args=("$(get_args)")
+display="${args[0]}"
+vnc_args=("${args[@]:1}")
+
+trap "cmd vncserver -kill $display" EXIT
+cmd vncserver $display
+cmd env DISPLAY=$display kwin --replace &
+cmd vncviewer $display -passwd ~/.vnc/passwd "${vnc_args[@]:1}"
