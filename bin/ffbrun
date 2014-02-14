@@ -1,42 +1,47 @@
 #!/bin/bash
 
+export DISPLAY=:9
+
 # Run given firefox on profile "<dirname firefox>/profile"
 # Used for build dirs
 
 set -e
 
 . "$(dirname "$0")"/lib/util.sh
+. "$(dirname "$0")"/lib/moz.sh
+
 neph="$(dirname "$(readlink -f "$0")")/.."
 
-[ ! -z "$MOZOBJ" ] || die "No moz config"
+parse_args ffbrun 'gd:a:rx' 'moz:' "$@"
+
+# Default FF args
+ffargs=(./firefox -no-remote -profile ./profile "$(get_args)")
+
+# Default moz env vars
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
 [ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
 # see also IPCPlugins:5 (VERY spammy)
 
-parse_args ffbrun 'gd:a:rx' 'moz:' "$@"
-
+# Set debugger from args
 dbgargs=($(get_option a))
 debugger="$(get_option d)"
-ffargs=(./firefox -no-remote -profile ./profile "$(get_args)")
-
 [ -z "$debugger$(get_option g)" ] || dbg=1
 [ ! -z "$debugger" ] || debugger="gdb"
 [ -z "$(get_option r)" ] || dbgargs=("${dbgargs[@]}" -ex run)
-
-# Sanity check
-if [ ! -d "$MOZPATH/$MOZOBJ" ] || [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
-  die "Not built :("
-fi
 
 # Don't cause non-gdb spew if running gdb in emacs
 if [ "$EMACS" = "t" ] && [ -n "$dbg" ]; then
   cmd() { "$@"; }
 fi
 
+# pass --moz foo to moz setup script
 moz="$(get_option moz)"
-if [ ! -z "$moz" ]; then
-  . "$(dirname "$0")"/lib/moz.sh
-  cmd moz $moz
+[ -z "$moz" ] || cmd moz $moz
+
+# Sanity checks
+[ ! -z "$MOZOBJ" ] || die "No moz config"
+if [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
+  die "Not built :("
 fi
 
 cd "$MOZPATH/$MOZOBJ/dist/bin/"
