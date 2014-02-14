@@ -473,6 +473,16 @@
 (global-set-key (kbd "C-z g") 'magit-status)
 
 ;;
+;; Web-mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/web-mode")
+(require 'web-mode)
+(web-mode-indent-style 1)
+(web-mode-script-padding 2)
+(web-mode-style-padding 2)
+
+;;
 ;; Auto-complete + Clang async
 ;;
 
