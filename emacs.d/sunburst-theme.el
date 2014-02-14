@@ -1,1 +1,0 @@
-sunburst-theme/sunburst-theme.el
