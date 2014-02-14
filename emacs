@@ -473,11 +473,12 @@
 ;; Magit
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/git-modes")
+; (add-to-list 'load-path "~/.emacs.d/git-modes")
 (add-to-list 'load-path "~/.emacs.d/magit")
 (require 'magit)
-(require 'git-rebase-mode)
+(require 'magit-blame)
 (global-set-key (kbd "C-z g") 'magit-status)
+(global-set-key (kbd "C-z b") 'magit-blame-mode)
 
 ;;
 ;; Web-mode
