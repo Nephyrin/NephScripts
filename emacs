@@ -227,6 +227,16 @@
 (require 'git-gutter-fringe)
 
 ;;
+;; Ediff
+;;
+
+(defun neph-ediff-mode ()
+  (git-gutter-mode -1))
+(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function 'split-window-horizontally)
+(setq ediff-merge-split-window-function 'split-window-horizontally)
+;;
 ;; Helm
 ;;
 (add-to-list 'load-path "~/.emacs.d/helm")
@@ -252,15 +262,12 @@
   (setq c-basic-offset 2)
   (setq sh-basic-offset 2)
   (git-gutter-mode t))
-(defun neph-ediff-mode ()
-  (git-gutter-mode -1))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
 (add-hook 'js-mode-hook 'enable-neph-coding)
 (add-hook 'c-mode-common-hook 'enable-neph-coding)
 (add-hook 'python-mode-hook 'enable-neph-coding)
 (add-hook 'java-mode-hook 'enable-neph-coding)
 (add-hook 'lisp-mode-hook 'enable-neph-coding)
-(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
 
 ;;
 ;; IswitchBuffers
