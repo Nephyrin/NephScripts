@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+. "$(dirname "$0")"/lib/util.sh
+
+usage() {
+  die "Usage: invnc [{-v|--vnc} vncargstr] :DISPLAY [--] app arguments"
+}
+
+parse_args invnc 'v:' 'vnc:' "$@"
+
+vncstr="$(get_option vnc)"
+[ -n "$vncstr" ] || vncstr="$(get_option v)"
+eval vnc_args=("$vncstr")
+eval args=("$(get_args)")
+app_args=("${args[@]:1}")
+display=("${args[0]}")
+
+estat "Display is $display"
+[ "${#display}" -gt 1 ] && [ "${display:0:1}" = ":" ] || usage
+[ "${#app_args[@]}" -ge 1 ] || usage
+
+#
+# Launch VNC
+#
+
+cmd vncserver "$display"
+
+# Register cleanup after succesfull launch, don't kill others vnc servers
+cleanup() {
+  cmd vncserver -kill "$display"
+}
+trap cleanup EXIT
+
+# Launch kwin and viewer
+cmd env DISPLAY=$display kwin --replace &>/dev/null &
+cmd vncviewer $display -passwd ~/.vnc/passwd "${vnc_args[@]}" &
+
+export DISPLAY="$display"
+cmd "${app_args[@]}"
