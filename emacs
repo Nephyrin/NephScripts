@@ -486,9 +486,9 @@
 
 (add-to-list 'load-path "~/.emacs.d/web-mode")
 (require 'web-mode)
-(web-mode-indent-style 1)
-(web-mode-script-padding 2)
-(web-mode-style-padding 2)
+(setq web-mode-indent-style 1)
+(setq web-mode-script-padding 2)
+(setq web-mode-style-padding 2)
 
 ;;
 ;; Auto-complete + Clang async
