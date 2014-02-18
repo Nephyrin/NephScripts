@@ -1,0 +1,8 @@
+. $topsrcdir/../cfg/base-ff-opt.inc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-opt-gcc
+
+export CC=gcc
+export CXX=g++
+
+. $topsrcdir/../cfg/distcc.inc
