@@ -13,5 +13,5 @@ vnc_args=("${args[@]:1}")
 
 trap "cmd vncserver -kill $display" EXIT
 cmd vncserver $display
-cmd env DISPLAY=$display kwin --replace &
+cmd env DISPLAY=$display kwin --replace &>/dev/null &
 cmd vncviewer $display -passwd ~/.vnc/passwd "${vnc_args[@]:1}"
