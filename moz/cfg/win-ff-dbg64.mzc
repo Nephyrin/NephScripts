@@ -31,3 +31,6 @@ export MOZ_DEBUG_SYMBOLS=1
 
 # Enable parallel compiling
 mk_add_options MOZ_MAKE_FLAGS="-j10"
+
+# Experimental build speedup. May not work well on windows.
+# export MOZ_PSEUDO_DERECURSE=1

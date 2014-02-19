@@ -11,8 +11,6 @@ ac_add_options --enable-tests
 # Impossibly slow on windows
 # ac_add_options --enable-trace-malloc
 
-# This seems to just include CC=/hardcoded/buildbot/path/gcc-4.5
-# . $topsrcdir/build/unix/mozconfig.linux
 
 # Mozilla-Central nightlies only since this has a cost in performance
 # ac_add_options --enable-js-diagnostics
@@ -20,19 +18,8 @@ ac_add_options --enable-tests
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../win-ff-dbg
 
-#export CC=$HOME/moz/gcc-4.5.3/bin/gcc
-#export CXX=$HOME/moz/gcc-4.5.3/bin/g++
-# export CC=gcc
-# export CXX=g++
-# Avoid dependency on libstdc++ 4.5
-#ac_add_options --enable-stdcxx-compat
-
-# export CFLAGS="$CFLAGS -gdwarf-2"
-# export CXXFLAGS="$CFLAGS -gdwarf-2"
-
 # For NSS symbols
 export MOZ_DEBUG_SYMBOLS=1
-#ac_add_options --enable-debug-symbols="-gdwarf-2"
 
 # Needed to enable breakpad in application.ini
 export MOZILLA_OFFICIAL=1
@@ -46,5 +33,5 @@ export MOZILLA_OFFICIAL=1
 # Enable parallel compiling
 mk_add_options MOZ_MAKE_FLAGS="-j10"
 
-#Use ccache
-#ac_add_options --with-ccache=/usr/bin/ccache
+# Experimental build speedup. May not work well on windows.
+# export MOZ_PSEUDO_DERECURSE=1
