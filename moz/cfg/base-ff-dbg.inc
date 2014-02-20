@@ -32,5 +32,5 @@ ac_add_options --enable-debug-symbols="-ggdb"
 # export MOZILLA_OFFICIAL=1
 # export MOZ_TELEMETRY_REPORTING=1
 
-# Experimental build speedup. Makes builds slower.
+# Experimental build speedup.
 export MOZ_PSEUDO_DERECURSE=1
