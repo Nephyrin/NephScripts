@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export DISPLAY=:9
-
 # Run given firefox on profile "<dirname firefox>/profile"
 # Used for build dirs
 
