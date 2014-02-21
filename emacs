@@ -7,7 +7,7 @@
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
 
-(ido-mode t)
+
 (put 'upcase-region 'disabled nil)
 
 ; Fix x clipboard
@@ -47,7 +47,6 @@
 
 (setq vc-follow-symlinks t)
 
-(require 'ido)
 (require 'uniquify)
 (setq uniquify-buffer-name-style (quote post-forward))
 
@@ -78,6 +77,16 @@
 (require 'whitespace)
 (global-whitespace-mode)
 (setq whitespace-style (quote (face trailing)))
+
+;;
+;; ido
+;;
+
+(add-to-list 'load-path "~/.emacs.d/ido-vertical-mode")
+(require 'ido)
+(require 'ido-vertical-mode)
+(ido-mode t)
+(ido-vertical-mode 1)
 
 ;;
 ;; Mode line
