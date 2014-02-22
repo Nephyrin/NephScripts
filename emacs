@@ -508,8 +508,11 @@
 (add-to-list 'load-path "~/.emacs.d/magit")
 (require 'magit)
 (require 'magit-blame)
+(add-hook 'magit-blame-file-on (lambda() (fci-mode -1)))
+(add-hook 'magit-blame-file-off (lambda() (fci-mode 1)))
 (global-set-key (kbd "C-z g") 'magit-status)
 (global-set-key (kbd "C-z b") 'magit-blame-mode)
+
 
 ;;
 ;; Web-mode
