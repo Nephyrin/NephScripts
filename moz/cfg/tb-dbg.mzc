@@ -3,27 +3,26 @@ ac_add_options --enable-debug
 ac_add_options --disable-optimize
 ac_add_options --enable-tests
 
-mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../tb-dbg
+# So both $topsrcdir and @TOPSRCDIR@ are randomly wrong in thunderbird builds??
 
-ac_add_options --enable-trace-malloc
+neph_top_dir="$topsrcdir"
+[ -d "$neph_top_dir/mozilla" ] || neph_top_dir="$topsrcdir/.."
 
-export CFLAGS="-gdwarf-2"
-export CXXFLAGS="-gdwarf-2"
+mk_add_options MOZ_OBJDIR="$neph_top_dir"/../tb-dbg
 
-export CC=$HOME/moz/gcc-4.5.3/bin/gcc
-export CXX=$HOME/moz/gcc-4.5.3/bin/g++
+# ac_add_options --enable-trace-malloc
+
+# export CC=$HOME/moz/gcc-4.5.3/bin/gcc
+# export CXX=$HOME/moz/gcc-4.5.3/bin/g++
 # Avoid dependency on libstdc++ 4.5
-ac_add_options --enable-stdcxx-compat
+# ac_add_options --enable-stdcxx-compat
 
 # Needed to enable breakpad in application.ini
-#export MOZILLA_OFFICIAL=1
+# export MOZILLA_OFFICIAL=1
 
 # For NSS symbols
 export MOZ_DEBUG_SYMBOLS=1
-ac_add_options --enable-debug-symbols="-gdwarf-2"
+ac_add_options --enable-debug-symbols="-ggdb"
 
-#Use ccache
-ac_add_options --with-ccache=/usr/bin/ccache
-
-# Enable parallel compiling
-mk_add_options MOZ_MAKE_FLAGS="-j10"
+. "$neph_top_dir"/../cfg/clang.inc
+. "$neph_top_dir"/../cfg/distcc.inc
