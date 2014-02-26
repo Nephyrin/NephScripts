@@ -66,7 +66,7 @@ if [ "$(hostname)" = "neph" ]; then
     env PULSE_SINK=alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1 "$@"
   }
   alias tvs='pulse-sink-juggle alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1 \
-                               alsa_output.pci-0000_02_04.0.analog-stereo'
+                               alsa_output.usb-2010_REV_1.7_Audioengine_D1-00-D1.analog-stereo'
   # Wine is on raid array
 elif [ "$(hostname)" = "Johnbook" ]; then
   #

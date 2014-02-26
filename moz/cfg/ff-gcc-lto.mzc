@@ -13,8 +13,8 @@ ac_add_options --enable-optimize=-O3
 
 # Actually enable LTO
 # export LDFLAGS="$LDFLAGS"
-export CFLAGS="$CFLAGS -flto"
-export CXXFLAGS="$CXXFLAGS -flto"
+export CFLAGS="$CFLAGS -flto -fuse-linker-plugin"
+export CXXFLAGS="$CXXFLAGS -flto -fuse-linker-plugin"
 
 . $topsrcdir/../cfg/gcc.inc
 . $topsrcdir/../cfg/distcc.inc

@@ -21,7 +21,7 @@ ac_add_options --enable-profiling
 
 # ac_add_options --enable-default-toolkit=cairo-qt
 # ac_add_options --disable-installer
-ac_add_options --disable-crashreporter
+#ac_add_options --disable-crashreporter
 ac_add_options --disable-javaxpcom
 # ac_add_options --disable-printing
 # ac_add_options --disable-embedding-tests
