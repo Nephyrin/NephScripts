@@ -4,14 +4,11 @@ set -e
 
 . "$(dirname "$0")"/lib/util.sh
 
-date="$1"
-[ "$#" -lt 1 ] || shift
-
-tempdir=$(mktemp -d)
-trap "rm -rf '$tempdir'" EXIT
+trap '[ -z "$tempdir" ] || rm -rf -- "$tempdir"' EXIT
+tempdir="$(mktemp -d)"
 
 cd "$tempdir"
 
-cmd ffgetnightly "$date"
+cmd ffgetnightly "${@:0:1}"
 
-cmd ffrun ./firefox/firefox "$@"
+cmd ffrun ./firefox/firefox "${@:1}"
