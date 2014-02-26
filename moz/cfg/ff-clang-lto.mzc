@@ -1,17 +1,17 @@
 . $topsrcdir/../cfg/base-ff-opt.inc
 
-# In-tree FFI breaks under LTO
+# Obsolete LTO fixes
 # export MOZ_NATIVE_FFI=1
+# ac_add_options --disable-crashreporter
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto
 
-# Doesn't compile under LTO
-# ac_add_options --disable-crashreporter
-
-# Actually enable LTO
-export LDFLAGS="$LDFLAGS -O4 -plugin /usr/lib/LLVMgold.so"
-export CFLAGS="$CFLAGS -O4"
-export CXXFLAGS="$CXXFLAGS -O4"
+# LDFLAGS no longer needs: -plugin /usr/lib/LLVMgold.so
+# This assumes gold is in use, which it should be if available and not in
+# --enable-release mode. Tested with clang 3.4.
+export LDFLAGS="$LDFLAGS -flto"
+export CFLAGS="$CFLAGS -O3 -flto"
+export CXXFLAGS="$CXXFLAGS -O3 -flto"
 
 . $topsrcdir/../cfg/clang.inc
 . $topsrcdir/../cfg/distcc.inc
