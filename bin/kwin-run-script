@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# http://unix.stackexchange.com/questions/115084/how-can-i-run-a-kwin-script-from-the-command-line
+
+set -e
+
+. "$(dirname "$0")"/lib/util.sh
+
+script="$*"
+
+[ -f "$script" ] || die "Script $script not found"
+script="$(readlink -f "$script")"
+
+num="$(cmd dbus-send --print-reply --dest=org.kde.kwin.Scripting /Scripting \
+  org.kde.kwin.Scripting.loadScript "string:$script" | awk 'END {print $2}' )"
+
+cmd dbus-send --print-reply --dest=org.kde.kwin.Scripting /"$num" org.kde.kwin.Scripting.run
