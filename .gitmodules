@@ -79,3 +79,6 @@
 [submodule "emacs.d/dash"]
 	path = emacs.d/dash
 	url = https://github.com/magnars/dash.el
+[submodule "emacs.d/sunburst-theme"]
+	path = emacs.d/sunburst-theme
+	url = https://github.com/neomantic/Emacs-Sunburst-Color-Theme

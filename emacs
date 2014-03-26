@@ -573,7 +573,9 @@
 ;;
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 (load-theme 'purple-haze t)
+;(load-theme 'sunburst t)
 (set-face-background 'hl-line "#19151D")
 (set-face-attribute 'vertical-border nil :foreground "#222")
 (set-default-font "Monospace-10")
