@@ -253,6 +253,7 @@
 (add-to-list 'load-path "~/.emacs.d/git-gutter")
 (require 'fringe-helper)
 (require 'git-gutter-fringe)
+(require 'rainbow-mode)
 
 ;;
 ;; Ediff
@@ -289,7 +290,8 @@
   (fic-mode t)
   (setq c-basic-offset 2)
   (setq sh-basic-offset 2)
-  (git-gutter-mode t))
+  (git-gutter-mode t)
+  (rainbow-mode t))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
 (add-hook 'js-mode-hook 'enable-neph-coding)
 (add-hook 'c-mode-common-hook 'enable-neph-coding)
