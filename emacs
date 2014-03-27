@@ -315,6 +315,7 @@
 (add-hook 'python-mode-hook 'enable-neph-coding)
 (add-hook 'java-mode-hook 'enable-neph-coding)
 (add-hook 'lisp-mode-hook 'enable-neph-coding)
+(add-hook 'emacs-lisp-mode-hook 'enable-neph-coding)
 
 ;;
 ;; IswitchBuffers
