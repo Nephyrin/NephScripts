@@ -280,6 +280,23 @@
 (global-set-key (kbd "C-x M-f") 'helm-find-moz)
 
 ;;
+;; Web-mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/web-mode")
+(require 'web-mode)
+(setq web-mode-indent-style 1)
+(setq web-mode-script-padding 2)
+(setq web-mode-style-padding 2)
+(setq web-mode-enable-css-colorization t)
+(setq web-mode-enable-comment-keywords t)
+(setq web-mode-enable-block-face t)
+(setq web-mode-enable-part-face t)
+(setq web-mode-enable-current-element-highlight t)
+(setq web-mode-enable-auto-pairing t)
+(add-to-list 'auto-mode-alist '(".html?$" . web-mode))
+
+;;
 ;; Neph mode. Aka enable defaults in programming modes
 ;;
 
@@ -524,17 +541,6 @@
 (global-set-key (kbd "C-z g") 'magit-status)
 (global-set-key (kbd "C-z b") 'magit-blame-mode)
 
-
-;;
-;; Web-mode
-;;
-
-(add-to-list 'load-path "~/.emacs.d/web-mode")
-(require 'web-mode)
-(setq web-mode-indent-style 1)
-(setq web-mode-script-padding 2)
-(setq web-mode-style-padding 2)
-
 ;;
 ;; Auto-complete + Clang async
 ;;
@@ -580,6 +586,7 @@
 ;(load-theme 'sunburst t)
 (set-face-background 'hl-line "#19151D")
 (set-face-attribute 'vertical-border nil :foreground "#222")
+(set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
 (set-default-font "Monospace-10")
 (add-to-list 'default-frame-alist '(font . "Monospace-10"))
 (add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
