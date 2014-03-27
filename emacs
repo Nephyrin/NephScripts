@@ -98,6 +98,13 @@
 (ido-vertical-mode 1)
 
 ;;
+;; Minimap
+;;
+
+(add-to-list 'load-path "~/.emacs.d/minimap")
+(require 'minimap)
+
+;;
 ;; remember-notes
 ;;
 

@@ -82,3 +82,6 @@
 [submodule "emacs.d/sunburst-theme"]
 	path = emacs.d/sunburst-theme
 	url = https://github.com/neomantic/Emacs-Sunburst-Color-Theme
+[submodule "emacs.d/minimap"]
+	path = emacs.d/minimap
+	url = https://github.com/dengste/minimap
