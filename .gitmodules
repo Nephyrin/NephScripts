@@ -85,3 +85,6 @@
 [submodule "emacs.d/minimap"]
 	path = emacs.d/minimap
 	url = https://github.com/dengste/minimap
+[submodule "gdbinit.git"]
+	path = gdbinit.git
+	url = https://github.com/gdbinit/Gdbinit/
