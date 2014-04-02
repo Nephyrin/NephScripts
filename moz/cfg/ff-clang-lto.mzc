@@ -3,15 +3,23 @@
 # Obsolete LTO fixes
 # export MOZ_NATIVE_FFI=1
 # ac_add_options --disable-crashreporter
+# LDFLAGS no longer needs: -plugin /usr/lib/LLVMgold.so
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto
 
-# LDFLAGS no longer needs: -plugin /usr/lib/LLVMgold.so
-# This assumes gold is in use, which it should be if available and not in
-# --enable-release mode. Tested with clang 3.4.
-export LDFLAGS="$LDFLAGS -flto"
+
+# LTO assumes gold is in use, which it should be if available and not in
+# --enable-release mode.
+
+# -march=native is a workaround for "LLVM ERROR: Cannot select: intrinsic", due
+# to the linker not being aware of available cpu features.
+# See: http://lists.cs.uiuc.edu/pipermail/llvmdev/2014-February/070047.html
+
+export LDFLAGS="$LDFLAGS -flto -march=native"
 export CFLAGS="$CFLAGS -O3 -flto"
 export CXXFLAGS="$CXXFLAGS -O3 -flto"
+
+# LTO last confirmed working with FF31+Clang 3.4.
 
 . $topsrcdir/../cfg/clang.inc
 . $topsrcdir/../cfg/distcc.inc
