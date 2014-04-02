@@ -12,3 +12,6 @@ set disassembly-flavor intel
 handle SIGPIPE nostop print pass
 
 source ~/.gdbinit-upstream
+
+# Don't show by default, slow
+disablecpuregisters
