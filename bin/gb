@@ -1,12 +1,26 @@
 #!/bin/bash
+
+# As |gb <branch>|
+#   ... shorthand for |git checkout branch|
+# As |gb <branch> <command>|
+#   ... shorthand for |git checkout branch && git command|
+# As |gbb <branch> <command>|
+#   ... shorthand for |git checkout branch && git command && git checkout @{-1}|
+
 set -e
-. "$(dirname "$(readlink -f "$0")")"/lib/util.sh
-[ "$#" -ge 2 ] || die "Usage: $0 <branch> <command>"
+
+. "$(dirname "$0")"/lib/util.sh
+
 [ "$(basename "$0")" != "gbb" ] || gbb=1
+if [[ $gbb && "$#" -lt 2 ]] || [ "$#" -lt 1 ]; then
+  die "Usage: $0 <branch> <command>"
+fi
+
 branch="$1"
 shift
+
 cmd git checkout "$branch"
-if ! cmd git "$@" && [ $gbb ]; then
+if [ "$#" -gt 0 ] && ! cmd git "$@" && [ $gbb ]; then
     die "git command failed, you are now on branch '$branch'"
 fi
 [ ! $gbb ] || git checkout @{-1}
