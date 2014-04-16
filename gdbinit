@@ -15,3 +15,5 @@ source ~/.gdbinit-upstream
 
 # Don't show by default, slow
 disablecpuregisters
+
+set prompt [gdb] 
