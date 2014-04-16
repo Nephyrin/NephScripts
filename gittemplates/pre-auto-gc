@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Just nag
+echo >&2 ";; An auto GC is needed"
+exit 1
