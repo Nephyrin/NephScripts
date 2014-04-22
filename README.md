@@ -24,7 +24,7 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
         # Git
         ln -sv $repo/gitconfig      ~/.gitconfig
         ln -sv $repo/gitignore      ~/.gitignore
-        ln -sv $repo/gittemplates   ~/.gittemplates
+        ln -sv $repo/gittemplate    ~/.gittemplate
 
         # GDB and its upstream
         ln -sv $repo/gdbinit ~/.gdbinit
