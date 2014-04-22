@@ -1,5 +1,13 @@
 #!/bin/bash
 
 # Just nag
-echo >&2 ";; An auto GC is needed"
+if [ -f ~/bin/lib/util.sh ]; then
+  source ~/bin/lib/util.sh
+else
+  ewarn() {
+    echo >&2 ";; $*"
+  }
+fi
+
+ewarn "A GC is needed"
 exit 1
