@@ -67,16 +67,24 @@
 (global-set-key  [f8] 'speedbar-get-focus)
 (global-set-key (kbd "C-c C-f") 'find-dired)
 
-(setq desktop-path '("~/.emacs.d/"))
-(setq desktop-dirname "~/.emacs.d/")
-(setq desktop-base-file-name "emacs-desktop")
-
-(if window-system (desktop-save-mode 1))
-
 ; Trailing spaces and whitespace
 (require 'whitespace)
 (global-whitespace-mode)
 (setq whitespace-style (quote (face trailing)))
+
+;;
+;; Desktop saving
+;;
+
+(setq desktop-path '("~/.emacs.d/"))
+; Autosave desktop as emacs-server-desktop for the server, otherwise leave
+; disabled unless asked for
+;(if (or server-mode (daemonp))
+;    (progn
+;      (setq desktop-base-file-name "emacs-server-desktop")
+;      (setq desktop-save t)
+;      (desktop-save-mode 1))
+;  (setq desktop-base-file-name "emacs-desktop"))
 
 ;;
 ;; Color identifiers mode
