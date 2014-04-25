@@ -73,6 +73,17 @@
 (setq whitespace-style (quote (face trailing)))
 
 ;;
+;; Snippets
+;;
+
+; Recompile all .elc.  The 0 tells us to compile files that have no .elc
+; already. Yes it should be 0, not t
+
+; (byte-recompile-directory "~/.emacs.d/" 0)
+;   or command line:
+; emacs -batch -f batch-byte-compile *.el
+
+;;
 ;; Desktop saving
 ;;
 
