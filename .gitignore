@@ -6,3 +6,6 @@ emacs.d/emacs-desktop
 emacs.d/ac-comphist.dat
 # ./build-powerline.sh output
 powerline
+
+# Emacs compiled cruft
+*.elc
