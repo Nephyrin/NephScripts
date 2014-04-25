@@ -150,7 +150,7 @@ moz() {
     MOZGENCFG=0
     local extraps1
     if [ ! -z "$MOZSUFFIX" ]; then
-        extraps1=$'\['"\e[0m"$'\]'" / "$'\['"\e[0;31m$MOZSUFFIX"
+        extraps1="\[\e[0m\] / \[\e[0;31m\]$MOZSUFFIX"
     fi
     if [ "$MOZCFG" != "$MOZOBJ" ]; then
         MOZCONFIG="$(mktemp -t mozcfg.XXXX)"
@@ -159,7 +159,7 @@ moz() {
         echo "mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../$MOZOBJ" >> "$MOZCONFIG"
     fi
     # FIXME doesn't display non-default tree
-    MOZ_PS1=$'\[\e'"[0;37m\]["$'\[\e'"[0;33m\]$MOZCFG$extraps1"$'\[\e'"[0;37m\]] "
+    MOZ_PS1="\[\e[0;37m\][\[\e[0;33m\]$MOZCFG$extraps1\[\e[0;37m\]] "
     _reprompt 2>/dev/null || true
     _update_mozinfo
     export MOZCONFIG MOZTREE MOZCFG MOZOBJ MOZGENCFG MOZSUFFIX MOZBUILDTREE
