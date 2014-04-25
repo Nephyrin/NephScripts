@@ -10,10 +10,11 @@ set -e
 
 neph="$(dirname "$(readlink -f "$0")")/.."
 
-parse_args ffbrun 'gd:a:rx' 'moz:' "$@"
+parse_args ffbrun 'gd:a:rx' 'use-build-path,moz:' "$@"
 
 # Default FF args
-ffargs=(./firefox -no-remote -profile ./profile "$(get_args)")
+eval args=("$(get_args)")
+ffargs=(-no-remote -profile ./profile "${args[@]}")
 
 # Default moz env vars
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
@@ -23,13 +24,15 @@ ffargs=(./firefox -no-remote -profile ./profile "$(get_args)")
 # Set debugger from args
 dbgargs=($(get_option a))
 debugger="$(get_option d)"
+debugger_use_build_path="$(get_option use-build-path)"
 [ -z "$debugger$(get_option g)" ] || dbg=1
 [ ! -z "$debugger" ] || debugger="gdb"
 [ -z "$(get_option r)" ] || dbgargs=("${dbgargs[@]}" -ex run)
 
 # Don't cause non-gdb spew if running gdb in emacs
 if [ "$EMACS" = "t" ] && [ -n "$dbg" ]; then
-  cmd() { "$@"; }
+    cmd() { "$@"; }
+    estat() { :; }
 fi
 
 # pass --moz foo to moz setup script
@@ -49,22 +52,33 @@ cd "$MOZPATH/$MOZOBJ/dist/bin/"
 
 # Make profile if necessary
 if [[ ! -d "profile" ]]; then
-  echo ":: Making fresh profile"
+  estat "Making fresh profile"
   cmd mkdir -p profile/plugins
 fi
 
 # Copy plugins into profile
 if [[ -d ../plugins ]]; then
+    [ -d profile/plugins ] || cmd mkdir profile/plugins
     cmd cp ../plugins/*.so profile/plugins
 fi
 
-if [ -n "$dbg" ] && [ "$EMACS" = "t" ]; then
-  # Don't use run-mozilla.sh as it'll include unwanted spew.
-  cleangtk $debugger -i=mi "${dbgargs[@]}" --args "${ffargs[@]}"
+gdb_quote() {
+  # Replace backslashes and single quotes. Probably not comprehensive.
+  local foo="$1"
+  foo="${foo//\\/\\\\}"
+  foo="${foo//\'/\\\'}"
+  echo "'$foo'"
+}
+
+# If debugging, swap build tree paths to source tree paths unless
+# --use-build-path is set
+if [[ -n "$dbg" && -z "$debugger_use_build_path" ]]; then
+    dbgargs=("${dbgargs[@]}" -ex "set substitute-path $(gdb_quote "$MOZPATH/$MOZBUILDTREE/") $(gdb_quote "$MOZPATH/$MOZTREE/")")
+fi
+
+if [ -n "$dbg" ]; then
+  [ -z "$EMACS" ] || dbgargs[${#dbgargs[@]}]="-i=mi"
+  cmd cleangtk $debugger "${dbgargs[@]}" --args ./firefox "${ffargs[@]}"
 else
-  [ -z "$dbg" ] || dbgarg="-g"
-  [ ${#dbgargs[@]} -eq 0 ] || dbgargs=(-a "$(sh_quote "${dbgargs[@]}")")
-  cmd cleangtk ./run-mozilla.sh $dbgarg -d "$debugger" \
-                                        "${dbgargs[@]}" \
-                                        "${ffargs[@]}"
+  cmd cleangtk ./firefox "${ffargs[@]}"
 fi
