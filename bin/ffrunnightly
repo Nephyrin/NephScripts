@@ -9,6 +9,6 @@ tempdir="$(mktemp -d)"
 
 cd "$tempdir"
 
-cmd ffgetnightly "${@:0:1}"
+cmd ffgetnightly "${@:1:1}"
 
-cmd ffrun ./firefox/firefox "${@:1}"
+cmd ffrun ./firefox/firefox "${@:2}"
