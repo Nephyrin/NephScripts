@@ -117,6 +117,13 @@
 (ido-vertical-mode 1)
 
 ;;
+;; Rainbow Delimiters
+;;
+
+(add-to-list 'load-path "~/.emacs.d/rainbow-delimiters")
+(require 'rainbow-delimiters)
+
+;;
 ;; Minimap
 ;;
 
@@ -335,7 +342,8 @@
   (setq sh-basic-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
-  (color-identifiers-mode t))
+  (color-identifiers-mode t)
+  (rainbow-delimiters-mode t))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
 (add-hook 'js-mode-hook 'enable-neph-coding)
 (add-hook 'c-mode-common-hook 'enable-neph-coding)
@@ -618,3 +626,14 @@
 (set-default-font "Monospace-10")
 (add-to-list 'default-frame-alist '(font . "Monospace-10"))
 (add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
+
+(set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
+(set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
+(set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
+(set-face-attribute 'rainbow-delimiters-depth-4-face nil   :foreground "#baf")
+(set-face-attribute 'rainbow-delimiters-depth-5-face nil   :foreground "#a9e")
+(set-face-attribute 'rainbow-delimiters-depth-6-face nil   :foreground "#98e")
+(set-face-attribute 'rainbow-delimiters-depth-7-face nil   :foreground "#87d")
+(set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
+(set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
+(set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
