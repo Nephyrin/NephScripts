@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. "$(dirname "$0")"/lib/util.sh
+
+die "Unfinished"
+
+pkgname="$1"
+
+[ $# -eq 1 ] && [ -n "$pkgname" ] || die "Need a package name"
+cmd rsync -av "rsync.archlinux.org::abs/x86_64/$fullpkg/" ./
