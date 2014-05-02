@@ -6,11 +6,15 @@ set -e
 
 . "$(dirname "$(readlink -f "$0")")"/lib/util.sh
 
-parse_args ffrun '' 'accel,omtc' "$@"
-
+parse_args ffrun 'n' 'nightly,accel,omtc' "$@"
 eval args=("$(get_args)")
 
-if [[ ${#args[@]} -gt 0 ]]; then
+if [ -n "$(get_option nightly)$(get_option n)" ]; then
+  ff="$HOME/firefox-nightly/firefox"
+  if [ ! -x "$ff" ]; then
+    die "--nightly specified but $nightly_exec does not exist or is not executable"
+  fi
+elif [[ ${#args[@]} -gt 0 ]]; then
   ff="${args[0]}"
   args=("${args[@]:1}")
   if [ ! "$ff" = "-" ] && [ ! -x "$ff" ]; then
