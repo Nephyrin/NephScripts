@@ -26,9 +26,8 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
         ln -sv $repo/gitignore      ~/.gitignore
         ln -sv $repo/gittemplate    ~/.gittemplate
 
-        # GDB and its upstream
+        # GDB
         ln -sv $repo/gdbinit ~/.gdbinit
-        ln -sv $repo/gdbinit.git/gdbinit ~/.gdbinit-upstream
 
         # Mercurial
         ln -sv $repo/hgrc           ~/.hgrc

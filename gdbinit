@@ -11,9 +11,4 @@ set disassembly-flavor intel
 # I want to not-care about SIGPIPE more often than I want to care
 handle SIGPIPE nostop print pass
 
-source ~/.gdbinit-upstream
-
-# Don't show by default, slow
-disablecpuregisters
-
 set prompt [gdb] 
