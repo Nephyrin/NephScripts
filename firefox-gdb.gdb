@@ -5,7 +5,8 @@ define hookpost-run
     end
 end
 
-define check-asmjsfaulthandler
+catch signal SIGSEGV
+commands
     if !$sigaction
         set $sigaction = malloc(sizeof(sigaction))
     end
@@ -15,17 +16,3 @@ define check-asmjsfaulthandler
         continue
     end
 end
-
-define hook-stop
-    if !$asmfaulthandlerinstalled
-        set $asmfaulthandlerinstalled = 1
-        echo Installing AsmJSFaultHandler catchpoint\n
-        catch signal SIGSEGV
-        commands
-            silent
-            check-asmjsfaulthandler
-        end
-    end
-end
-
-handle SIGPIPE nostop noprint pass
