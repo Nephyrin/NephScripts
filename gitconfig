@@ -55,6 +55,7 @@
 	mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
 	ol = "!x() { (i=0; git log @{u}.. --oneline --decorate --color \"$@\" | while IFS= read -r line; do msg=\"        \"; [ $i -eq 0 ] || msg=\"[HEAD~$i]\"; echo $'\\033[36m'\"$msg\"$'\\033[0m'\" $line\"; (( ++i )); done); }; x"
 	ll = log --oneline
+	st = status --ignore-submodule=untracked
 
 [init]
 	templatedir = ~/.gittemplate
