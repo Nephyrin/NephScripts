@@ -340,6 +340,7 @@
   (fic-mode t)
   (setq c-basic-offset 2)
   (setq sh-basic-offset 2)
+  (setq sh-indentation 2)
   (git-gutter-mode t)
   (rainbow-mode t)
   (color-identifiers-mode t)
