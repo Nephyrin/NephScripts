@@ -9,14 +9,14 @@ nephbin="$(dirname "$(readlink -f "$0")")"
 
 cd "$MOZPATH"
 
-parse_args mb j:bicfvp \
+parse_args mb xj:bicfvp \
   autoclobber,moz:,no-mach,cgroup,no-distcc,ramdisk,no-buildtree,only-distcc,nuke,cpufreq,branch: \
   "$@"
 
 eval args=("$(get_args)")
 
 # Enable autoclobber in make system
-autoclobber="$(get_option autoclobber)"
+autoclobber="$(get_option autoclobber)$(get_option x)"
 # Select and use a specific moz config, string is passed to moz() as args
 mozconfig="$(get_option moz)"
 # Don't use mach
@@ -59,9 +59,6 @@ cpufreq="$(get_option cpufreq)"
 #
 # Make environment
 #
-
-# We handle clobbering when desired, so disable mach/client.mk's autoclobber
-export NO_AUTOCLOBBER=1
 
 PYTHON="py2e python"
 MACH="py2e ./mach"
