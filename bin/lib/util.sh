@@ -74,9 +74,10 @@ ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
 eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
 eerrint() { eerr "$@"; return 1; }
 
-cmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(sh_quote "$@")"; "$@"; }
-qcmd() { cmd "$@" >/dev/null; }
-xcmd() { cmd "$@" &>/dev/null; }
+showcmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(sh_quote "$@")"; }
+cmd() { showcmd "$@"; "$@"; }
+qcmd() { showcmd "$@"; "$@" >/dev/null; }
+xcmd() { showcmd "$@"; "$@" &>/dev/null; }
 
 die() { eerr "$*"; exit 1; }
 
