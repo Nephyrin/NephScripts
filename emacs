@@ -617,17 +617,21 @@
 ;; Theme
 ;;
 
-(add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
-(load-theme 'purple-haze t)
+;(add-to-list 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 ;(load-theme 'sunburst t)
+
+; Setting cursor face-attribute fails for new frames?
+;(set-face-attribute 'cursor nil :foreground "#D96E26")
+;(add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
+(load-theme 'purple-haze t)
+; purple-haze overrides
+(set-face-attribute 'mode-line nil :height 82)
 (set-face-background 'hl-line "#19151D")
 (set-face-attribute 'vertical-border nil :foreground "#222")
 (set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
-(set-default-font "Monospace-10")
-(add-to-list 'default-frame-alist '(font . "Monospace-10"))
-(add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
-
+; These are way too strong by default
 (set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
 (set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
 (set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
@@ -638,3 +642,7 @@
 (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
 (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
 (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+
+; Default font
+(set-face-attribute 'default nil :family "DejaVu Sans Mono")
+(set-face-attribute 'default nil :height 96)
