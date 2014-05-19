@@ -77,7 +77,7 @@
 ;;
 
 ; Recompile all .elc.  The 0 tells us to compile files that have no .elc
-; already. Yes it should be 0, not t
+; already. Yes it should be 0, not t. Append t as third arg to force.
 
 ; (byte-recompile-directory "~/.emacs.d/" 0)
 ;   or command line:
