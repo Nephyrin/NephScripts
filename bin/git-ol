@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+# Pad for the allowance of this many digits of "~foo" before breaking columns
+pad=3
+
+for hash in $(git log @{u}.. "$@" --pretty="%h"); do
+  len="$(git rev-list --count $hash..HEAD)"
+  if [ "$len" -eq 0 ]; then
+    msg="$(printf "%$(( $pad + 1 ))s" "")"
+  else
+    msg="$(printf "%$(( $pad - ${#len} ))s~%i" '' $len)"
+  fi
+
+  echo $'\033[32m'"$msg"$'\033[0m'" $(git log --no-walk $hash --oneline --decorate --color "$@")"
+done
