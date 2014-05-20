@@ -353,6 +353,11 @@ fi
   cmd cd "$MOZBUILDTREE"
   if [ -z "$nomach" ]; then
     estat "Building with mach"
+    # Mach ignores make arguments for 'binaries' for whatever reason, if we have
+    # distcc, force pass a -j directly to mach
+    if [[ -n $incremental && -n $MAKE_JOBS ]]; then
+      args=("-j$MAKE_JOBS" "${args[@]}")
+    fi
     cmd $MACH build "${args[@]}"
   else
     ewarn "Not using mach"
