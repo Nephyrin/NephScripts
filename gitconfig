@@ -55,6 +55,7 @@
 	mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
 	ll = log --oneline
 	st = status --ignore-submodule=untracked
+	pff = pull --ff-only
 
 [init]
 	templatedir = ~/.gittemplate
