@@ -368,7 +368,7 @@ Default is nil."
          ;; ad-advised-definition-p no longer exists on Emacs 24.4 as of 2014-01-03.
          (if (or (and (>= emacs-major-version 24) (>= emacs-minor-version 4))
                  (string-match "24\\.3\\.50\\..*" emacs-version)
-                 (string-match "24\\.3\\.90\\..*" emacs-version))
+                 (string-match "24\\.3\\.9[0-9]+\\..*" emacs-version))
              (when (ad-is-advised 'other-window)
                (multi-term-dedicated-handle-other-window-advice value))
            (when (ad-advised-definition-p 'other-window)
