@@ -5,4 +5,7 @@ mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-gcc
 export CC=gcc
 export CXX=g++
 
+# Trunk still only checked with gcc 4.5
+ac_add_options --disable-warnings-as-errors
+
 . $topsrcdir/../cfg/distcc.inc
