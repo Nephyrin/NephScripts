@@ -630,6 +630,7 @@
 ;(add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
+
 (load-theme 'purple-haze t)
 ; purple-haze overrides
 (set-face-attribute 'mode-line nil :height 82)
@@ -647,6 +648,8 @@
 (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
 (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
 (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+
+(set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 22)
 
 ; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
