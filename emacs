@@ -386,6 +386,11 @@
 ;; Custom binds
 ;;
 
+;; Back one window
+(global-set-key (kbd "C-x O") (lambda ()
+                                (interactive)
+                                (other-window -1)))
+
 ; Scroll window
 (global-set-key (kbd "s-n") (lambda ()
                               (interactive)
