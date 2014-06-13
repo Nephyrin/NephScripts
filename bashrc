@@ -245,9 +245,20 @@ alias brusay='ntf toybox/brusay'
 # wherien they would not be after expansion.
 BASE_PS1="$PS1"
 _reprompt() {
-    PS1="$NEPH_CGROUP_PS1$MOZ_PS1$BASE_PS1"
+    PS1="$NEPH_PROMPTNOTE_PS1$NEPH_CGROUP_PS1$MOZ_PS1$BASE_PS1"
 }
 _reprompt
+
+# Add a note to the prompt
+promptnote() {
+  local note="$*"
+  if [ -n "$note" ]; then
+    NEPH_PROMPTNOTE_PS1="\[\e[37;2m\]~\[\e[32;2m\]$note\[\e[37;2m\]~\[\e[0m\] "
+  else
+    unset NEPH_PROMPTNOTE_PS1
+  fi
+  _reprompt
+}
 
 # Records the current git tip in variable
 gm()
