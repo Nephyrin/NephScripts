@@ -2,40 +2,39 @@
 
 set -e
 
-if [ $# -ne 2 ]; then
-  echo >&2 "!! Usage: $(basename $0) gitbranch targetrepo"
-  exit 1
-fi
+. ~/bin/lib/util.sh
 
-gitbranch="$1"
-targetrepo="$2"
+parse_args ghg '' '' "$@"
 
-cd $MOZPATH/moz-git-map
-if [ ! -z "$(git status -s)" ]; then
-  echo >&2 "!! Git mapfile is dirty"
-  exit 1
-fi
+[ $(num_args) -eq 1 ] || die "Usage: $(basename $0) gitbranch"
 
-cd $MOZPATH/mozilla-"$targetrepo"
+gitbranch="$(get_arg 1)"
 
-if [ ! -z "$(hg qa)" ]; then
-    echo >&2 "!! A queue is active"
-    exit
-fi
+cd "$MOZPATH"/moz-git-map
 
-echo ":: Checking for outgoing..."
-if [ ! -z "$(hg log -r 'outgoing()')" ]; then
-    echo >&2 "!! Repository has outgoing"
-    exit
-fi
+[ -z "$(git status -s)" ] || die "git mapfile is dirty"
 
-echo ":: Pulling..."
-rm -f .hg/bookmarks{,.current}
-hg bookmark -r tip $(cat .hg/git-branch)
-hg pull ../moz-git -u -r "$gitbranch"
-rm -f .hg/bookmarks{,.current}
-hg bookmark -r tip $(cat .hg/git-branch)
+cd "$MOZPATH/$MOZHG"
 
-echo ":: Cleaning up map"
-cd $MOZPATH/moz-git-map
-git reset --hard
+[ -z "$(hg qa)" ] || die "A queue is active"
+
+estat "Checking for outgoing..."
+
+[ -z "$(hg log -r 'outgoing()')" ] || die "Repository has outgoing"
+
+estat "Pulling..."
+
+# Avoid screwing with bookmarks, and throw away any hg-git makes
+cmd mv .hg/bookmarks .hg/bookmarks.ghg
+cleanup() {
+  cd "$MOZPATH/$MOZHG"
+  cmd mv .hg/bookmarks{.ghg,}
+}
+trap cleanup EXIT
+
+cmd hg pull ../moz-git -u -r "$gitbranch"
+
+# Don't commit these to mapfile
+estat "cleaning up map"
+cd "$MOZPATH"/moz-git-map
+cmd git checkout -f hg-git-mapfile

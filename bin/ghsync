@@ -9,50 +9,54 @@ parse_args ghsync u "" "$@"
 
 [[ $(num_args) -eq 1 ]] || die "Usage: $0 <branch>"
 
+[[ ! -z "$MOZPATH" && ! -z "$MOZHG" ]] || die "moz environment not setup"
+
 update="$(get_option u)"
-repo="$(basename "$(get_arg 1)")"
-repo="${repo#mozilla-}"
+branch="$(get_arg 1)"
 
-estat "Updating $repo"
-cd "$MOZPATH"
-if [ ! -d "mozilla-$repo/.hg" ]; then
-  echo >&2 "mozilla-$repo" does not appear to be a hg repository
-  exit 1
+estat "Updating $branch"
+cmd cd "$MOZPATH/$MOZHG"
+
+[ -d ".hg" ] || die "$MOZPATH/$MOZHG does not appear to be a hg repository"
+
+if [ ! -e .hg/git ] || [ ! -e .hg/git-mapfile ]; then
+  die "This repo lacks the necessary .hg/git* files for syncing"
 fi
 
-cd "mozilla-$repo"
-if [ ! -e .hg/git ] || [ ! -e .hg/git-mapfile ] || [ ! -e .hg/git-branch ]; then
-    echo >&2 "This repo lacks the necessary .hg/git* files for syncing"
-    exit 1
-fi
+tempbookmarks() {
+  repopath="$PWD"
+  cleanup() {
+    cmd mv -v "$repopath/.hg/bookmarks"{.ghsync,}
+  }
+  [ -e .hg/bookmarks ] || touch .hg/bookmarks
+  cmd mv .hg/bookmarks .hg/bookmarks.ghsync
+  trap cleanup EXIT
+}
 
-oldrev="$(hg log -r tip --template={node})"
-hg pull
-newrev="$(hg log -r tip --template={node})"
+cmd hg pull "$branch"
+
+newrev="$(cmd hg identify -r default "$branch")"
 newgit="$(h2g $newrev 2>/dev/null || true)"
 
-branch="$(cat .hg/git-branch)"
-
-if [ "$newrev" != "$oldrev" ]; then
-    hg up -C
-    rm -f .hg/bookmarks
-    hg bookmark -v -r tip "$branch"
-fi
+cmd hg bookmark -r "$newrev" "$branch"
 
 if [ -z "$newgit" ]; then
     if [[ $update -eq 1 ]]; then
-        estat "Git is not up to date, exporting"
-        hg gexport -v
-        cd "$MOZPATH/moz-git-map"
-        git commit -a -m "Locally imported revisions" || true
+      estat "Git is not up to date, exporting"
+      # Make empty bookmarks file so gexport only touches this branch
+      tempbookmarks
+      cmd hg bookmark -r "$newrev" "$branch"
+      hg gexport -v
+      cd "$MOZPATH/moz-git-map"
+      git commit -a -m "Locally imported revisions" || true
     else
-        ewarn "git is behind mercurial - specify -u to convert missing revisions locally"
+      ewarn "git is behind mercurial - specify -u to convert missing revisions locally"
     fi
-elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$repo" ]; then
-    echo >&2 '!!'" $repo is currently checked out in the master git repo, not updating ref"
+elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$branch" ]; then
+  eerr "$branch is currently checked out in the master git repo, not updating ref"
 else
-    estat "Updating $repo ref ($branch) to $newgit"
-    target="$MOZPATH/moz-git/.git/refs/heads/$branch"
-    mkdir -pv "$(dirname "$target")"
-    echo "$newgit" > "$target"
+  estat "Updating $branch ref ($branch) to $newgit"
+  target="$MOZPATH/moz-git/.git/refs/heads/$branch"
+  mkdir -pv "$(dirname "$target")"
+  echo "$newgit" > "$target"
 fi

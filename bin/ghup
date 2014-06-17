@@ -15,10 +15,6 @@ update="$(get_option u)"
 [ -z "$update" ] || update="-u"
 branch="$(get_arg 1)"
 
-if [ ! -z "$branch" ] && [ ! -d "../mozilla-$branch" ]; then
-  die "Branch $branch not found"
-fi
-
 estat "Updating git"
 git fetch bangles
 estat "Updating git map"
