@@ -56,6 +56,7 @@ fi
 
 export MOZPATH="$HOME/moz"
 export MOZDEFAULTTREE=moz-git
+export MOZHG=mozilla-hg
 [ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
 
 # Machine specific
