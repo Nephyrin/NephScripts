@@ -10,13 +10,14 @@ set -e
 
 neph="$(dirname "$(readlink -f "$0")")/.."
 
-parse_args ffbrun 'gd:a:rx' 'use-build-path,moz:' "$@"
+parse_args ffbrun 'gd:a:rx' 'slowscript,use-build-path,moz:' "$@"
 
 # Default FF args
 eval args=("$(get_args)")
 ffargs=(-no-remote -profile ./profile "${args[@]}")
 
 # Default moz env vars
+[ -n "$(get_option slowscript)" ] || export JS_DISABLE_SLOW_SCRIPT_SIGNALS=1
 [ ! -z "$XPCOM_MEM_LEAK_LOG" ] || export XPCOM_MEM_LEAK_LOG=1
 [ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
 # see also IPCPlugins:5 (VERY spammy)
