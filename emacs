@@ -265,6 +265,7 @@
 (setq mouse-wheel-progressive-speed nil)
 (setq mouse-wheel-follow-mouse 't)
 (setq scroll-step 1)
+(setq scroll-conservatively 10000)
 
 ;;
 ;; fci-mode
@@ -541,6 +542,9 @@
 (defun linum-on()
   (unless (or (minibufferp) (member major-mode linum-disabled-modes-list))
     (linum-mode 1)))
+
+(setq linum-delay t)
+(setq linum-eager nil)
 
 ;;
 ;; Multi-term
