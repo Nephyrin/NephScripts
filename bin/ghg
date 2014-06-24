@@ -18,10 +18,6 @@ cd "$MOZPATH/$MOZHG"
 
 [ -z "$(hg qa)" ] || die "A queue is active"
 
-estat "Checking for outgoing..."
-
-[ -z "$(hg log -r 'outgoing()')" ] || die "Repository has outgoing"
-
 estat "Pulling..."
 
 # Avoid screwing with bookmarks, and throw away any hg-git makes
