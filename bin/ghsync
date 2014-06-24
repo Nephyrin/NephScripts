@@ -56,7 +56,8 @@ elif [ "$(cat "$MOZPATH/moz-git/.git/HEAD")" = "ref: refs/heads/$branch" ]; then
   eerr "$branch is currently checked out in the master git repo, not updating ref"
 else
   estat "Updating $branch ref ($branch) to $newgit"
-  target="$MOZPATH/moz-git/.git/refs/heads/$branch"
-  mkdir -pv "$(dirname "$target")"
-  echo "$newgit" > "$target"
+  tree="$MOZTREE"
+  [ -n "$tree" ] || tree="$MOZDEFAULTTREE"
+  cd "$MOZPATH/$tree"
+  cmd git branch -f "$branch" "$newgit"
 fi
