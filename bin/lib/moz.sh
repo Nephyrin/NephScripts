@@ -70,7 +70,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
 
 _update_mozinfo() {
-  if [ -z "$MOZPATH" ]; then
+  if [[ -z "$MOZPATH" || -z "$MOZOBJ" ]]; then
     eerr "No mozconfig"
     return 1
   fi
@@ -83,7 +83,7 @@ _update_mozinfo() {
       echo $(sh_quote "$tree") $(sh_quote "$obj") >> "$MOZPATH"/mozinfo.new
     fi
   done
-  echo $(sh_quote "$tree") $(sh_quote "$obj") >> "$MOZPATH"/mozinfo.new
+  echo $(sh_quote "$MOZTREE") $(sh_quote "$MOZOBJ") >> "$MOZPATH"/mozinfo.new
   mv "$MOZPATH"/mozinfo.new "$MOZPATH"/mozinfo
 }
 
