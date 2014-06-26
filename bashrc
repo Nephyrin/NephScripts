@@ -180,6 +180,7 @@ fi
 # Aliases & shorthand
 #
 
+alias pn='promptnote'
 alias pidof='pgrep -x'
 
 alias please='eval sudo "$(fc -nl -1)"'
