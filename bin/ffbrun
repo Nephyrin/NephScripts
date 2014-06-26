@@ -10,7 +10,7 @@ set -e
 
 neph="$(dirname "$(readlink -f "$0")")/.."
 
-parse_args ffbrun 'gd:a:rx' 'profile,slowscript,use-build-path,moz:' "$@"
+parse_args ffbrun 'gd:a:rx' 'profile:,slowscript,use-build-path,moz:' "$@"
 
 # Default FF args
 eval args=("$(get_args)")
