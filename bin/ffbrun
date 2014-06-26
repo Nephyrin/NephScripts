@@ -10,11 +10,14 @@ set -e
 
 neph="$(dirname "$(readlink -f "$0")")/.."
 
-parse_args ffbrun 'gd:a:rx' 'slowscript,use-build-path,moz:' "$@"
+parse_args ffbrun 'gd:a:rx' 'profile,slowscript,use-build-path,moz:' "$@"
 
 # Default FF args
 eval args=("$(get_args)")
-ffargs=(-no-remote -profile ./profile "${args[@]}")
+profile="$(get_option profile)"
+[ -n "$profile" ] || profile="./profile"
+
+ffargs=(-no-remote -profile "$profile" "${args[@]}")
 
 # Default moz env vars
 [ -n "$(get_option slowscript)" ] || export JS_DISABLE_SLOW_SCRIPT_SIGNALS=1
@@ -40,7 +43,11 @@ fi
 moz="$(get_option moz)"
 [ -z "$moz" ] || cmd moz $moz
 
-# Sanity checks
+# Sanity checks Don't rm -rf custom profile paths, especially since they can be
+# relative and could lead to painful accidents
+[ -z "$(get_option x)" ] || [ -z "$profile" ] || die "-x and --profile don't mix"
+
+# Chcek for mozconfig
 [ ! -z "$MOZOBJ" ] || die "No moz config"
 if [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
   die "Not built :("
@@ -49,18 +56,18 @@ fi
 cd "$MOZPATH/$MOZOBJ/dist/bin/"
 
 # Nuke profile with -x
-[ -z "$(get_option x)" ] || rm -rf profile
+[ -z "$(get_option x)" ] || rm -rf "$profile"
 
 # Make profile if necessary
-if [[ ! -d "profile" ]]; then
+if [[ ! -d "$profile" ]]; then
   estat "Making fresh profile"
-  cmd mkdir -p profile/plugins
+  cmd mkdir -p "$profile"/plugins
 fi
 
 # Copy plugins into profile
 if [[ -d ../plugins ]]; then
-    [ -d profile/plugins ] || cmd mkdir profile/plugins
-    cmd cp ../plugins/*.so profile/plugins
+    [ -d "$profile"/plugins ] || cmd mkdir "$profile"/plugins
+    cmd cp ../plugins/*.so "$profile"/plugins
 fi
 
 gdb_quote() {
