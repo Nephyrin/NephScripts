@@ -258,6 +258,18 @@ alias brusay='ntf toybox/brusay'
 # Misc utility functions
 #
 
+pathadd() {
+  if [[ $# -le 0 ]]; then
+    ewarn "Usage: pathadd <path> [<path...>]"
+    return 1
+  fi
+
+  local item
+  for item in "$@"; do
+    _list_push PATH "$(readlink -f "$item")"
+  done
+}
+
 # This is necessary so that NEPH_CGROUP_PS1 and MOZ_PS1 are expanded now, such
 # that \[\] escapes can be recognized, rather than literally in the prompt,
 # wherien they would not be after expansion.
