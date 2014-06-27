@@ -1,5 +1,20 @@
 # -*- mode: sh; sh-basic-offset 2; sh-indentation 2; -*-
 
+# Uses util.sh from nephscripts
+if [ -r ~/bin/lib/util.sh ]; then
+  source ~/bin/lib/util.sh
+else
+  # Check same dir as the source bashrc.
+  # This makes things like: `ln -sv ~/nephscripts/bashrc ~/.bashrc` work without
+  # using the whole nephscripts bin/
+  _neph_bashrc_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+  if [[ -n "$_bashrc_dir" && -r "$_bashrc_dir/bin/lib/util.sh" ]]; then
+    source "$_bashrc_dir/bin/lib/util.sh"
+  else
+    echo >&2 "!! No util.sh found, this (nephscripts) bashrc uses it. Expect blarg."
+  fi
+  unset _neph_bashrc_dir
+fi
 
 _list_contains() {
   local s
