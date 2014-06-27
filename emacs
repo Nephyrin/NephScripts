@@ -599,7 +599,6 @@
 
 (require 'auto-complete-clang-async)
 
-(setq ac-auto-start nil)
 (setq ac-quick-help-delay 0.5)
 ;; (ac-set-trigger-key "TAB")
 (define-key ac-mode-map  [(control tab)] 'auto-complete)
@@ -617,7 +616,8 @@
   (setq ac-sources '(ac-source-clang-async))
   (ac-clang-launch-completion-process)
   (setq ac-clang-cflags (split-string (shell-command-to-string (concat "~/.emacs.d/moz_objdir.sh " (buffer-file-name)))))
-  (ac-clang-update-cmdlineargs))
+  (ac-clang-update-cmdlineargs)
+  (auto-complete-mode t))
 (add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup)
 ;; ac-source-gtags
 (my-ac-config)
