@@ -1,0 +1,9 @@
+. $topsrcdir/../cfg/ff-clang-lto.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto-gtk3
+
+ac_add_options --enable-default-toolkit=cairo-gtk3
+# Required for cairo-gtk3 as of now
+ac_add_options --enable-system-cairo
+# Not ported to gtk3 yet
+ac_add_options --disable-crashreporter
