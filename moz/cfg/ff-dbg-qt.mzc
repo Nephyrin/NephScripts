@@ -1,0 +1,11 @@
+. $topsrcdir/../cfg/base-ff-dbg.inc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-qt
+
+# Doesn't work with clang 3.4 currently
+ac_add_options --disable-warnings-as-errors
+
+ac_add_options --enable-default-toolkit=cairo-qt
+
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc
