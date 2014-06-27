@@ -93,4 +93,7 @@ if outputfile is "-":
 else:
     oh = open(outputfile, "wb")
 
+offset = if.tell()
+stat("Payload found at offset 0x%X (%u)" % (offset, offset))
+
 oh.write(ih.read(-1))
