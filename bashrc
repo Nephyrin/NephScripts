@@ -1,6 +1,5 @@
 # -*- mode: sh; sh-basic-offset 2; sh-indentation 2; -*-
 
-NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
 
 _list_contains() {
   local s
@@ -26,6 +25,8 @@ _if_dir_list_push() {
 _list_push PATH "$HOME/bin"
 _list_push PATH "$HOME/.local/bin"
 _list_push PATH "$HOME/neph/priv/bin"
+
+NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
 
 export BROWSER="firefox '%s'"
 export EDITOR="ec"
