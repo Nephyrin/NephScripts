@@ -1,0 +1,15 @@
+. $topsrcdir/../cfg/base-ff-dbg.inc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-gtk3
+
+# Doesn't work with clang 3.4 currently
+ac_add_options --disable-warnings-as-errors
+
+ac_add_options --enable-default-toolkit=cairo-gtk3
+# Required for cairo-gtk3 as of now
+# ac_add_options --enable-system-cairo
+# Not ported to gtk3 yet
+# ac_add_options --disable-crashreporter
+
+. $topsrcdir/../cfg/clang.inc
+. $topsrcdir/../cfg/distcc.inc
