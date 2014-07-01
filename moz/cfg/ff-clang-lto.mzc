@@ -7,6 +7,8 @@
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto
 
+# This should be in like neph-custom-something
+ac_add_options --enable-gstreamer=1.0
 
 # LTO assumes gold is in use, which it should be if available and not in
 # --enable-release mode.
@@ -15,9 +17,11 @@ mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto
 # to the linker not being aware of available cpu features.
 # See: http://lists.cs.uiuc.edu/pipermail/llvmdev/2014-February/070047.html
 
+ac_add_options --enable-optimize=-O3
+# ac_add_options --disable-elf-hack
 export LDFLAGS="$LDFLAGS -flto -march=native"
-export CFLAGS="$CFLAGS -O3 -flto"
-export CXXFLAGS="$CXXFLAGS -O3 -flto"
+export CFLAGS="$CFLAGS -flto"
+export CXXFLAGS="$CXXFLAGS -flto"
 
 # LTO last confirmed working with FF31+Clang 3.4.
 
