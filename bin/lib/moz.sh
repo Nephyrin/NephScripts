@@ -77,14 +77,30 @@ _update_mozinfo() {
   eval mozinfo=($(cat "$MOZPATH"/mozinfo))
   local i=-2
   while [ $(( i += 2 )) -lt ${#mozinfo[@]} ]; do
-    obj=${mozinfo[$(( i + 1 ))]}
-    tree=${mozinfo[$i]}
+    obj="${mozinfo[$(( i + 1 ))]}"
+    tree="${mozinfo[$i]}"
     if [ "$obj" != "$MOZOBJ" ]; then
       echo $(sh_quote "$tree") $(sh_quote "$obj") >> "$MOZPATH"/mozinfo.new
     fi
   done
-  echo $(sh_quote "$MOZTREE") $(sh_quote "$MOZOBJ") >> "$MOZPATH"/mozinfo.new
+  echo $(sh_quote "$MOZBUILDTREE") $(sh_quote "$MOZOBJ") >> "$MOZPATH"/mozinfo.new
   mv "$MOZPATH"/mozinfo.new "$MOZPATH"/mozinfo
+}
+
+moz_get_suffix_objdirs() {
+  [[ -n "$MOZPATH" && -n "$MOZBUILDTREE" ]] || die "No moz config in env"
+
+  local mozinfo="$MOZPATH"/mozinfo
+  [ -r "$mozinfo" ] || return 0
+  eval mozinfo=($(cat "$mozinfo"))
+  local i=-2
+  while [ $(( i += 2 )) -lt ${#mozinfo[@]} ]; do
+    obj="${mozinfo[$(( i + 1 ))]}"
+    tree="${mozinfo[$i]}"
+    if [[ "$tree" = "$MOZBUILDTREE" && -d "$MOZPATH/$obj" ]]; then
+      echo "$(printf "%q" "$obj")"
+    fi
+  done
 }
 
 # Sets the current moz config and target
