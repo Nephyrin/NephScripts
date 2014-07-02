@@ -6,7 +6,7 @@ set -e
 . "$(dirname "$0")"/../bashrc
 
 usage() {
-  ewarn "Usage: mnuke [-t] [-X] [--tree] [--branch] [--infra] [moz() arguments]"
+  ewarn "Usage: mnuke [-t] [-x] [-X] [--tree] [--branch] [--infra] [moz() arguments]"
   ewarn "  --tree"
   ewarn "      Also nuke the build tree and its other obj directories"
   ewarn "  --branch"
@@ -15,11 +15,13 @@ usage() {
   ewarn "      Also nuke unnecessary stuff mb makes like mb-staging"
   ewarn "  -t"
   ewarn "      Shorthand for --tree"
+  ewarn "  -x"
+  ewarn "      Shorthand for --tree --staging (all build files)"
   ewarn "  -X"
-  die   "      Shorthand for --tree --branch --staging (everything)"
+  die   "      Shorthand for --tree --staging --branch (everything)"
 }
 
-parse_args mnuke 'tX' 'tree,branch,infra' "$@"
+parse_args mnuke 'txX' 'tree,branch,infra' "$@"
 
 [ $(num_args) -le 2 ] || usage
 if [[ $(num_args) -ge 1 ]]; then
@@ -30,8 +32,10 @@ fi
 [ ! -z "$MOZOBJ" ] || die "No moz config"
 
 nukeall="$(get_option X)"
-nuketree="$(get_option tree)$(get_option t)$nukeall"
-nukeinfra="$(get_option infra)$nukeall"
+nukefiles="$(get_option x)$nukeall"
+
+nuketree="$(get_option tree)$(get_option t)$nukefiles"
+nukeinfra="$(get_option infra)$nukefiles"
 nukebranch="$(get_option branch)$nukeall"
 
 ifnuke() {
