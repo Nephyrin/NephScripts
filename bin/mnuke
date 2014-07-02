@@ -5,14 +5,34 @@ set -e
 . "$(dirname "$0")"/lib/util.sh
 . "$(dirname "$0")"/../bashrc
 
-parse_args mnuke '' '' "$@"
-[ $(num_args) -le 2 ] || die "Takes one or two arguments (moz config setup)"
+usage() {
+  ewarn "Usage: mnuke [-t] [-X] [--tree] [--branch] [--infra] [moz() arguments]"
+  ewarn "  --tree"
+  ewarn "      Also nuke the build tree and its other obj directories"
+  ewarn "  --branch"
+  ewarn "      Also nuke the build-traking branch in git"
+  ewarn "  --infra"
+  ewarn "      Also nuke unnecessary stuff mb makes like mb-staging"
+  ewarn "  -t"
+  ewarn "      Shorthand for --tree"
+  ewarn "  -X"
+  die   "      Shorthand for --tree --branch --staging (everything)"
+}
+
+parse_args mnuke 'tX' 'tree,branch,infra' "$@"
+
+[ $(num_args) -le 2 ] || usage
 if [[ $(num_args) -ge 1 ]]; then
   eval args=("$(get_args)")
   moz "${args[@]}"
 fi
 
 [ ! -z "$MOZOBJ" ] || die "No moz config"
+
+nukeall="$(get_option X)"
+nuketree="$(get_option tree)$(get_option t)$nukeall"
+nukeinfra="$(get_option infra)$nukeall"
+nukebranch="$(get_option branch)$nukeall"
 
 ifnuke() {
   if [ -d "$1" ]; then
@@ -28,12 +48,20 @@ ifnuke() {
 
 cd "$MOZPATH"
 ifnuke "$MOZOBJ"
-ifnuke "mb-staging"
-if [ ! -z "$MOZBUILDTREE" ] && [ "$MOZBUILDTREE" != "$MOZTREE" ]; then
+
+if [[ -n "$nuketree" && -n "$MOZBUILDTREE" && "$MOZBUILDTREE" != "$MOZTREE" ]]; then
   ifnuke "$MOZBUILDTREE"
-  if [ -d "$MOZTREE/.git" ]; then
-    estat "Removing branch build/$MOZBUILDTREE"
-    cmd cd "$MOZTREE"
-    cmd git branch -D "build/$MOZBUILDTREE" || true
-  fi
+  eval objdirs=("$(moz_get_suffix_objdirs)")
+  for objdir in "${objdirs[@]}"; do
+    estat "$objdir"
+    showcmd ifnuke "$objdir"
+  done
 fi
+
+if [[ -n "$nukebranch" && -d "$MOZTREE/.git" ]]; then
+  estat "Removing branch build/$MOZBUILDTREE"
+  cmd cd "$MOZTREE"
+  cmd git branch -D "build/$MOZBUILDTREE" || true
+fi
+
+[ -z "$nukeinfra" ] || ifnuke "mb-staging"
