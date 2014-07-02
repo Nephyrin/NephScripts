@@ -60,8 +60,10 @@ fi
 
 if [[ -n "$nukebranch" && -d "$MOZTREE/.git" ]]; then
   estat "Removing branch build/$MOZBUILDTREE"
-  cmd cd "$MOZTREE"
-  cmd git branch -D "build/$MOZBUILDTREE" || true
+  (
+    cmd cd "$MOZTREE"
+    cmd git branch -D "build/$MOZBUILDTREE" || true
+  )
 fi
 
 [ -z "$nukeinfra" ] || ifnuke "mb-staging"
