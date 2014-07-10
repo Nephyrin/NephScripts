@@ -26,13 +26,11 @@ ffargs=(-no-remote -profile "$profile" "${args[@]}")
 [ ! -z "$NSPR_LOG_MODULES" ] || export NSPR_LOG_MODULES="objlc:5,Plugin:5,PluginNPP:5,PluginNPN:5"
 [ ! -z "$ASAN_OPTIONS"] || export ASAN_OPTIONS="abort_on_error=1"
 
-# Set debugger from args
-dbgargs=($(get_option a))
+# Debugger
 debugger="$(get_option d)"
 debugger_use_build_path="$(get_option use-build-path)"
 [ -z "$debugger$(get_option g)" ] || dbg=1
 [ ! -z "$debugger" ] || debugger="gdb"
-[ -z "$(get_option r)" ] || dbgargs=("${dbgargs[@]}" -ex run)
 
 # Don't cause non-gdb spew if running gdb in emacs
 if [ "$EMACS" = "t" ] && [ -n "$dbg" ]; then
@@ -79,13 +77,19 @@ gdb_quote() {
   echo "'$foo'"
 }
 
-# If debugging, swap build tree paths to source tree paths unless
-# --use-build-path is set
-if [[ -n "$dbg" && -z "$debugger_use_build_path" ]]; then
-    dbgargs=("${dbgargs[@]}" -ex "set substitute-path $(gdb_quote "$MOZPATH/$MOZBUILDTREE/") $(gdb_quote "$MOZPATH/$MOZTREE/")")
-fi
-
 if [ -n "$dbg" ]; then
+  dbgargs=($(get_option a))
+  # If debugging, swap build tree paths to source tree paths unless
+  # --use-build-path is set
+  if [ -z "$debugger_use_build_path" ]; then
+    qbuildtree="$(gdb_quote "$MOZPATH/$MOZBUILDTREE/")"
+    qtree="$(gdb_quote "$MOZPATH/$MOZTREE/")"
+    dbgargs=("${dbgargs[@]}" -ex "set substitute-path $qbuildtree $qtree")
+  fi
+
+  # Add run as last arg with -r
+  [ -z "$(get_option r)" ] || dbgargs=("${dbgargs[@]}" -ex run)
+
   [ -z "$EMACS" ] || dbgargs[${#dbgargs[@]}]="-i=mi"
   cmd cleangtk $debugger "${dbgargs[@]}" --args ./firefox "${ffargs[@]}"
 else
