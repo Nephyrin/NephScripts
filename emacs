@@ -599,7 +599,7 @@
 
 (require 'auto-complete-clang-async)
 
-(setq ac-quick-help-delay 0.5)
+(setq ac-quick-help-delay nil)
 ;; (ac-set-trigger-key "TAB")
 (define-key ac-mode-map  [(control tab)] 'auto-complete)
 (defun my-ac-config ()
