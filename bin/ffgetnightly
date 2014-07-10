@@ -40,7 +40,7 @@ if [ -d "$cachedir" ]; then
   estat "Extracting"
   tar xjf "$file"
 else
-  estat "Not using cache directory"
+  estat "Not using cache directory, set MOZPATH and create $MOZPATH/nightlycache/ to cache nightlies"
   curl -# "$url" | tar xj
 fi
 
