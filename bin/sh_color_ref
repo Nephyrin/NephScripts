@@ -4,30 +4,37 @@ set -e
 
 source "$(dirname "$0")"/lib/util.sh
 
-parse_args sh_color_ref 'a:b:' '' "$@"
-[ "$(num_args)" -eq 0 ] || die "Usage: sh_color_ref [-a start:stop] [-b start:stop]"
+parse_args sh_color_ref '' '256' "$@"
 
-as="$(get_option a)"
-[ "${as#*:}" = "$as" ] || ae="${as#*:}"
-as="${as%:*}"
-bs="$(get_option b)"
-[ "${bs#*:}" = "$bs" ] || be="${bs#*:}"
-bs="${bs%:*}"
-[ -n "$as" ] || as=1
-[ -n "$ae" ] || ae=64
-[ -n "$bs" ] || bs=1
-[ -n "$be" ] || be=8
-
-[ "$bs" -le "$be" ] || die "Invalid -b range"
-[ "$as" -le "$ae" ] || die "Invalid -b range"
+eval args=("$(get_args)")
+text="${args[*]}"
+[[ -z $text ]] || text=" $text"
 
 ai=$as
-while [[ $ai -le $ae ]]; do
-  bi=$bs
-  while [[ $bi -le $be ]]; do
-    echo -en "\e[${bi};${ai}mColor $bi;$ai\e[0m "
-    (( ++bi ))
+
+pc() {
+  local f="$1"
+  local b="$2"
+  [ -z "$b" ] || f="$f;"
+  for x in "" {1..7}; do
+    [[ -z $x ]] || x="$x;"
+    echo -en " \e[${x}${f}${b}m \\\e[${x}${f}${b}${pad}${text} \e[0m "
   done
   echo ""
-  (( ++ai ))
-done
+}
+
+if [ -z "$(get_option 256)" ]; then
+  for b in "" {40..49} {100..107}; do
+    for f in {30..39} {90..97}; do
+      pc $f $b
+    done
+  done
+else
+  for b in "" {0..256}; do
+    [ -z "$b" ] || b="48;5;$b"
+    for f in "" {0..256}; do
+      [ -z "$f" ] || f="38;5;$f"
+      pc "$f" "$b"
+    done
+  done
+fi
