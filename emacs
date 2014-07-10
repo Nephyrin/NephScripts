@@ -104,7 +104,7 @@
 (add-to-list 'load-path "~/.emacs.d/color-identifiers-mode")
 (add-to-list 'load-path "~/.emacs.d/dash") ; dependency
 (require 'color-identifiers-mode)
-(setq global-color-identifiers-mode t)
+;(setq global-color-identifiers-mode t)
 
 ;;
 ;; ido
