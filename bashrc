@@ -75,32 +75,6 @@ export MOZDEFAULTTREE=moz-git
 export MOZHG=mozilla-hg
 [ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
 
-# Machine specific
-if [ "$(hostname)" = "neph" ]; then
-  # BenQ left monitor
-  export __GL_SYNC_DISPLAY_DEVICE="DFP-2"
-  function ext() {
-    env PULSE_SINK=alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1 "$@"
-  }
-  alias tvs='pulse-sink-juggle alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1 \
-                               alsa_output.usb-2010_REV_1.7_Audioengine_D1-00-D1.analog-stereo'
-  # Wine is on raid array
-elif [ "$(hostname)" = "Johnbook" ]; then
-  #
-  # Graphics switcher helpers
-  #
-  alias gfx_igd='sudo screen -d -m -S gfx_switch /root/live_switch.sh igd'
-  alias gfx_discrete='sudo screen -d -m -S gfx_switch /root/live_switch.sh discrete'
-  gfx() {
-    local ret="$(cat /var/log/Xorg.0.log | grep "LoadModule: \"radeon\"")"
-    if [ -z "$ret" ]; then
-      echo ":: Intel Active"
-    else
-      echo ":: Radeon Active"
-    fi
-  }
-fi
-
 #
 # Interactive tweaks
 #
@@ -205,32 +179,12 @@ alias pidof='pgrep -x'
 
 alias please='eval sudo "$(fc -nl -1)"'
 
-alias phone='sshfs root@NephGalaxy:/sdcard/ $HOME/NephGalaxy'
-alias unphone='fusermount -u $HOME/NephGalaxy'
 
 # mozilla
-alias fm='ffmake'
 alias fb='ffbrun'
-
-# Hibernate-reboot with mount handling, for OS switching
-alias switchos='hib reboot mounts'
 
 alias hgreset="hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status"
 alias rv='rsync -avy --partial --progress'
-alias ns1="ssh srcds@174.37.110.81"
-alias ns2="ssh srcds@74.55.49.243"
-alias nsw="ssh apaloma@173.193.9.83"
-alias ntf="ssh tf@nemu.pointysoftware.net"
-alias naf="ssh tfadmin@nemu.pointysoftware.net"
-alias nnf="ssh nephyrin@nemu.pointysoftware.net"
-alias relap='service laptop-mode restart'
-nalb() {
-  if host albus.mv.mozilla.com &>/dev/null; then
-    ssh -L8000:localhost:8000 johns@albus.mv.mozilla.com "$@"
-  else
-    ssh -L8000:albus:8000 -t jschoenick@office.mozilla.org ssh johns@albus "$@"
-  fi
-}
 
 alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
 alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
@@ -243,7 +197,6 @@ alias giff='git diff --no-index --color=auto'
 
 alias gref='git commit --amend -a --no-edit'
 
-alias xderp='sudo mount -o loop /mnt/N/Applications/X-Plane/Disk1.iso /mnt/cd'
 alias resetswap='sudo swapoff -a && sudo swapon -a && echo ":: Done"'
 
 alias xg='x gedit'
@@ -255,8 +208,6 @@ alias p='sudo pacman'
 alias dir='x dolphin "$@"'
 
 alias rebash='source ~/.bashrc'
-
-alias brusay='ntf toybox/brusay'
 
 #
 # Misc utility functions
@@ -323,41 +274,6 @@ qr()
         gwenview "$derp"
         rm "$derp"
     )& ) &>/dev/null
-}
-
-stoparch32()
-{
-    # Stop mounts
-    sudo umount /mnt/N/arch32/proc
-    sudo umount /mnt/N/arch32/dev/pts
-    sudo umount /mnt/N/arch32/dev/shm
-    sudo umount /mnt/N/arch32/dev
-    sudo umount /mnt/N/arch32/sys
-    sudo umount /mnt/N/arch32/home
-    sudo umount /mnt/N/arch32/etc/chroot_host
-    sudo umount /mnt/N/arch32/mnt/N
-}
-
-arch32()
-{
-    if [ ! -d /mnt/N/arch32/home/nephyrin ]; then
-        # Start mounts
-        sudo mount /mnt/N/arch32/proc
-        sudo mount /mnt/N/arch32/dev
-        sudo mount /mnt/N/arch32/dev/shm
-        sudo mount /mnt/N/arch32/dev/pts
-        sudo mount /mnt/N/arch32/sys
-        sudo mount /mnt/N/arch32/home
-        sudo mount /mnt/N/arch32/mnt/N
-        sudo mount /mnt/N/arch32/etc/chroot_host
-        sudo mount /mnt/N/arch32/etc/chroot_host -o remount,ro
-    fi
-    sudo linux32 chroot /mnt/N/arch32 /bin/bash -c "su - nephyrin"
-}
-
-resteam()
-{
-    for x in {Bru,}Steam; do x ~/Launch/$x steam://nav/console; done
 }
 
 rand32()
@@ -489,15 +405,6 @@ java_memanalyze()
     fi
 }
 
-# OR I COULD JUST PROPERLY FIX IT LOL
-fixraid()
-{
-    sudo mdadm --stop /dev/md*
-    sudo mdadm --detail /dev/md*
-    sudo mdadm --assemble --scan
-    sudo mount /mnt/N
-}
-
 lcg()
 {
   local cgroup=$1
@@ -588,14 +495,11 @@ van()
     yelp "man:$@" &>/dev/null &
 }
 
-_quote() {
-  echo \'${1//\'/\'\\\'\'}\'
-}
-
 x() {
   [ ! -z "$NEPH_CGROUP" ] && echo >&2 ":: WARNING: In cgroup"
   ("$@" >/dev/null 2>/dev/null &)
 }
+
 pic() { x gwenview "$@"; }
 avant() { pkill avant-window; x avant-window-navigator; }
 
@@ -608,29 +512,6 @@ connectx()
     echo -n "export " && sh_var DISPLAY
     echo -n "export " && sh_var XAUTHORITY
   )
-}
-
-tf2()
-{
-    local host=$1
-    local password=$2
-    if [ ! -z "$host" ] && [ "$host" = "${host%.*}" ]; then
-        if [ "$host" = "tf0" ]; then
-            host="game.doublezen.net";
-            password="dicks"
-        else
-            host="$1.game.doublezen.net";
-        fi
-    fi
-    if [ ! -z "$(pidof hl2_linux)" ]; then
-        echo ":: TF2 already running"
-    else
-        [ ! -z "$password" ] && cmdpassword="+password ${password}"
-        [ ! -z "$host" ] && cmd="+connect ${host} $cmdpassword"
-        c="steam -applaunch 440 $cmd"
-        echo "Running command $c"
-        eval "$c"
-    fi
 }
 
 boost()
