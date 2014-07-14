@@ -280,20 +280,9 @@ qr()
 
 rand32()
 {
-    let "r = $RANDOM << 17 | $RANDOM << 2 | $RANDOM & 0x3"
-    echo -n $r
-}
-
-rand64()
-{
-    let "r = ($RANDOM << 49) | ($RANDOM << 34) | ($RANDOM << 19) | ($RANDOM << 4) | ($RANDOM & 15 )"
-    echo -n $r
-}
-# Max positive range
-rand63()
-{
-    let "r = $(rand64) & ~(1 << 63)"
-    echo -n $r
+  local r
+  let "r = $RANDOM << 17 | $RANDOM << 2 | ( $RANDOM & 0x3 )"
+  echo $r
 }
 
 dcg()
