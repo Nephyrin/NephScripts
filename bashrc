@@ -175,10 +175,12 @@ fi
 #
 
 alias pn='promptnote'
-alias pidof='pgrep -x'
+
+if ( ! which pidof && which pgrep ) &>/dev/null; then
+  alias pidof='pgrep -x'
+fi
 
 alias please='eval sudo "$(fc -nl -1)"'
-
 
 # mozilla
 alias fb='ffbrun'
