@@ -17,7 +17,7 @@ export LDFLAGS="-fsanitize=address"
 
 # Use at least -O1 for optimization to avoid stack space exhaustions caused by
 # Clang function inlining, esp. on lin32
-ac_add_options --enable-optimize="-O1"
+# ac_add_options --enable-optimize="-O1"
 
 # Needed for asan to work
 ac_add_options --enable-address-sanitizer
