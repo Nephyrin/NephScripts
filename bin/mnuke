@@ -58,7 +58,7 @@ if [[ -n "$nuketree" && -n "$MOZBUILDTREE" && "$MOZBUILDTREE" != "$MOZTREE" ]]; 
   eval objdirs=("$(moz_get_suffix_objdirs)")
   for objdir in "${objdirs[@]}"; do
     estat "$objdir"
-    showcmd ifnuke "$objdir"
+    cmd ifnuke "$objdir"
   done
 fi
 
