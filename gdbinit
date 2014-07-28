@@ -11,4 +11,7 @@ set disassembly-flavor intel
 # I want to not-care about SIGPIPE more often than I want to care
 handle SIGPIPE nostop print pass
 
+# Used by libdl apparently, rarely useful
+handle SIG38 noprint nostop pass
+
 set prompt [gdb] 
