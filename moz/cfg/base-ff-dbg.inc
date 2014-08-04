@@ -13,7 +13,9 @@ ac_add_options --enable-profiling
 # ac_add_options --enable-trace-malloc
 # ac_add_options --enable-dmd
 # ac_add_options --enable-js-diagnostics
-ac_add_options --enable-warnings-as-errors
+
+# Disabled again for bug 1047494
+# ac_add_options --enable-warnings-as-errors
 
 # ac_add_options --disable-webrtc
 
