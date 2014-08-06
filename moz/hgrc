@@ -1,0 +1,54 @@
+[no-git-sync-paths]
+default =
+try =
+
+[paths]
+default = https://hg.mozilla.org/mozilla-central
+try = ssh://jschoenick@mozilla.com@hg.mozilla.org/try/
+
+# Projects
+projects/ionmonkey = https://hg.mozilla.org/projects/ionmonkey
+projects/ux = https://hg.mozilla.org/projects/ux
+projects/alder = https://hg.mozilla.org/projects/alder
+projects/ash = https://hg.mozilla.org/projects/ash
+projects/birch = https://hg.mozilla.org/projects/birch
+projects/build-system = https://hg.mozilla.org/projects/build-system
+projects/cedar = https://hg.mozilla.org/projects/cedar
+projects/cypress = https://hg.mozilla.org/projects/cypress
+projects/date = https://hg.mozilla.org/projects/date
+projects/elm = https://hg.mozilla.org/projects/elm
+projects/fig = https://hg.mozilla.org/projects/fig
+projects/graphics = https://hg.mozilla.org/projects/graphics
+projects/gum = https://hg.mozilla.org/projects/gum
+projects/holly = https://hg.mozilla.org/projects/holly
+projects/jamun = https://hg.mozilla.org/projects/jamun
+projects/larch = https://hg.mozilla.org/projects/larch
+projects/maple = https://hg.mozilla.org/projects/maple
+projects/oak = https://hg.mozilla.org/projects/oak
+projects/pine = https://hg.mozilla.org/projects/pine
+projects/profiling = https://hg.mozilla.org/projects/profiling
+projects/ux = https://hg.mozilla.org/projects/ux
+
+# Services
+services/services-central = https://hg.mozilla.org/services/services-central
+
+# Releases
+releases/esr17 = https://hg.mozilla.org/releases/mozilla-esr17
+releases/esr24 = https://hg.mozilla.org/releases/mozilla-esr24
+releases/b2g18 = https://hg.mozilla.org/releases/mozilla-b2g18
+releases/b2g18_v1_0_0 = https://hg.mozilla.org/releases/mozilla-b2g18_v1_0_0
+releases/b2g18_v1_0_1 = https://hg.mozilla.org/releases/mozilla-b2g18_v1_0_1
+releases/b2g18_v1_1_0_hd = https://hg.mozilla.org/releases/mozilla-b2g18_v1_1_0_hd
+releases/b2g26_v1_2 = https://hg.mozilla.org/releases/mozilla-b2g26_v1_2
+releases/b2g26_v1_2f = https://hg.mozilla.org/releases/mozilla-b2g26_v1_2f
+releases/release = https://hg.mozilla.org/releases/mozilla-release
+releases/beta = https://hg.mozilla.org/releases/mozilla-beta
+releases/aurora = https://hg.mozilla.org/releases/mozilla-aurora
+
+# Central
+central = https://hg.mozilla.org/mozilla-central
+
+# Integration
+integration/inbound = ssh://jschoenick@mozilla.com@hg.mozilla.org/integration/mozilla-inbound
+integration/fx-team = https://hg.mozilla.org/integration/fx-team
+integration/b2g-inbound = https://hg.mozilla.org/integration/b2g-inbound
