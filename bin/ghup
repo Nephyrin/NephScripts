@@ -7,14 +7,40 @@ cd "$MOZPATH/moz-git"
 
 . "$(dirname "$0")"/lib/util.sh
 
-parse_args ghup u "" "$@"
+#
+# Functions
+#
+
+# List keys under some prefix, e.g. | hg_config_list paths |
+hg_config_list() {
+  for config in $(hg -R "$MOZPATH/$MOZHG" showconfig "$1"); do
+    [[ ! "$config" =~ ^"$1."(.+)'=' ]] || echo "${BASH_REMATCH[1]}";
+  done
+}
+
+syncbranch() {
+  estat "Syncing $1"
+  cmd ghsync $update "$1"
+}
+
+#
+# Args
+#
+
+parse_args ghup ua "all" "$@"
 
 [ $(num_args) -le 1 ] || die "Unexpected argument"
+branch="$(get_arg 1)"
+all="$(get_option all)$(get_option a)"
+
+[[ -z $all || -z $branch ]] || die "-a/--all doesn't make sense with a specific branch name"
 
 update="$(get_option u)"
 [ -z "$update" ] || update="-u"
-branch="$(get_arg 1)"
 
+#
+# Update git
+#
 estat "Updating git"
 git fetch bangles
 estat "Updating git map"
@@ -23,9 +49,29 @@ estat "Updating git map"
     git pull --no-edit
 )
 
-if [ ! -z "$branch" ]; then
-  estat "Syncing $branch"
-  ghsync $update "$branch"
+#
+# Call ghsync on given branches or everything in the config file with -a.
+#   -a/--all ignores keys under no-git-sync-paths in hgrc
+#
+
+[ -z "$branch" ] || syncbranch "$branch"
+
+if [ -n "$all" ]; then
+  paths=($(hg_config_list paths))
+  skip=($(hg_config_list no-git-sync-paths))
+  for path in "${paths[@]}"; do
+    unset skipme
+    for skip in "${skip[@]}"; do
+      if [[ $path = $skip ]]; then
+        skipme=1
+        break
+      fi
+    done
+
+    [[ -z $skipme ]] || continue
+
+    syncbranch "$path"
+  done
 fi
 
 missing="$((git tag >/dev/null ) 2>&1 | sed -r 's/error: (.*) does.*/\1/g;tx;d;:x')"
