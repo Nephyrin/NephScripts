@@ -97,22 +97,6 @@ if [[ $- == *i* ]] ; then
     shopt -s checkwinsize
     shopt -s histappend
     [ -z "$PROMPT_COMMAND" ] || PROMPT_COMMAND="$PROMPT_COMMAND; "
-    PROMPT_COMMAND="${PROMPT_COMMAND}history -a"
-
-    # Change the window title of X terminals
-    if [ -z "$TMUX" ]; then # tmux.conf handles this
-      _bashrc_termtitle='${HOSTNAME%%.*} :: ${PWD/$HOME/~}'
-      case ${TERM} in
-        xterm*|rxvt*|aterm|kterm|gnome*|interix)
-          PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e]0;'"$_bashrc_termtitle"'\007"'
-          ;;
-        screen*)
-          PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e_'"$_bashrc_termtitle"'\e\\"'
-          ;;
-      esac
-      unset _bashrc_termtitle
-    fi
-    use_color=false
 
     # Set colorful PS1 only on colorful terminals.
     # dircolors --print-database uses its own built-in database
@@ -239,19 +223,52 @@ pathadd() {
 # wherien they would not be after expansion.
 BASE_PS1="$PS1"
 _reprompt() {
-    PS1="$NEPH_PROMPTNOTE_PS1$NEPH_CGROUP_PS1$MOZ_PS1$BASE_PS1"
+  PS1="$NEPH_PROMPTNOTE_PS1$NEPH_CGROUP_PS1$MOZ_PS1$NEPH_GIT_PS1$BASE_PS1"
 }
 _reprompt
+
+# The prompt command could be just a big eval statement and avoid needing this,
+# but we bake in things like NEPH_PROMPTNOTE and hostname that either don't
+# change or can call _reprompt_command when they do
+BASE_PROMPT_COMMAND="history -a"
+
+_reprompt_command() {
+  PROMPT_COMMAND="$BASE_PROMPT_COMMAND"
+
+  # Window title
+  if [ -z "$TMUX" ]; then # tmux.conf handles this
+    NEPH_TERM_TITLE='${PWD/$HOME/\~}'
+    if [[ -n $NEPH_PROMPTNOTE ]]; then
+      NEPH_TERM_TITLE="[$NEPH_PROMPTNOTE] $NEPH_TERM_TITLE"
+    fi
+    if [[ $HOSTNAME != $(hostname) ]]; then
+      NEPH_TERM_TITLE='${HOSTNAME%%.*}: '"$NEPH_TERM_TITLE"
+    fi
+
+    case ${TERM} in
+      xterm*|rxvt*|aterm|kterm|gnome*|interix)
+        PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e]0;'"$NEPH_TERM_TITLE"'\007"'
+        ;;
+      screen*)
+        PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e_'"$NEPH_TERM_TITLE"'\e\\"'
+        ;;
+    esac
+  fi
+}
+_reprompt_command
 
 # Add a note to the prompt
 promptnote() {
   local note="$*"
   if [ -n "$note" ]; then
+    NEPH_PROMPTNOTE="$note"
     NEPH_PROMPTNOTE_PS1="\[\e[37;2m\]~\[\e[32;2m\]$note\[\e[37;2m\]~\[\e[0m\] "
   else
+    unset NEPH_PROMPTNOTE
     unset NEPH_PROMPTNOTE_PS1
   fi
   _reprompt
+  _reprompt_command
 }
 
 # Records the current git tip in variable
