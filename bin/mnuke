@@ -10,15 +10,15 @@ usage() {
   ewarn "  --tree"
   ewarn "      Also nuke the build tree and its other obj directories"
   ewarn "  --branch"
-  ewarn "      Also nuke the build-traking branch in git"
+  ewarn "      Also nuke the build-tracking branch in git"
   ewarn "  --infra"
   ewarn "      Also nuke unnecessary stuff mb makes like mb-staging"
   ewarn "  -t"
   ewarn "      Shorthand for --tree"
   ewarn "  -x"
-  ewarn "      Shorthand for --tree --staging (all build files)"
+  ewarn "      Shorthand for --tree --infra (all build files)"
   ewarn "  -X"
-  die   "      Shorthand for --tree --staging --branch (everything)"
+  die   "      Shorthand for --tree --infra --branch (everything)"
 }
 
 parse_args mnuke 'txX' 'tree,branch,infra' "$@"
