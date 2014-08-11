@@ -7,9 +7,6 @@
 
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-clang-lto
 
-# This should be in like neph-custom-something
-ac_add_options --enable-gstreamer=1.0
-
 # LTO assumes gold is in use, which it should be if available and not in
 # --enable-release mode.
 
@@ -19,7 +16,7 @@ ac_add_options --enable-gstreamer=1.0
 
 ac_add_options --enable-optimize=-O3
 # ac_add_options --disable-elf-hack
-export LDFLAGS="$LDFLAGS -flto -march=native"
+export LDFLAGS="$LDFLAGS -flto -march=corei7-avx"
 export CFLAGS="$CFLAGS -flto"
 export CXXFLAGS="$CXXFLAGS -flto"
 

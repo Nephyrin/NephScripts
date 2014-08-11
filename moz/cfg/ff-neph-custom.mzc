@@ -1,0 +1,7 @@
+. $topsrcdir/../cfg/ff-clang-lto.mzc
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-neph-custom
+
+ac_add_options --enable-gstreamer=1.0
+# Still weird graphical glitches with hardware acceleration
+# ac_add_options --enable-default-toolkit=cairo-gtk3
