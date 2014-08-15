@@ -1,8 +1,10 @@
 #!/bin/bash
 
+set -e
+
 source "$(dirname "$0")"/lib/util.sh
 
-parse_args nightfox 'gr' 'no-omtc,slowscript' "$@"
+parse_args nightfox 'grp' 'no-omtc,slowscript' "$@"
 eval app_args=("$(get_args)")
 
 [ -n "$(get_option no-omtc)" ] || export MOZ_USE_OMTC=1
@@ -14,15 +16,37 @@ eval app_args=("$(get_args)")
 # export MOZ_PROFILER_MODE=combined
 # export MOZ_PROFILER_STACK_SCAN=0
 
+plugin_container="$(get_option p)"
+
 if [ -n "$(get_option g)" ]; then
   if [ -n "$(get_option r)" ]; then
     run="-ex run"
   else
-    estat "Existing instances"
-    ps $(pgrep firefox)
+    if [[ -n $plugin_container ]]; then
+      pids=($(cmd pgrep -f plugin-container || true))
+    else
+      pids=($(cmd pgrep firefox || true))
+    fi
+    if [[ -n $pids ]]; then
+      estat "Existing instances"
+      ps $pids
+    else
+      estat "No existing instances found"
+    fi
   fi
   cmd cd ~/firefox-nightly
-  cmd cleangtk gdb $run --args ./firefox "${app_args[@]}"
+  if [[ -n $plugin_container ]]; then
+    if [[ $(get_option r) ]]; then
+      [[ ${#pids[@]} -eq 1 ]] || die "-r can only auto-run if one plugin-container is found, but found ${#pids[@]}: ${pids[*]}"
+      plugin_run=(-ex "attach ${pids[0]}" -ex continue)
+    fi
+    [[ $(num_args) -eq 0 ]] || die "Can't pass args with -p"
+    cmd gdb ./plugin-container "${plugin_run[@]}"
+  else
+    cmd cleangtk gdb $run --args ./firefox "${app_args[@]}"
+  fi
 else
+  [[ -z $plugin_container ]] || die "-p doesn't make sense without -g"
+  [[ -z $(get_option r) ]] || die "-r doesn't make sense without -g"
   cmd cleangtk ~/firefox-nightly/firefox "${app_args[@]}"
 fi
