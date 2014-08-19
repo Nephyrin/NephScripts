@@ -404,7 +404,7 @@
                               (move-to-window-line nil)))
 
 ; Fast window nav
-(global-set-key (kbd "C-z C-b") (lambda ()
+(global-set-key (kbd "C-z C-d") (lambda ()
                                   (interactive)
                                   (other-window -1)))
 (global-set-key (kbd "C-z C-f") (lambda ()
