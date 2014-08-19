@@ -580,6 +580,14 @@
   (insert char)
   (if (< 0 arg) (forward-char -1)))
 
+; Just inverts the argument to zap-to-char
+(defun backwards-zap-to-char (arg char)
+  "zap-to-char with an inverted argument"
+  (interactive (list (prefix-numeric-value current-prefix-arg)
+                     (read-char "Zap backwards to char: ")))
+  (zap-to-char (* -1 arg) char))
+(global-set-key (kbd "M-Z") 'backwards-zap-to-char)
+
 ;;
 ;; Magit
 ;;
