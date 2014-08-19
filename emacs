@@ -411,6 +411,12 @@
                                   (interactive)
                                   (other-window 1)))
 
+; New frame
+(global-set-key (kbd "C-z C-n") (lambda ()
+                                  (interactive)
+                                  (make-frame)))
+
+
 (defun flyspell-toggle (arg)
   "Toggle flyspell mode, and check the entire buffer when enabling"
   (interactive "p")
