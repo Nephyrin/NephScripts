@@ -29,6 +29,7 @@
 
 (setq-default indent-tabs-mode nil)
 (setq js-indent-level 2)
+(setq tab-width 2)
 
 (global-auto-revert-mode t)
 
@@ -70,7 +71,9 @@
 ; Trailing spaces and whitespace
 (require 'whitespace)
 (global-whitespace-mode)
-(setq whitespace-style (quote (face trailing)))
+; Options list of whitespace to mess with, 'face' option uses faces per type
+; instead of replacement chars
+(setq whitespace-style (quote (face trailing tabs)))
 
 ;;
 ;; Snippets
@@ -668,6 +671,9 @@
 (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
 
 (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 22)
+
+; #120F14
+(set-face-attribute 'whitespace-tab nil :background "#100D20")
 
 ; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
