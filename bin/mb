@@ -153,8 +153,13 @@ fi
 #
 
 if [ -z "$nodistcc" ]; then
-    MACH="pump $MACH"
-    MAKE="pump $MAKE"
+  # To use pump mode, set this, signal somehow to distcc.conf to add add
+  # ,cpp,lzo to hosts, make sure mozconfig doesn't use ccache and enables
+  # distcc.
+  # MACH="pump $MACH"
+  # MAKE="pump $MAKE"
+  # TODO add a way to not require changing mozconfig, make --distcc-pump an
+  #      option or something.
     if [ -f "$nephbin/../priv/distcc.conf" ]; then
       [ -z "$onlydistcc" ] || export NEPH_DISTCC_NOLOCAL=1
       estat "Found distcc.conf"
