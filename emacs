@@ -647,7 +647,7 @@
 ;(load-theme 'sunburst t)
 
 ; Setting cursor face-attribute fails for new frames?
-;(set-face-attribute 'cursor nil :foreground "#D96E26")
+(set-face-attribute 'cursor nil :background "#D96E26")
 ;(add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
