@@ -70,6 +70,15 @@ while true; do
   if [[ $ret -ne 0 ]]; then
     ewarn "Non-zero return code $ret"
   fi
-  estat "Exited. Press return to re-launch or ctrl-C to end"
-  read
+  estat "Exited. Press return to re-launch or ctrl-C to end."
+  [[ -z $temp_profile ]] || estat "Type 'keep' to not delete temporary profile."
+  while read input; do
+    [[ -n $input ]] || break;
+    if [[ -n $temp_profile && $input = "keep" ]]; then
+      ewarn "Not deleting temp profile: $prof"
+      trap '' EXIT
+      exit 0
+    fi
+    eerr "Unknown input '$input'."
+  done
 done
