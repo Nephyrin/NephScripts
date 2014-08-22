@@ -6,7 +6,7 @@ set -e
 
 . "$(dirname "$(readlink -f "$0")")"/lib/util.sh
 
-parse_args ffrun 'n' 'nightly,accel,omtc' "$@"
+parse_args ffrun 'n' 'profile:,nightly,accel,omtc' "$@"
 eval args=("$(get_args)")
 
 if [ -n "$(get_option nightly)$(get_option n)" ]; then
@@ -49,9 +49,17 @@ if [[ $(get_option accel) ]]; then
   prefs[${#prefs[@]}]='user_pref("layers.async-video.enabled", true);'
 fi
 
-prof="$(mktemp -d -t ffrun_profile.XXXXXXX)"
-trap "cmd rm -r '$prof'" EXIT
-estat "Temp profile is $prof"
+profile="$(get_option profile)"
+[[ -z "$profile" || -d $profile ]] || die "Profile '$profile' does not exist or is not a directory"
+
+if [[ -n $profile ]]; then
+  prof="$(readlink -f "$profile")"
+else
+  temp_profile=1
+  prof="$(mktemp -d -t ffrun_profile.XXXXXXX)"
+  trap "cmd rm -r '$prof'" EXIT
+  estat "Temp profile is $prof"
+fi
 
 for pref in "${prefs[@]}"; do
   echo "$pref" >> "$prof"/user.js
