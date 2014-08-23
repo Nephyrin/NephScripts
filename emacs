@@ -156,9 +156,8 @@
   `(:eval (propertize " " 'display '(space :align-to (- right-margin
                                                         ,reserve)))))
 (defun neph-modeline-hud (height width)
-      `(:eval (propertize " " 'display (neph-hud "#0C0C0C" "#222222"
-                                                 ,height ,width)
-                          'face 'neph-modeline-hud)))
+  (propertize " " 'display (neph-hud "#0C0C0C" "#222222" height width)
+                  'face 'neph-modeline-hud))
 (setq neph-modeline-path
       '(:eval (propertize (let ((bufname (buffer-file-name)))
                             (if bufname
@@ -231,21 +230,22 @@
               '(:eval
                 (list
                  neph-modeline-bufstat
-                 '(:propertize " [%l:%2c]  ")
+                 " [%l:%2c]  "
                  neph-modeline-path
                  `(:propertize "%b" face ,(if (neph-modeline-active)
                                               'neph-modeline-id
                                             'neph-modeline-id-inactive))
                  "   %["
-                 '(:propertize mode-name face neph-modeline-mode)
+                 (propertize mode-name 'face 'neph-modeline-mode)
                  "%] "
                  '(:propertize mode-line-process face neph-modeline-misc)
                  '(:propertize global-mode-string face neph-modeline-misc)
                  '(:propertize minor-mode-alist face neph-modeline-misc)
-                 (when vc-mode '(:propertize (concat " /" vc-mode)
-                                             face neph-modeline-misc))
+                 (when vc-mode (propertize (concat " /" vc-mode)
+                                           'face 'neph-modeline-misc))
                  (neph-fill-to 13)
-                 '(:propertize "%p ")
+                 "%p "
+                 (propertize " " 'display '(list (raise -0.30) (height 1.25)))
                  (neph-modeline-hud 1.5 10))))
 
 ;;
