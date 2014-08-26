@@ -57,7 +57,5 @@
 	st = status --ignore-submodule=untracked
 	pff = pull --ff-only
 
-[init]
-	templatedir = ~/.gittemplate
 [column]
 	ui = auto
