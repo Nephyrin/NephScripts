@@ -1,6 +1,6 @@
-. $topsrcdir/../cfg/base-ff-dbg.inc
+. $topsrcdir/../cfg/base-ff-opt.inc
 
-mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-dbg-minimal
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../ff-opt-minimal
 
 . $topsrcdir/../cfg/minimal.inc
 
