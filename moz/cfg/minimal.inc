@@ -12,6 +12,8 @@ ac_add_options --disable-gamepad
 ac_add_options --disable-eme
 
 ac_add_options --disable-printing
+
+ac_add_options --disable-tests
 ac_add_options --disable-embedding-tests
 
 ac_add_options --with-system-icu
