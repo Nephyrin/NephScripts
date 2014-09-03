@@ -91,3 +91,6 @@
 [submodule "bin/ls++-Term-ExtendedColor.git"]
 	path = bin/ls++-Term-ExtendedColor.git
 	url = https://github.com/trapd00r/Term-ExtendedColor
+[submodule "emacs.d/markdown-mode"]
+	path = emacs.d/markdown-mode
+	url = git://jblevins.org/git/markdown-mode.git
