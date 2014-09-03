@@ -56,6 +56,7 @@
 	ll = log --oneline
 	st = status --ignore-submodule=untracked
 	pff = pull --ff-only
+	cm = commit -m
 
 [column]
 	ui = auto
