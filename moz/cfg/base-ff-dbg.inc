@@ -7,6 +7,7 @@ ac_add_options --disable-install-strip
 ac_add_options --enable-tests
 ac_add_options --enable-crashreporter
 
+ac_add_options --enable-ipdl-tests
 # Optional
 ac_add_options --enable-profiling
 # ac_add_options --enable-codesighs
