@@ -15,9 +15,6 @@ parse_args ffbrun 'gd:a:rx' 'profile:,slowscript,use-build-path,moz:' "$@"
 # Default FF args
 eval args=("$(get_args)")
 profile="$(get_option profile)"
-[ -n "$profile" ] || profile="./profile"
-
-ffargs=(-no-remote -profile "$profile" "${args[@]}")
 
 # Default moz env vars
 [ -n "$(get_option slowscript)" ] || export JS_DISABLE_SLOW_SCRIPT_SIGNALS=1
@@ -42,10 +39,13 @@ fi
 moz="$(get_option moz)"
 [ -z "$moz" ] || cmd moz $moz
 
-# Sanity checks Don't rm -rf custom profile paths, especially since they can be
-# relative and could lead to painful accidents
+# Sanity checks
+# Don't rm -rf custom profile paths, especially since they can be relative and
+# could lead to painful accidents
 [ -z "$(get_option x)" ] || [ -z "$profile" ] || die "-x and --profile don't mix"
 
+
+[ -n "$profile" ] || profile="./profile"
 # Chcek for mozconfig
 [ ! -z "$MOZOBJ" ] || die "No moz config"
 if [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
@@ -53,9 +53,11 @@ if [ ! -x "$MOZPATH/$MOZOBJ/dist/bin/firefox" ]; then
 fi
 
 cd "$MOZPATH/$MOZOBJ/dist/bin/"
+[[ -n $profile ]] || profile="./profile"
+ffargs=(-no-remote -profile "$profile" "${args[@]}")
 
 # Nuke profile with -x
-[ -z "$(get_option x)" ] || rm -rf "$profile"
+[ -z "$(get_option x)" ] || cmd rm -rf "$profile"
 
 # Make profile if necessary
 if [[ ! -d "$profile" ]]; then
