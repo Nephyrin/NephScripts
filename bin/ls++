@@ -1,0 +1,7 @@
+#!/bin/bash
+
+home="$(dirname "$0")"
+[[ -z $PERL5LIB ]] || PERL5LIB="$PERL5LIB:"
+export PERL5LIB="${PERL5LIB}$home/ls++-Term-ExtendedColor.git/lib"
+
+"$home"/ls++.git/ls++ "$@"

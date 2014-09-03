@@ -1,5 +1,5 @@
 [submodule "ls--"]
-	path = ls--
+	path = bin/ls++.git
 	url = https://github.com/trapd00r/ls--.git
 [submodule "emacs.d/auto-complete-clang"]
 	path = emacs.d/auto-complete-clang
@@ -88,3 +88,6 @@
 [submodule "emacs.d/rainbow-delimiters"]
 	path = emacs.d/rainbow-delimiters
 	url = https://github.com/jlr/rainbow-delimiters.git
+[submodule "bin/ls++-Term-ExtendedColor.git"]
+	path = bin/ls++-Term-ExtendedColor.git
+	url = https://github.com/trapd00r/Term-ExtendedColor
