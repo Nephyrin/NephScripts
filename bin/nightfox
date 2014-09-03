@@ -18,23 +18,21 @@ eval app_args=("$(get_args)")
 
 plugin_container="$(get_option p)"
 
+cmd cd ~/firefox-nightly
+
 if [ -n "$(get_option g)" ]; then
-  if [ -n "$(get_option r)" ]; then
-    run="-ex run"
+  if [[ -n $plugin_container ]]; then
+    pids=($(cmd pgrep -f plugin-container || true))
   else
-    if [[ -n $plugin_container ]]; then
-      pids=($(cmd pgrep -f plugin-container || true))
-    else
-      pids=($(cmd pgrep firefox || true))
-    fi
-    if [[ -n $pids ]]; then
-      estat "Existing instances"
-      ps $pids
-    else
-      estat "No existing instances found"
-    fi
+    pids=($(cmd pgrep firefox || true))
   fi
-  cmd cd ~/firefox-nightly
+  if [[ -n $pids ]]; then
+    estat "Existing instances"
+    ps $pids
+  else
+    estat "No existing instances found"
+  fi
+
   if [[ -n $plugin_container ]]; then
     if [[ $(get_option r) ]]; then
       [[ ${#pids[@]} -eq 1 ]] || die "-r can only auto-run if one plugin-container is found, but found ${#pids[@]}: ${pids[*]}"
@@ -43,6 +41,7 @@ if [ -n "$(get_option g)" ]; then
     [[ $(num_args) -eq 0 ]] || die "Can't pass args with -p"
     cmd gdb ./plugin-container "${plugin_run[@]}"
   else
+    [[ -z $(get_option r) ]] || run="-ex run"
     cmd cleangtk gdb $run --args ./firefox "${app_args[@]}"
   fi
 else
