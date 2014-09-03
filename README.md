@@ -45,6 +45,10 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
         chown -v $USER ~/.ssh/config
         chmod -v 600 ~/.ssh/config
 
+        # ls++ config
+        mkdir -pv ~/ls++
+        ln -sv $repo/ls++.conf ~/ls++/
+
 ## Various mozilla things assume:
 
 - ~/moz/mozilla-central and other mozilla-* things are mozilla mercurial repos
