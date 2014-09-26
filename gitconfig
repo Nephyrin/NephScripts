@@ -63,3 +63,5 @@
 	ui = auto
 [pull]
 	ff = true
+[diff]
+	algorithm = patience
