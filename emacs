@@ -125,6 +125,14 @@
 ;(setq global-color-identifiers-mode t)
 
 ;;
+;; Company mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/company-mode")
+(require 'company)
+
+
+;;
 ;; ido
 ;;
 
