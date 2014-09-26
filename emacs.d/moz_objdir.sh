@@ -11,27 +11,27 @@ tree="${file#$mozdir/}"
 [ "$tree" != "$file" ] || exit 1
 tree="${tree%%/*}"
 
-if [ -z "$objdir" ]; then
+if [[ -z $objdir ]]; then
   eval mozinfo=($(cat "$mozinfo"))
-  i=-2
-  while [ -z "$objdir" ] && [ $(( i += 2 )) -lt ${#mozinfo[@]} ]; do
-    [ "$tree" != "${mozinfo[$i]}" ] || objdir="${mozinfo[$(( i + 1 ))]}"
+  i=-3
+  while [[ $(( i += 3 )) -lt ${#mozinfo[@]} ]]; do
+    [ "$tree" != "${mozinfo[$i]}" ] || objdir="${mozinfo[i + 2]}"
   done
 fi
 
-[ ! -z "$objdir" ] || exit 1
+[[ -n $objdir ]] || exit 1
 
 objdir="$mozdir/$objdir"
 target="$objdir/${file#$mozdir/$tree/}"
 
 while true; do
-  if [ -z "$makedir" ]; then
+  if [[ -z $makedir ]]; then
     makedir="$(dirname "$target")"
   else
     makedir="$(readlink -f "$makedir/..")"
   fi
-  [ "${makedir#$objdir}" != "$makedir" ] || exit 1
-  [ ! -f "$makedir"/Makefile ] || break
+  [[ ${makedir#$objdir} != $makedir ]] || exit 1
+  [[ ! -f "$makedir"/Makefile ]] || break
 done
 
 cxxflags="$(sed -r 's/COMPILE_CXXFLAGS\s+=\s(.*)/\1/g;tx;d;:x' \
