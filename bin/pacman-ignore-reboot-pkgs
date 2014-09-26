@@ -7,10 +7,10 @@ set -e
 
 ignore=(# Upgrading kernel removes modules for running kernel, and ability to
         # build modules for it :( Arch needs multiple-version package support
-        linux{,-lts}{,-{headers,firmware}}
+        linux{,-lts,-neph}{,-{{api-,}headers,firmware}}
         # nvidia module needs X restart and must match kernel, updating libgl
         # while running old kernel module not supported
-        nvidia {lib32-,}nvidia-{libgl,utils} {lib32-,}opencl-nvidia
+        nvidia{,-neph} {lib32-,}nvidia-{libgl,utils} {lib32-,}opencl-nvidia
         # Don't replace libgl while drivers running might depend on it. Not
         # actually sure if this is needed.
         mesa{,-libgl}
