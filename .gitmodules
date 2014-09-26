@@ -1,9 +1,6 @@
 [submodule "ls--"]
 	path = bin/ls++.git
 	url = https://github.com/trapd00r/ls--.git
-[submodule "emacs.d/auto-complete-clang"]
-	path = emacs.d/auto-complete-clang
-	url = https://github.com/brianjcj/auto-complete-clang.git
 [submodule "bin/git-bz-moz"]
 	path = bin/git-bz-moz
 	url = https://github.com/jlebar/git-bz-moz.git
@@ -30,9 +27,6 @@
 	url = https://github.com/syohex/emacs-git-gutter.git
 [submodule "emacs.d/clang-complete-async.git"]
 	path = emacs.d/clang-complete-async.git
-	url = https://github.com/Golevka/emacs-clang-complete-async.git
-[submodule "emacs.d/clang-complete-async"]
-	path = emacs.d/clang-complete-async
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
 [submodule "emacs.d/magit"]
 	path = emacs.d/magit
