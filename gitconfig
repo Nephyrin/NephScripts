@@ -57,6 +57,7 @@
 	st = status --ignore-submodule=untracked
 	pff = pull --ff-only
 	cm = commit -m
+	bzaq = !git bz attach -e $(git merge-base HEAD @{u})..
 
 [column]
 	ui = auto
