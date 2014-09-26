@@ -6,24 +6,31 @@ set -e
 . "$(dirname "$0")"/../bashrc
 
 usage() {
-  ewarn "Usage: mnuke [-t] [-x] [-X] [--tree] [--branch] [--infra] [moz() arguments]"
-  ewarn "  --tree"
-  ewarn "      Also nuke the build tree and its other obj directories"
-  ewarn "  --branch"
-  ewarn "      Also nuke the build-tracking branch in git"
-  ewarn "  --infra"
-  ewarn "      Also nuke unnecessary stuff mb makes like mb-staging"
-  ewarn "  -t"
-  ewarn "      Shorthand for --tree"
-  ewarn "  -x"
-  ewarn "      Shorthand for --tree --infra (all build files)"
-  ewarn "  -X"
-  die   "      Shorthand for --tree --infra --branch (everything)"
+  local msg;
+  function msg() { eerr "$@"; }
+  [[ $# -eq 0 ]] || function msg() { estat "$@"; }
+  msg "Usage: mnuke [-t] [-x] [-X] [--tree] [--branch] [--infra] [moz() arguments]"
+  msg "  --tree"
+  msg "      Also nuke the build tree and its other obj directories"
+  msg "  --branch"
+  msg "      Also nuke the build-tracking branch in git"
+  msg "  --infra"
+  msg "      Also nuke unnecessary stuff mb makes like mb-staging"
+  msg "  -t"
+  msg "      Shorthand for --tree"
+  msg "  -x"
+  msg "      Shorthand for --tree --infra (all build files)"
+  msg "  -X"
+  msg "      Shorthand for --tree --infra --branch (everything)"
+  [[ $# -eq 0 ]] || exit 0
+  exit 1
 }
 
-parse_args mnuke 'txX' 'tree,branch,infra' "$@"
+parse_args mnuke 'h?txX' 'help,tree,branch,infra' "$@" || usage
 
+[[ -z $(get_merged_option h ? help) ]] || usage 1
 [ $(num_args) -le 2 ] || usage
+
 if [[ $(num_args) -ge 1 ]]; then
   eval args=("$(get_args)")
   moz "${args[@]}"

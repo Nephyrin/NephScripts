@@ -199,6 +199,24 @@ parse_args()
   done
 }
 
+# get_merged_option option_one [option_two ...]
+#   For aliased options, e.g. -h and --help, gets first set value (pass options
+#   in descending precedence)
+get_merged_option()
+{
+  local opt_name
+  local i=0
+  while [ $i -lt ${#_parse_args_options[@]} ]; do
+    for opt_name in "$@"; do
+      if [ "${_parse_args_options[$i]}" = "$opt_name" ]; then
+        echo "${_parse_args_values[$i]}"
+        return
+      fi
+    done
+    (( ++i ))
+  done
+}
+
 get_option()
 {
   local opt_name="$1"
