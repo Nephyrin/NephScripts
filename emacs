@@ -297,9 +297,7 @@
 ;;
 
 (require 'fill-column-indicator)
-(setq-default fill-column 80)
 (setq fci-rule-color "#444")
-(setq fci-rule-column 80)
 
 ;;
 ;; Misc modes with no config
@@ -361,8 +359,6 @@
 
 (defun enable-neph-coding ()
   (fci-mode t)
-  (set-fill-column 80)
-  (setq fci-rule-column 80)
   (fic-mode t)
   (setq c-basic-offset 2)
   (setq sh-basic-offset 2)
