@@ -195,6 +195,8 @@ alias dir='x dolphin "$@"'
 
 alias rebash='source ~/.bashrc'
 
+alias ll='ls++'
+
 #
 # Misc utility functions
 #
