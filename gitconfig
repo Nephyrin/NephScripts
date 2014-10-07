@@ -58,6 +58,9 @@
 	pff = pull --ff-only
 	cm = commit -m
 	bzaq = !git bz attach -e $(git merge-base HEAD @{u})..
+	exec = ! exec
+	eval = ! eval
+	root = !pwd
 
 [column]
 	ui = auto
