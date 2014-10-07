@@ -201,6 +201,14 @@ alias ll='ls++'
 # Misc utility functions
 #
 
+# Change to git toplevel directory or error
+gt() {
+  local top
+  # Will show useful error if not a git directory and return empty
+  top="$(git rev-parse --show-toplevel)"
+  [[ -z $top ]] || cmd cd "$top"
+}
+
 # 99% of my find invocations
 fn() {
   local name="$1"
