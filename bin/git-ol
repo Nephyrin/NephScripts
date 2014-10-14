@@ -2,16 +2,49 @@
 
 set -e
 
+die() {
+  echo >&2 "!! Internal Error: $*"
+  exit 1
+}
+
+args=("$@")
+
+if [[ -n $1 && ${1:0:1} != "-" ]]; then
+  upstream="${args[@]:0:1}"
+  args=("${args[@]:1}")
+else
+  upstream="@{u}"
+fi
+
 # Pad for the allowance of this many digits of "~foo" before breaking columns
 pad=3
 
-for hash in $(git log @{u}.. "$@" --pretty="%h"); do
-  len="$(git rev-list --count $hash..HEAD)"
-  if [ "$len" -eq 0 ]; then
+# Get all revs in this range first
+revs=($(git rev-list "$upstream"..))
+
+regex='[0-9a-f]{6}[0-9a-f]*'
+
+# Do the actual log
+while IFS= read -r -d$'\n' line; do
+  # The hash is the first alphanumeric thing
+  [[ "$line" =~ $regex ]] || die "Bad line from git log?: \"$line\""
+  hash=${BASH_REMATCH[0]}
+  [[ -n $hash ]] || die "Failed to parse hash from git-log?: \"$line\""
+  i=-1
+  len=-1
+  while [[ $(( i++ )) -lt ${#revs[@]} ]]; do
+    if [[ ${revs[i]:0:${#hash}} = $hash ]]; then
+      len=$i
+    fi
+  done
+
+  if [[ $len -eq -1 ]]; then
+    msg=$'\033[2;31m'"$(printf "%$(( $pad - ${#len} ))s%s" '' '??')"
+  elif [[ $len -eq 0 ]]; then
     msg="$(printf "%$(( $pad + 1 ))s" "")"
   else
-    msg="$(printf "%$(( $pad - ${#len} ))s~%i" '' $len)"
+    msg=$'\033[32m'"$(printf "%$(( $pad - ${#len} ))s~%i" '' $len)"
   fi
 
-  echo $'\033[32m'"$msg"$'\033[0m'" $(git log --no-walk $hash --oneline --decorate --color "$@")"
-done
+  echo "$msg"$'\033[0m'" $line"
+done < <(git log --no-walk --oneline --decorate --color "$upstream".. "${args[@]}")
