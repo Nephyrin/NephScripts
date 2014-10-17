@@ -73,6 +73,7 @@ estat() { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
 ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
 eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
 eerrint() { eerr "$@"; return 1; }
+einfo() { echo >&2 "$(sh_c 30 1)::$(sh_c) $*"; }
 
 showcmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(sh_quote "$@")"; }
 cmd() { showcmd "$@"; "$@"; }
