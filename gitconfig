@@ -61,6 +61,7 @@
 	exec = ! exec
 	eval = ! eval
 	root = !pwd
+	fetch-current = "! upstream=\"$(git rev-parse --symbolic-full-name @{u})\"; remote=\"${upstream#refs/remotes/}\"; if [[ -n $remote && $remote != $upstream ]]; then echo \"+ git fetch ${remote%%/*}\" && git fetch \"${remote%%/*}\"; else echo >&2 \"Could not find upstream (@{u} is \\\"$upstream\\\")\"; fi;"
 
 [column]
 	ui = auto
