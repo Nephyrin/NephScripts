@@ -6,13 +6,18 @@ set -e
 
 [ -z "$MOZPATH" ] || cachedir="$MOZPATH/nightlycache"
 
+date="$1"
+[[ -n $date && $date != "-" ]] || date="today"
+date="$(date --date="$date" +%F)"
+
 while read -r inf; do
   info[i++]="$inf"
-done < <(ffnightlyinfo "$@" 2>/dev/null)
+done < <(ffnightlyinfo "$date" 2>/dev/null)
 
 timestamp=${info[0]}
 shortrev=${info[1]}
 url=${info[2]}
+
 gitrev="$(h2g $shortrev 2>/dev/null || true)"
 if [ ! -z "$gitrev" ] && [ ! -z "$MOZTREE" ] && [ -d "$MOZPATH/$MOZTREE" ]; then
   gitrev="${gitrev:0:12}"
