@@ -100,6 +100,27 @@ get_x_session()
   [ ! -z "$XAUTHORITY" ] || export XAUTHORITY=$HOME/.Xauthority
 }
 
+sh_is_callable_thing()
+{
+  if [[ $# -ne 1 ]]; then
+    eerr "Internal error: sh_is_callable_thing takes exactly 1 argument"
+    return 1
+  fi
+
+  local cmd="$1"
+  case "$([[ -z $cmd ]] || type -t "$cmd" || true)" in
+    "function" |\
+    "builtin" |\
+    "alias" |\
+    "file")
+      return 0
+    ;;
+    *)
+      return 1
+    ;;
+  esac
+}
+
 sh_quote()
 {
   local args=()
