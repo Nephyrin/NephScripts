@@ -121,6 +121,27 @@ sh_is_callable_thing()
   esac
 }
 
+require_commands()
+{
+  if [[ $# -lt 2 ]]; then
+    eerr "Internal error: require_commands mis-used, requires at least two arguments"
+    return 1
+  fi
+
+  local script="$1"
+  shift
+  local cmd
+  while [[ $# -gt 0 ]]; do
+    cmd="$1"
+    shift
+    if ! sh_is_callable_thing "$cmd"; then
+      eerr "'$cmd' utility not found, required by '$script'"
+      return 1
+    fi
+  done
+  return 0
+}
+
 sh_quote()
 {
   local args=()
