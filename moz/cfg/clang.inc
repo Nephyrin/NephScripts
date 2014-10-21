@@ -2,7 +2,8 @@ export CC="clang"
 export CXX="clang++"
 # inline-new-delete can be removed when Bug 928808 lands
 # https://bugzilla.mozilla.org/show_bug.cgi?id=928808
-_cflags="-fcolor-diagnostics -Wno-inline-new-delete"
+# no-parentheses-equality can be removed when we support clang 3.5 w/Werror
+_cflags="-fcolor-diagnostics -Wno-inline-new-delete -Wno-parentheses-equality"
 
 # This doesn't enable gold early enough in the process, so -flto fails because
 # configure tries to link LLVM .o files with BFD ld.
