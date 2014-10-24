@@ -450,6 +450,19 @@
                                   (interactive)
                                   (make-frame)))
 
+; Toggle case of the next letter
+(defun toggle-case ()
+  "Toggle the casing of the character under point"
+  (interactive)
+  (let* ((curchar   (char-after))
+         (curcapped (if curchar (upcase (char-after)))))
+    (if curchar
+        (save-excursion
+          (delete-char 1)
+          (insert (if (eq curchar curcapped)
+                      (downcase curchar)
+                    curcapped))))))
+(global-set-key (kbd "C-z C-c") 'toggle-case)
 
 (defun flyspell-toggle (arg)
   "Toggle flyspell mode, and check the entire buffer when enabling"
