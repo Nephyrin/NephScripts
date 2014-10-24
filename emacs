@@ -127,8 +127,20 @@
 ;; Company mode
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/company-mode")
-(require 'company)
+;(add-to-list 'load-path "/tmp/nephtmp.vte9DTy/rtags/src")
+;(require 'rtags)
+;(require 'company-rtags)
+;(add-to-list 'load-path "~/.emacs.d/company-mode")
+;(require 'company)
+;
+;(defun company-mode-moz ()
+;  (setq company-clang-arguments (split-string
+;                                 (shell-command-to-string
+;                                  (concat "~/.emacs.d/moz_objdir.sh "
+;                                          (buffer-file-name)))))
+;  (company-mode t)
+;  (local-set-key (kbd "<C-tab>") 'company-complete))
+;(add-hook 'c-mode-common-hook 'company-mode-moz)
 
 
 ;;
