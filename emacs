@@ -377,6 +377,7 @@
   (setq sh-indentation 2)
   (git-gutter-mode t)
   (rainbow-mode t)
+  (setq fill-column 80)
   (color-identifiers-mode t)
   (rainbow-delimiters-mode t))
 (add-hook 'sh-mode-hook 'enable-neph-coding)
