@@ -384,24 +384,43 @@
 ;; Neph mode. Aka enable defaults in programming modes
 ;;
 
-(defun enable-neph-coding ()
-  (fci-mode t)
-  (fic-mode t)
+(defun neph-cfg ()
+;  (fci-mode t)
   (setq c-basic-offset 2)
+  (setq c-default-style "linux")
   (setq sh-basic-offset 2)
   (setq sh-indentation 2)
   (git-gutter-mode t)
   (rainbow-mode t)
   (setq fill-column 80)
-  (color-identifiers-mode t)
-  (rainbow-delimiters-mode t))
-(add-hook 'sh-mode-hook 'enable-neph-coding)
-(add-hook 'js-mode-hook 'enable-neph-coding)
-(add-hook 'c-mode-common-hook 'enable-neph-coding)
-(add-hook 'python-mode-hook 'enable-neph-coding)
-(add-hook 'java-mode-hook 'enable-neph-coding)
-(add-hook 'lisp-mode-hook 'enable-neph-coding)
-(add-hook 'emacs-lisp-mode-hook 'enable-neph-coding)
+  (rainbow-delimiters-mode t)
+  (run-with-idle-timer 1 nil (lambda ()
+                               (color-identifiers-mode t)
+                               (fic-mode t))))
+; Tabs, 4 wide with 4 indent to match e.g. default VS style
+(defun neph-valve-cfg ()
+  (setq c-default-style "linux")
+  (setq indent-tabs-mode 'tabs)
+  (setq c-basic-offset 4)
+  (setq sh-basic-offset 4)
+  (setq sh-indentation 4)
+  (setq tab-width 4)
+  (git-gutter-mode t)
+  (rainbow-mode t)
+  (setq fill-column 100)
+  (rainbow-delimiters-mode t)
+  (run-with-idle-timer 1 nil (lambda ()
+                               (color-identifiers-mode t)
+                               (fic-mode t))))
+(add-hook 'sh-mode-hook 'neph-cfg)
+(add-hook 'js-mode-hook 'neph-cfg)
+(add-hook 'python-mode-hook 'neph-cfg)
+(add-hook 'java-mode-hook 'neph-cfg)
+(add-hook 'lisp-mode-hook 'neph-cfg)
+(add-hook 'emacs-lisp-mode-hook 'neph-cfg)
+(add-hook 'c-mode-common-hook 'neph-valve-cfg) ; Default to valve mode for now,
+                                               ; should have path detection or
+                                               ; something
 
 ;;
 ;; IswitchBuffers
