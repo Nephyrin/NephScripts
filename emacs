@@ -642,8 +642,8 @@
   (unless (or (minibufferp) (member major-mode linum-disabled-modes-list))
     (linum-mode 1)))
 
-(setq linum-delay t)
-(setq linum-eager nil)
+;(setq linum-delay t)
+;(setq linum-eager nil)
 
 ;;
 ;; Multi-term
