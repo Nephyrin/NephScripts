@@ -155,6 +155,15 @@
 (global-set-key (kbd "C-z C-n") 'rtags-next-match)
 (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
 
+;;
+;; GDB
+;;
+
+(setq gdb-non-stop-setting nil)
+; (gdb-many-windows t)
+
+; Replace this to not be dumb
+; (defadvice gud-display-line (around do-it-better activate) ... )
 
 ;;
 ;; ido
