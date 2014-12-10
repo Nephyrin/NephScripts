@@ -94,3 +94,6 @@
 [submodule "emacs.d/rtags"]
 	path = emacs.d/rtags
 	url = https://github.com/Andersbakken/rtags
+[submodule "emacs.d/ample-zen"]
+	path = emacs.d/ample-zen
+	url = https://github.com/mjwall/ample-zen

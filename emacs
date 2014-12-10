@@ -248,14 +248,6 @@
   '((t (:inherit mode-line-face
         :foreground "#FF0000")))
   "Neph modeline which-func-mode face")
-(set-face-attribute 'mode-line nil
-                    :background "#111"
-                    :foreground "#666"
-                    :box '(:line-width 1 :color "#221" :style nil))
-(set-face-attribute 'mode-line-inactive nil
-                    :background "#333"
-                    :foreground "#666"
-                    :box '(:line-width 1 :color "#333" :style nil))
 (setq-default mode-line-format
               '(:eval
                 (list
@@ -334,6 +326,7 @@
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq ediff-merge-split-window-function 'split-window-horizontally)
+
 ;;
 ;; Helm
 ;;
@@ -655,34 +648,64 @@
 ;(add-to-list 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 ;(load-theme 'sunburst t)
 
-; Setting cursor face-attribute fails for new frames?
-(set-face-attribute 'cursor nil :background "#D96E26")
-;(add-to-list 'default-frame-alist '(cursor-color . "#D96E26"))
+;;
+;; ample-zen
+;;
 
-(add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/ample-zen")
+(load-theme 'ample-zen t)
 
-(load-theme 'purple-haze t)
-; purple-haze overrides
-(set-face-attribute 'mode-line nil :height 82)
-(set-face-background 'hl-line "#19151D")
-(set-face-attribute 'vertical-border nil :foreground "#222")
-(set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
-; These are way too strong by default
-(set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
-(set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
-(set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
-(set-face-attribute 'rainbow-delimiters-depth-4-face nil   :foreground "#baf")
-(set-face-attribute 'rainbow-delimiters-depth-5-face nil   :foreground "#a9e")
-(set-face-attribute 'rainbow-delimiters-depth-6-face nil   :foreground "#98e")
-(set-face-attribute 'rainbow-delimiters-depth-7-face nil   :foreground "#87d")
-(set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
-(set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
-(set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+(set-face-attribute 'mode-line nil
+                    :background "#111"
+                    :foreground "#999"
+                    :box '(:line-width 1 :color "#000" :style nil))
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#555"
+                    :foreground "#999"
+                    :box '(:line-width 1 :color "#333" :style nil))
 
-(set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 22)
+(set-face-attribute 'linum nil
+                    :foreground "#555"
+                    :background "#222")
+(setq linum-format " %5d  ")
 
-; #120F14
-(set-face-attribute 'whitespace-tab nil :background "#100D20")
+;;
+;; purple-haze
+;;
+
+;; (set-face-attribute 'cursor nil :background "#D96E26")
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
+;; (load-theme 'purple-haze t)
+
+;; (set-face-attribute 'mode-line nil :height 82)
+;; (set-face-background 'hl-line "#19151D")
+;; (set-face-attribute 'vertical-border nil :foreground "#222")
+;; (set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
+;; ; These are way too strong by default
+;; (set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
+;; (set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
+;; (set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
+;; (set-face-attribute 'rainbow-delimiters-depth-4-face nil   :foreground "#baf")
+;; (set-face-attribute 'rainbow-delimiters-depth-5-face nil   :foreground "#a9e")
+;; (set-face-attribute 'rainbow-delimiters-depth-6-face nil   :foreground "#98e")
+;; (set-face-attribute 'rainbow-delimiters-depth-7-face nil   :foreground "#87d")
+;; (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
+;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
+;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+;;
+;; (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 22)
+;;
+;; ; #120F14
+;; (set-face-attribute 'whitespace-tab nil :background "#100D20")
+
+;; (set-face-attribute 'mode-line nil
+;;                     :background "#111"
+;;                     :foreground "#666"
+;;                     :box '(:line-width 1 :color "#221" :style nil))
+;; (set-face-attribute 'mode-line-inactive nil
+;;                     :background "#333"
+;;                     :foreground "#666"
+;;                     :box '(:line-width 1 :color "#333" :style nil))
 
 ; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
