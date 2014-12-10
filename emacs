@@ -566,6 +566,15 @@
    (concat "/sudo:root@localhost:/" (buffer-file-name)))
   (toggle-read-only 0))
 
+(defun p4-edit-current ()
+  "Checks out the current buffer and mark editable"
+  (interactive)
+  (if (call-process "p4" nil nil nil "edit" (buffer-file-name))
+      (progn (read-only-mode 0)
+             (message "p4 opened into default changeset"))
+    (message "p4 edit failed")))
+(global-set-key (kbd "C-z C-e") 'p4-edit-current)
+
 ;; Custom binds for existing commands
 (global-set-key (kbd "C-c C-j") 'term-line-mode)
 (global-set-key (kbd "C-c C-k") 'term-char-mode)
