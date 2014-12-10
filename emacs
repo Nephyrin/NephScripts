@@ -455,6 +455,9 @@
 ;; Custom binds
 ;;
 
+;; Revert without prompting
+(global-set-key (kbd "C-z R") (lambda () (interactive) (revert-buffer nil t)))
+
 ;; Back one window
 (global-set-key (kbd "C-x O") (lambda ()
                                 (interactive)
