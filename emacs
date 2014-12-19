@@ -405,6 +405,10 @@
   (helm-find-1 "~/moz/moz-git"))
 (global-set-key (kbd "C-x M-f") 'helm-find-moz)
 
+(when (executable-find "ack-grep")
+  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:map --noIGNORED %p %f"
+        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:map --noIGNORED %p %f"))
+
 ;;
 ;; Web-mode
 ;;
@@ -499,6 +503,10 @@
 
 ;; Revert without prompting
 (global-set-key (kbd "C-z R") (lambda () (interactive) (revert-buffer nil t)))
+
+; helm shortcuts
+(global-set-key (kbd "C-z C-f") 'helm-find-files)
+(global-set-key (kbd "C-z h") 'helm-resume)
 
 ;; Back one window
 (global-set-key (kbd "C-x O") (lambda ()
