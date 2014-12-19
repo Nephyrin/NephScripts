@@ -15,3 +15,7 @@ handle SIGPIPE nostop print pass
 handle SIG38 noprint nostop pass
 
 set prompt [gdb] 
+
+define hook-stop
+  echo
+end
