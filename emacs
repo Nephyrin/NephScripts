@@ -49,6 +49,7 @@
 
 (add-to-list 'auto-mode-alist '("/yaourtrc$" . sh-mode))
 (add-to-list 'auto-mode-alist '("/PKGBUILD$" . sh-mode))
+(add-to-list 'auto-mode-alist '("/bash(rc|_profile)$" . sh-mode))
 
 (setq vc-follow-symlinks t)
 
