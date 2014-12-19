@@ -197,6 +197,9 @@ alias rebash='source ~/.bashrc'
 
 alias ll='ls++'
 
+# Ack types
+alias cck='ack --type=cpp'
+
 #
 # Misc utility functions
 #
