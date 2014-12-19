@@ -502,7 +502,12 @@
 ;;
 
 ;; Revert without prompting
-(global-set-key (kbd "C-z R") (lambda () (interactive) (revert-buffer nil t)))
+(global-set-key (kbd "C-z R") (lambda () (interactive) (revert-buffer t t)))
+
+; Quick eval-defun
+(global-set-key (kbd "C-z E") 'eval-defun)
+(global-set-key (kbd "C-z G") 'gdb)
+(global-set-key (kbd "C-z M") 'gdb-many-windows)
 
 ; helm shortcuts
 (global-set-key (kbd "C-z C-f") 'helm-find-files)
