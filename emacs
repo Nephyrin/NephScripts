@@ -117,6 +117,16 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;;
+;; Lua mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/lua-mode")
+(autoload 'lua-mode "lua-mode"
+   "Major mode for editing Lua files" t)
+(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+
+
+;;
 ;; Color identifiers mode
 ;;
 

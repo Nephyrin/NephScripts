@@ -97,3 +97,6 @@
 [submodule "emacs.d/ample-zen"]
 	path = emacs.d/ample-zen
 	url = https://github.com/mjwall/ample-zen
+[submodule "emacs.d/lua-mode"]
+	path = emacs.d/lua-mode
+	url = https://github.com/immerrr/lua-mode
