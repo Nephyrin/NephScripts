@@ -310,29 +310,44 @@
   "Neph modeline clean status face")
 (defface neph-modeline-which-func
   '((t (:inherit mode-line-face
-        :foreground "#FF0000")))
+        :foreground "#866")))
   "Neph modeline which-func-mode face")
 (setq-default mode-line-format
               '(:eval
                 (list
                  neph-modeline-bufstat
-                 " [%l:%2c]  "
+                 " [%l:%2c] "
+                 ;; which-function
+                 (let ((which-func (which-function)))
+                   (when (and which-func (not (string= "" which-func)))
+                     (concat
+                      (propertize which-func 'face 'neph-modeline-which-func)
+                      " :: ")))
+                 ; path
                  neph-modeline-path
+                 ; buffer name
                  `(:propertize "%b" face ,(if (neph-modeline-active)
                                               'neph-modeline-id
                                             'neph-modeline-id-inactive))
-                 "   %["
+                 ; Mode
+                 "  %["
                  (propertize mode-name 'face 'neph-modeline-mode)
-                 "%] "
+                 "%]  "
+                 ; misc
                  '(:propertize mode-line-process face neph-modeline-misc)
                  '(:propertize global-mode-string face neph-modeline-misc)
                  '(:propertize minor-mode-alist face neph-modeline-misc)
                  (when vc-mode (propertize (concat " /" vc-mode)
                                            'face 'neph-modeline-misc))
+                 ; Padding to righthand side
                  (neph-fill-to 13)
+                 ; Percentage and modeline-hud
                  "%p "
+                 ; Bonus hacky alignment, such that if the buffer is too narrow
+                 ; to show the hud, the height of the modeline stays the same
                  (propertize " " 'display '(list (raise -0.30) (height 1.25)))
-                 (neph-modeline-hud 1.5 10))))
+                 (neph-modeline-hud 1.5 10)
+                 )))
 
 ;;
 ;; God mode
