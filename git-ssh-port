@@ -1,0 +1,7 @@
+#!/bin/bash
+
+. ~/bin/lib/util.sh
+
+[[ -n $GIT_SSH_PORT ]] || GIT_SSH_PORT=22
+
+cmd ssh -p $GIT_SSH_PORT "$@"
