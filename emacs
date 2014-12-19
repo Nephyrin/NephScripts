@@ -278,7 +278,7 @@
   "Neph modeline buffer id face")
 (defface neph-modeline-mode
   '((t (:inherit mode-line-face
-        :foreground "#656")))
+        :foreground "#464")))
   "Neph modeline mode face")
 (defface neph-modeline-misc
   '((t (:inherit mode-line-face
@@ -763,6 +763,7 @@
                     :foreground "#555"
                     :background "#222")
 (setq linum-format " %5d  ")
+(set-face-attribute 'whitespace-tab nil :background "#242424")
 
 ;;
 ;; purple-haze
