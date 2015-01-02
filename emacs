@@ -393,6 +393,13 @@
 (setq fci-rule-color "#444")
 
 ;;
+;; re-builder
+;;
+
+(require 're-builder)
+(setq reb-re-syntax 'string)
+
+;;
 ;; Misc modes with no config
 ;;
 
