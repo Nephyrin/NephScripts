@@ -522,6 +522,25 @@
 (defun tramp-set-auto-save ()
   (auto-save-mode -1))
 
+(defun sudoize-buffer ()
+  "Reopens the current file with sudo"
+  (interactive)
+  (set-visited-file-name
+   (concat "/sudo::/" (buffer-file-name)))
+  (toggle-read-only 0))
+
+(defun drop-sudo ()
+  "Drops tramp sudo sessions"
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (let ((name (buffer-name buffer)))
+      (when (and name (string-match "^*tramp/sudo " name))
+        (kill-buffer buffer))))
+  (message "Dropped sudo buffers"))
+
+(global-set-key (kbd "C-z C-s") 'sudoize-buffer)
+(global-set-key (kbd "C-z S") 'drop-sudo)
+
 ;;
 ;; Custom binds
 ;;
@@ -638,13 +657,6 @@
 (define-key minibuffer-local-map [f3]
   (lambda () (interactive)
      (insert (buffer-name (window-buffer (minibuffer-selected-window))))))
-
-(defun sudoize-buffer ()
-  "Reopens the current file with sudo"
-  (interactive)
-  (set-visited-file-name
-   (concat "/sudo:root@localhost:/" (buffer-file-name)))
-  (toggle-read-only 0))
 
 (defun p4-edit-current ()
   "Checks out the current buffer and mark editable"
