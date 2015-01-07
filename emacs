@@ -165,6 +165,7 @@
 (global-set-key (kbd "C-z C-/") (lambda () (interactive) (delete-windows-on rtags-buffer-name t)))
 (global-set-key (kbd "C-z C-n") 'rtags-next-match)
 (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
+(global-set-key (kbd "C-z C-i") 'rtags-imenu)
 
 ;;
 ;; GDB
