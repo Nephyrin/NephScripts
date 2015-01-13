@@ -817,6 +817,10 @@
                     :background "#111"
                     :foreground "#999"
                     :box '(:line-width 1 :color "#000" :style nil))
+(set-face-attribute 'header-line nil
+                    :background "#111"
+                    :foreground "#999"
+                    :box '(:line-width 1 :color "#000" :style nil))
 (set-face-attribute 'mode-line-inactive nil
                     :background "#555"
                     :foreground "#999"
