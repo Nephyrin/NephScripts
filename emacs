@@ -825,6 +825,8 @@
                     :background "#555"
                     :foreground "#999"
                     :box '(:line-width 1 :color "#333" :style nil))
+(set-face-attribute 'rtags-skippedline nil
+                    :background "#323030")
 (set-face-attribute 'hl-line nil
                     :background "#232020"
                     :box '(:line-width -1 :color "#444" :style nil))
