@@ -825,10 +825,13 @@
                     :background "#555"
                     :foreground "#999"
                     :box '(:line-width 1 :color "#333" :style nil))
-
+(set-face-attribute 'hl-line nil
+                    :background "#232020"
+                    :box '(:line-width -1 :color "#444" :style nil))
 (set-face-attribute 'linum nil
                     :foreground "#555"
-                    :background "#222")
+                    :background "#222"
+                    :box nil)
 (setq linum-format " %5d  ")
 (set-face-attribute 'whitespace-tab nil :background "#242424")
 
