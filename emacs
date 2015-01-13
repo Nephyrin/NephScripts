@@ -145,6 +145,10 @@
 (add-to-list 'company-backends 'company-rtags)
 (setq rtags-completions-enabled t) ; Needed?
 
+(setq rtags-autostart-diagnostics t)
+(setq rtags-find-file-case-insensitive t)
+(setq rtags-show-containing-function nil)
+
 (defun company-mode-moz ()
   (setq company-clang-arguments (split-string
                                  (shell-command-to-string
