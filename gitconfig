@@ -7,6 +7,7 @@
   status = auto
   branch = auto
   log = auto
+  ui = 1
 
 [core]
   excludesfile = /home/johns/.gitignore
