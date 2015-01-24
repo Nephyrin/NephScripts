@@ -170,6 +170,7 @@
 (global-set-key (kbd "C-z C-n") 'rtags-next-match)
 (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
 (global-set-key (kbd "C-z C-i") 'rtags-imenu)
+(global-set-key (kbd "C-z F") 'rtags-fix-fixit-at-point)
 
 ;;
 ;; GDB
