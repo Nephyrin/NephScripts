@@ -341,7 +341,7 @@
                  neph-modeline-bufstat
                  " [%l:%2c] "
                  ;; which-function
-                 (let ((which-func (and (boundp 'which-function) (which-function))))
+                 (let ((which-func (and (fboundp 'which-function) (which-function))))
                    (when (and which-func (not (string= "" which-func)))
                      (concat
                       (propertize which-func 'face 'neph-modeline-which-func)
