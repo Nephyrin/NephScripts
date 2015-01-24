@@ -223,6 +223,13 @@
 	(if (eq gud-minor-mode 'gdbmi)
 	    (setq gdb-source-window window))))))
 
+;; Stop GDB from force-displaying I/O buffer (what the actual hell)
+(defadvice gdb-inferior-filter
+    (around gdb-inferior-filter-without-stealing)
+  (with-current-buffer (gdb-get-buffer-create 'gdb-inferior-io)
+    (comint-output-filter proc string)))
+(ad-activate 'gdb-inferior-filter)
+
 ;;
 ;; ido
 ;;
