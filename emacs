@@ -451,6 +451,7 @@
   (helm-find-1 "~/moz/moz-git"))
 (global-set-key (kbd "C-x M-f") 'helm-find-moz)
 (global-set-key (kbd "C-z M-f") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 (when (executable-find "ack-grep")
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
