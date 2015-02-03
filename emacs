@@ -11,7 +11,6 @@
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
 
-
 (put 'upcase-region 'disabled nil)
 
 ; Fix x clipboard
@@ -456,6 +455,54 @@
 (when (executable-find "ack-grep")
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
         helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
+
+(add-to-list 'grep-find-ignored-files "*.pdb")
+(add-to-list 'grep-find-ignored-files "*.map")
+(add-to-list 'grep-find-ignored-files "*.P")
+(add-to-list 'grep-find-ignored-files "*.dylib")
+(add-to-list 'grep-find-ignored-files "*.dll")
+(add-to-list 'grep-find-ignored-files "*.exe")
+(add-to-list 'grep-find-ignored-files "*.dbg")
+
+(add-to-list 'grep-find-ignored-files "*.zip")
+(add-to-list 'grep-find-ignored-files "*.rar")
+(add-to-list 'grep-find-ignored-files "*.7z")
+(add-to-list 'grep-find-ignored-files "*.xz")
+(add-to-list 'grep-find-ignored-files "*.bz2")
+(add-to-list 'grep-find-ignored-files "*.xz")
+(add-to-list 'grep-find-ignored-files "*.tar")
+(add-to-list 'grep-find-ignored-files "*.dmg")
+
+(add-to-list 'grep-find-ignored-files "*.vtf")
+(add-to-list 'grep-find-ignored-files "*.vvd")
+(add-to-list 'grep-find-ignored-files "*.vcd")
+(add-to-list 'grep-find-ignored-files "*.phy")
+(add-to-list 'grep-find-ignored-files "*.mdl")
+(add-to-list 'grep-find-ignored-files "*.dmx")
+(add-to-list 'grep-find-ignored-files "*.bsp")
+(add-to-list 'grep-find-ignored-files "*.vpk")
+(add-to-list 'grep-find-ignored-files "*.vtx")
+(add-to-list 'grep-find-ignored-files "*.fbx")
+(add-to-list 'grep-find-ignored-files "*.vmt")
+
+(add-to-list 'grep-find-ignored-files "*.cache")
+(add-to-list 'grep-find-ignored-files "*.raw")
+(add-to-list 'grep-find-ignored-files "*.ani")
+(add-to-list 'grep-find-ignored-files "*.bik")
+(add-to-list 'grep-find-ignored-files "*.dat")
+(add-to-list 'grep-find-ignored-files "*.ttf")
+
+(add-to-list 'grep-find-ignored-files "*.tga")
+(add-to-list 'grep-find-ignored-files "*.jpg")
+(add-to-list 'grep-find-ignored-files "*.jpeg")
+(add-to-list 'grep-find-ignored-files "*.png")
+(add-to-list 'grep-find-ignored-files "*.bmp")
+
+(add-to-list 'grep-find-ignored-files "*.wav")
+(add-to-list 'grep-find-ignored-files "*.ogg")
+(add-to-list 'grep-find-ignored-files "*.mp3")
+
+(add-to-list 'grep-find-ignored-files "*.psd")
 
 ;;
 ;; Projectile
