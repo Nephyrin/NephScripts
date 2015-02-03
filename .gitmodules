@@ -100,3 +100,6 @@
 [submodule "emacs.d/lua-mode"]
 	path = emacs.d/lua-mode
 	url = https://github.com/immerrr/lua-mode
+[submodule "emacs.d/projectile"]
+	path = emacs.d/projectile
+	url = https://github.com/bbatsov/projectile

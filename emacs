@@ -439,7 +439,9 @@
 ;;
 ;; Helm
 ;;
+
 (add-to-list 'load-path "~/.emacs.d/helm")
+(require 'helm)
 (require 'helm-config)
 (require 'helm-files)
 ; Way too broken
@@ -454,6 +456,17 @@
 (when (executable-find "ack-grep")
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
         helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
+
+;;
+;; Projectile
+;;
+
+(add-to-list 'load-path "~/.emacs.d/projectile")
+(require 'projectile)
+(require 'helm-projectile)
+(projectile-global-mode t)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
 
 ;;
 ;; Web-mode
