@@ -930,6 +930,14 @@
 (setq linum-format " %5d  ")
 (set-face-attribute 'whitespace-tab nil :background "#242424")
 
+(set-face-attribute 'region nil :background "#392121")
+
+(require 'ediff)
+(set-face-attribute 'ediff-current-diff-A nil :background "#412421")
+(set-face-attribute 'ediff-current-diff-B nil :background "#244121")
+(set-face-attribute 'ediff-fine-diff-A nil :background "#811411")
+(set-face-attribute 'ediff-fine-diff-B nil :background "#148111")
+
 ;;
 ;; purple-haze
 ;;
