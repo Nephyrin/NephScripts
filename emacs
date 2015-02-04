@@ -125,6 +125,22 @@
 (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
 
 ;;
+;; Multi-term
+;;
+
+(require 'multi-term)
+(setq multi-term-program "/bin/bash")
+
+(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
+
+(make-variable-buffer-local 'global-hl-line-mode)
+; Paste not yank
+(add-hook 'term-mode-hook (lambda ()
+                            (setq global-hl-line-mode nil)
+                            (define-key term-raw-map (kbd "C-y") 'term-paste)
+                            ))
+
+;;
 ;; ECB
 ;;
 
@@ -831,22 +847,6 @@
 
 ;(setq linum-delay t)
 ;(setq linum-eager nil)
-
-;;
-;; Multi-term
-;;
-
-(require 'multi-term)
-(setq multi-term-program "/bin/bash")
-
-(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
-
-(make-variable-buffer-local 'global-hl-line-mode)
-; Paste not yank
-(add-hook 'term-mode-hook (lambda ()
-                            (setq global-hl-line-mode nil)
-                            (define-key term-raw-map (kbd "C-y") 'term-paste)
-                            ))
 
 ;;
 ;; zap-to-char
