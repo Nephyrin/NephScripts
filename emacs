@@ -90,6 +90,11 @@
 ;   or command line:
 ; emacs -batch -f batch-byte-compile *.el
 
+;; (progn
+;;   (setq kill-ring nil)
+;;   (setq buffer-undo-tree nil)
+;;   (garbage-collect))
+
 ;;
 ;; Desktop saving
 ;;
