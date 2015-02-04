@@ -124,6 +124,18 @@
    "Major mode for editing Lua files" t)
 (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
 
+;;
+;; ECB
+;;
+
+(require 'ecb)
+(setq ecb-show-sources-in-directories-buffer 'always)
+(setq ecb-layout-name "left7")
+(setq ecb-tip-of-the-day nil)
+(setq ecb-windows-width 0.1)
+
+(global-set-key (kbd "C-z q") 'ecb-activate)
+(global-set-key (kbd "C-z Q") 'ecb-deactivate)
 
 ;;
 ;; Color identifiers mode
