@@ -408,6 +408,8 @@
                  (neph-modeline-hud 1.5 10)
                  )))
 
+(which-function-mode t)
+
 ;;
 ;; God mode
 ;;
