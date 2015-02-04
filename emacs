@@ -962,8 +962,6 @@
 ;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
 ;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
 ;;
-;; (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 22)
-;;
 ;; ; #120F14
 ;; (set-face-attribute 'whitespace-tab nil :background "#100D20")
 
