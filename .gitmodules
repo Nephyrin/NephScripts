@@ -91,9 +91,6 @@
 [submodule "emacs.d/company-mode"]
 	path = emacs.d/company-mode
 	url = https://github.com/company-mode/company-mode
-[submodule "emacs.d/rtags"]
-	path = emacs.d/rtags
-	url = https://github.com/Andersbakken/rtags
 [submodule "emacs.d/ample-zen"]
 	path = emacs.d/ample-zen
 	url = https://github.com/mjwall/ample-zen
