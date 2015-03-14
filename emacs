@@ -535,7 +535,7 @@
   (interactive)
   (helm-find-1 "~/moz/moz-git"))
 (global-set-key (kbd "C-x M-f") 'helm-find-moz)
-(global-set-key (kbd "C-z M-f") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
+(global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 (when (executable-find "ack-grep")
@@ -601,6 +601,16 @@
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 (setq projectile-enable-caching t)
+
+(global-set-key (kbd "C-z M-f") 'projectile-find-file)
+(global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
+(global-set-key (kbd "C-z M-g") 'helm-projectile-grep)
+(global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
+(global-set-key (kbd "C-z B") 'helm-projectile-switch-to-buffer-other-window)
+(global-set-key (kbd "C-z p") 'projectile-switch-project)
+(global-set-key (kbd "C-z C-p") 'helm-projectile)
+
+(setq projectile-switch-project-action 'helm-projectile)
 
 ;;
 ;; Web-mode
