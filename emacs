@@ -318,16 +318,37 @@
                                                         ,reserve)))))
 (defun neph-modeline-hud (height width)
   (propertize " " 'display (neph-hud "#0C0C0C" "#222222" height width)
-                  'face 'neph-modeline-hud))
+              'face 'neph-modeline-hud))
+
 (setq neph-modeline-path
-      '(:eval (propertize (let ((bufname (buffer-file-name)))
-                            (if bufname
-                                (replace-regexp-in-string
-                                 "/[^/]*$" "/"
-                                 (replace-regexp-in-string
-                                  (regexp-quote (getenv "HOME")) "~"
-                                  bufname)) ""))
-                          'face 'neph-modeline-path)))
+      '(:eval (let ((bufname (propertize (buffer-file-name) 'face 'neph-modeline-path))
+                    ;; Paths to replace. Of the form ((search replace) ...)
+                    (replacements `((,(getenv "HOME") "~"))))
+                ;; Also replace projectile root with project name when available
+                (when (featurep 'projectile)
+                  (add-to-list 'replacements
+                               (list
+                                (projectile-project-root)
+                                (concat (projectile-project-name) "/"))))
+                (if bufname
+                    (progn
+                      ;; Trim filename from path and default propertize
+                      (setq bufname (replace-regexp-in-string "/[^/]*$" "/" bufname))
+                      ;; Apply neph-modeline-shortpaths replacements
+                      (while replacements
+                        (let* ((search (car (car replacements)))
+                               (replace (car (cdr (car replacements))))
+                               (splitname (split-string bufname (concat "^" (regexp-quote search))))
+                               (remainder (car (cdr splitname))))
+                          (if remainder
+                              (setq bufname
+                                    (concat
+                                     (propertize replace 'face 'neph-modeline-path-replacement)
+                                     (propertize remainder 'face 'neph-modeline-path)))))
+                        (setq replacements (cdr replacements)))
+                      ;; Return
+                      bufname)
+                  ""))))
 (setq neph-modeline-bufstat
       '(:eval (cond (buffer-read-only
                      (propertize " RO " 'face 'neph-modeline-stat-readonly))
@@ -357,6 +378,10 @@
   '((t (:inherit mode-line-face
         :foreground "#DFDDDD")))
   "Neph modeline path face")
+(defface neph-modeline-path-replacement
+  '((t (:inherit neph-modeline-path
+        :foreground "#7F7777")))
+  "Neph modeline path face for replacements made by neph-modeline-shortpaths")
 (defface neph-modeline-id-inactive
   '((t (:inherit neph-modeline-id
         :foreground "#CC9")))
