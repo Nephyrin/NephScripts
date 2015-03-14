@@ -211,6 +211,8 @@
 (global-set-key (kbd "C-z D") 'rtags-diagnostics)
 (global-set-key (kbd "C-z i") 'rtags-fixit)
 (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
+(global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
+(global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
 
 ;;
 ;; GDB
