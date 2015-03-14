@@ -195,20 +195,22 @@
   (company-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 (defun company-mode-neph ()
-  (rtags-diagnostics)
   (company-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 (add-hook 'c-mode-common-hook 'company-mode-neph)
 
 (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
 (global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
+(global-set-key (kbd "C-z C->") 'rtags-find-virtuals-at-point)
 (global-set-key (kbd "C-z .") 'rtags-find-symbol)
 (global-set-key (kbd "C-z ,") 'rtags-find-references)
 (global-set-key (kbd "C-z C-/") (lambda () (interactive) (delete-windows-on rtags-buffer-name t)))
 (global-set-key (kbd "C-z C-n") 'rtags-next-match)
 (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
 (global-set-key (kbd "C-z C-i") 'rtags-imenu)
-(global-set-key (kbd "C-z F") 'rtags-fix-fixit-at-point)
+(global-set-key (kbd "C-z D") 'rtags-diagnostics)
+(global-set-key (kbd "C-z i") 'rtags-fixit)
+(global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
 
 ;;
 ;; GDB
