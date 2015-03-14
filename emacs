@@ -723,6 +723,30 @@
 (global-set-key (kbd "C-z C-S") 'drop-sudo)
 
 ;;
+;; isearch tweaks
+;;
+
+; Always exit isearch at the beginning of the match
+(defun isearch-exit-at-start-hook ()
+  (when (and isearch-forward isearch-other-end (not isearch-mode-end-hook-quit))
+    (goto-char isearch-other-end)))
+
+(add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
+(defadvice isearch-exit (after isearch-exit-at-start-hook)
+  "Go to beginning of match."
+  (when (and isearch-forward isearch-other-end)
+    (goto-char isearch-other-end)))
+
+;; Exit isearch killing the current match
+(defun kill-isearch-match ()
+    "Kill the current isearch match string and continue searching."
+    (interactive)
+    (kill-region isearch-other-end (point))
+    (isearch-exit))
+
+(define-key isearch-mode-map [(.)] 'kill-isearch-match)
+
+;;
 ;; Custom binds
 ;;
 
