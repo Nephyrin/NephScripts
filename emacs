@@ -11,6 +11,11 @@
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
 
+;; Copy file name to kill ring
+(global-set-key (kbd "C-z C-S-n") (lambda () (interactive)
+                                  (kill-new (buffer-file-name))
+                                  (message "Copied buffer name to kill ring")))
+
 (put 'upcase-region 'disabled nil)
 
 ; Fix x clipboard
