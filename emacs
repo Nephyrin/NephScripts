@@ -547,6 +547,7 @@
 (add-to-list 'grep-find-ignored-files "*.P")
 (add-to-list 'grep-find-ignored-files "*.dylib")
 (add-to-list 'grep-find-ignored-files "*.dll")
+(add-to-list 'grep-find-ignored-files "*.so.0")
 (add-to-list 'grep-find-ignored-files "*.exe")
 (add-to-list 'grep-find-ignored-files "*.dbg")
 
