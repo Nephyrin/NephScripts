@@ -719,8 +719,8 @@
         (kill-buffer buffer))))
   (message "Dropped sudo buffers"))
 
-(global-set-key (kbd "C-z C-s") 'sudoize-buffer)
-(global-set-key (kbd "C-z S") 'drop-sudo)
+(global-set-key (kbd "C-z S") 'sudoize-buffer)
+(global-set-key (kbd "C-z C-S") 'drop-sudo)
 
 ;;
 ;; Custom binds
@@ -755,10 +755,10 @@
                               (move-to-window-line nil)))
 
 ; Fast window nav
-(global-set-key (kbd "C-z C-d") (lambda ()
+(global-set-key (kbd "C-z C-s") (lambda ()
                                   (interactive)
                                   (other-window -1)))
-(global-set-key (kbd "C-z C-f") (lambda ()
+(global-set-key (kbd "C-z C-d") (lambda ()
                                   (interactive)
                                   (other-window 1)))
 
