@@ -402,29 +402,31 @@
   "Neph modeline clean status face")
 (defface neph-modeline-which-func
   '((t (:inherit mode-line-face
-        :foreground "#866")))
+        :foreground "#866"
+        :height 80)))
   "Neph modeline which-func-mode face")
 (setq-default mode-line-format
               '(:eval
                 (list
                  neph-modeline-bufstat
-                 " [%l:%2c] "
+                 ;; Position
+                 "%[%l:%c"
                  ;; which-function
                  (let ((which-func (and (fboundp 'which-function) (which-function))))
                    (when (and which-func (not (string= "" which-func)))
-                     (concat
-                      (propertize which-func 'face 'neph-modeline-which-func)
-                      " :: ")))
-                 ; path
+                      (propertize (concat " " which-func) 'face 'neph-modeline-which-func)))
+                 ;; End brace for position
+                 "%] "
+                 ;; path
                  neph-modeline-path
-                 ; buffer name
+                 ;; buffer name
                  `(:propertize "%b" face ,(if (neph-modeline-active)
                                               'neph-modeline-id
                                             'neph-modeline-id-inactive))
                  ; Mode
-                 "  %["
+                 " :: "
                  (propertize mode-name 'face 'neph-modeline-mode)
-                 "%]  "
+                 ""
                  ; misc
                  '(:propertize mode-line-process face neph-modeline-misc)
                  '(:propertize global-mode-string face neph-modeline-misc)
