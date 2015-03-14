@@ -786,11 +786,6 @@
                                   (interactive)
                                   (other-window 1)))
 
-; New frame
-(global-set-key (kbd "C-z C-n") (lambda ()
-                                  (interactive)
-                                  (make-frame)))
-
 ; Toggle case of the next letter
 (defun toggle-case ()
   "Toggle the casing of the character under point"
