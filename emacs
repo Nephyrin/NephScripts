@@ -1040,8 +1040,6 @@
                     :background "#555"
                     :foreground "#999"
                     :box '(:line-width 1 :color "#333" :style nil))
-(set-face-attribute 'rtags-skippedline nil
-                    :background "#323030")
 (set-face-attribute 'hl-line nil
                     :background "#232020"
                     :box '(:line-width -1 :color "#444" :style nil))
@@ -1054,6 +1052,12 @@
 
 (set-face-attribute 'region nil :background "#392121")
 
+;; rtags
+(set-face-attribute 'rtags-skippedline nil :background "#323030")
+(set-face-attribute 'rtags-errline nil :background "#511411")
+(set-face-attribute 'rtags-fixitline nil :background "#513121")
+
+;; ediff
 (require 'ediff)
 (set-face-attribute 'ediff-current-diff-A nil :background "#412421")
 (set-face-attribute 'ediff-current-diff-B nil :background "#244121")
