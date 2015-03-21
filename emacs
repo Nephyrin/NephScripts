@@ -540,6 +540,8 @@
 (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
 (global-set-key (kbd "M-x") 'helm-M-x)
 
+(global-set-key (kbd "C-z b") 'helm-mini)
+
 (when (executable-find "ack-grep")
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
         helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
@@ -1014,7 +1016,7 @@
 (add-hook 'magit-blame-file-on (lambda() (fci-mode -1)))
 (add-hook 'magit-blame-file-off (lambda() (fci-mode 1)))
 (global-set-key (kbd "C-z g") 'magit-status)
-(global-set-key (kbd "C-z b") 'magit-blame-mode)
+(global-set-key (kbd "C-z L") 'magit-blame-mode)
 
 ;;
 ;; Theme
