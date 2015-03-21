@@ -645,6 +645,8 @@
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
 (global-set-key (kbd "C-z M-g") 'helm-projectile-grep)
+;; Non-incremental, but can be faster and supports prefix arg for filename globbing
+(global-set-key (kbd "C-z M-G") 'projectile-grep)
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
 (global-set-key (kbd "C-z B") 'helm-projectile-switch-to-buffer-other-window)
 (global-set-key (kbd "C-z p") 'projectile-switch-project)
