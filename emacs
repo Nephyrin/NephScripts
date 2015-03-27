@@ -1162,6 +1162,18 @@
 (set-face-attribute 'ediff-fine-diff-A nil :background "#811411")
 (set-face-attribute 'ediff-fine-diff-B nil :background "#148111")
 
+;; Semantic
+(set-face-attribute 'semantic-tag-boundary-face nil :overline "#544")
+
+;; Company
+(set-face-attribute 'company-tooltip nil :background "#333" :foreground "white")
+(set-face-attribute 'company-tooltip-selection nil :background "#555")
+(set-face-attribute 'company-tooltip-common-selection nil :foreground "#955")
+(set-face-attribute 'company-tooltip-common nil :foreground "#944")
+(set-face-attribute 'company-scrollbar-fg nil :background "#222")
+(set-face-attribute 'company-scrollbar-bg nil :background "#555")
+(setq company-tooltip-margin 2)
+
 ;;
 ;; purple-haze
 ;;
