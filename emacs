@@ -871,6 +871,19 @@
                                   (interactive)
                                   (other-window 1)))
 
+;; Debug mode
+(global-set-key (kbd "C-z C-M-D") (lambda ()
+                                (interactive)
+                                ;; If in mismatched state, default to enabling the disabled one
+                                (if (and debug-on-error debug-on-quit)
+                                    (progn
+                                      (setq debug-on-error nil)
+                                      (setq debug-on-quit nil)
+                                      (message "Disabled debug-on-error and debug-on-quit"))
+                                  (setq debug-on-error t)
+                                  (setq debug-on-quit t)
+                                  (message "Enabled debug-on-error and debug-on-quit"))))
+
 ; Toggle case of the next letter
 (defun toggle-case ()
   "Toggle the casing of the character under point"
