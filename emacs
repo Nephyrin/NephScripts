@@ -173,19 +173,27 @@
 (require 'color-identifiers-mode)
 
 ;;
-;; Company mode
+;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/company-mode")
 (require 'company)
 (require 'rtags)
 (require 'company-rtags)
-(add-to-list 'company-backends 'company-rtags)
+
 (setq rtags-completions-enabled t) ; Needed?
 
 (setq rtags-autostart-diagnostics t)
 (setq rtags-find-file-case-insensitive t)
 (setq rtags-show-containing-function nil)
+
+;; Semantic
+(require 'semantic)
+(require 'semantic/bovine/gcc)
+(global-semantic-decoration-mode t)
+(global-semantic-highlight-func-mode t)
+
+(add-to-list 'company-backends 'company-semantic)
 
 (defun company-mode-moz ()
   (setq company-clang-arguments (split-string
@@ -195,10 +203,13 @@
   (company-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 (defun company-mode-neph ()
+  (interactive)
   (company-mode t)
+  (semantic-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 (add-hook 'c-mode-common-hook 'company-mode-neph)
 
+;; Keys for C++ completion and such
 (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
 (global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
 (global-set-key (kbd "C-z C->") 'rtags-find-virtuals-at-point)
@@ -208,6 +219,7 @@
 (global-set-key (kbd "C-z C-n") 'rtags-next-match)
 (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
 (global-set-key (kbd "C-z C-i") 'rtags-imenu)
+(global-set-key (kbd "C-z SPC") 'helm-semantic)
 (global-set-key (kbd "C-z D") 'rtags-diagnostics)
 (global-set-key (kbd "C-z i") 'rtags-fixit)
 (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
