@@ -706,6 +706,15 @@
   (run-with-idle-timer 1 nil (lambda ()
                                (color-identifiers-mode t)
                                (fic-mode t))))
+
+(defadvice align-regexp (around align-regexp-with-spaces activate)
+  (let ((indent-tabs-mode nil))
+    ad-do-it))
+
+(defadvice align (around align-with-spaces activate)
+  (let ((indent-tabs-mode nil))
+    ad-do-it))
+
 ; Tabs, 4 wide with 4 indent to match e.g. default VS style
 (defun neph-valve-cfg ()
   (interactive)
