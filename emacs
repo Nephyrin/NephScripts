@@ -195,6 +195,11 @@
 
 (add-to-list 'company-backends 'company-semantic)
 
+;; function-args modes
+(add-to-list 'load-path "~/.emacs.d/function-args")
+(require 'function-args)
+(fa-config-default)
+
 (defun company-mode-moz ()
   (setq company-clang-arguments (split-string
                                  (shell-command-to-string
@@ -220,6 +225,7 @@
 (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
 (global-set-key (kbd "C-z C-i") 'rtags-imenu)
 (global-set-key (kbd "C-z SPC") 'helm-semantic)
+(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
 (global-set-key (kbd "C-z D") 'rtags-diagnostics)
 (global-set-key (kbd "C-z i") 'rtags-fixit)
 (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
