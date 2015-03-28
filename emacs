@@ -193,7 +193,7 @@
 (global-semantic-decoration-mode t)
 (global-semantic-highlight-func-mode t)
 
-(add-to-list 'company-backends 'company-semantic)
+(add-to-list 'company-backends (list 'company-semantic 'company-rtags))
 
 ;; function-args modes
 (add-to-list 'load-path "~/.emacs.d/function-args")
