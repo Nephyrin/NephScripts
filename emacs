@@ -432,7 +432,7 @@
                  ;; Position
                  "%[%l:%c"
                  ;; which-function
-                 (let ((which-func (and (fboundp 'which-function) (which-function))))
+                 (let ((which-func (and which-function-mode (fboundp 'which-function) (which-function))))
                    (when (and which-func (not (string= "" which-func)))
                       (propertize (concat " " which-func) 'face 'neph-modeline-which-func)))
                  ;; End brace for position
@@ -462,8 +462,6 @@
                  (propertize " " 'display '(list (raise -0.30) (height 1.25)))
                  (neph-modeline-hud 1.5 10)
                  )))
-
-(which-function-mode t)
 
 ;;
 ;; God mode
