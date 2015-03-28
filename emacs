@@ -1168,6 +1168,7 @@
 (set-face-attribute 'company-tooltip-selection nil :background "#555")
 (set-face-attribute 'company-tooltip-common-selection nil :foreground "#955")
 (set-face-attribute 'company-tooltip-common nil :foreground "#944")
+(set-face-attribute 'company-tooltip-annotation nil :foreground "#A99")
 (set-face-attribute 'company-scrollbar-fg nil :background "#222")
 (set-face-attribute 'company-scrollbar-bg nil :background "#555")
 (setq company-tooltip-margin 2)
