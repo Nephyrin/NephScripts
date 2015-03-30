@@ -235,7 +235,7 @@
 ;; GDB
 ;;
 
-(setq gdb-non-stop-setting nil)
+; (setq gdb-non-stop-setting nil)
 ; (gdb-many-windows t)
 
 ; Replace this to not be dumb
