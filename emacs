@@ -559,13 +559,7 @@
 (require 'helm)
 (require 'helm-config)
 (require 'helm-files)
-; Way too broken
-; (global-set-key (kbd "C-x C-f") 'helm-find-files)
-(defun helm-find-moz ()
-  "Find files in moz dir"
-  (interactive)
-  (helm-find-1 "~/moz/moz-git"))
-(global-set-key (kbd "C-x M-f") 'helm-find-moz)
+
 (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
 (global-set-key (kbd "M-x") 'helm-M-x)
 
