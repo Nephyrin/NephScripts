@@ -171,6 +171,108 @@
 (require 'color-identifiers-mode)
 
 ;;
+;; Helm
+;;
+
+(add-to-list 'load-path "~/.emacs.d/helm")
+(require 'helm)
+(require 'helm-config)
+(require 'helm-files)
+
+(global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+(global-set-key (kbd "C-z b") 'helm-mini)
+
+(when (executable-find "ack-grep")
+  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
+        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
+
+(add-to-list 'grep-find-ignored-files "*.pdb")
+(add-to-list 'grep-find-ignored-files "*.map")
+(add-to-list 'grep-find-ignored-files "*.P")
+(add-to-list 'grep-find-ignored-files "*.dylib")
+(add-to-list 'grep-find-ignored-files "*.lib")
+(add-to-list 'grep-find-ignored-files "*.a")
+(add-to-list 'grep-find-ignored-files "*.dSYM")
+(add-to-list 'grep-find-ignored-files "*.app")
+(add-to-list 'grep-find-ignored-files "*.framework")
+(add-to-list 'grep-find-ignored-files "*.dll")
+(add-to-list 'grep-find-ignored-files "*.so.0")
+(add-to-list 'grep-find-ignored-files "*.so")
+(add-to-list 'grep-find-ignored-files "*.o")
+(add-to-list 'grep-find-ignored-files "*.exe")
+(add-to-list 'grep-find-ignored-files "*.dbg")
+
+;; Python compiled thing
+(add-to-list 'grep-find-ignored-files "*.pyd")
+(add-to-list 'grep-find-ignored-files "*.pyc")
+
+(add-to-list 'grep-find-ignored-files "*.zip")
+(add-to-list 'grep-find-ignored-files "*.rar")
+(add-to-list 'grep-find-ignored-files "*.7z")
+(add-to-list 'grep-find-ignored-files "*.xz")
+(add-to-list 'grep-find-ignored-files "*.bz2")
+(add-to-list 'grep-find-ignored-files "*.gz")
+(add-to-list 'grep-find-ignored-files "*.tar")
+(add-to-list 'grep-find-ignored-files "*.dmg")
+(add-to-list 'grep-find-ignored-files "*.deb")
+(add-to-list 'grep-find-ignored-files "*.rpm")
+(add-to-list 'grep-find-ignored-files "*.iso")
+
+(add-to-list 'grep-find-ignored-files "*.vtf")
+(add-to-list 'grep-find-ignored-files "*.vvd")
+(add-to-list 'grep-find-ignored-files "*.vcd")
+(add-to-list 'grep-find-ignored-files "*.phy")
+(add-to-list 'grep-find-ignored-files "*.mdl")
+(add-to-list 'grep-find-ignored-files "*.dmx")
+(add-to-list 'grep-find-ignored-files "*.bsp")
+(add-to-list 'grep-find-ignored-files "*.vpk")
+(add-to-list 'grep-find-ignored-files "*.vtx")
+(add-to-list 'grep-find-ignored-files "*.fbx")
+(add-to-list 'grep-find-ignored-files "*.vmt")
+(add-to-list 'grep-find-ignored-files "*.dds")
+
+(add-to-list 'grep-find-ignored-files "*.cache")
+(add-to-list 'grep-find-ignored-files "*.svn-base")
+(add-to-list 'grep-find-ignored-files "*.sdf") ; Visual studio database thing
+
+;; PS3 compiled file... thing
+(add-to-list 'grep-find-ignored-files "*.prx")
+(add-to-list 'grep-find-ignored-files "*.sprx")
+
+(add-to-list 'grep-find-ignored-files "*.raw")
+(add-to-list 'grep-find-ignored-files "*.ani")
+(add-to-list 'grep-find-ignored-files "*.bik")
+(add-to-list 'grep-find-ignored-files "*.dat")
+(add-to-list 'grep-find-ignored-files "*.ttf")
+(add-to-list 'grep-find-ignored-files "*.pdf")
+
+(add-to-list 'grep-find-ignored-files "*.tga")
+(add-to-list 'grep-find-ignored-files "*.jpg")
+(add-to-list 'grep-find-ignored-files "*.jpeg")
+(add-to-list 'grep-find-ignored-files "*.png")
+(add-to-list 'grep-find-ignored-files "*.bmp")
+(add-to-list 'grep-find-ignored-files "*.psd")
+(add-to-list 'grep-find-ignored-files "*.cbr")
+(add-to-list 'grep-find-ignored-files "*.icns")
+(add-to-list 'grep-find-ignored-files "*.ico")
+
+(add-to-list 'grep-find-ignored-files "*.wav")
+(add-to-list 'grep-find-ignored-files "*.ogg")
+(add-to-list 'grep-find-ignored-files "*.mp3")
+
+(add-to-list 'grep-find-ignored-files "*.h264")
+(add-to-list 'grep-find-ignored-files "*.mkv")
+(add-to-list 'grep-find-ignored-files "*.avi")
+(add-to-list 'grep-find-ignored-files "*.mp4")
+
+; Oneoffs
+(add-to-list 'grep-find-ignored-files "ip-country-region-city-latitude-longitude-isp.csv")
+(add-to-list 'grep-find-ignored-files "engine_symbols.txt")
+(add-to-list 'grep-find-ignored-files "dedicated_symbols.txt")
+
+;;
 ;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
 
@@ -550,108 +652,6 @@
       (let ((cmd "js-beautify"))
         (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
     (message "!! js-beautify command not installed/available")))
-
-;;
-;; Helm
-;;
-
-(add-to-list 'load-path "~/.emacs.d/helm")
-(require 'helm)
-(require 'helm-config)
-(require 'helm-files)
-
-(global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
-(global-set-key (kbd "M-x") 'helm-M-x)
-
-(global-set-key (kbd "C-z b") 'helm-mini)
-
-(when (executable-find "ack-grep")
-  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
-        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
-
-(add-to-list 'grep-find-ignored-files "*.pdb")
-(add-to-list 'grep-find-ignored-files "*.map")
-(add-to-list 'grep-find-ignored-files "*.P")
-(add-to-list 'grep-find-ignored-files "*.dylib")
-(add-to-list 'grep-find-ignored-files "*.lib")
-(add-to-list 'grep-find-ignored-files "*.a")
-(add-to-list 'grep-find-ignored-files "*.dSYM")
-(add-to-list 'grep-find-ignored-files "*.app")
-(add-to-list 'grep-find-ignored-files "*.framework")
-(add-to-list 'grep-find-ignored-files "*.dll")
-(add-to-list 'grep-find-ignored-files "*.so.0")
-(add-to-list 'grep-find-ignored-files "*.so")
-(add-to-list 'grep-find-ignored-files "*.o")
-(add-to-list 'grep-find-ignored-files "*.exe")
-(add-to-list 'grep-find-ignored-files "*.dbg")
-
-;; Python compiled thing
-(add-to-list 'grep-find-ignored-files "*.pyd")
-(add-to-list 'grep-find-ignored-files "*.pyc")
-
-(add-to-list 'grep-find-ignored-files "*.zip")
-(add-to-list 'grep-find-ignored-files "*.rar")
-(add-to-list 'grep-find-ignored-files "*.7z")
-(add-to-list 'grep-find-ignored-files "*.xz")
-(add-to-list 'grep-find-ignored-files "*.bz2")
-(add-to-list 'grep-find-ignored-files "*.gz")
-(add-to-list 'grep-find-ignored-files "*.tar")
-(add-to-list 'grep-find-ignored-files "*.dmg")
-(add-to-list 'grep-find-ignored-files "*.deb")
-(add-to-list 'grep-find-ignored-files "*.rpm")
-(add-to-list 'grep-find-ignored-files "*.iso")
-
-(add-to-list 'grep-find-ignored-files "*.vtf")
-(add-to-list 'grep-find-ignored-files "*.vvd")
-(add-to-list 'grep-find-ignored-files "*.vcd")
-(add-to-list 'grep-find-ignored-files "*.phy")
-(add-to-list 'grep-find-ignored-files "*.mdl")
-(add-to-list 'grep-find-ignored-files "*.dmx")
-(add-to-list 'grep-find-ignored-files "*.bsp")
-(add-to-list 'grep-find-ignored-files "*.vpk")
-(add-to-list 'grep-find-ignored-files "*.vtx")
-(add-to-list 'grep-find-ignored-files "*.fbx")
-(add-to-list 'grep-find-ignored-files "*.vmt")
-(add-to-list 'grep-find-ignored-files "*.dds")
-
-(add-to-list 'grep-find-ignored-files "*.cache")
-(add-to-list 'grep-find-ignored-files "*.svn-base")
-(add-to-list 'grep-find-ignored-files "*.sdf") ; Visual studio database thing
-
-;; PS3 compiled file... thing
-(add-to-list 'grep-find-ignored-files "*.prx")
-(add-to-list 'grep-find-ignored-files "*.sprx")
-
-(add-to-list 'grep-find-ignored-files "*.raw")
-(add-to-list 'grep-find-ignored-files "*.ani")
-(add-to-list 'grep-find-ignored-files "*.bik")
-(add-to-list 'grep-find-ignored-files "*.dat")
-(add-to-list 'grep-find-ignored-files "*.ttf")
-(add-to-list 'grep-find-ignored-files "*.pdf")
-
-(add-to-list 'grep-find-ignored-files "*.tga")
-(add-to-list 'grep-find-ignored-files "*.jpg")
-(add-to-list 'grep-find-ignored-files "*.jpeg")
-(add-to-list 'grep-find-ignored-files "*.png")
-(add-to-list 'grep-find-ignored-files "*.bmp")
-(add-to-list 'grep-find-ignored-files "*.psd")
-(add-to-list 'grep-find-ignored-files "*.cbr")
-(add-to-list 'grep-find-ignored-files "*.icns")
-(add-to-list 'grep-find-ignored-files "*.ico")
-
-(add-to-list 'grep-find-ignored-files "*.wav")
-(add-to-list 'grep-find-ignored-files "*.ogg")
-(add-to-list 'grep-find-ignored-files "*.mp3")
-
-(add-to-list 'grep-find-ignored-files "*.h264")
-(add-to-list 'grep-find-ignored-files "*.mkv")
-(add-to-list 'grep-find-ignored-files "*.avi")
-(add-to-list 'grep-find-ignored-files "*.mp4")
-
-; Oneoffs
-(add-to-list 'grep-find-ignored-files "ip-country-region-city-latitude-longitude-isp.csv")
-(add-to-list 'grep-find-ignored-files "engine_symbols.txt")
-(add-to-list 'grep-find-ignored-files "dedicated_symbols.txt")
 
 ;;
 ;; Projectile
