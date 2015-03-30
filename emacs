@@ -184,6 +184,7 @@
 (setq rtags-autostart-diagnostics t)
 (setq rtags-find-file-case-insensitive t)
 (setq rtags-show-containing-function nil)
+;; (setq rtags-tooltips-enabled nil)
 
 ;; Semantic
 (require 'semantic)
