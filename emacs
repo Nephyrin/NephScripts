@@ -351,7 +351,7 @@
                                 (concat (projectile-project-name) "/"))))
                 (if bufname
                     (progn
-                      ;; Trim filename from path and default propertize
+                      ;; Trim filename from path
                       (setq bufname (replace-regexp-in-string "/[^/]*$" "/" bufname))
                       ;; Apply neph-modeline-shortpaths replacements
                       (while replacements
@@ -362,6 +362,7 @@
                           (if remainder
                               (setq bufname
                                     (concat
+                                     ;; This blows away the default propertize, they're not additive.
                                      (propertize replace 'face 'neph-modeline-path-replacement)
                                      (propertize remainder 'face 'neph-modeline-path)))))
                         (setq replacements (cdr replacements)))
