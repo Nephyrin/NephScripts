@@ -144,12 +144,10 @@
 
 (global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
 
-(make-variable-buffer-local 'global-hl-line-mode)
 ; Paste not yank
 (add-hook 'term-mode-hook (lambda ()
-                            (setq global-hl-line-mode nil)
-                            (define-key term-raw-map (kbd "C-y") 'term-paste)
-                            ))
+                            (hl-line-mode nil)
+                            (define-key term-raw-map (kbd "C-y") 'term-paste)))
 
 ;;
 ;; ECB
