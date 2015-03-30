@@ -533,8 +533,10 @@
 
 (defun astyle-beautify-region()
   (interactive)
-  (let ((cmd "astyle --style=allman --pad-paren-in --pad-oper --pad-header --unpad-paren --max-code-length=100 --break-blocks"))
-    (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t)))
+  (if (executable-find "astyle")
+      (let ((cmd "astyle --style=allman --pad-paren-in --pad-oper --pad-header --unpad-paren --max-code-length=100 --break-blocks"))
+        (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
+    (message "!! astyle command not installed/available")))
 
 (global-set-key (kbd "C-z C-S-B") 'astyle-beautify-region)
 
