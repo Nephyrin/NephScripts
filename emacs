@@ -541,6 +541,17 @@
 (global-set-key (kbd "C-z C-S-B") 'astyle-beautify-region)
 
 ;;
+;; js-beautify
+;;
+
+(defun js-beautify-region()
+  (interactive)
+  (if (executable-find "js-beautify")
+      (let ((cmd "js-beautify"))
+        (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
+    (message "!! js-beautify command not installed/available")))
+
+;;
 ;; Helm
 ;;
 
