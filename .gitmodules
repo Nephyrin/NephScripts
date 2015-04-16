@@ -103,3 +103,6 @@
 [submodule "emacs.d/function-args"]
 	path = emacs.d/function-args
 	url = https://github.com/abo-abo/function-args
+[submodule "emacs.d/cedet-git"]
+	path = emacs.d/cedet-git
+	url = http://git.code.sf.net/p/cedet/git

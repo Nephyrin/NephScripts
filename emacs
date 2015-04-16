@@ -4,6 +4,9 @@
 ;; Misc
 ;;
 
+;; Load this before something tries to load built-in CEDET libraries
+(load-file "~/.emacs.d/cedet-git/cedet-devel-load.el")
+
 ; This just makes things slower. Maybe useful on spinning disks?
 (setq cache-long-line-scans nil)
 (setq cache-long-scans nil)
