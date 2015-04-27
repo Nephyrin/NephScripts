@@ -186,6 +186,9 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 (global-set-key (kbd "C-z b") 'helm-mini)
+(global-set-key (kbd "C-z C-o") 'helm-occur)
+
+(define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
 
 (when (executable-find "ack-grep")
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
