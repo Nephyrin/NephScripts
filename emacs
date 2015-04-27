@@ -276,6 +276,14 @@
 (add-to-list 'grep-find-ignored-files "dedicated_symbols.txt")
 
 ;;
+;; Swiper
+;;
+
+(add-to-list 'load-path "~/.emacs.d/swiper")
+(require 'swiper)
+(global-set-key (kbd "C-z s") 'swiper)
+
+;;
 ;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
 

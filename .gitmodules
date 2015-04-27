@@ -106,3 +106,6 @@
 [submodule "emacs.d/cedet-git"]
 	path = emacs.d/cedet-git
 	url = http://git.code.sf.net/p/cedet/git
+[submodule "emacs.d/swiper"]
+	path = emacs.d/swiper
+	url = https://github.com/abo-abo/swiper
