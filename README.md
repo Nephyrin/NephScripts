@@ -24,6 +24,8 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
         # Emacs (Make sure you submodule init && update)
         ln -sv $repo/emacs          ~/.emacs
         ln -sv $repo/emacs.d        ~/.emacs.d
+        # Byte compile things and setup CEDET
+        ( cd ~/.emacs.d && ./compile.sh )
 
         # Git
         ln -sv $repo/gitconfig      ~/.gitconfig
