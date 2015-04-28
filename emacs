@@ -844,7 +844,7 @@
     (kill-region isearch-other-end (point))
     (isearch-exit))
 
-(define-key isearch-mode-map [(.)] 'kill-isearch-match)
+(define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
 
 ;;
 ;; Custom binds
