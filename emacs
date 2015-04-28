@@ -155,6 +155,7 @@
 ;; ECB
 ;;
 
+(add-to-list 'load-path "~/.emacs.d/ecb")
 (require 'ecb)
 (setq ecb-show-sources-in-directories-buffer 'always)
 (setq ecb-layout-name "left7")
