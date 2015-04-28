@@ -36,7 +36,6 @@
 (setq save-interprogram-paste-before-kill t)
 
 (setq inhibit-startup-message t)
-(setq load-path (cons "~/.emacs.d" load-path))
 
 (setq-default indent-tabs-mode nil)
 (setq js-indent-level 2)
@@ -142,7 +141,7 @@
 ;; Multi-term
 ;;
 
-(require 'multi-term)
+(load-file "~/.emacs.d/multi-term.el")
 (setq multi-term-program "/bin/bash")
 
 (global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
@@ -459,7 +458,7 @@
 ;; Mode line
 ;;
 
-(require 'neph-modeline-util)
+(load-file "~/.emacs.d/neph-modeline-util.el")
 (defun neph-fill-to (reserve)
   `(:eval (propertize " " 'display '(space :align-to (- right-margin
                                                         ,reserve)))))
@@ -621,6 +620,7 @@
 ;; fci-mode
 ;;
 
+(add-to-list 'load-path "~/.emacs.d/fill-column-indicator")
 (require 'fill-column-indicator)
 (setq fci-rule-color "#444")
 
@@ -640,9 +640,10 @@
 
 (add-to-list 'load-path "~/.emacs.d/git-gutter-fringe")
 (add-to-list 'load-path "~/.emacs.d/git-gutter")
+(add-to-list 'load-path "~/.emacs.d/fringe-helper")
 (require 'fringe-helper)
 (require 'git-gutter-fringe)
-(require 'rainbow-mode)
+(load-file "~/.emacs.d/rainbow-mode.el")
 
 ;;
 ;; Ediff
@@ -1099,7 +1100,7 @@
 ;; Line numbers
 ;;
 
-(require 'linum)
+(load-file "~/.emacs.d/linum.el")
 (setq linum-format " %d ")
 (global-linum-mode 1)
 (setq linum-disabled-modes-list '(term-mode))
