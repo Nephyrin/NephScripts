@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/home/johns/.zsh.d/oh-my-zsh
+export ZSH=~/.zsh.d/oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.zsh.d/oh-my-zsh/themes/
@@ -52,7 +52,6 @@ plugins=(git compleat)
 
 # User configuration
 
-export PATH="/home/johns/neph/powerline/bin:/home/johns/perl5/bin:/home/johns/neph/priv/bin:/home/johns/.local/bin:/home/johns/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/android-sdk/platform-tools:/opt/cuda/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
