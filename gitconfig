@@ -54,7 +54,7 @@
 [alias]
 	thisbranch = "!foo=\"$(git rev-parse --symbolic-full-name HEAD)\"; bar=\"${foo#refs/heads/}\"; [ \"$foo\" = \"$bar\" ] || echo \"$bar\""
 	mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
-	ll = log --oneline
+	ll = log --oneline --decorate
 	st = status --ignore-submodule=untracked
 	pff = pull --ff-only
 	cm = commit -m
