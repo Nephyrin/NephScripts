@@ -109,3 +109,6 @@
 [submodule "emacs.d/swiper"]
 	path = emacs.d/swiper
 	url = https://github.com/abo-abo/swiper
+[submodule "emacs.d/popup-el"]
+	path = emacs.d/popup-el
+	url = https://github.com/auto-complete/popup-el

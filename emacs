@@ -290,6 +290,10 @@
 ;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
 
+;; popup.el for rtags tooltips
+(add-to-list 'load-path "~/.emacs.d/popup-el")
+(require 'popup)
+
 (add-to-list 'load-path "~/.emacs.d/company-mode")
 (require 'company)
 (require 'rtags)
@@ -301,6 +305,13 @@
 (setq rtags-find-file-case-insensitive t)
 (setq rtags-show-containing-function nil)
 ;; (setq rtags-tooltips-enabled nil)
+
+;; Buggy
+(setq rtags-completions-timer-interval 0)
+
+(setq rtags-tooltips-enabled t)
+(setq rtags-display-current-error-as-tooltip t)
+(setq rtags-display-summary-as-tooltip t)
 
 ;; Semantic
 (require 'semantic)
