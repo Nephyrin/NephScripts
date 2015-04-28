@@ -112,3 +112,12 @@
 [submodule "emacs.d/popup-el"]
 	path = emacs.d/popup-el
 	url = https://github.com/auto-complete/popup-el
+[submodule "zsh.d/autosuggestions"]
+	path = zsh.d/autosuggestions
+	url = https://github.com/tarruda/zsh-autosuggestions
+[submodule "zsh.d/oh-my-zsh"]
+	path = zsh.d/oh-my-zsh
+	url = https://github.com/robbyrussell/oh-my-zsh.git
+[submodule "zsh.d/syntax-highlighting"]
+	path = zsh.d/syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

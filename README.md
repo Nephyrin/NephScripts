@@ -17,6 +17,10 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
         ln -sv $repo/bashrc         ~/.bashrc
         ln -sv $repo/bash_profile   ~/.bash_profile
 
+        # zsh
+        ln -sv "$repo"/zshrc ~/.zshrc
+        ln -sv "$repo"/zsh.d ~/.zsh.d
+
         # Emacs (Make sure you submodule init && update)
         ln -sv $repo/emacs          ~/.emacs
         ln -sv $repo/emacs.d        ~/.emacs.d
