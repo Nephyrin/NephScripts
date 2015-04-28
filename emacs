@@ -316,7 +316,7 @@
 (require 'semantic)
 (require 'semantic/bovine/gcc)
 (global-semantic-decoration-mode t)
-(global-semantic-highlight-func-mode t)
+(global-semantic-stickyfunc-mode t)
 
 (add-to-list 'company-backends (list 'company-semantic 'company-rtags))
 
