@@ -1101,7 +1101,6 @@
 ;; Line numbers
 ;;
 
-(load-file "~/.emacs.d/linum.el")
 (setq linum-format " %d ")
 (global-linum-mode 1)
 (setq linum-disabled-modes-list '(term-mode))
@@ -1109,8 +1108,6 @@
   (unless (or (minibufferp) (member major-mode linum-disabled-modes-list))
     (linum-mode 1)))
 
-;(setq linum-delay t)
-;(setq linum-eager nil)
 
 ;;
 ;; zap-to-char
