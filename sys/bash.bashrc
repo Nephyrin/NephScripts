@@ -21,8 +21,8 @@ PS4='+ '
 # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
 shopt -s checkwinsize
 shopt -s histappend
-export PROMPT_COMMAND="history -a"
 
+[ -z "$PROMPT_COMMAND" ] || PROMPT_COMMAND="$PROMPT_COMMAND; "
 # Change the window title of X terminals
 case ${TERM} in
   xterm*|rxvt*|aterm|kterm|gnome*|interix)
