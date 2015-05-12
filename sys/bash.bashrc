@@ -61,7 +61,11 @@ if ${use_color} ; then
   if [[ ${EUID} == 0 ]] ; then
     PS1='\[\e[01;31m\]\h\[\e[01;34m\] \W \$\[\e[00m\] '
   else
-    PS1='\[\e[01;32m\]\u@\h\[\e[01;34m\] \w \$\[\e[00m\] '
+    if [ -n "$SSH_CLIENT" ]; then
+      PS1='\[\e[32m\]\u\[\e[90m\]@\[\e[33m\]\h\[\e[01;34m\] \w \$\[\e[00m\] '
+    else
+      PS1='\[\e[32m\]\u\[\e[01;34m\] \w \$\[\e[00m\] '
+    fi
   fi
 
   alias ls='ls --color=auto'
