@@ -124,3 +124,6 @@
 [submodule "emacs.d/ecb"]
 	path = emacs.d/ecb
 	url = https://github.com/emacsmirror/ecb
+[submodule "emacs.d/smarttabs"]
+	path = emacs.d/smarttabs
+	url = https://github.com/jcsalomon/smarttabs
