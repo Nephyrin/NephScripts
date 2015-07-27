@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+. ~/bin/lib/util.sh
+
+file="$1"
+[[ $# -eq 1 && -f "$file" ]] || die "Usage: minidump_comment <minidump>"
+
+commentstream_lines=($(minidump_dump "$file" 2>/dev/null | \
+                          sed -r '/^ *stream_type *\= *0x[a-f0-9]+ *\(MD_COMMENT_STREAM_A\)/ { s/.*//g; N; N; s/ *//g; b };d'))
+
+# Expected output
+# location.data_size=14629
+# location.rva=0x138b2
+
+einfo "Parsing comment section info:"
+
+for line in "${commentstream_lines[@]}"; do
+  einfo "$line"
+  size_prefix="${line#location.data_size=}"
+  offset_prefix="${line#location.rva=}"
+  if [[ $size_prefix != $line ]]; then
+    comment_size=$size_prefix
+  elif [[ $offset_prefix != $line ]]; then
+    comment_offset=$offset_prefix
+  elif [[ ${#line} -gt 0 ]]; then
+    die "Unexpected minidump parse output"
+  fi
+done
+
+[[ -n $comment_size && -n comment_offset ]] || die "Failed to find comment information in minidump"
+
+cmd dd if="$file" bs=1 skip=$(( $comment_offset )) count=$(( $comment_size - 1 ))
