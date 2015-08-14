@@ -305,6 +305,14 @@
 (require 'swiper)
 (global-set-key (kbd "C-z s") 'swiper)
 
+(defun isearch-to-swiper ()
+    "Drop into swiper with current isearch"
+    (interactive)
+    (isearch-exit)
+    (swiper isearch-string))
+
+(define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
+
 ;;
 ;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
