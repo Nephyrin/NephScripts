@@ -529,12 +529,14 @@
   (propertize " " 'display (neph-hud "#0C0C0C" "#222222" height width)
               'face 'neph-modeline-hud))
 
+;; TODO set this only when buffer path changes, rather than per frame
 (setq neph-modeline-path
-      '(:eval (let ((bufname (propertize (buffer-file-name) 'face 'neph-modeline-path))
-                    ;; Paths to replace. Of the form ((search replace) ...)
-                    (replacements `((,(getenv "HOME") "~"))))
+      '(:eval (let* ((rawname (buffer-file-name))
+                     (bufname (if rawname (propertize rawname 'face 'neph-modeline-path) nil))
+                     ;; Paths to replace. Of the form ((search replace) ...)
+                     (replacements `((,(getenv "HOME") "~"))))
                 ;; Also replace projectile root with project name when available
-                (when (featurep 'projectile)
+                (when (and (featurep 'projectile) (projectile-project-p))
                   (add-to-list 'replacements
                                (list
                                 (projectile-project-root)
