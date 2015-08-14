@@ -319,10 +319,16 @@ rand32()
 
 dcg()
 {
-    echo $$ > "$NEPH_DEFAULT_CGROUP"/cgroup.procs
-    unset NEPH_CGROUP
-    unset NEPH_CGROUP_PS1
-    _reprompt
+  if [[ -z $NEPH_DEFAULT_CGROUP || -z $NEPH_CGROUP ]]; then
+    eerr "Invalid cgroup"
+    return 1
+  fi
+
+  echo $$ > "$NEPH_DEFAULT_CGROUP"/cgroup.procs
+  cmd rmdir "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
+  unset NEPH_CGROUP
+  unset NEPH_CGROUP_PS1
+  _reprompt
 }
 
 lowprio()
@@ -348,9 +354,15 @@ lpcg()
   fi
   group="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
   [ ! -d "$group" ] && echo ":: '$group' is not a directory" && return
-  /bin/echo 10 > "$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
+
   /bin/echo 1 > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
-  /bin/echo 256M > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
+
+  local blkioweight="$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
+  local memlimit="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
+
+ [[ ! -e $blkioweight ]] || /bin/echo 10   > $blkioweight
+ [[ ! -e $memlimit    ]] || /bin/echo 256M > $memlimit
+
   echo ":: Done"
 }
 
@@ -394,8 +406,11 @@ _mcg()
 
   mkdir "$NEPH_DEFAULT_CGROUP"/"$name"
 
-  cat "$NEPH_DEFAULT_CGROUP"/cpuset.cpus > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.cpus
-  cat "$NEPH_DEFAULT_CGROUP"/cpuset.mems > "$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.mems
+  local cpus="$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.cpus
+  local mems="$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.mems
+
+  [[ ! -e $cpus ]] || cat "$NEPH_DEFAULT_CGROUP"/cpuset.cpus > $cpus
+  [[ ! -e $mems ]] || cat "$NEPH_DEFAULT_CGROUP"/cpuset.mems > $mems
 
   echo $name
 }
