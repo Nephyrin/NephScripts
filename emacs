@@ -142,6 +142,12 @@
 (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
 
 ;;
+;; Htmlize
+;;
+
+(load-file "~/.emacs.d/htmlize.el")
+
+;;
 ;; Multi-term
 ;;
 
