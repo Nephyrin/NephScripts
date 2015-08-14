@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # This could be an alias, but then it wouldn't play nice with $EDITOR
-export TERM=xterm-256color
 if ! emacsclient -t "$@"; then
     echo >&2 ":: Spawning daemon"
     emacs --daemon
