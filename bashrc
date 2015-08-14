@@ -580,5 +580,3 @@ unaff()
 }
 
 [ ! -f ~/neph/priv/bashrc ] || . ~/neph/priv/bashrc
-
-...() { echo ":-/"; }
