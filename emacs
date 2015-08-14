@@ -1211,12 +1211,21 @@ Goes backward if ARG is negative; error if CHAR not found."
 ;;
 
 (setq linum-format " %d ")
-(global-linum-mode 1)
-(setq linum-disabled-modes-list '(term-mode))
-(defun linum-on()
-  (unless (or (minibufferp) (member major-mode linum-disabled-modes-list))
-    (linum-mode 1)))
+(require 'linum)
+;(global-linum-mode 1)
+;(setq linum-disabled-modes-list '(term-mode))
+;(defun linum-on()
+;  (unless (or (minibufferp) (string-equal mode-name "Helm") (member major-mode linum-disabled-modes-list))
+;    (linum-mode 1)))
 
+(setq jit-lock-chunk-size 200)
+(setq jit-lock-context-time 0.1)
+(setq jit-lock-contextually (quote syntax-driven))
+(setq jit-lock-defer-time 0.05)
+(setq jit-lock-stealth-nice 0.1)
+(setq jit-lock-stealth-time 0.5)
+(setq linum-delay t)
+(setq linum-eager nil)
 
 ;;
 ;; zap-to-char
