@@ -476,6 +476,9 @@
     (comint-output-filter proc string)))
 (ad-activate 'gdb-inferior-filter)
 
+(global-set-key (kbd "C-z C-M-i") 'gdb-io-interrupt)
+(global-set-key (kbd "C-z C-M-c") 'gud-cont)
+
 ;;
 ;; ido
 ;;
