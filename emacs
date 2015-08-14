@@ -251,7 +251,11 @@
 (add-to-list 'grep-find-ignored-files "*.vtx")
 (add-to-list 'grep-find-ignored-files "*.fbx")
 (add-to-list 'grep-find-ignored-files "*.vmt")
+(add-to-list 'grep-find-ignored-files "*.vmf")
 (add-to-list 'grep-find-ignored-files "*.dds")
+(add-to-list 'grep-find-ignored-files "*.smd")
+(add-to-list 'grep-find-ignored-files "*.nav")
+(add-to-list 'grep-find-ignored-files "*.vcs")
 
 (add-to-list 'grep-find-ignored-files "*.cache")
 (add-to-list 'grep-find-ignored-files "*.svn-base")
@@ -286,6 +290,7 @@
 (add-to-list 'grep-find-ignored-files "*.mkv")
 (add-to-list 'grep-find-ignored-files "*.avi")
 (add-to-list 'grep-find-ignored-files "*.mp4")
+(add-to-list 'grep-find-ignored-files "*.mov")
 
 ; Oneoffs
 (add-to-list 'grep-find-ignored-files "ip-country-region-city-latitude-longitude-isp.csv")
