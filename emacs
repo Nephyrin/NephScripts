@@ -411,6 +411,14 @@
 (global-set-key (kbd "C-z <C-M-tab>") 'rtags-global-imenu)
 
 ;;
+;; Smart Tabs
+;;
+
+(add-to-list 'load-path "~/.emacs.d/smarttabs")
+(require 'smart-tabs-mode)
+(smart-tabs-insinuate 'c 'javascript 'c++)
+
+;;
 ;; GDB
 ;;
 
