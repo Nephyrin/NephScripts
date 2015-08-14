@@ -326,15 +326,17 @@
 (require 'rtags)
 (require 'company-rtags)
 
+(setq company-idle-delay nil)
+(setq company-rtags-max-wait 1000)
 (setq rtags-completions-enabled t) ; Needed?
+(setq company-rtags-use-async nil)
 
 (setq rtags-autostart-diagnostics t)
 (setq rtags-find-file-case-insensitive t)
 (setq rtags-show-containing-function nil)
-;; (setq rtags-tooltips-enabled nil)
 
-;; Buggy
-(setq rtags-completions-timer-interval 0)
+(setq rtags-enable-unsaved-reparsing t)
+(setq rtags-completions-timer-interval 0.5)
 
 (setq rtags-tooltips-enabled t)
 (setq rtags-display-current-error-as-tooltip t)
