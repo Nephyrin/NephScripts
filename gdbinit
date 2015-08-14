@@ -16,6 +16,15 @@ handle SIG38 noprint nostop pass
 
 set prompt [gdb] 
 
+define broff
+  call setenv("DONT_BREAK_ON_ASSERT", "1", 1)
+  call unsetenv("RAISE_ON_ASSERT")
+end
+
+define bron
+  call unsetenv("DONT_BREAK_ON_ASSERT")
+  call setenv("RAISE_ON_ASSERT", "1", 1)
+end
 
 # original by Tavis Ormandy (http://my.opera.com/taviso/blog/index.dml/tag/gdb) (great fix!)
 # modified to work with Mac OS X by fG!
