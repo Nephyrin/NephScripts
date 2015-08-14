@@ -1136,6 +1136,32 @@
 
 (global-set-key (kbd "C-S-j") 'duplicate-line)
 
+(defun jump-to-char (arg char)
+  "Jump forward to ARGth occurrence of CHAR.
+Case is ignored if `case-fold-search' is non-nil in the current buffer.
+Goes backward if ARG is negative; error if CHAR not found."
+  (interactive (list (prefix-numeric-value current-prefix-arg)
+                     (read-char "Jump to char: " t)))
+  ;; Avoid "obsolete" warnings for translation-table-for-input.
+  (with-no-warnings
+    (if (char-table-p translation-table-for-input)
+        (setq char (or (aref translation-table-for-input char) char))))
+  (if (and (search-forward (char-to-string char) nil nil arg)
+           (> arg 0))
+      (backward-char 1)))
+
+(defun backward-jump-to-char (arg char)
+  "Jump backward to ARGth occurrence of CHAR.
+Case is ignored if `case-fold-search' is non-nil in the current buffer.
+Goes backward if ARG is negative; error if CHAR not found."
+  (interactive (list (prefix-numeric-value current-prefix-arg)
+                     (read-char "Backward jump to char: " t)))
+  (jump-to-char (* -1 arg) char))
+
+(global-set-key (kbd "M-F") 'jump-to-char)
+(global-set-key (kbd "M-B") 'backward-jump-to-char)
+(global-set-key (kbd "M-G") 'goto-line)
+
 ;;
 ;; Line-highlight
 
