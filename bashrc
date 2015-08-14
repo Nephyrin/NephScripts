@@ -1,4 +1,4 @@
-# -*- mode: sh; sh-basic-offset 2; sh-indentation 2; -*-
+# -*- mode: sh; sh-basic-offset: 2; sh-indentation: 2; -*-
 
 # Uses util.sh from nephscripts
 if [ -r ~/bin/lib/util.sh ]; then
