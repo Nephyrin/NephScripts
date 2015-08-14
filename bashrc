@@ -238,7 +238,12 @@ pathadd() {
 # wherien they would not be after expansion.
 BASE_PS1="$PS1"
 _reprompt() {
-  PS1="$NEPH_PROMPTNOTE_PS1$NEPH_CGROUP_PS1$MOZ_PS1$NEPH_GIT_PS1$BASE_PS1"
+  if [[ $(type -t _priv_reprompt) = function ]]; then
+    _priv_reprompt
+  else
+    unset PRIV_PS1
+  fi
+  PS1="$NEPH_PROMPTNOTE_PS1$NEPH_CGROUP_PS1$PRIV_PS1$MOZ_PS1$NEPH_GIT_PS1$BASE_PS1"
 }
 _reprompt
 
