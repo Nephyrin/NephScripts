@@ -59,7 +59,8 @@
 (add-to-list 'auto-mode-alist '("/yaourtrc$" . sh-mode))
 (add-to-list 'auto-mode-alist '("/PKGBUILD$" . sh-mode))
 (add-to-list 'auto-mode-alist '("/bash(rc|_profile)$" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.vpc\\'" . js-mode))
+;; Use js-mode for vpc/vgc files for now
+(add-to-list 'auto-mode-alist '("\.v[pg]c$" . js-mode))
 
 (setq vc-follow-symlinks t)
 
