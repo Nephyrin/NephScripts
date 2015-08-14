@@ -1287,8 +1287,8 @@ Goes backward if ARG is negative; error if CHAR not found."
                     :foreground "#999"
                     :box '(:line-width 1 :color "#333" :style nil))
 (set-face-attribute 'hl-line nil
-                    :background "#232020"
-                    :box '(:line-width -1 :color "#444" :style nil))
+                    :background "#262222"
+                    :box '(:line-width -1 :color "#555" :style nil))
 (set-face-attribute 'linum nil
                     :foreground "#555"
                     :background "#222"
@@ -1312,6 +1312,15 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 ;; Semantic
 (set-face-attribute 'semantic-tag-boundary-face nil :overline "#544")
+
+;; ECB
+(set-face-attribute 'ecb-default-highlight-face nil
+                    :background "#448"
+                    :box '(:line-width -1 :color "#669"))
+(set-face-attribute 'ecb-source-face nil
+                    :background "#484"
+                    :box '(:line-width -1 :color "#696"))
+(set-face-attribute 'ecb-source-in-directories-buffer-face nil :foreground "#EEE")
 
 ;; Company
 (set-face-attribute 'company-tooltip nil :background "#333" :foreground "white")
