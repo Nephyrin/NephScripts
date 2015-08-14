@@ -207,6 +207,7 @@
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
         helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
 
+(require 'grep)
 (add-to-list 'grep-find-ignored-files "*.pdb")
 (add-to-list 'grep-find-ignored-files "*.map")
 (add-to-list 'grep-find-ignored-files "*.P")
