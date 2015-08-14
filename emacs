@@ -757,6 +757,15 @@
 (helm-projectile-on)
 (setq projectile-enable-caching t)
 
+(let ((neph-ignored-patterns '("*.o" "*.P")))
+  (setq projectile-generic-command (concat "find . -type f "
+                                           (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
+                                                      neph-ignored-patterns " -and ")
+                                           " -print0")))
+
+;; Default
+;; (setq projectile-indexing-method 'alien)
+
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
 (global-set-key (kbd "C-z M-g") 'helm-projectile-grep)
@@ -764,10 +773,11 @@
 (global-set-key (kbd "C-z M-G") 'projectile-grep)
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
 (global-set-key (kbd "C-z B") 'helm-projectile-switch-to-buffer-other-window)
-(global-set-key (kbd "C-z p") 'projectile-switch-project)
+(global-set-key (kbd "C-z p") 'helm-projectile-switch-project)
 (global-set-key (kbd "C-z C-p") 'helm-projectile)
 
-(setq projectile-switch-project-action 'helm-projectile)
+;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
+;; (setq projectile-switch-project-action 'projectile-find-file)
 
 ;;
 ;; Web-mode
