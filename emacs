@@ -800,8 +800,9 @@
 ;; Neph mode. Aka enable defaults in programming modes
 ;;
 
-(defun neph-cfg ()
-;  (fci-mode t)
+(defun neph-space-cfg ()
+  ;;(fci-mode t)
+  (linum-mode t)
   (setq c-basic-offset 2)
   (setq c-default-style "linux")
   (setq sh-basic-offset 2)
@@ -822,9 +823,11 @@
   (let ((indent-tabs-mode nil))
     ad-do-it))
 
-; Tabs, 4 wide with 4 indent to match e.g. default VS style
-(defun neph-valve-cfg ()
+;; Tabs, 4 wide with 4 indent to match e.g. default VS style. Smart-tabs.
+(defun neph-tab-cfg ()
   (interactive)
+  (linum-mode t)
+  (smart-tabs-mode t)
   (setq c-default-style "linux")
   (setq indent-tabs-mode 'tabs)
   (setq c-basic-offset 4)
@@ -839,15 +842,21 @@
   (run-with-idle-timer 1 nil (lambda ()
                                (color-identifiers-mode t)
                                (fic-mode t))))
-(add-hook 'sh-mode-hook 'neph-cfg)
-(add-hook 'js-mode-hook 'neph-cfg)
-(add-hook 'python-mode-hook 'neph-cfg)
-(add-hook 'java-mode-hook 'neph-cfg)
-(add-hook 'lisp-mode-hook 'neph-cfg)
-(add-hook 'emacs-lisp-mode-hook 'neph-cfg)
-(add-hook 'c-mode-common-hook 'neph-valve-cfg) ; Default to valve mode for now,
-                                               ; should have path detection or
-                                               ; something
+(add-hook 'sh-mode-hook 'neph-space-cfg)
+
+(add-hook 'js-mode-hook (lambda ()
+                          (if (and (stringp buffer-file-name)
+                                   (string-match "\\.vpc\\'" buffer-file-name))
+                              (neph-tab-cfg)
+                            (neph-space-cfg))))
+
+(add-hook 'python-mode-hook 'neph-space-cfg)
+(add-hook 'java-mode-hook 'neph-space-cfg)
+(add-hook 'lisp-mode-hook 'neph-space-cfg)
+(add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
+(add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
+                                             ; should have path detection or
+                                             ; something
 
 ;;
 ;; IswitchBuffers
