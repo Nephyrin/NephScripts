@@ -197,7 +197,7 @@ alias dir='x dolphin "$@"'
 
 alias rebash='source ~/.bashrc'
 
-alias ll='ls++'
+alias lx='ls++ --potsf'
 
 # Ack types
 alias cck='ack --type=cpp'
