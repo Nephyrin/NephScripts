@@ -172,6 +172,9 @@
 (setq ecb-tip-of-the-day nil)
 (setq ecb-windows-width 0.1)
 
+;; Quiet startup warning
+(setq ecb-options-version "2.40")
+
 (global-set-key (kbd "C-z q") 'ecb-activate)
 (global-set-key (kbd "C-z Q") 'ecb-deactivate)
 
