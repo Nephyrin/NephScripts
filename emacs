@@ -389,6 +389,27 @@
 (global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
 (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
 
+(defun rtags-global-imenu ()
+  (interactive)
+  (rtags-location-stack-push)
+  (let* ((fn (buffer-file-name))
+         (init (read-string "Initial search: "))
+         (alternatives (with-temp-buffer
+                         (message (concat "Using: " init))
+                         (rtags-call-rc :path fn "--imenu"
+                                        "--list-symbols" init
+                                        "-Y"
+                                        (when rtags-wildcard-symbol-names "--wildcard-symbol-names"))
+                         (eval (read (buffer-string)))))
+         (match (car alternatives)))
+    (if (> (length alternatives) 1)
+        (setq match (completing-read "Symbol: " alternatives nil t)))
+    (if match
+        (rtags-goto-location (with-temp-buffer (rtags-call-rc :path fn "-F" match) (buffer-string)))
+      (message "RTags: No symbols"))))
+
+(global-set-key (kbd "C-z <C-M-tab>") 'rtags-global-imenu)
+
 ;;
 ;; GDB
 ;;
