@@ -354,6 +354,7 @@
 (add-to-list 'load-path "~/.emacs.d/function-args")
 (require 'function-args)
 (fa-config-default)
+(setq moo-select-method 'helm)
 
 (defun company-mode-moz ()
   (setq company-clang-arguments (split-string
