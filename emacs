@@ -711,6 +711,13 @@
 (load-file "~/.emacs.d/rainbow-mode.el")
 
 ;;
+;; P4.el
+;;
+
+(add-to-list 'load-path "~/.emacs.d/p4.el")
+(require 'p4)
+
+;;
 ;; Ediff
 ;;
 
