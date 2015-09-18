@@ -31,4 +31,8 @@ pattern="${args[0]}"
 
 psargs=("${args[@]:1}")
 
-cmd ps $(pgrep "$pattern" | sed 's/^/-p /') "${psargs[@]}"
+pids=($(pgrep "$pattern"))
+
+[[ ${#pids[@]} -ne 0 ]] || exit 1
+
+cmd ps $(echo ${pids[@]} | sed 's/^/-p /') "${psargs[@]}"
