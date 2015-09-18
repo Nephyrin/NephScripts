@@ -35,4 +35,4 @@ pids=($(pgrep "$pattern"))
 
 [[ ${#pids[@]} -ne 0 ]] || exit 1
 
-cmd ps $(echo ${pids[@]} | sed 's/^/-p /') "${psargs[@]}"
+cmd ps -p "${pids[*]}" "${psargs[@]}"
