@@ -1338,14 +1338,15 @@ Goes backward if ARG is negative; error if CHAR not found."
 (set-face-attribute 'ecb-source-in-directories-buffer-face nil :foreground "#EEE")
 
 ;; Company
-(set-face-attribute 'company-tooltip nil :background "#333" :foreground "white")
-(set-face-attribute 'company-tooltip-selection nil :background "#555")
-(set-face-attribute 'company-tooltip-common-selection nil :foreground "#955")
-(set-face-attribute 'company-tooltip-common nil :foreground "#944")
-(set-face-attribute 'company-tooltip-annotation nil :foreground "#A99")
-(set-face-attribute 'company-scrollbar-fg nil :background "#222")
-(set-face-attribute 'company-scrollbar-bg nil :background "#555")
-(setq company-tooltip-margin 2)
+(when (featurep 'company)
+  (set-face-attribute 'company-tooltip nil :background "#333" :foreground "white")
+  (set-face-attribute 'company-tooltip-selection nil :background "#555")
+  (set-face-attribute 'company-tooltip-common-selection nil :foreground "#955")
+  (set-face-attribute 'company-tooltip-common nil :foreground "#944")
+  (set-face-attribute 'company-tooltip-annotation nil :foreground "#A99")
+  (set-face-attribute 'company-scrollbar-fg nil :background "#222")
+  (set-face-attribute 'company-scrollbar-bg nil :background "#555")
+  (setq company-tooltip-margin 2))
 
 ;;
 ;; purple-haze
