@@ -321,26 +321,31 @@
 (add-to-list 'load-path "~/.emacs.d/popup-el")
 (require 'popup)
 
-(add-to-list 'load-path "~/.emacs.d/company-mode")
-(require 'company)
-(require 'rtags)
-(require 'company-rtags)
+;; Rtags is installed separate from NephScripts, don't assume it is available
+(when (require 'rtags nil t)
+  ;; Don't configure company without rtags available
+  (add-to-list 'load-path "~/.emacs.d/company-mode")
+  (require 'company)
+  (require 'company-rtags)
 
-(setq company-idle-delay nil)
-(setq company-rtags-max-wait 1000)
-(setq rtags-completions-enabled t) ; Needed?
-(setq company-rtags-use-async nil)
+  (add-to-list 'company-backends 'company-rtags)
 
-(setq rtags-autostart-diagnostics t)
-(setq rtags-find-file-case-insensitive t)
-(setq rtags-show-containing-function nil)
+  (setq company-idle-delay nil)
 
-(setq rtags-enable-unsaved-reparsing t)
-(setq rtags-completions-timer-interval 0.5)
+  (setq company-rtags-max-wait 1000)
+  (setq rtags-completions-enabled t) ; Needed?
+  (setq company-rtags-use-async nil)
 
-(setq rtags-tooltips-enabled t)
-(setq rtags-display-current-error-as-tooltip t)
-(setq rtags-display-summary-as-tooltip t)
+  (setq rtags-autostart-diagnostics t)
+  (setq rtags-find-file-case-insensitive t)
+  (setq rtags-show-containing-function nil)
+
+  (setq rtags-enable-unsaved-reparsing t)
+  (setq rtags-completions-timer-interval 0.5)
+
+  (setq rtags-tooltips-enabled t)
+  (setq rtags-display-current-error-as-tooltip t)
+  (setq rtags-display-summary-as-tooltip t))
 
 ;; Semantic
 (require 'semantic)
@@ -348,7 +353,6 @@
 (global-semantic-decoration-mode t)
 (global-semantic-stickyfunc-mode t)
 
-(add-to-list 'company-backends 'company-rtags)
 
 ;; function-args modes
 (add-to-list 'load-path "~/.emacs.d/function-args")
@@ -371,44 +375,47 @@
 (add-hook 'c-mode-common-hook 'company-mode-neph)
 
 ;; Keys for C++ completion and such
-(global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
-(global-set-key (kbd "C-z M-r") 'rtags-reparse-file)
-(global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
-(global-set-key (kbd "C-z C->") 'rtags-find-virtuals-at-point)
-(global-set-key (kbd "C-z .") 'rtags-find-symbol)
-(global-set-key (kbd "C-z ,") 'rtags-find-references)
-(global-set-key (kbd "C-z C-/") (lambda () (interactive) (delete-windows-on rtags-buffer-name t)))
-(global-set-key (kbd "C-z C-n") 'rtags-next-match)
-(global-set-key (kbd "C-z C-p") 'rtags-previous-match)
-(global-set-key (kbd "C-z C-i") 'rtags-imenu)
 (global-set-key (kbd "C-z SPC") 'helm-semantic)
 (global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
-(global-set-key (kbd "C-z D") 'rtags-diagnostics)
-(global-set-key (kbd "C-z i") 'rtags-fixit)
-(global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
-(global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
-(global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
 
-(defun rtags-global-imenu ()
-  (interactive)
-  (rtags-location-stack-push)
-  (let* ((fn (buffer-file-name))
-         (init (read-string "Initial search: "))
-         (alternatives (with-temp-buffer
-                         (message (concat "Using: " init))
-                         (rtags-call-rc :path fn "--imenu"
-                                        "--list-symbols" init
-                                        "-Y"
-                                        (when rtags-wildcard-symbol-names "--wildcard-symbol-names"))
-                         (eval (read (buffer-string)))))
-         (match (car alternatives)))
-    (if (> (length alternatives) 1)
-        (setq match (completing-read "Symbol: " alternatives nil t)))
-    (if match
-        (rtags-goto-location (with-temp-buffer (rtags-call-rc :path fn "-F" match) (buffer-string)))
-      (message "RTags: No symbols"))))
+(when (featurep 'rtags)
+  (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
+  (global-set-key (kbd "C-z M-r") 'rtags-reparse-file)
+  (global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
+  (global-set-key (kbd "C-z C->") 'rtags-find-virtuals-at-point)
+  (global-set-key (kbd "C-z .") 'rtags-find-symbol)
+  (global-set-key (kbd "C-z ,") 'rtags-find-references)
+  (global-set-key (kbd "C-z C-/") (lambda () (interactive) (delete-windows-on rtags-buffer-name t)))
+  (global-set-key (kbd "C-z C-n") 'rtags-next-match)
+  (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
+  (global-set-key (kbd "C-z C-i") 'rtags-imenu)
+  (global-set-key (kbd "C-z D") 'rtags-diagnostics)
+  (global-set-key (kbd "C-z i") 'rtags-fixit)
+  (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
+  (global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
+  (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
 
-(global-set-key (kbd "C-z <C-M-tab>") 'rtags-global-imenu)
+
+  (defun rtags-global-imenu ()
+    (interactive)
+    (rtags-location-stack-push)
+    (let* ((fn (buffer-file-name))
+           (init (read-string "Initial search: "))
+           (alternatives (with-temp-buffer
+                           (message (concat "Using: " init))
+                           (rtags-call-rc :path fn "--imenu"
+                                          "--list-symbols" init
+                                          "-Y"
+                                          (when rtags-wildcard-symbol-names "--wildcard-symbol-names"))
+                           (eval (read (buffer-string)))))
+           (match (car alternatives)))
+      (if (> (length alternatives) 1)
+          (setq match (completing-read "Symbol: " alternatives nil t)))
+      (if match
+          (rtags-goto-location (with-temp-buffer (rtags-call-rc :path fn "-F" match) (buffer-string)))
+        (message "RTags: No symbols"))))
+
+  (global-set-key (kbd "C-z <C-M-tab>") 'rtags-global-imenu))
 
 ;;
 ;; Smart Tabs
