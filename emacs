@@ -71,9 +71,9 @@
 
 ; Hide toolbar, hide menu in console mode
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-
+; OS X builds can lack these, check
+(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
 
 (setq split-width-threshold 170)
 (setq split-height-threshold 50)
