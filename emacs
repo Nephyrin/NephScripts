@@ -1313,9 +1313,10 @@ Goes backward if ARG is negative; error if CHAR not found."
 (set-face-attribute 'region nil :background "#392121")
 
 ;; rtags
-(set-face-attribute 'rtags-skippedline nil :background "#323030")
-(set-face-attribute 'rtags-errline nil :background "#511411")
-(set-face-attribute 'rtags-fixitline nil :background "#513121")
+(when (featurep 'rtags)
+  (set-face-attribute 'rtags-skippedline nil :background "#323030")
+  (set-face-attribute 'rtags-errline nil :background "#511411")
+  (set-face-attribute 'rtags-fixitline nil :background "#513121"))
 
 ;; ediff
 (require 'ediff)
