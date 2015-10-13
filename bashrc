@@ -206,6 +206,12 @@ alias cck='ack --type=cpp'
 # Misc utility functions
 #
 
+# Shorthand rdp
+rdp()
+{
+  rdesktop -x l -g 1920x1200 -a 32 "$@"
+}
+
 # Change to git toplevel directory or error
 gt() {
   local top
