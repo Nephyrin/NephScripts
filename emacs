@@ -298,6 +298,13 @@
 (add-to-list 'grep-find-ignored-files "dedicated_symbols.txt")
 
 ;;
+;; Helm AG
+;;
+
+(add-to-list 'load-path "~/.emacs.d/helm-ag")
+(require 'helm-ag)
+
+;;
 ;; Swiper
 ;;
 
@@ -782,7 +789,7 @@
 
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
-(global-set-key (kbd "C-z M-g") 'helm-projectile-grep)
+(global-set-key (kbd "C-z M-g") 'helm-projectile-ag)
 ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
 (global-set-key (kbd "C-z M-G") 'projectile-grep)
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
