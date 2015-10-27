@@ -160,7 +160,7 @@ fi
 # Aliases & shorthand
 #
 
-alias pn='promptnote'
+pn() { promptnote "$@"; }
 
 if ( ! which pidof && which pgrep ) &>/dev/null; then
   alias pidof='pgrep -x'
@@ -168,39 +168,31 @@ fi
 
 alias please='eval sudo "$(fc -nl -1)"'
 
-# mozilla
-alias fb='ffbrun'
+hgreset() {
+  [[ $# -eq 0 ]] || err "Unexpected arguments: $*"
+  hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status
+}
+rv() { rsync -avy --partial --progress "$@"; }
 
-alias hgreset="hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status"
-alias rv='rsync -avy --partial --progress'
-
-alias c32="sudo linux32 chroot /opt/i686_chroot/ /bin/bash"
-alias iswine='ps -A | grep -Ei "wine|exe|stea|hl2"'
-
-# Random password
-alias rpass='pwgen -sync 24 1'
+iswine() { for x in wine exe; do pf "$x"; done; }
 
 # Git's nicer diff can be used with --no-index to diff random things
-alias giff='git diff --no-index --color=auto'
+giff() { git diff --no-index --color=auto "$@"; }
 
-alias gref='git commit --amend -a --no-edit'
+xg() { x gedit "$@"; }
+xk() { x kate "$@"; }
+y() { yaourt "$@"; }
+yclean() { yaourt -Rs $(y -Qdtq) "$@"; }
+p() { sudo pacman "$@"; }
 
-alias resetswap='sudo swapoff -a && sudo swapon -a && echo ":: Done"'
+dir() { x dolphin "$@"; }
 
-alias xg='x gedit'
-alias xk='x kate'
-alias y='yaourt'
-alias yclean='yaourt -Rs $(y -Qdtq)'
-alias p='sudo pacman'
+rebash() { source ~/.bashrc "$@"; }
 
-alias dir='x dolphin "$@"'
+lx()  { ls++ --potsf     "$@"; }
+lxx() { ls++ --potsf -tr "$@"; }
 
-alias rebash='source ~/.bashrc'
-
-alias lx='ls++ --potsf'
-
-# Ack types
-alias cck='ack --type=cpp'
+agc() { ag --cpp "$@"; }
 
 #
 # Misc utility functions
