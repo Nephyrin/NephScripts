@@ -269,6 +269,8 @@
 
 (add-to-list 'load-path "~/.emacs.d/helm-ag")
 (require 'helm-ag)
+;; M-g in find files, projectile keys also use this below
+(define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
 
 ;;
 ;; Swiper
