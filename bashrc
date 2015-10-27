@@ -370,6 +370,15 @@ lpcg()
   echo ":: Created low prio cgroup with $prio cpu shares and $mem soft memory limit"
 }
 
+cdcg()
+{
+  if [[ -z $NEPH_DEFAULT_CGROUP || -z $NEPH_CGROUP ]]; then
+    echo >&2 "!! No cgroup"
+    return 1
+  fi
+  cmd cd "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
+}
+
 # Add a process to a control group (or a new one)
 pcg()
 {
