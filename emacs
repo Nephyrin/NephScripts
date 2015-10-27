@@ -757,6 +757,8 @@
 
 (add-to-list 'load-path "~/.emacs.d/projectile")
 (require 'projectile)
+;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
+(setq helm-projectile-fuzzy-match nil)
 (require 'helm-projectile)
 (projectile-global-mode t)
 (setq projectile-completion-system 'helm)
