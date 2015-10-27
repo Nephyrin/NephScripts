@@ -307,7 +307,7 @@
 
   (setq company-idle-delay nil)
 
-  (setq company-rtags-max-wait 1000)
+  (setq company-rtags-max-wait 10000)
   (setq rtags-completions-enabled t) ; Needed?
   (setq company-rtags-use-async nil)
 
