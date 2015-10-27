@@ -693,11 +693,28 @@
 (load-file "~/.emacs.d/rainbow-mode.el")
 
 ;;
-;; P4.el
+;; P4
 ;;
 
+;; p4.el
 (add-to-list 'load-path "~/.emacs.d/p4.el")
 (require 'p4)
+
+;; p4vc commands
+(defun neph-p4vc (command)
+  (if (buffer-file-name)
+      (if (executable-find "p4vc")
+          (let ((cmd (concat
+                      "env XDG_CURRENT_DESKTOP=gnome p4vc -c johns "
+                      (shell-quote-argument command)
+                      " "
+                      (shell-quote-argument (buffer-file-name))
+                      )))
+            (shell-command cmd))
+        (message "!! p4vc not installed/available"))
+    (message "!! This buffer has no file name")))
+
+(global-set-key (kbd "C-z P t") (lambda () (interactive) (neph-p4vc "tlv")))
 
 ;;
 ;; Ediff
