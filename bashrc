@@ -350,23 +350,24 @@ lowprio()
 
 lpcg()
 {
-  local group="$1"
-  if [ -z "$group" ]; then
-    [ -z "$NEPH_CGROUP" ] && cg
-    group=$NEPH_CGROUP
-  fi
+  local prio="$1"
+  local mem="$2"
+  [[ -n $prio ]] || prio=1
+  [[ -n $mem ]] || mem=256M
+  [[ -z $NEPH_CGROUP ]] && cg
+  group=$NEPH_CGROUP
   group="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
-  [ ! -d "$group" ] && echo ":: '$group' is not a directory" && return
+  [[ ! -d $group ]] && echo ":: '$group' is not a directory" && return
 
-  /bin/echo 1 > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
+  /bin/echo "$prio" > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
 
   local blkioweight="$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
   local memlimit="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
 
  [[ ! -e $blkioweight ]] || /bin/echo 10   > $blkioweight
- [[ ! -e $memlimit    ]] || /bin/echo 256M > $memlimit
+ [[ ! -e $memlimit    ]] || /bin/echo "$mem" > $memlimit
 
-  echo ":: Done"
+  echo ":: Created low prio cgroup with $prio cpu shares and $mem soft memory limit"
 }
 
 # Add a process to a control group (or a new one)
