@@ -208,94 +208,60 @@
         helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
 
 (require 'grep)
-(add-to-list 'grep-find-ignored-files "*.pdb")
-(add-to-list 'grep-find-ignored-files "*.map")
-(add-to-list 'grep-find-ignored-files "*.P")
-(add-to-list 'grep-find-ignored-files "*.dylib")
-(add-to-list 'grep-find-ignored-files "*.lib")
-(add-to-list 'grep-find-ignored-files "*.a")
-(add-to-list 'grep-find-ignored-files "*.dSYM")
-(add-to-list 'grep-find-ignored-files "*.app")
-(add-to-list 'grep-find-ignored-files "*.framework")
-(add-to-list 'grep-find-ignored-files "*.dll")
-(add-to-list 'grep-find-ignored-files "*.so.0")
-(add-to-list 'grep-find-ignored-files "*.so")
-(add-to-list 'grep-find-ignored-files "*.o")
-(add-to-list 'grep-find-ignored-files "*.exe")
-(add-to-list 'grep-find-ignored-files "*.dbg")
+(setq grep-find-ignored-files (append grep-find-ignored-files
+        '( ;; Binaries
+          "*.pdb" "*.map" "*.P" "*.dylib" "*.lib" "*.a" "*.dSYM" "*.app" "*.framework" "*.dll"
+           "*.so.0" "*.so" "*.o" "*.exe" "*.dbg" "*.sys" "*.h.gch"
 
-;; Python compiled thing
-(add-to-list 'grep-find-ignored-files "*.pyd")
-(add-to-list 'grep-find-ignored-files "*.pyc")
+           ;; Python compiled thing
+           "*.pyd" "*.pyc"
 
-(add-to-list 'grep-find-ignored-files "*.zip")
-(add-to-list 'grep-find-ignored-files "*.rar")
-(add-to-list 'grep-find-ignored-files "*.7z")
-(add-to-list 'grep-find-ignored-files "*.xz")
-(add-to-list 'grep-find-ignored-files "*.bz2")
-(add-to-list 'grep-find-ignored-files "*.gz")
-(add-to-list 'grep-find-ignored-files "*.tar")
-(add-to-list 'grep-find-ignored-files "*.dmg")
-(add-to-list 'grep-find-ignored-files "*.deb")
-(add-to-list 'grep-find-ignored-files "*.rpm")
-(add-to-list 'grep-find-ignored-files "*.iso")
+           ;; Archives
+           "*.zip" "*.rar" "*.7z" "*.xz" "*.bz2" "*.gz" "*.tar" "*.dmg" "*.deb" "*.rpm" "*.iso"
+           "*.msi"
 
-(add-to-list 'grep-find-ignored-files "*.vtf")
-(add-to-list 'grep-find-ignored-files "*.vvd")
-(add-to-list 'grep-find-ignored-files "*.vcd")
-(add-to-list 'grep-find-ignored-files "*.phy")
-(add-to-list 'grep-find-ignored-files "*.mdl")
-(add-to-list 'grep-find-ignored-files "*.dmx")
-(add-to-list 'grep-find-ignored-files "*.bsp")
-(add-to-list 'grep-find-ignored-files "*.vpk")
-(add-to-list 'grep-find-ignored-files "*.vtx")
-(add-to-list 'grep-find-ignored-files "*.fbx")
-(add-to-list 'grep-find-ignored-files "*.vmt")
-(add-to-list 'grep-find-ignored-files "*.vmf")
-(add-to-list 'grep-find-ignored-files "*.dds")
-(add-to-list 'grep-find-ignored-files "*.smd")
-(add-to-list 'grep-find-ignored-files "*.nav")
-(add-to-list 'grep-find-ignored-files "*.vcs")
+           ;; Source engine cruft
+           "*.vtf" "*.vvd" "*.vcd" "*.phy" "*.mdl" "*.dmx" "*.bsp" "*.vpk" "*.vtx"
+           "*.fbx" "*.vmt" "*.vmf" "*.dds" "*.smd" "*.nav" "*.vcs" "*.pcf" "*.dem"
+           "*.lmp"
+           "soundcache/*.manifest"
+           "reslists/*.txt"
+           "reslists_xbox/*.lst"
+           "*.xsiaddon"
 
-(add-to-list 'grep-find-ignored-files "*.cache")
-(add-to-list 'grep-find-ignored-files "*.svn-base")
-(add-to-list 'grep-find-ignored-files "*.sdf") ; Visual studio database thing
+           ;; Misc
+           "*.ma" "*.mll" ; Maya
+           "*.cache"
+           "*.svn-base"
+           "*.sdf" ; Visual studio database thing
+           "*.al" ; Perl cruft
+           "*.ppm"
+           "*.vcproj" "*.vcxproj"
 
-;; PS3 compiled file... thing
-(add-to-list 'grep-find-ignored-files "*.prx")
-(add-to-list 'grep-find-ignored-files "*.sprx")
+           ;; PS3 compiled file... thing
+           "*.prx" "*.sprx"
 
-(add-to-list 'grep-find-ignored-files "*.raw")
-(add-to-list 'grep-find-ignored-files "*.ani")
-(add-to-list 'grep-find-ignored-files "*.bik")
-(add-to-list 'grep-find-ignored-files "*.dat")
-(add-to-list 'grep-find-ignored-files "*.ttf")
-(add-to-list 'grep-find-ignored-files "*.pdf")
+           ;; Misc Media
+           "*.raw" "*.ani" "*.bik" "*.dat" "*.ttf" "*.pdf" "*.max"
 
-(add-to-list 'grep-find-ignored-files "*.tga")
-(add-to-list 'grep-find-ignored-files "*.jpg")
-(add-to-list 'grep-find-ignored-files "*.jpeg")
-(add-to-list 'grep-find-ignored-files "*.png")
-(add-to-list 'grep-find-ignored-files "*.bmp")
-(add-to-list 'grep-find-ignored-files "*.psd")
-(add-to-list 'grep-find-ignored-files "*.cbr")
-(add-to-list 'grep-find-ignored-files "*.icns")
-(add-to-list 'grep-find-ignored-files "*.ico")
+           ;; Images
+           "*.tga" "*.jpg" "*.jpeg" "*.png" "*.bmp" "*.psd" "*.cbr" "*.icns" "*.ico" "*.gif"
 
-(add-to-list 'grep-find-ignored-files "*.wav")
-(add-to-list 'grep-find-ignored-files "*.ogg")
-(add-to-list 'grep-find-ignored-files "*.mp3")
+           ;; Sound
+           "*.wav" "*.ogg" "*.mp3"
 
-(add-to-list 'grep-find-ignored-files "*.h264")
-(add-to-list 'grep-find-ignored-files "*.mkv")
-(add-to-list 'grep-find-ignored-files "*.avi")
-(add-to-list 'grep-find-ignored-files "*.mp4")
-(add-to-list 'grep-find-ignored-files "*.mov")
+           ;; Video
+           "*.h264" "*.mkv" "*.avi" "*.mp4" "*.mov" "*.webm"
 
-; Oneoffs
-(add-to-list 'grep-find-ignored-files "ip-country-region-city-latitude-longitude-isp.csv")
-(add-to-list 'grep-find-ignored-files "engine_symbols.txt")
-(add-to-list 'grep-find-ignored-files "dedicated_symbols.txt")
+           ;; Oneoffs
+           "ip-country-region-city-latitude-longitude-isp.csv"
+           "engine_symbols.txt"
+           "dedicated_symbols.txt"
+           "staging_latest_good.txt")))
+(remove-duplicates grep-find-ignored-files :test 'string=)
+
+;; Use ncdu to look at not-ignored files in a directory in this list:
+;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
 
 ;;
 ;; Helm AG
