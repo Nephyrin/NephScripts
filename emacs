@@ -1170,6 +1170,25 @@ Goes backward if ARG is negative; error if CHAR not found."
 (global-set-key (kbd "M-B") 'backward-jump-to-char)
 (global-set-key (kbd "M-G") 'goto-line)
 
+(defun touch-current-file ()
+     "updates mtime on the file for the current buffer"
+     (interactive)
+     (if (buffer-file-name)
+         (progn
+           (shell-command (concat "touch " (shell-quote-argument (buffer-file-name))))
+           (clear-visited-file-modtime)
+           (message (concat "Ran touch on " (buffer-file-name))))
+       (message "No filename for current file")))
+
+(global-set-key (kbd "C-z T") 'touch-current-file)
+
+(defun neph-ia-server ()
+  "Prompt for a server name, set server-name to that, start the server"
+  (interactive)
+    (setq server-name (read-string "(Re)start server with name: "))
+    (server-start)
+    (message (concat "Server started as '" server-name "'")))
+
 ;;
 ;; Line-highlight
 
