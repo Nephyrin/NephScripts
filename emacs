@@ -76,7 +76,7 @@
 (when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
 
 (setq split-width-threshold 170)
-(setq split-height-threshold 50)
+(setq split-height-threshold 60)
 
 (require 'speedbar)
 (speedbar-change-initial-expansion-list "buffers")
