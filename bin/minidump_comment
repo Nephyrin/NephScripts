@@ -31,4 +31,4 @@ done
 
 [[ -n $comment_size && -n comment_offset ]] || die "Failed to find comment information in minidump"
 
-cmd dd if="$file" bs=1 skip=$(( $comment_offset )) count=$(( $comment_size - 1 ))
+cmd dd 2>/dev/null if="$file" bs=1 skip=$(( $comment_offset )) count=$(( $comment_size - 1 ))
