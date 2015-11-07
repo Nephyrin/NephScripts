@@ -16,6 +16,6 @@ estat Compiling ECB
 ( cmd cd ecb && cmd make )
 
 estat Compiling remaining modules in directory
-cmd emacs --batch --eval "(byte-recompile-directory \"$PWD\" 0)"
+cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"
 
 estat Done
