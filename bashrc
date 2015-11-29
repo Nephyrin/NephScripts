@@ -194,6 +194,10 @@ lxx() { ls++ --potsf -tr "$@"; }
 
 agc() { ag --cpp "$@"; }
 
+# Like cd, but do a { readlink -f } and cd to the ultimate target
+# With no argument, defaults to $PWD (unlike cd) to simply canonicalize current dir
+recd() { cd "$(readlink -f "${*-$(pwd)}")"; }
+
 #
 # Misc utility functions
 #
