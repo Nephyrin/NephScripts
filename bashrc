@@ -98,7 +98,6 @@ if [[ $- == *i* ]] ; then
     # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
     shopt -s checkwinsize
     shopt -s histappend
-    [ -z "$PROMPT_COMMAND" ] || PROMPT_COMMAND="$PROMPT_COMMAND; "
 
     # Set colorful PS1 only on colorful terminals.
     # dircolors --print-database uses its own built-in database
@@ -254,10 +253,10 @@ _reprompt
 # The prompt command could be just a big eval statement and avoid needing this,
 # but we bake in things like NEPH_PROMPTNOTE and hostname that either don't
 # change or can call _reprompt_command when they do
-BASE_PROMPT_COMMAND="history -a"
+HISTORY_PROMPT_COMMAND="${HISTORY_PROMPT_COMMAND:=history -a}"
 
 _reprompt_command() {
-  PROMPT_COMMAND="$BASE_PROMPT_COMMAND"
+  PROMPT_COMMAND="$HISTORY_PROMPT_COMMAND"
 
   # Window title
   if [ -z "$TMUX" ]; then # tmux.conf handles this
@@ -269,12 +268,13 @@ _reprompt_command() {
       NEPH_TERM_TITLE='${HOSTNAME%%.*}: '"$NEPH_TERM_TITLE"
     fi
 
+    [[ -z $PROMPT_COMMAND ]] || PROMPT_COMMAND="$PROMPT_COMMAND;"
     case ${TERM} in
       xterm*|rxvt*|aterm|kterm|gnome*|interix)
-        PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e]0;'"$NEPH_TERM_TITLE"'\007"'
+        PROMPT_COMMAND="$PROMPT_COMMAND"'echo -ne "\e]0;'"$NEPH_TERM_TITLE"'\007"'
         ;;
       screen*)
-        PROMPT_COMMAND="$PROMPT_COMMAND;"'echo -ne "\e_'"$NEPH_TERM_TITLE"'\e\\"'
+        PROMPT_COMMAND="$PROMPT_COMMAND"'echo -ne "\e_'"$NEPH_TERM_TITLE"'\e\\"'
         ;;
     esac
   fi
@@ -293,6 +293,18 @@ promptnote() {
   fi
   _reprompt
   _reprompt_command
+}
+
+# Stop writing history for this session
+nohist()
+{
+  HISTORY_PROMPT_COMMAND=":"
+  unset HISTFILE
+  _reprompt_command
+
+  local note="$NEPH_PROMPTNOTE"
+  [[ -z $note ]] || note="$note, "
+  promptnote "${note}no history"
 }
 
 # Records the current git tip in variable
