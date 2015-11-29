@@ -198,6 +198,8 @@ agc() { ag --cpp "$@"; }
 # With no argument, defaults to $PWD (unlike cd) to simply canonicalize current dir
 recd() { cd "$(readlink -f "${*-$(pwd)}")"; }
 
+alias qvnc='vncviewer -QualityLevel 9 -NoJPEG -CompressLevel 6'
+
 #
 # Misc utility functions
 #
