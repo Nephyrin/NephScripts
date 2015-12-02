@@ -842,20 +842,29 @@
 ;; Neph mode. Aka enable defaults in programming modes
 ;;
 
-(defun neph-space-cfg ()
-  ;;(fci-mode t)
+(defun neph-base-cfg ()
   (linum-mode t)
+  (smart-tabs-mode nil)
   (setq c-basic-offset 2)
   (setq c-default-style "linux")
   (setq sh-basic-offset 2)
   (setq sh-indentation 2)
+  (setq indent-tabs-mode nil)
+  (setq tab-width 2)
+  (setq js-indent-level 2)
   (git-gutter-mode t)
   (rainbow-mode t)
   (setq fill-column 80)
   (rainbow-delimiters-mode t)
-  (run-with-idle-timer 1 nil (lambda ()
+  ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
+  (run-with-idle-timer 0.5 nil (lambda ()
                                (color-identifiers-mode t)
                                (fic-mode t))))
+
+;; Currently just the base config
+(defun neph-space-cfg ()
+  (interactive)
+  (neph-base-cfg))
 
 (defadvice align-regexp (around align-regexp-with-spaces activate)
   (let ((indent-tabs-mode nil))
@@ -868,22 +877,16 @@
 ;; Tabs, 4 wide with 4 indent to match e.g. default VS style. Smart-tabs.
 (defun neph-tab-cfg ()
   (interactive)
-  (linum-mode t)
+  (neph-base-cfg)
   (smart-tabs-mode t)
-  (setq c-default-style "linux")
   (setq indent-tabs-mode 'tabs)
   (setq c-basic-offset 4)
   (setq sh-basic-offset 4)
   (setq sh-indentation 4)
   (setq tab-width 4)
   (setq js-indent-level 4)
-  (git-gutter-mode t)
-  (rainbow-mode t)
-  (setq fill-column 120)
-  (rainbow-delimiters-mode t)
-  (run-with-idle-timer 1 nil (lambda ()
-                               (color-identifiers-mode t)
-                               (fic-mode t))))
+  (setq fill-column 120))
+
 (add-hook 'sh-mode-hook 'neph-space-cfg)
 
 (add-hook 'js-mode-hook (lambda ()
