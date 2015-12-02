@@ -1102,6 +1102,29 @@
   (indent-according-to-mode))
 (global-set-key [(control shift down)] 'move-line-down)
 
+(defun move-region (start end n)
+  "Move the current region up or down by N lines."
+  (interactive "r\np")
+  (let ((line-text (delete-and-extract-region start end)))
+    (forward-line n)
+    (let ((start (point)))
+      (insert line-text)
+      (setq deactivate-mark nil)
+      (set-mark start))))
+
+(defun move-region-up (start end n)
+  "Move the current line up by N lines."
+  (interactive "r\np")
+  (move-region start end (if (null n) -1 (- n))))
+
+(defun move-region-down (start end n)
+  "Move the current line down by N lines."
+  (interactive "r\np")
+  (move-region start end (if (null n) 1 n)))
+
+(global-set-key (kbd "M-P") 'move-region-up)
+(global-set-key (kbd "M-N") 'move-region-down)
+
 (defun open-next-line (arg)
   "Move to the next line and then opens a line.
     See also `newline-and-indent'."
@@ -1206,6 +1229,21 @@ Goes backward if ARG is negative; error if CHAR not found."
 (global-set-key (kbd "M-F") 'jump-to-char)
 (global-set-key (kbd "M-B") 'backward-jump-to-char)
 (global-set-key (kbd "M-G") 'goto-line)
+
+(defun vsplit-last-buffer ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(defun hsplit-last-buffer ()
+  (interactive)
+  (split-window-horizontally)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
+(global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
 
 (defun touch-current-file ()
      "updates mtime on the file for the current buffer"
