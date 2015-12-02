@@ -732,13 +732,16 @@
                       "env XDG_CURRENT_DESKTOP=gnome p4vc -c johns "
                       (shell-quote-argument command)
                       " "
-                      (shell-quote-argument (buffer-file-name))
-                      )))
-            (shell-command cmd))
+                      (shell-quote-argument (buffer-file-name)))))
+            ;; This is the way the help actually suggests you prevent it from opening this buffer.
+            (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+                                              display-buffer-alist)))
+              (async-shell-command cmd)))
         (message "!! p4vc not installed/available"))
     (message "!! This buffer has no file name")))
 
 (global-set-key (kbd "C-z P t") (lambda () (interactive) (neph-p4vc "tlv")))
+(global-set-key (kbd "C-z P c") (lambda () (interactive) (neph-p4vc "revgraph")))
 
 ;;
 ;; Ediff
