@@ -380,6 +380,7 @@
   (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
   (global-set-key (kbd "C-z M-r") 'rtags-reparse-file)
   (global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
+  (global-set-key (kbd "C-z C-<") 'rtags-references-tree)
   (global-set-key (kbd "C-z C->") 'rtags-find-virtuals-at-point)
   (global-set-key (kbd "C-z .") 'rtags-find-symbol)
   (global-set-key (kbd "C-z ,") 'rtags-find-references)
