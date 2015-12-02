@@ -214,11 +214,13 @@
 (require 'helm-config)
 (require 'helm-files)
 
+(helm-mode 1)
 (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 (global-set-key (kbd "C-z b") 'helm-mini)
 (global-set-key (kbd "C-z C-o") 'helm-occur)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
 (define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
 
