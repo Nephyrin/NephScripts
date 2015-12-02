@@ -147,6 +147,25 @@
 
 (load-file "~/.emacs.d/htmlize.el")
 
+;; Hacky thing to htmlize a region and send it straight to browser
+(defun neph-html-region ()
+  (interactive)
+  (let* ((regionp (region-active-p))
+         (beg (and regionp (region-beginning)))
+         (end (and regionp (region-end)))
+         (buf (current-buffer)))
+    (with-temp-buffer
+      (switch-to-buffer (current-buffer) nil t)
+      (rename-buffer "*My Temp Buffer*" t)
+      (insert-buffer-substring buf beg end)
+      (with-current-buffer (htmlize-buffer)
+        (write-file "~/.emacs.d/htmlize-temp.htm")
+        (kill-buffer)))
+    ;; This is the way the help actually suggests you prevent it from opening this buffer.
+    (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+                                      display-buffer-alist)))
+      (async-shell-command "xdg-open ~/.emacs.d/htmlize-temp.htm"))))
+
 ;;
 ;; Multi-term
 ;;
