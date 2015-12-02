@@ -290,8 +290,10 @@
 
 (add-to-list 'load-path "~/.emacs.d/helm-ag")
 (require 'helm-ag)
-;; M-g in find files, projectile keys also use this below
+
 (define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
+
+;; Most keybinds in projectile below
 
 ;;
 ;; Swiper
@@ -805,6 +807,13 @@
 (global-set-key (kbd "C-z p") 'helm-projectile-switch-project)
 (global-set-key (kbd "C-z C-p") 'helm-projectile)
 
+(define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
+                                                        (interactive)
+                                                        (with-helm-alive-p
+                                                          ;; For some reason we need to have a lambda swallow the options string or helm-ag breaks
+                                                          (helm-exit-and-execute-action (lambda (&optional options)
+                                                                                          (interactive)
+                                                                                          (helm-projectile-ag))))))
 ;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
 ;; (setq projectile-switch-project-action 'projectile-find-file)
 
