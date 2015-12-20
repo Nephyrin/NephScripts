@@ -16,6 +16,14 @@ usage() {
   out "  -v / --verbose             Show steps"
   out "  -i / --ignore-case         Pass --ignore-case to pgrep"
   out "  -P / --pgrep-args          Pass additional arguments to pgrep"
+  out ""
+  out "pf combines pgrep and ps to allow you to search for running processes while"
+  out "better controlling their display."
+  out ""
+  out "Examples:"
+  out "  pf -i xorg"
+  out "  pf -i xorg f"
+  out "  pf -i xorg -- -o comm="
   [[ -n $1 ]] || exit 0
   exit 1
 }
