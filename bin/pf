@@ -13,14 +13,26 @@ usage() {
   fi
   out "Usage: pf [options] <pattern> [[--] [ps arguments]]"
   out "  -h / --help                Show this usage message"
+  out "  -v / --verbose             Show steps"
+  out "  -i / --ignore-case         Pass --ignore-case to pgrep"
+  out "  -P / --pgrep-args          Pass additional arguments to pgrep"
   [[ -n $1 ]] || exit 0
   exit 1
 }
 
 # Parse args
-parse_args pf h help "$@" || usage 1
+parse_args pf hviP: help,verbose,ignore-case,pgrep-args: "$@" || usage 1
 
 eval args=("$(get_args)")
+
+ignore_case="$(get_merged_option i ignore-case)"
+pgrep_args=($(get_merged_option P pgrep-args))
+verbose="$(get_merged_option v verbose)"
+
+# Swallow cmd() if not verbose
+[[ -n $verbose ]] || cmd() { "$@"; }
+
+[[ -z $ignore_case ]] || pgrep_args=(-i "${pgrep_args[@]}")
 
 # Help
 [[ -z $(get_merged_option h help) ]] || usage
@@ -31,7 +43,10 @@ pattern="${args[0]}"
 
 psargs=("${args[@]:1}")
 
-pids=($(pgrep "$pattern"))
+output="$(cmd pgrep "${pgrep_args[@]}" "$pattern")"
+# Account for --pgrep-args="-l". Don't spawn egrep while pgrep is running or
+# it'll find the egrep pid depending on the pattern.
+pids=($(echo "$output" | cmd egrep -o '^[0-9]+'))
 
 [[ ${#pids[@]} -ne 0 ]] || exit 1
 
