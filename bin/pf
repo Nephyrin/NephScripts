@@ -21,8 +21,8 @@ usage() {
   out "better controlling their display."
   out ""
   out "Examples:"
-  out "  pf -i xorg"
-  out "  pf -i xorg f"
+  out "  pf Xorg"
+  out "  pf Xorg f"
   out "  pf -i xorg -- -o cmd="
   [[ -n $1 ]] || exit 0
   exit 1
