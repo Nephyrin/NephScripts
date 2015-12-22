@@ -134,8 +134,8 @@ if [[ $- == *i* ]] ; then
           fi
         fi
 
-        alias ls='ls --color=auto'
-        alias grep='grep --colour=auto'
+        ls() { ( unset ls && ls --color=auto "$@" ) }
+        grep() { ( unset grep && grep --colour=auto "$@" ) }
     else
         if [[ ${EUID} == 0 ]] ; then
             # show root@ when we don't have colors
@@ -162,10 +162,10 @@ fi
 pn() { promptnote "$@"; }
 
 if ( ! which pidof && which pgrep ) &>/dev/null; then
-  alias pidof='pgrep -x'
+  pidof() { cmd pgrep -x "$@"; }
 fi
 
-alias please='eval sudo "$(fc -nl -1)"'
+please() { cmd eval sudo "$(fc -nl -1)"; }
 
 hgreset() {
   [[ $# -eq 0 ]] || err "Unexpected arguments: $*"
@@ -197,7 +197,7 @@ agc() { ag --cpp "$@"; }
 # With no argument, defaults to $PWD (unlike cd) to simply canonicalize current dir
 recd() { cd "$(readlink -f "${*-$(pwd)}")"; }
 
-alias qvnc='vncviewer -QualityLevel 9 -NoJPEG -CompressLevel 6'
+qvnc() { cmd vncviewer -QualityLevel 9 -NoJPEG -CompressLevel 6 "$@"; }
 
 #
 # Misc utility functions
