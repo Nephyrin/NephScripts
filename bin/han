@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+. ~/bin/lib/util.sh
+
+cleanup() { [[ -z $tmp ]] || rm -f "$tmp"; }
+trap cleanup EXIT
+
+tmp="$(mktemp --tmpdir han_XXXX.htm)"
+
+cmd man -Thtml "$@" 2>/dev/null > "$tmp"
+cmd xdg-open "$tmp"
+
+# xdg-open seems to do the right thing and wait for the browser... or maybe it's
+# just slow? A more-proper script would spin up a small python http that dies
+# after the first request.
+( ( sleep 5 && rm -f "$tmp" ) & )
+# If that worked don't trigger exit clenaup
+trap - EXIT
