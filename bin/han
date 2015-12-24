@@ -46,7 +46,8 @@ EOF
 # Eat stderr because it spews a bunch of troff HTML debugging output for some
 # reason, but display it if it actually fails.
 showcmd man -Thtml "$@"
-if ! man -Thtml "$@" 2> "$errtmp" >> "$tmp"; then
+if ! man -Thtml "$@" 2> "$errtmp" | \
+     sed -r 's/color="#[0-9A-F]+"//g' >> "$tmp"; then
   die "$(cat "$errtmp")"
 fi
 cmd xdg-open "$tmp"
