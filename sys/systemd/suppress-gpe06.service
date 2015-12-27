@@ -1,0 +1,8 @@
+[Unit]
+Description=Disables GPE 06. On 2015 Macbook 15 inch, this interrupt fires continuously due to some driver not doing the right thing.
+
+[Service]
+ExecStart=/usr/bin/bash -c 'echo "disable" > /sys/firmware/acpi/interrupts/gpe06'
+
+[Install]
+WantedBy=multi-user.target
