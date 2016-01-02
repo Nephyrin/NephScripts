@@ -844,7 +844,7 @@
 
 (defun neph-base-cfg ()
   (linum-mode t)
-  (smart-tabs-mode nil)
+  (smart-tabs-mode 0)
   (setq c-basic-offset 2)
   (setq c-default-style "linux")
   (setq sh-basic-offset 2)
