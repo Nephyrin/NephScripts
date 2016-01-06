@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+scriptdir="$(dirname "$(readlink -f "$0")")"
+source "$scriptdir"/lib/util.sh
+
+lat="$1"
+long="$2"
+
+[[ $# -eq 2 ]] || die "Usage: firstLight <lat> <long>"
+
+cd "$scriptdir"
+node -e "console.log(require('./suncalc.git/suncalc.js').getTimes(new Date(), $lat, $long).dawn.toLocaleTimeString())" || die Failed to invoke node/suncalc

@@ -133,3 +133,6 @@
 [submodule "emacs.d/helm-ag"]
 	path = emacs.d/helm-ag
 	url = https://github.com/syohex/emacs-helm-ag
+[submodule "bin/suncalc.git"]
+	path = bin/suncalc.git
+	url = https://github.com/mourner/suncalc
