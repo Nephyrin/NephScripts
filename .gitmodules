@@ -136,3 +136,6 @@
 [submodule "bin/suncalc.git"]
 	path = bin/suncalc.git
 	url = https://github.com/mourner/suncalc
+[submodule "emacs.d/helm-projectile"]
+	path = emacs.d/helm-projectile
+	url = https://github.com/bbatsov/helm-projectile
