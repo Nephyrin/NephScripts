@@ -285,6 +285,8 @@
 (require 'helm-ag)
 
 (define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
+(add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
+(add-to-list 'helm-sources-using-default-as-input helm-ag-source)
 
 ;; Most keybinds in projectile below
 
