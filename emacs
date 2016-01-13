@@ -1509,3 +1509,4 @@ Goes backward if ARG is negative; error if CHAR not found."
 ; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
 (set-face-attribute 'default nil :height 96)
+(put 'downcase-region 'disabled nil)
