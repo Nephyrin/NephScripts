@@ -14,14 +14,6 @@
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
 
-;; Copy file name to kill ring
-(defun neph-buffer-name-to-kill-ring ()
-  (interactive)
-  (kill-new (buffer-file-name))
-  (message "Copied buffer name to kill ring"))
-
-(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
-
 (put 'upcase-region 'disabled nil)
 
 ; Fix x clipboard
@@ -1284,6 +1276,14 @@ Goes backward if ARG is negative; error if CHAR not found."
     (setq server-name (read-string "(Re)start server with name: "))
     (server-start)
     (message (concat "Server started as '" server-name "'")))
+
+;; Copy file name to kill ring
+(defun neph-buffer-name-to-kill-ring ()
+  (interactive)
+  (kill-new (buffer-file-name))
+  (message "Copied buffer name to kill ring"))
+
+(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
 
 ;;
 ;; Line-highlight
