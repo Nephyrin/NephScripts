@@ -1423,8 +1423,8 @@ Goes backward if ARG is negative; error if CHAR not found."
                     :foreground "#999"
                     :box '(:line-width 1 :color "#333" :style nil))
 (set-face-attribute 'hl-line nil
-                    :background "#262222"
-                    :box '(:line-width -1 :color "#555" :style nil))
+                    :background "#302020"
+                    :box '(:line-width -1 :color "#777" :style nil))
 (set-face-attribute 'linum nil
                     :foreground "#555"
                     :background "#222"
