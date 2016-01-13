@@ -1288,6 +1288,16 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
 
+(defun jump-to-container ()
+  (interactive)
+  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
+         (overlay (and tag (last (semantic-current-tag))))
+         (char (and overlay (overlay-start (car overlay)))))
+    (when char
+      (goto-char char))))
+
+(global-set-key (kbd "C-z C") 'jump-to-container)
+
 ;;
 ;; Line-highlight
 
