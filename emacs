@@ -76,7 +76,7 @@
 (when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
 
 (setq split-width-threshold 170)
-(setq split-height-threshold 60)
+(setq split-height-threshold 1000)
 
 (require 'speedbar)
 (speedbar-change-initial-expansion-list "buffers")
@@ -338,7 +338,7 @@
   (setq rtags-find-file-case-insensitive t)
   (setq rtags-show-containing-function nil)
 
-  (setq rtags-enable-unsaved-reparsing t)
+  (setq rtags-enable-unsaved-reparsing nil)
   (setq rtags-completions-timer-interval 0.5)
 
   (setq rtags-tooltips-enabled t)
@@ -377,6 +377,27 @@
 (global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
 
 (when (featurep 'rtags)
+  ;; FIXME need to also wrap rtags-references-tree, then rtags-goto-location needs to deactivate it so single-item matches don't asplode.
+  (defadvice rtags-references-tree (around neph-rtags-references-tree activate)
+    (let* ((neph-in-references-tree t)
+           (neph-original-split-height-threshold split-height-threshold)
+           (split-height-threshold 70))
+      ;;(message (concat "rtags-references-tree with height " (number-to-string split-height-threshold)))
+      ad-do-it))
+  (defadvice rtags-handle-results-buffer (around neph-rtags-handle-results-buffer activate)
+    (let* ((neph-original-split-height-threshold split-height-threshold)
+           (split-height-threshold 70))
+      ;;(message (concat "rtags-handle-results-buffer with height " (number-to-string split-height-threshold)))
+      ad-do-it))
+  (defadvice rtags-goto-location (around neph-rtags-goto-location activate)
+    (let ((split-height-threshold (if (boundp 'neph-original-split-height-threshold)
+                                      neph-original-split-height-threshold
+                                    split-height-threshold)))
+      ;;(message (concat "rtags-goto-location with height " (number-to-string split-height-threshold)))
+      (if (boundp 'neph-in-references-tree)
+          (rtags-select-and-remove-rtags-buffer))
+      ad-do-it))
+
   (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
   (global-set-key (kbd "C-z M-r") 'rtags-reparse-file)
   (global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
