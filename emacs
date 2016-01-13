@@ -825,7 +825,7 @@
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
 (global-set-key (kbd "C-z B") 'helm-projectile-switch-to-buffer-other-window)
 (global-set-key (kbd "C-z p") 'helm-projectile-switch-project)
-(global-set-key (kbd "C-z C-p") 'helm-projectile)
+;(global-set-key (kbd "C-z C-p") 'helm-projectile)
 
 (define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
                                                         (interactive)
