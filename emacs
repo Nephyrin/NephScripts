@@ -211,6 +211,7 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 (global-set-key (kbd "C-z b") 'helm-mini)
+(global-set-key (kbd "C-z C-b") 'helm-bookmarks)
 (global-set-key (kbd "C-z C-o") 'helm-occur)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
