@@ -69,15 +69,30 @@ sh_c()
   echo -n -e "\e[$b${c}m"
 }
 
-estat() { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
-ewarn() { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
-eerr() { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
+estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
+estat2()  { echo >&2 "  $(sh_c 34 1)->$(sh_c) $*"; }
+emsg()    { echo >&2 "$(sh_c 34 1)::$(sh_c) $*"; }
+emsg2()   { echo >&2 "  $(sh_c 34 1)->$(sh_c) $*"; }
+ewarn()   { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
+ewarn2()  { echo >&2 "  $(sh_c 33 1)=>$(sh_c) $*"; }
+einfo()   { echo >&2 "$(sh_c 30 1)::$(sh_c) $*"; }
+einfo2()  { echo >&2 "  $(sh_c 30 1)->$(sh_c) $*"; }
+eerr()    { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
+eerr2()   { echo >&2 "  $(sh_c 31 1)~>$(sh_c) $*"; }
 eerrint() { eerr "$@"; return 1; }
-einfo() { echo >&2 "$(sh_c 30 1)::$(sh_c) $*"; }
 
+# Shows "+ command" as stderr, info style
 showcmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(sh_quote "$@")"; }
+# Shows "`#` command" as stdout, copy-pasteable by user (`#` is a bash no-op)
+offercmd() { echo "$(sh_c 30 1)\`#\`$(sh_c) $(sh_quote "$@")"; }
+# showcmd and also actually run it
 cmd() { showcmd "$@"; "$@"; }
+# showcmd and actually run it, with stderr to /dev/null. This is helpful since
+#   showcmd echos to stderr, so $(cmd 2>/dev/null ...) is self-defeating
+scmd() { showcmd "$@"; "$@" 2>/dev/null; }
+# showcmd and actually run it, with stdout to /dev/null
 qcmd() { showcmd "$@"; "$@" >/dev/null; }
+# showcmd and actually run it, with all output to /dev/null
 xcmd() { showcmd "$@"; "$@" &>/dev/null; }
 
 die() { eerr "$*"; exit 1; }
