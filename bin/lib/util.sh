@@ -168,10 +168,10 @@ sh_quote()
 
 # Prints eval-able expression to set given variable, e.g.:
 # sh_var DISPLAY -> "DISPLAY=':0'"
+# FIXME Behavior is undefined for invalid variable name input
 sh_var()
 {
-  eval local ret="\$$1"
-  echo $1=\'${ret//\'/\'\\\'\'}\';
+  echo "$(sh_quote "$1")"="$(sh_quote "${!1}")"
 }
 
 parse_args()
