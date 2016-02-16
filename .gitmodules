@@ -142,3 +142,9 @@
 [submodule "bin/diff-so-fancy.git"]
 	path = bin/diff-so-fancy.git
 	url = https://github.com/stevemao/diff-so-fancy
+[submodule "emacs.d/phi-search"]
+	path = emacs.d/phi-search
+	url = https://github.com/zk-phi/phi-search
+[submodule "emacs.d/multiple-cursors"]
+	path = emacs.d/multiple-cursors
+	url = https://github.com/magnars/multiple-cursors.el

@@ -291,6 +291,20 @@
 ;; Most keybinds in projectile below
 
 ;;
+;; multiple-cursors
+;;
+
+(add-to-list 'load-path "~/.emacs.d/multiple-cursors")
+(require 'multiple-cursors)
+
+;;
+;; phi-search
+;;
+
+(add-to-list 'load-path "~/.emacs.d/phi-search")
+(require 'phi-search)
+
+;;
 ;; Swiper
 ;;
 
