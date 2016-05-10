@@ -1,5 +1,5 @@
 #!/bin/bash
 
 set -e
-# Convenient pipe for chaining the diff-so-fancy tools to less
-diff-highlight | diff-so-fancy | less --tabs=1,5 -R
+# Git's nicer diff can be used with --no-index to diff random things, combine with diff-so-fancy for nice diffs
+git diff --no-index --color=auto "$@" | diff-so-fancy | less --tabs=1,5 -R

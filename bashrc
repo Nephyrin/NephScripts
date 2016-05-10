@@ -175,11 +175,6 @@ rv() { rsync -avy --partial --progress "$@"; }
 
 iswine() { for x in wine exe; do pf "$x"; done; }
 
-# Git's nicer diff can be used with --no-index to diff random things, combine with pdiff for nice diffs
-giff() {
-  git diff --no-index --color=auto "$@" | pdiff;
-}
-
 xg() { x gedit "$@"; }
 xk() { x kate "$@"; }
 y() { yaourt "$@"; }
