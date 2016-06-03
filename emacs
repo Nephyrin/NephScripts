@@ -365,11 +365,15 @@
   (setq rtags-completions-enabled t) ; Needed?
   (setq company-rtags-use-async nil)
 
+  (setq rtags-use-helm t)
+  (setq rtags-max-bookmark-count 10)
+
   (setq rtags-autostart-diagnostics t)
   (setq rtags-find-file-case-insensitive t)
   (setq rtags-show-containing-function nil)
 
-  (setq rtags-enable-unsaved-reparsing nil)
+  (setq rtags-enable-unsaved-reparsing t)
+  (setq rtags-periodic-reparse-timeout 0.5)
   (setq rtags-completions-timer-interval 0.5)
 
   (setq rtags-tooltips-enabled t)
