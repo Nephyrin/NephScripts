@@ -148,3 +148,6 @@
 [submodule "emacs.d/multiple-cursors"]
 	path = emacs.d/multiple-cursors
 	url = https://github.com/magnars/multiple-cursors.el
+[submodule "emacs.d/highlight-symbol"]
+	path = emacs.d/highlight-symbol
+	url = https://github.com/nschum/highlight-symbol.el

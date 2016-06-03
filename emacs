@@ -125,6 +125,14 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;;
+;; Highlight Symbol
+;;
+(add-to-list 'load-path "~/.emacs.d/highlight-symbol")
+(require 'highlight-symbol)
+(global-set-key (kbd "C-z H") 'highlight-symbol)
+(global-set-key (kbd "C-z C-H") 'highlight-symbol-remove-all)
+
+;;
 ;; Lua mode
 ;;
 
@@ -885,6 +893,7 @@
   (setq js-indent-level 2)
   (git-gutter-mode t)
   (rainbow-mode t)
+  (highlight-symbol-mode t)
   (setq fill-column 80)
   (rainbow-delimiters-mode t)
   ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
