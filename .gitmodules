@@ -60,7 +60,7 @@
 	url = https://github.com/chrisdone/god-mode
 [submodule "powerline.git"]
 	path = powerline.git
-	url = https://github.com/Lokaltog/powerline
+	url = https://github.com/powerline/powerline
 [submodule "emacs.d/web-mode"]
 	path = emacs.d/web-mode
 	url = https://github.com/fxbois/web-mode
