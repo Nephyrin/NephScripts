@@ -1031,10 +1031,10 @@
   (setq js-indent-level 2)
   (git-gutter-mode t)
   (rainbow-mode t)
-  (highlight-symbol-mode t)
+  ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (rtags-enable-standard-keybindings)
   (setq fill-column 80)
-  (rainbow-delimiters-mode t)
+  ; (rainbow-delimiters-mode nil) ;; FIXME forces fontification
   ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
   (run-with-idle-timer 0.5 nil (lambda ()
                                (color-identifiers-mode t)
