@@ -777,6 +777,45 @@
                  (neph-modeline-hud 1.5 10)
                  )))
 
+(defcustom neph-sticky-header nil "Event-updated portion of the header line")
+(defcustom neph-sticky-header-valid-range nil "Range of characters for which the current sticky header is valid")
+(setq rtags-current-container-hook (lambda (containerName)
+                                     (let* ((container       (rtags-current-container))
+                                            (startLineCell   (when container (assoc 'startLine container)))
+                                            (endLineCell     (when container (assoc 'endLine container)))
+                                            (startColumnCell (when container (assoc 'startColumn container)))
+                                            (endColumnCell   (when container (assoc 'endColumn container)))
+                                            (needed          (and container startLineCell endLineCell
+                                                                  startColumnCell endColumnCell))
+                                            (startLine       (when needed (cdr startLineCell)))
+                                            (endLine         (when needed (cdr endLineCell)))
+                                            (startColumn     (when needed (cdr startColumnCell)))
+                                            (endColumn       (when needed (cdr endColumnCell)))
+                                            (curLine         (when needed (line-number-at-pos)))
+                                            (lineOffset      (when needed (- startLine curLine)))
+                                            (endLineOffset   (when needed (- endLine curLine)))
+                                            (charStart       (when needed (line-beginning-position (+ lineOffset 1))))
+                                            (charEnd         (when needed (line-end-position (+ lineOffset 1))))
+                                            (regionStart     (when needed (+ (line-beginning-position (+ lineOffset 1))
+                                                                             startColumn)))
+                                            (regionEnd       (when needed (+ (line-end-position (+ endLineOffset 1))
+                                                                             endColumn)))
+                                            (lineStr         (when (and needed charStart charEnd)
+                                                               (buffer-substring charStart charEnd))))
+                                       (setq neph-sticky-header
+                                             (list
+                                              (if lineStr lineStr (propertize "- unknown -" 'face 'neph-modeline-misc))))
+
+                                       (setq neph-sticky-header-valid-range
+                                             (if (and regionStart regionEnd)
+                                                 (cons regionStart regionEnd)
+                                               nil)))))
+
+(setq-default header-line-format
+              '(:eval (when (and neph-sticky-header-valid-range
+                                 (>= (point) (car neph-sticky-header-valid-range))
+                                 (<= (point) (cdr neph-sticky-header-valid-range)))
+                        neph-sticky-header)))
 ;;
 ;; God mode
 ;;
