@@ -5,4 +5,4 @@ set -e
 . "$(dirname "$0")"/lib/util.sh
 
 cmd ssh -f -o ControlPath=None -L5900:localhost:5900 "$1" "x11vnc -display :0 -localhost -timeout 10"
-cmd krdc vnc://:0
+cmd vncviewer :0
