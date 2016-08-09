@@ -393,13 +393,34 @@
   (require 'company)
   (require 'company-rtags)
 
+  (cl-defun popup-tip (string
+                       &key
+                       point
+                       (around t)
+                       width
+                       (height 15)
+                       min-height
+                       max-width
+                       truncate
+                       margin
+                       margin-left
+                       margin-right
+                       scroll-bar
+                       parent
+                       parent-offset
+                       nowait
+                       nostrip
+                       prompt
+                       &aux tip lines)
+    (tooltip-show string))
+
   (add-to-list 'company-backends 'company-rtags)
 
   (setq company-idle-delay nil)
 
   (setq company-rtags-max-wait 10000)
   (setq rtags-completions-enabled t) ; Needed?
-  (setq company-rtags-use-async nil)
+  (setq company-rtags-use-async t)
 
   (setq rtags-use-helm t)
   (setq rtags-max-bookmark-count 10)
@@ -409,12 +430,12 @@
   (setq rtags-show-containing-function nil)
 
   (setq rtags-enable-unsaved-reparsing t)
-  (setq rtags-periodic-reparse-timeout 0.5)
-  (setq rtags-completions-timer-interval 0.5)
+  (rtags-set-periodic-reparse-timeout nil)
+  (setq rtags-completions-timer-interval nil) ; This seems to cause stutter if reparsing is happening
 
-  (setq rtags-tooltips-enabled t)
-  (setq rtags-display-current-error-as-tooltip t)
-  (setq rtags-display-summary-as-tooltip t))
+  (setq rtags-tooltips-enabled nil)
+  (setq rtags-display-current-error-as-tooltip nil)
+  (setq rtags-display-summary-as-tooltip nil))
 
 ;; Semantic
 ; (require 'semantic)
@@ -970,6 +991,7 @@
   (git-gutter-mode t)
   (rainbow-mode t)
   (highlight-symbol-mode t)
+  (rtags-enable-standard-keybindings)
   (setq fill-column 80)
   (rainbow-delimiters-mode t)
   ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
