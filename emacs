@@ -1683,7 +1683,7 @@ beginning of it and the point to the end of it if so"
 (setq linum-format " %5d  ")
 (set-face-attribute 'whitespace-tab nil :background "#242424")
 
-(set-face-attribute 'region nil :background "#392121")
+(set-face-attribute 'region nil :background "#303030")
 
 ;; rtags
 (when (featurep 'rtags)
