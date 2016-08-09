@@ -188,6 +188,7 @@ rebash() { source ~/.bashrc "$@"; }
 lx()  { ls++ --potsf     "$@"; }
 lxx() { ls++ --potsf -tr "$@"; }
 
+ag() { $(which ag) --noaffinity "$@"; }
 agc() { ag --cpp "$@"; }
 
 # Like cd, but do a { readlink -f } and cd to the ultimate target
