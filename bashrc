@@ -198,6 +198,47 @@ recd() { cd "$(readlink -f "${*-$(pwd)}")"; }
 qvnc() { cmd vncviewer -QualityLevel 9 -NoJPEG -CompressLevel 6 "$@"; }
 
 #
+# fzf stuff
+#
+check_fzf()
+{
+  if ! type fzf &>/dev/null; then
+    eerr fzf not available
+    return 1
+  fi
+}
+
+fzcd() { _fzcd_int "-type d" "$@"; }
+fzfd() { _fzcd_int "" "$@"; }
+
+fzvd() {
+  if [[ -z $VALVE_ROOT ]]; then
+    err No \$VALVE_ROOT
+    return 1
+  fi
+  fzfd "$VALVE_ROOT"
+}
+
+_fzcd_int()
+{
+  if ! check_fzf; then return 1; fi
+
+  local type="$1"
+  local in=("${@:2}")
+  if [[ ${#in[@]} -eq 0 || -z ${in[*]} ]]; then
+    local dir="$(find . $type | sed -r 's/^.\/(.+)$/\1/;t;/^.$/ d' | fzf)"
+  else
+    local dir="$(find "${in[@]}" $type | fzf)"
+  fi
+  if [[ $? -ne 0 || -z $dir ]]; then
+    ewarn "No directory selected"
+    return 1
+  fi
+  [[ -d $dir || ! -d $(dirname "$dir") ]] || dir="$(dirname "$dir")"
+  cmd cd "$dir"
+}
+
+#
 # Misc utility functions
 #
 
