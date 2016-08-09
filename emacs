@@ -204,10 +204,10 @@
 ;; Multi-term
 ;;
 
-(load-file "~/.emacs.d/multi-term.el")
-(setq multi-term-program "/bin/bash")
-
-(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
+;(load-file "~/.emacs.d/multi-term.el")
+;(setq multi-term-program "/bin/bash")
+;
+;(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
 
 ; Paste not yank
 (add-hook 'term-mode-hook (lambda ()
