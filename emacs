@@ -329,9 +329,22 @@
 (add-to-list 'load-path "~/.emacs.d/helm-ag")
 (require 'helm-ag)
 
+(setq helm-ag-insert-at-point t)
+;; (setq helm-ag-always-set-extra-option t)
+
+(defun helm-ff-helm-do-ag ()
+  (interactive)
+  (with-helm-alive-p
+    (helm-exit-and-execute-action '(lambda (basedir)
+                                     (let ((parent (file-name-directory (directory-file-name basedir)))
+                                           (default-directory nil))
+                                       (helm-do-ag nil (list parent)))))))
+;; FIXME not needed?
+;; (put 'helm-ff-helm-do-ag 'helm-only nil)
+
 (define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
 (add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
-(add-to-list 'helm-sources-using-default-as-input helm-ag-source)
+(add-to-list 'helm-sources-using-default-as-input 'helm-ag-source)
 
 ;; Most keybinds in projectile below
 
@@ -884,9 +897,28 @@
 ;; Default
 ;; (setq projectile-indexing-method 'alien)
 
+;; helm prjoectile-ag with default args
+(defun helm-projectile-ag-cpp()
+  (interactive)
+  (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp")))
+    (helm-projectile-ag)))
+(defun helm-projectile-ag-cpp-this-word()
+  (interactive)
+  (save-excursion
+    (mark-current-word)
+    (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp")))
+      (helm-projectile-ag))))
+(defun helm-projectile-ag-this-word()
+  (interactive)
+  (save-excursion
+    (mark-current-word)
+    (helm-projectile-ag)))
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
-(global-set-key (kbd "C-z M-g") 'helm-projectile-ag)
+(global-set-key (kbd "C-z M-g") 'helm-projectile-ag-cpp)
+(global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
+(global-set-key (kbd "C-z g") 'helm-projectile-ag)
+(global-set-key (kbd "C-z G") 'helm-projectile-ag-this-word)
 ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
 (global-set-key (kbd "C-z M-G") 'projectile-grep)
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
@@ -1085,7 +1117,7 @@
 
 ; Quick eval-defun
 (global-set-key (kbd "C-z E") 'eval-defun)
-(global-set-key (kbd "C-z G") 'gdb)
+;(global-set-key (kbd "C-z G") 'gdb)
 (global-set-key (kbd "C-z M") 'gdb-many-windows)
 
 ; helm shortcuts
@@ -1461,7 +1493,7 @@ Goes backward if ARG is negative; error if CHAR not found."
 (require 'magit-blame)
 (add-hook 'magit-blame-file-on (lambda() (fci-mode -1)))
 (add-hook 'magit-blame-file-off (lambda() (fci-mode 1)))
-(global-set-key (kbd "C-z g") 'magit-status)
+;(global-set-key (kbd "C-z g") 'magit-status)
 (global-set-key (kbd "C-z L") 'magit-blame-mode)
 
 ;;
