@@ -892,6 +892,7 @@
             ;; This is the way the help actually suggests you prevent it from opening this buffer.
             (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
                                               display-buffer-alist)))
+              (message (concat "Running: " cmd))
               (async-shell-command cmd)))
         (message "!! p4vc not installed/available"))
     (message "!! This buffer has no file name")))
