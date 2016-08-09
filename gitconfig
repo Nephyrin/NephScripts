@@ -52,7 +52,6 @@
 [push]
   default = simple
 [alias]
-	thisbranch = "!foo=\"$(git rev-parse --symbolic-full-name HEAD)\"; bar=\"${foo#refs/heads/}\"; [ \"$foo\" = \"$bar\" ] || echo \"$bar\""
 	mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
 	ll = log --oneline --decorate
 	st = status --ignore-submodule=untracked
@@ -64,6 +63,9 @@
 	root = !pwd
 	fetch-current = "! upstream=\"$(git rev-parse --symbolic-full-name @{u})\"; remote=\"${upstream#refs/remotes/}\"; if [[ -n $remote && $remote != $upstream ]]; then echo \"+ git fetch ${remote%%/*}\" && git fetch \"${remote%%/*}\"; else echo >&2 \"Could not find upstream (@{u} is \\\"$upstream\\\")\"; fi;"
 	su = submodule update --init --recursive
+	emails = "!x() { local b=\"$1\"; [[ -n $b ]] || b=HEAD; git log --format=\"format:%ae\" \"$b\" | sort | uniq; }; x"
+	current-branch = "! x() { if [[ $# -ne 0 ]]; then echo >&2 \"!! current-branch takes no arguments\"; return 1; fi; local f=\"$(git rev-parse --symbolic-full-name HEAD)\" && local b=\"${f#refs/heads/}\" && if [[ $b = $f ]]; then return 1; else echo \"$b\"; fi; }; x"
+	dsf = "!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy  | less --tabs=4 -RFX; }; f"
 
 [column]
 	ui = auto
