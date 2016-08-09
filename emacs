@@ -5,7 +5,8 @@
 ;;
 
 ;; Load this before something tries to load built-in CEDET libraries
-(load-file "~/.emacs.d/cedet-git/cedet-devel-load.el")
+;; Removed CEDET is garbage jesus christ has anyone used this for non-toy development?
+; (load-file "~/.emacs.d/cedet-git/cedet-devel-load.el")
 
 ; This just makes things slower. Maybe useful on spinning disks?
 (setq cache-long-line-scans nil)
@@ -381,17 +382,20 @@
   (setq rtags-display-summary-as-tooltip t))
 
 ;; Semantic
-(require 'semantic)
-(require 'semantic/bovine/gcc)
-(global-semantic-decoration-mode t)
-(global-semantic-stickyfunc-mode t)
+; (require 'semantic)
+; (require 'semantic/bovine/gcc)
+; (global-semantic-decoration-mode t)
+; (global-semantic-stickyfunc-mode t)
+; (global-semantic-idle-scheduler-mode -1)
 
+;; EDE
+(global-ede-mode t)
 
-;; function-args modes
-(add-to-list 'load-path "~/.emacs.d/function-args")
-(require 'function-args)
-(fa-config-default)
-(setq moo-select-method 'helm)
+;; function-args modes (Disabled pending semantic)
+;;(add-to-list 'load-path "~/.emacs.d/function-args")
+;;(require 'function-args)
+;;(fa-config-default)
+;;(setq moo-select-method 'helm)
 
 (defun company-mode-moz ()
   (setq company-clang-arguments (split-string
@@ -403,13 +407,13 @@
 (defun company-mode-neph ()
   (interactive)
   (company-mode t)
-  (semantic-mode t)
+  ;;(semantic-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 (add-hook 'c-mode-common-hook 'company-mode-neph)
 
 ;; Keys for C++ completion and such
-(global-set-key (kbd "C-z SPC") 'helm-semantic)
-(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
+;;(global-set-key (kbd "C-z SPC") 'helm-semantic)
+;;(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
 
 (when (featurep 'rtags)
   ;; FIXME need to also wrap rtags-references-tree, then rtags-goto-location needs to deactivate it so single-item matches don't asplode.
@@ -1489,8 +1493,8 @@ Goes backward if ARG is negative; error if CHAR not found."
 (set-face-attribute 'ediff-fine-diff-A nil :background "#811411")
 (set-face-attribute 'ediff-fine-diff-B nil :background "#148111")
 
-;; Semantic
-(set-face-attribute 'semantic-tag-boundary-face nil :overline "#544")
+;; Semantic (disabled)
+; (set-face-attribute 'semantic-tag-boundary-face nil :overline "#544")
 
 ;; ECB
 (set-face-attribute 'ecb-default-highlight-face nil
