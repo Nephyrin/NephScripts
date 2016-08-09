@@ -626,7 +626,7 @@
 (add-to-list 'load-path "~/.emacs.d/minimap")
 (require 'minimap)
 
-(set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 20)
+(set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
 (setq minimap-window-location (quote right))
 (setq minimap-width-fraction 0.01)
 
