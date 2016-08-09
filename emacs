@@ -509,6 +509,7 @@
   (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
   (global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
   (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
+  (global-set-key (kbd "C-z C-S-R") 'rtags-rename-symbol)
 
 
   (defun rtags-global-imenu ()
