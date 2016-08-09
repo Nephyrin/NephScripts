@@ -1405,9 +1405,87 @@ Goes backward if ARG is negative; error if CHAR not found."
                      (read-char "Backward jump to char: " t)))
   (jump-to-char (* -1 arg) char))
 
-(global-set-key (kbd "M-F") 'jump-to-char)
-(global-set-key (kbd "M-B") 'backward-jump-to-char)
+;; Replaces backwards/forwards sexp.
+(global-set-key (kbd "C-M-f") 'jump-to-char)
+(global-set-key (kbd "C-M-b") 'backward-jump-to-char)
 (global-set-key (kbd "M-G") 'goto-line)
+
+(defun backward-to-word (&optional arg)
+  "Move backward until encountering the *end* of a word.
+With argument ARG, do this that many times.
+If ARG is omitted or nil, move point backward one word.
+
+This is roughly (backward-word arg) followed by (forward-ward 1),
+with a special case for when you are in a word"
+  (interactive "^p")
+  (forward-to-word (- (or arg 1))))
+
+(defun forward-to-word (&optional arg)
+    "Move backwards to the *beginning* of the next recognized
+word. This is a combination of (forward-word) (backward-word)
+with a special case for when you are within a word"
+  (interactive "^p")
+  (let ((original-point (point))
+        (n (or arg 1))
+        (inc (if (< (or arg 1) 0) -1 1)))
+    (forward-word inc)
+    (forward-word (- inc))
+    (if (or (and (> n 0) (<= (point) original-point))
+            (and (< n 0) (>= (point) original-point)))
+        (forward-word (* 2 inc))
+      (forward-word inc))
+    (if (or (> n 1) (< n -1))
+        (forward-word (* inc (- arg 1))))
+    (forward-word (- inc))))
+
+(defun forward-to-word (&optional arg)
+    "Move backwards to the *beginning* of the next recognized
+word. This is a combination of (forward-word) (backward-word)
+with a special case for when you are within a word"
+  (interactive "^p")
+  (let ((original-point (point))
+        (n (or arg 1))
+        (inc (if (< (or arg 1) 0) -1 1)))
+    (forward-word inc)
+    (forward-word (- inc))
+    (if (or (and (> n 0) (<= (point) original-point))
+            (and (< n 0) (>= (point) original-point)))
+        (forward-word (* 2 inc))
+      (forward-word inc))
+    (if (or (> n 1) (< n -1))
+        (forward-word (* inc (- arg 1))))
+    (forward-word (- inc))))
+
+(defun mark-current-word (&optional arg)
+    "Determines if you are over a word, and moves the mark to the
+beginning of it and the point to the end of it if so"
+  (interactive "^p")
+  (let ((original-point (point)))
+    (forward-word -1)
+    (let ((startword (point)))
+      (forward-word 1)
+      (if (> (point) original-point)
+          (set-mark startword)
+        (message "No word at point")
+        (goto-char original-point)))))
+
+(defun current-word-to-kill-ring (&optional arg)
+  "Puts the current word in the kill ring"
+  (interactive)
+  (kill-new (current-word)))
+
+(global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
+(global-set-key (kbd "M-@") 'mark-current-word)
+(global-set-key (kbd "M-B") 'backward-to-word)
+(global-set-key (kbd "M-F") 'forward-to-word)
+
+(defun mark-current-line (&optional arg)
+  "Mark the current line without moving the cursor"
+  (interactive)
+  (end-of-line)
+  (set-mark (line-beginning-position)))
+
+(global-set-key (kbd "C-M-S-A") 'mark-current-line)
 
 (defun vsplit-last-buffer ()
   (interactive)
@@ -1451,15 +1529,22 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
 
-(defun jump-to-container ()
+(defun neph-show-file-coding ()
   (interactive)
-  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
-         (overlay (and tag (last (semantic-current-tag))))
-         (char (and overlay (overlay-start (car overlay)))))
-    (when char
-      (goto-char char))))
+  (message (symbol-name buffer-file-coding-system)))
 
-(global-set-key (kbd "C-z C") 'jump-to-container)
+(global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
+
+;; Disabled (requires semantic)
+;;(defun jump-to-container ()
+;;  (interactive)
+;;  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
+;;         (overlay (and tag (last (semantic-current-tag))))
+;;         (char (and overlay (overlay-start (car overlay)))))
+;;    (when char
+;;      (goto-char char))))
+;;
+;;(global-set-key (kbd "C-z C") 'jump-to-container)
 
 ;;
 ;; Line-highlight
