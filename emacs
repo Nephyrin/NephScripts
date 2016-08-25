@@ -1654,75 +1654,30 @@ beginning of it and the point to the end of it if so"
 ;(add-to-list 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 ;(load-theme 'sunburst t)
 
-;;
-;; ample-zen
-;;
-
+;; See also neph-ample-zen-theme.el
 (add-to-list 'custom-theme-load-path "~/.emacs.d/ample-zen")
-(load-theme 'ample-zen t)
-
-(set-face-attribute 'mode-line nil
-                    :background "#111"
-                    :foreground "#999"
-                    :box '(:line-width 1 :color "#000" :style nil))
-(set-face-attribute 'header-line nil
-                    :background "#111"
-                    :foreground "#999"
-                    :box '(:line-width 1 :color "#000" :style nil))
-(set-face-attribute 'mode-line-inactive nil
-                    :background "#555"
-                    :foreground "#999"
-                    :box '(:line-width 1 :color "#333" :style nil))
-(set-face-attribute 'hl-line nil
-                    :background "#302020"
-                    :box '(:line-width -1 :color "#777" :style nil))
-(set-face-attribute 'linum nil
-                    :foreground "#555"
-                    :background "#222"
-                    :box nil)
-(setq linum-format " %5d  ")
-(set-face-attribute 'whitespace-tab nil :background "#242424")
-
-(set-face-attribute 'region nil :background "#303030")
-
-;; rtags
-(when (featurep 'rtags)
-  (set-face-attribute 'rtags-skippedline nil :background "#323030")
-  (set-face-attribute 'rtags-errline nil :background "#511411")
-  (set-face-attribute 'rtags-fixitline nil :background "#513121"))
-
-;; ediff
-(require 'ediff)
-(set-face-attribute 'ediff-current-diff-A nil :background "#412421")
-(set-face-attribute 'ediff-current-diff-B nil :background "#244121")
-(set-face-attribute 'ediff-fine-diff-A nil :background "#811411")
-(set-face-attribute 'ediff-fine-diff-B nil :background "#148111")
-
-;; Semantic (disabled)
-; (set-face-attribute 'semantic-tag-boundary-face nil :overline "#544")
-
-;; ECB
-(set-face-attribute 'ecb-default-highlight-face nil
-                    :background "#448"
-                    :box '(:line-width -1 :color "#669"))
-(set-face-attribute 'ecb-source-face nil
-                    :background "#484"
-                    :box '(:line-width -1 :color "#696"))
-(set-face-attribute 'ecb-source-in-directories-buffer-face nil :foreground "#EEE")
-
-;; Company
-(when (featurep 'company)
-  (set-face-attribute 'company-tooltip nil :background "#333" :foreground "white")
-  (set-face-attribute 'company-tooltip-selection nil :background "#555")
-  (set-face-attribute 'company-tooltip-common-selection nil :foreground "#955")
-  (set-face-attribute 'company-tooltip-common nil :foreground "#944")
-  (set-face-attribute 'company-tooltip-annotation nil :foreground "#A99")
-  (set-face-attribute 'company-scrollbar-fg nil :background "#222")
-  (set-face-attribute 'company-scrollbar-bg nil :background "#555")
-  (setq company-tooltip-margin 2))
 
 ;;
-;; purple-haze
+;; Load theme selected by env
+;;
+(setq neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
+                   (if envtheme envtheme
+                     "ample-zen")))
+
+(when (string= neph-theme "ample-zen")
+  (load-theme 'ample-zen t)
+  (load-theme 'neph-ample-zen t))
+(when (string= neph-theme "tango")
+  (load-theme 'tango t))
+
+;; Default font
+(set-face-attribute 'default nil :family "DejaVu Sans Mono")
+(set-face-attribute 'default nil :height 96)
+(put 'downcase-region 'disabled nil)
+
+
+;;
+;; purple-haze (needs to be made into a neph-purple-haze-theme.el)
 ;;
 
 ;; (set-face-attribute 'cursor nil :background "#D96E26")
@@ -1757,7 +1712,3 @@ beginning of it and the point to the end of it if so"
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
 
-; Default font
-(set-face-attribute 'default nil :family "DejaVu Sans Mono")
-(set-face-attribute 'default nil :height 96)
-(put 'downcase-region 'disabled nil)
