@@ -1032,7 +1032,7 @@
   (git-gutter-mode t)
   (rainbow-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
-  (rtags-enable-standard-keybindings)
+  (when (featurep 'rtags) (rtags-enable-standard-keybindings))
   (setq fill-column 80)
   ; (rainbow-delimiters-mode nil) ;; FIXME forces fontification
   ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
