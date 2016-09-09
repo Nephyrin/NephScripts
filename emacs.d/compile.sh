@@ -7,7 +7,7 @@ source ~/bin/lib/util.sh
 cd "$(dirname "$0")"
 
 estat Compiling Magit
-( cmd cd cedet-git && cmd make )
+( cmd cd magit && cmd make )
 
 estat Compiling CEDET
 ( cmd cd cedet-git && cmd make )
