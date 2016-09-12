@@ -81,7 +81,7 @@
 	url = https://github.com/dengste/minimap
 [submodule "emacs.d/rainbow-delimiters"]
 	path = emacs.d/rainbow-delimiters
-	url = https://github.com/jlr/rainbow-delimiters.git
+	url = https://github.com/Fanael/rainbow-delimiters
 [submodule "bin/ls++-Term-ExtendedColor.git"]
 	path = bin/ls++-Term-ExtendedColor.git
 	url = https://github.com/trapd00r/Term-ExtendedColor
