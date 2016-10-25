@@ -151,3 +151,6 @@
 [submodule "emacs.d/highlight-symbol"]
 	path = emacs.d/highlight-symbol
 	url = https://github.com/nschum/highlight-symbol.el
+[submodule "emacs.d/rainbow-mode"]
+	path = emacs.d/rainbow-mode
+	url = https://github.com/emacsmirror/rainbow-mode

@@ -870,7 +870,8 @@
 (add-to-list 'load-path "~/.emacs.d/fringe-helper")
 (require 'fringe-helper)
 (require 'git-gutter-fringe)
-(load-file "~/.emacs.d/rainbow-mode.el")
+(add-to-list 'load-path "~/.emacs.d/rainbow-mode")
+(autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
 
 ;;
 ;; P4
