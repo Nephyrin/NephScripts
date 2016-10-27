@@ -1048,6 +1048,7 @@
 (defun neph-base-cfg ()
   (linum-mode t)
   (smart-tabs-mode 0)
+  (c-set-offset 'case-label '+) ;; Indent case statements in switches
   (setq c-basic-offset 2)
   (setq c-default-style "linux")
   (setq sh-basic-offset 2)
