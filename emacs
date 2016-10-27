@@ -199,7 +199,7 @@
     ;; This is the way the help actually suggests you prevent it from opening this buffer.
     (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
                                       display-buffer-alist)))
-      (async-shell-command "xdg-open ~/.emacs.d/htmlize-temp.htm"))))
+      (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm"))))
 
 ;;
 ;; Multi-term
