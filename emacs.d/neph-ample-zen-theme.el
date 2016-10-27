@@ -44,6 +44,7 @@
 
 ;; ECB
 (custom-theme-set-faces 'neph-ample-zen
+                        '(ecb-default-general-face ((t ( :foreground "#EEE" ))))
                         '(ecb-default-highlight-face ((t ( :background "#448"
                                                            :box (:line-width -1 :color "#669" )))))
                         '(ecb-source-face ((t ( :background "#484"
