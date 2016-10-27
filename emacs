@@ -1010,7 +1010,7 @@
 ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
 (global-set-key (kbd "C-z C-G") 'projectile-grep)
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
-(global-set-key (kbd "C-z B") 'helm-projectile-switch-to-buffer-other-window)
+(global-set-key (kbd "C-z B") 'helm-buffers-list)
 (global-set-key (kbd "C-z p") 'helm-projectile-switch-project)
 ;(global-set-key (kbd "C-z C-p") 'helm-projectile)
 
