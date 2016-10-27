@@ -422,7 +422,8 @@
 
   (setq company-rtags-max-wait 10000)
   (setq rtags-completions-enabled t) ; Needed?
-  (setq company-rtags-use-async t)
+  (setq rtags-track-container t)
+  (setq company-rtags-use-async nil)
 
   (setq rtags-use-helm t)
   (setq rtags-max-bookmark-count 10)
@@ -433,7 +434,7 @@
 
   (setq rtags-enable-unsaved-reparsing t)
   (rtags-set-periodic-reparse-timeout nil)
-  (setq rtags-completions-timer-interval nil) ; This seems to cause stutter if reparsing is happening
+  (setq rtags-completions-timer-interval 0.5) ; This seems to cause stutter if reparsing is happening
 
   (setq rtags-tooltips-enabled nil)
   (setq rtags-display-current-error-as-tooltip nil)
@@ -813,7 +814,8 @@
                                        (setq neph-sticky-header-valid-range
                                              (if (and regionStart regionEnd)
                                                  (cons regionStart regionEnd)
-                                               nil)))))
+                                               nil))
+                                       (redisplay))))
 
 (setq-default header-line-format
               '(:eval (when (and neph-sticky-header-valid-range
