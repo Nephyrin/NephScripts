@@ -1634,13 +1634,13 @@ beginning of it and the point to the end of it if so"
 ;  (unless (or (minibufferp) (string-equal mode-name "Helm") (member major-mode linum-disabled-modes-list))
 ;    (linum-mode 1)))
 
-(setq jit-lock-chunk-size 50)
-(setq jit-lock-context-time 0.1)
-(setq jit-lock-contextually nil)
-(setq jit-lock-defer-time 0.1)
-(setq jit-lock-stealth-load nil)
-(setq jit-lock-stealth-nice 0.1)
-(setq jit-lock-stealth-time 0.1)
+;;(setq jit-lock-chunk-size 50)
+;;(setq jit-lock-context-time 0.1)
+;;(setq jit-lock-contextually nil)
+;;(setq jit-lock-defer-time 0.1)
+;;(setq jit-lock-stealth-load nil)
+;;(setq jit-lock-stealth-nice 0.1)
+;;(setq jit-lock-stealth-time 0.1)
 
 ;
 (setq linum-delay t)
