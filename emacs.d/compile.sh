@@ -23,6 +23,12 @@ estat Compiling ECB
 estat Making flyspell autoloads
 cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/flyspell-lazy/flyspell-lazy.el\" t \"$PWD/neph-autoloads/neph-flyspell-lazy-autoload.el\")"
 
+estat Making projectile autoloads
+cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/projectile/projectile.el\" t \"$PWD/neph-autoloads/neph-projectile-autoload.el\")"
+
+estat Making helm-projectile autoloads
+cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/helm-projectile/helm-projectile.el\" t \"$PWD/neph-autoloads/neph-helm-projectile-autoload.el\")"
+
 estat Compiling remaining modules in directory
 cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"
 

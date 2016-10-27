@@ -245,9 +245,10 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/helm")
-(require 'helm)
-(require 'helm-config)
-(require 'helm-files)
+(require 'helm-autoloads)
+;;(require 'helm)
+;;(require 'helm-config)
+;;(require 'helm-files)
 
 (helm-mode 1)
 (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
@@ -361,14 +362,14 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/phi-search")
-(require 'phi-search)
+(autoload 'phi-search "phi-search" "Phi Search." t)
 
 ;;
 ;; Swiper
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/swiper")
-(require 'swiper)
+(autoload 'swiper "swiper" "Swiper popup thing" t)
 (global-set-key (kbd "C-z s") 'swiper)
 
 (defun isearch-to-swiper ()
@@ -385,7 +386,7 @@
 
 ;; popup.el for rtags tooltips
 (add-to-list 'load-path "~/.emacs.d/popup-el")
-(require 'popup)
+(autoload 'popup "popup" "Popup tooltip thing." t)
 
 ;; Rtags is installed separate from NephScripts, don't assume it is available
 (when (require 'rtags nil t)
@@ -608,8 +609,8 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/ido-vertical-mode")
-(require 'ido)
-(require 'ido-vertical-mode)
+(autoload 'ido "ido" "Ido thing." t)
+(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
 (ido-mode t)
 (ido-vertical-mode 1)
 
@@ -618,18 +619,19 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/rainbow-delimiters")
-(require 'rainbow-delimiters)
+(autoload 'rainbow-delimiters "rainbow-delimiters" "rainbow-delimiters" t)
 
 ;;
 ;; Minimap
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/minimap")
-(require 'minimap)
+(autoload 'minimap "minimap" "minimap" t)
 
-(set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
-(setq minimap-window-location (quote right))
-(setq minimap-width-fraction 0.01)
+(with-eval-after-load "minimap"
+              (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
+              (setq minimap-window-location (quote right))
+              (setq minimap-width-fraction 0.01))
 
 ;;
 ;; remember-notes
@@ -823,7 +825,7 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/god-mode")
-(require 'god-mode)
+(autoload 'god-mode "god-mode" "god-mode" t)
 (global-set-key (kbd "C-z C-z") 'god-local-mode)
 
 ;;
@@ -849,14 +851,13 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/fill-column-indicator")
-(require 'fill-column-indicator)
-(setq fci-rule-color "#444")
+(autoload 'fill-column-indicator "fill-column-indicator" "fill-column-indicator" t)
 
 ;;
 ;; re-builder
 ;;
 
-(require 're-builder)
+(autoload 're-builder "re-builder" "re-builder" t)
 (setq reb-re-syntax 'string)
 
 ;;
@@ -864,12 +865,13 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/fic-mode.git")
-(require 'fic-mode)
+(autoload 'fic-mode "fic-mode" "fic-mode" t)
 
 (add-to-list 'load-path "~/.emacs.d/git-gutter-fringe")
 (add-to-list 'load-path "~/.emacs.d/git-gutter")
 (add-to-list 'load-path "~/.emacs.d/fringe-helper")
 (require 'fringe-helper)
+(require 'git-gutter)
 (require 'git-gutter-fringe)
 (add-to-list 'load-path "~/.emacs.d/rainbow-mode")
 (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
@@ -880,7 +882,7 @@
 
 ;; p4.el
 (add-to-list 'load-path "~/.emacs.d/p4.el")
-(require 'p4)
+(autoload 'p4 "p4" "p4" t)
 
 ;; p4vc commands
 (defun neph-p4vc (command)
@@ -962,11 +964,11 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/projectile")
-(require 'projectile)
+(require 'neph-projectile-autoload)
 ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
 (setq helm-projectile-fuzzy-match nil)
 (add-to-list 'load-path "~/.emacs.d/helm-projectile")
-(require 'helm-projectile)
+(require 'neph-helm-projectile-autoload)
 (projectile-global-mode t)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
