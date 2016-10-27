@@ -1693,15 +1693,27 @@ beginning of it and the point to the end of it if so"
 ;;
 ;; Load theme selected by env
 ;;
-(setq neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
-                   (if envtheme envtheme
-                     "ample-zen")))
+(setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
+                           (if envtheme envtheme
+                             "ample-zen")))
 
-(when (string= neph-theme "ample-zen")
-  (load-theme 'ample-zen t)
-  (load-theme 'neph-ample-zen t))
-(when (string= neph-theme "tango")
-  (load-theme 'tango t))
+(defun load-neph-theme (neph-theme)
+  "Load the given theme, possibly with neph wrapper"
+  (interactive (list (read-string "Theme: ")))
+  ;; Disable all existing
+  (dolist (elem custom-enabled-themes)
+    (disable-theme elem))
+  ;; Custom handlers
+  (if (string= neph-theme "ample-zen")
+      (progn
+        (load-theme 'ample-zen t)
+        (load-theme 'neph-ample-zen t))
+    ;; Safe handlers
+    (if (string= neph-theme "tango")
+        (load-theme 'tango t)
+      ;; Else just forward to load-theme
+      (load-theme neph-theme))))
+(load-neph-theme default-neph-theme)
 
 ;; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
@@ -1744,4 +1756,3 @@ beginning of it and the point to the end of it if so"
 ;;                     :background "#333"
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
-

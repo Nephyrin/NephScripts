@@ -6,20 +6,22 @@
                         '(linum ((t (:background "#222" :foreground "#555" :box nil))))
                         '(mode-line ((t ( :background "#111"
                                           :foreground "#999"
-                                          :box '(:line-width 1 :color "#000" :style nil)))))
+                                          :box (:line-width 1 :color "#000" :style nil)))))
                         '(header-line ((t ( :background "#111"
                                             :foreground "#999"
-                                            :box '(:line-width 1 :color "#000" :style nil)))))
+                                            :box (:line-width 1 :color "#000" :style nil)))))
                         '(mode-line-inactive ((t ( :background "#555"
                                                    :foreground "#999"
-                                                   :box '(:line-width 1 :color "#333" :style nil)))))
-                        '(hl-line ((t ( :background "#302020"
-                                        :box '(:line-width -1 :color "#777" :style nil)))))
-                        '(whitespace-tab ((t ( :background "#242424" ))))
-                        '(region ((t ( :background "#303030" )))))
+                                                   :box (:line-width 1 :color "#333" :style nil)))))
+                        '(hl-line ((t :background "#302020"
+                                      :box (:line-width -1 :color "#777" :style nil))))
+                        '(whitespace-tab ((t  :background "#242424" )))
+                        '(region ((t :background "#303030" ))))
 
 ;; linum
-(custom-theme-set-variables 'neph-ample-zen '(linum-format " %5d  "))
+(custom-theme-set-variables 'neph-ample-zen
+                            '(linum-format " %5d  ")
+                            '(fci-rule-color "#444"))
 
 
 ;; rtags
@@ -43,9 +45,9 @@
 ;; ECB
 (custom-theme-set-faces 'neph-ample-zen
                         '(ecb-default-highlight-face ((t ( :background "#448"
-                                                           :box '(:line-width -1 :color "#669" )))))
+                                                           :box (:line-width -1 :color "#669" )))))
                         '(ecb-source-face ((t ( :background "#484"
-                                                :box '(:line-width -1 :color "#696" )))))
+                                                :box (:line-width -1 :color "#696" )))))
                         '(ecb-source-in-directories-buffer-face ((t ( :foreground "#EEE" )))))
 
 ;; Company
