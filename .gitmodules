@@ -157,3 +157,6 @@
 [submodule "emacs.d/with-editor"]
 	path = emacs.d/with-editor
 	url = https://github.com/magit/with-editor
+[submodule "emacs.d/flyspell-lazy"]
+	path = emacs.d/flyspell-lazy
+	url = https://github.com/rolandwalker/flyspell-lazy

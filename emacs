@@ -4,6 +4,7 @@
 ;; Misc
 ;;
 
+(add-to-list 'load-path "~/.emacs.d/neph-autoloads")
 ;; Load this before something tries to load built-in CEDET libraries
 ;; Removed CEDET is garbage jesus christ has anyone used this for non-toy development?
 ; (load-file "~/.emacs.d/cedet-git/cedet-devel-load.el")
@@ -937,6 +938,26 @@
     (message "!! js-beautify command not installed/available")))
 
 ;;
+;; Flyspell-lazy
+(add-to-list 'load-path "~/.emacs.d/flyspell-lazy")
+(require 'neph-flyspell-lazy-autoload)
+(setq flyspell-lazy-idle-seconds 1)
+(setq flyspell-lazy-window-idle-seconds 1)
+
+;; With the lazy mode window timer set
+(defun flyspell-lazy-toggle (arg)
+  "Toggle flyspell lazy mode"
+  (interactive "p")
+  (if (and (boundp 'flyspell-mode) flyspell-mode)
+      (progn
+        (flyspell-mode 0)
+        (flyspell-lazy-mode 0))
+    (flyspell-lazy-mode t)
+    (flyspell-mode t)
+    (flyspell-lazy-check-visible)))
+(global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
+
+;;
 ;; Projectile
 ;;
 
@@ -1238,15 +1259,6 @@
                       (downcase curchar)
                     curcapped))))))
 (global-set-key (kbd "C-z C-c") 'toggle-case)
-
-(defun flyspell-toggle (arg)
-  "Toggle flyspell mode, and check the entire buffer when enabling"
-  (interactive "p")
-  (if (and (boundp 'flyspell-mode) flyspell-mode)
-      (flyspell-mode 0)
-    (flyspell-mode)
-    (flyspell-buffer)))
-(global-set-key (kbd "C-c M-l") 'flyspell-toggle)
 
 ;; merge-next-line
 (defun merge-next-line (arg)
