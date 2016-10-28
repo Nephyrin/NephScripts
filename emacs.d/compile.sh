@@ -20,6 +20,13 @@ estat Compiling Helm
 estat Compiling ECB
 ( cmd cd ecb && cmd make )
 
+estat Compiling Evil
+( cmd cd evil && cmd make )
+
+estat Making Evil autoloads
+cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-evil-autoload.el\"))  \
+                                  (update-directory-autoloads \"$PWD/evil\"))"
+
 estat Making flyspell autoloads
 cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/flyspell-lazy/flyspell-lazy.el\" t \"$PWD/neph-autoloads/neph-flyspell-lazy-autoload.el\")"
 

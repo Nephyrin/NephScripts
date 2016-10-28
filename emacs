@@ -138,6 +138,14 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;;
+;; Evil
+;;
+
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'neph-evil-autoload)
+(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
+
+;;
 ;; Highlight Symbol
 ;;
 (add-to-list 'load-path "~/.emacs.d/highlight-symbol")

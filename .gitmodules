@@ -160,3 +160,6 @@
 [submodule "emacs.d/flyspell-lazy"]
 	path = emacs.d/flyspell-lazy
 	url = https://github.com/rolandwalker/flyspell-lazy
+[submodule "emacs.d/evil"]
+	path = emacs.d/evil
+	url = https://github.com/emacsmirror/evil
