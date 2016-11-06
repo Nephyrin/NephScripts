@@ -41,7 +41,8 @@ _list_push PATH "$HOME/bin"
 _list_push PATH "$HOME/.local/bin"
 _list_push PATH "$HOME/neph/priv/bin"
 
-NEPH_DEFAULT_CGROUP=/sys/fs/cgroup/cpu
+NEPH_CGROUP_ROOT=/sys/fs/cgroup
+NEPH_DEFAULT_CGROUP="$NEPH_CGROUP_ROOT"/cpu
 
 export BROWSER="firefox '%s'"
 export EDITOR="ec"
@@ -391,8 +392,18 @@ dcg()
     return 1
   fi
 
-  echo $$ > "$NEPH_DEFAULT_CGROUP"/cgroup.procs
-  cmd rmdir "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
+  local dir
+  for dir in "$NEPH_CGROUP_ROOT"/*; do
+    [[ -d $dir/$NEPH_CGROUP ]] || continue
+
+    local task
+    # FIXME This is race-y
+    for task in $(cat "$dir/$NEPH_CGROUP/tasks"); do
+      cmd echo $task > $dir/tasks 2>/dev/null # Some tasks will follow their parent
+    done
+    cmd rmdir "$dir/$NEPH_CGROUP"
+  done
+
   unset NEPH_CGROUP
   unset NEPH_CGROUP_PS1
   _reprompt
@@ -412,27 +423,28 @@ lowprio()
   dcg
 }
 
-lpcg()
-{
-  local prio="$1"
-  local mem="$2"
-  [[ -n $prio ]] || prio=1
-  [[ -n $mem ]] || mem=256M
-  [[ -z $NEPH_CGROUP ]] && cg
-  group=$NEPH_CGROUP
-  group="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
-  [[ ! -d $group ]] && echo ":: '$group' is not a directory" && return
-
-  /bin/echo "$prio" > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
-
-  local blkioweight="$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
-  local memlimit="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
-
- [[ ! -e $blkioweight ]] || /bin/echo 10   > $blkioweight
- [[ ! -e $memlimit    ]] || /bin/echo "$mem" > $memlimit
-
-  echo ":: Created low prio cgroup with $prio cpu shares and $mem soft memory limit"
-}
+# Needs to be fixed for new CG commands
+#lpcg()
+#{
+#  local prio="$1"
+#  local mem="$2"
+#  [[ -n $prio ]] || prio=1
+#  [[ -n $mem ]] || mem=256M
+#  [[ -z $NEPH_CGROUP ]] && cg
+#  group=$NEPH_CGROUP
+#  group="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
+#  [[ ! -d $group ]] && echo ":: '$group' is not a directory" && return
+#
+#  /bin/echo "$prio" > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
+#
+#  local blkioweight="$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
+#  local memlimit="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
+#
+# [[ ! -e $blkioweight ]] || /bin/echo 10   > $blkioweight
+# [[ ! -e $memlimit    ]] || /bin/echo "$mem" > $memlimit
+#
+#  echo ":: Created low prio cgroup with $prio cpu shares and $mem soft memory limit"
+#}
 
 cdcg()
 {
@@ -444,63 +456,105 @@ cdcg()
 }
 
 # Add a process to a control group (or a new one)
-pcg()
-{
-  local procgrep="$1"
-  local cgroup="$2"
-  [ -z "$procgrep" ] && echo ":: Need a taskname" && return
-  local tasks=$(pgrep "$procgrep")
-
-  [ -z "$cgroup" ] && cgroup=$(_mcg "$procgrep")
-  if [ ! -d "$NEPH_DEFAULT_CGROUP"/"$cgroup" ]; then
-    echo ":: cgroup $cgroup does not exist!"
-    return
-  fi
-
-  for task in $tasks; do
-      echo ":: Adding task $task to group '$cgroup'"
-      /bin/echo $task > "$NEPH_DEFAULT_CGROUP"/"$cgroup"/cgroup.procs
-  done
-}
+# Needs to be fixed for new CG commands
+#pcg()
+#{
+#  local procgrep="$1"
+#  local cgroup="$2"
+#  [ -z "$procgrep" ] && echo ":: Need a taskname" && return
+#  local tasks=$(pgrep "$procgrep")
+#
+#  [ -z "$cgroup" ] && cgroup=$(_mcg "$procgrep")
+#  if [ ! -d "$NEPH_DEFAULT_CGROUP"/"$cgroup" ]; then
+#    echo ":: cgroup $cgroup does not exist!"
+#    return
+#  fi
+#
+#  for task in $tasks; do
+#      echo ":: Adding task $task to group '$cgroup'"
+#      /bin/echo $task > "$NEPH_DEFAULT_CGROUP"/"$cgroup"/cgroup.procs
+#  done
+#}
 
 # Make a control group with prefix
 mcg()
 {
   # Pretty version
-  local name=$(_mcg "$1")
-  echo ":: Created empty control group $name"
+  local name=$(_mcg "$@")
+  local types=("${@:2}")
+  if [[ -z $name ]]; then
+    eerr "Failed to create cgroup: $*"
+    return 1
+  fi
+
+  einfo "Created empty control groups $name / (${types[@]})"
 }
 
 _mcg()
 {
-  local prefix="$1"
-  [ -z "$prefix" ] && echo ":: Need a name" && return
+  local name="$1"
+  local types=("${@:2}")
+  [[ $# -lt 2 || ${#types[@]} = 0 || -z $name ]] && eerr "Usage: _mcg <name> <types>" && return 1
   local i
-  local name
-  while [ -d "$NEPH_DEFAULT_CGROUP"/"$name" ] && i=$(( $i + 1 )); do
-      name="${prefix}:$i"
+
+  local type
+  for type in "${types[@]}"; do
+    local cgdir=
+    if [[ -d $NEPH_CGROUP_ROOT/$type/$name ]]; then
+      eerr "cgroup already exists: $type/$name"
+      return 1
+    fi
   done
 
-  mkdir "$NEPH_DEFAULT_CGROUP"/"$name"
-
-  local cpus="$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.cpus
-  local mems="$NEPH_DEFAULT_CGROUP"/"$name"/cpuset.mems
-
-  [[ ! -e $cpus ]] || cat "$NEPH_DEFAULT_CGROUP"/cpuset.cpus > $cpus
-  [[ ! -e $mems ]] || cat "$NEPH_DEFAULT_CGROUP"/cpuset.mems > $mems
+  for type in "${types[@]}"; do
+    if ! cmd mkdir "$NEPH_CGROUP_ROOT/$type/$name"; then
+      eerr "Could not create cgroup $type/$name"
+      return 1
+    fi
+  done
 
   echo $name
 }
 
 cg()
 {
-    local name=$(_mcg "shell$$")
-    local i
+  local name="$1"
+  local types=("${@:2}")
+  [[ -n $name ]] || name="shell$$"
+  [[ ${#types[@]} -ge 1 ]] || types=(cpu)
+  local i
 
-    echo $$ > "$NEPH_DEFAULT_CGROUP"/"$name"/cgroup.procs
-    export NEPH_CGROUP=$name
-    NEPH_CGROUP_PS1=$'\[\e'"[0;37m\]$NEPH_CGROUP "
-    _reprompt
+  mcg "$name" "${types[@]}" || return 1
+
+  for type in "${types[@]}"; do
+    echo $$ > "$NEPH_CGROUP_ROOT"/"$type"/"$name"/cgroup.procs
+  done
+  export NEPH_CGROUP=$name
+  # 3 italic, 90 grey, 23 cancel italic yay
+  NEPH_CGROUP_PS1='\['$(sh_c 3 90)'\]'$NEPH_CGROUP'\['$(sh_c 23)'\]'" "
+  _reprompt
+}
+
+lcg()
+{
+  local cgroup=$1
+  if [ -z "$cgroup" ]; then
+    for x in "$NEPH_DEFAULT_CGROUP"/*; do
+      [ -d "$x" ] && [ -f "$x"/tasks ] && lcg "$(basename "$x")"
+    done
+  else
+    if [ ! -d "$NEPH_DEFAULT_CGROUP"/"$cgroup" ]; then
+      eerr "cgroup $cgroup doesn't exist";
+      return
+    fi
+    einfo "Tasks for $cgroup"
+    local tasks="$(cat "$NEPH_DEFAULT_CGROUP"/"$cgroup"/tasks)"
+    if [ -z "$tasks" ]; then
+      echo " none"
+    else
+      ps -o pid= -o comm= -p "${tasks/$'\n'/ }"
+    fi
+  fi
 }
 
 java_memanalyze()
@@ -518,28 +572,6 @@ java_memanalyze()
             jhat -J-Xmx4096M "$file"
         )
     fi
-}
-
-lcg()
-{
-  local cgroup=$1
-  if [ -z "$cgroup" ]; then
-    for x in "$NEPH_DEFAULT_CGROUP"/*; do
-      [ -d "$x" ] && [ -f "$x"/tasks ] && lcg "$(basename "$x")"
-    done
-  else
-    if [ ! -d "$NEPH_DEFAULT_CGROUP"/"$cgroup" ]; then
-      echo ":: cgroup $cgroup doesn't exist";
-      return
-    fi
-    echo ":: Tasks for $cgroup"
-    local tasks="$(cat "$NEPH_DEFAULT_CGROUP"/"$cgroup"/tasks)"
-    if [ -z "$tasks" ]; then
-      echo " none"
-    else
-      ps -o pid= -o comm= -p "${tasks/$'\n'/ }"
-    fi
-  fi
 }
 
 ct()
