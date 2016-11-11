@@ -290,6 +290,18 @@ get_option()
   echo "$default"
 }
 
+# Differentiate between empty option and not passed
+has_option()
+{
+  local opt_name="$1"
+  local opt
+  for opt in ${_parse_args_options[@]}; do
+    [[ $opt != $opt_name ]] || return 0
+  done
+  # Not found
+  return 1
+}
+
 get_arg()
 {
   # Args are 1-indexed, though we don't keep $0 around
