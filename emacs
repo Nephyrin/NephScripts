@@ -53,12 +53,6 @@
   kept-old-versions 2
   version-control t)
 
-(add-to-list 'auto-mode-alist '("/yaourtrc$" . sh-mode))
-(add-to-list 'auto-mode-alist '("/PKGBUILD$" . sh-mode))
-(add-to-list 'auto-mode-alist '("/bash(rc|_profile)$" . sh-mode))
-;; Use js-mode for vpc/vgc files for now
-(add-to-list 'auto-mode-alist '("\.v[pg]c$" . js-mode))
-
 (setq vc-follow-symlinks t)
 
 (require 'uniquify)
@@ -1118,13 +1112,23 @@
   (setq js-indent-level 4)
   (setq fill-column 120))
 
+;; Default modes
+
+(add-to-list 'auto-mode-alist '("/yaourtrc$" . sh-mode))
+(add-to-list 'auto-mode-alist '("/PKGBUILD$" . sh-mode))
+(add-to-list 'auto-mode-alist '("/bash(rc|_profile)$" . sh-mode))
+;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
+(defun neph-js-mode-hook ()
+  (if (and (stringp buffer-file-name)
+           (string-match "\\.\\(v[pg]c\\|res\\)\\'" buffer-file-name))
+      (neph-tab-cfg)
+    (neph-space-cfg)))
+(add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
+(add-hook 'js-mode-hook 'neph-js-mode-hook)
+
 (add-hook 'sh-mode-hook 'neph-space-cfg)
 
-(add-hook 'js-mode-hook (lambda ()
-                          (if (and (stringp buffer-file-name)
-                                   (string-match "\\.vpc\\'" buffer-file-name))
-                              (neph-tab-cfg)
-                            (neph-space-cfg))))
+
 
 (add-hook 'python-mode-hook 'neph-space-cfg)
 (add-hook 'java-mode-hook 'neph-space-cfg)
