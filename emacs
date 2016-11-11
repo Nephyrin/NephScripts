@@ -182,6 +182,44 @@
 (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
 
 ;;
+;; Command helpers
+;;
+
+(defun neph-buffer-command (cmd &optional name callback)
+  "Runs a command into a new buffer, noting when it finishes, with a callback"
+  (interactive "MCommand: \n")
+  (let* ((envcmd (concat "env -u NEPH_COLOR_TERM " cmd))
+         (name (if name name "neph-buffer-command"))
+         (buf (generate-new-buffer (concat name ": " cmd))))
+    (switch-to-buffer buf nil t)
+    (insert-string (concat "<command: " cmd ">"))
+    (newline)
+    (let ((proc (start-process-shell-command
+                 (concat name "-proc")
+                 buf envcmd)))
+      (set-process-sentinel
+       proc
+       `(lambda (process signal)
+          (when (eq (process-status process) 'exit)
+            (message (concat ,name " finished"))
+            (with-current-buffer (process-buffer process)
+              (rename-buffer (concat (buffer-name) " <command finished>"))
+              (newline)
+              (insert-string "<command finished>")
+              (when ,callback
+                (apply ,callback (list process)))
+              (goto-char (point-min)))))))))
+
+(defun neph-p4inter (args)
+  "Runs the p4inter command with args"
+  (interactive "Mp4inter: \n")
+  (neph-buffer-command
+   (concat "p4inter " args) "neph-p4inter"
+   (lambda (process)
+     (delete-trailing-whitespace)
+     (highlight-regexp "^Change" 'git-commit-note))))
+
+;;
 ;; Htmlize
 ;;
 
