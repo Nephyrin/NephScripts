@@ -300,12 +300,14 @@
 (global-set-key (kbd "C-z b") 'helm-mini)
 (global-set-key (kbd "C-z C-b") 'helm-bookmarks)
 (global-set-key (kbd "C-z C-o") 'helm-occur)
+(global-set-key (kbd "C-z C-S-o") 'occur)
 (global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
 
 ;; Blows up helm on emacs 25 right now
 ;; (setq helm-follow-mode-persistent nil)
 
 (define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
+(define-key isearch-mode-map (kbd "C-S-o") 'isearch-occur)
 
 (when (executable-find "ack-grep")
   (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
