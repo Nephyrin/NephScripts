@@ -508,7 +508,7 @@
   (setq rtags-track-container t)
   (setq company-rtags-use-async nil)
 
-  (setq rtags-use-helm t)
+  (setq rtags-use-helm nil)
   (setq rtags-max-bookmark-count 10)
 
   (setq rtags-autostart-diagnostics t)
