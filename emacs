@@ -427,13 +427,6 @@
 (add-to-list 'load-path "~/.emacs.d/phi-search")
 (autoload 'phi-search "phi-search" "Phi Search." t)
 
-(global-set-key (kbd "C-s") 'phi-search)
-(global-set-key (kbd "C-r") 'phi-search-backward)
-
-;; See also
-;;phi-search-additional-keybinds
-;;phi-replace-additional-keybinds
-;; -- NOT keymaps tho, see doc
 (defun kill-phisearch-match ()
     "Kill the current isearch match string and continue searching."
     (interactive)
@@ -445,7 +438,15 @@
        (let ((ov (nth phi-search--selection phi-search--overlays)))
          (kill-region (overlay-end ov) (overlay-start ov)))))
     (phi-search-complete))
-(define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match)
+
+(with-eval-after-load "phi-search"
+  (global-set-key (kbd "C-s") 'phi-search)
+  (global-set-key (kbd "C-r") 'phi-search-backward)
+  (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
+;; See also
+;;phi-search-additional-keybinds
+;;phi-replace-additional-keybinds
+;; -- NOT keymaps tho, see doc
 
 ;;
 ;; Swiper
