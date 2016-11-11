@@ -9,6 +9,9 @@
 ;; Removed CEDET is garbage jesus christ has anyone used this for non-toy development?
 ; (load-file "~/.emacs.d/cedet-git/cedet-devel-load.el")
 
+;; Disable silly "type Y-E-S" prompts
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ; This just makes things slower. Maybe useful on spinning disks?
 (setq cache-long-line-scans nil)
 (setq cache-long-scans nil)
