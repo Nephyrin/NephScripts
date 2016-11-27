@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+. ~/bin/lib/util.sh
+
+# Run a yaourt command after running -Sy to sync. Useful for the no-argument search-and-select-and-install mode, e.g. "sy wine", where you cannot do "yaourt -y wine"
+
+showcmd yaourt -Sy
+showcmd yaourt "$@"
