@@ -35,20 +35,25 @@ einfo "Container session pid is $sid"
 pids=($(ps -a -o pid=,sid= | grep -Po ".*(?= $sid\$)"))
 
 # Print each PID with its NSPid mapping, record longest seen
-longest_nspid=0
 function get_nspids()
 {
   for pid in $@; do
     pidrow=($(cat /proc/$pid/status | grep '^NSpid:'))
     nspid=${pidrow[2]}
-    len=${#nspid}
-    if [[ $len -gt $longest_nspid ]]; then
-      longest_nspid=len
-    fi
     echo $nspid
   done
 }
 nspids=($(get_nspids ${pids[@]}))
+
+# Count longest
+nspid_header="NSPID"
+longest_nspid=${#nspid_header}
+for nspid in ${nspids[@]}; do
+  len=${#nspid}
+  if [[ $len -gt $longest_nspid ]]; then
+    longest_nspid=$len
+  fi
+done
 
 # Run ps with any additional args, filtering to these pids, but prefix result lines with nspid
 # FIXME This will break if you disable the header in your ps args
@@ -56,7 +61,11 @@ i=-1
 cmd ps -p "${pids[*]}" "${psargs[@]}" | \
   while IFS= read -r -d$'\n' line; do
     pref=""
-    [[ $i -eq -1 ]] || pref="${nspids[i]}"
+    if [[ $i -eq -1 ]]; then
+      pref="$nspid_header"
+    else
+      pref="${nspids[i]}"
+    fi
     echo "$(printf %${longest_nspid}s "$pref") $line"
     (( i++ )) || true
   done
