@@ -1,0 +1,62 @@
+#!/bin/bash
+
+set -e
+
+. ~/bin/lib/util.sh
+
+usage() {
+  local out
+  if [[ -n $1 ]]; then
+    # Error
+    out() { ewarn "$@"; }
+  else
+    out() { einfo "$@"; }
+  fi
+  out "Usage: dockerpid [options] <container> [<ps args...>]"
+  out "  -h / --help                Show this usage message"
+  [[ -n $1 ]] || exit 0
+  exit 1
+}
+
+parse_args vmk h help "$@" || usage 1
+
+eval args=("$(get_args)")
+help="$(get_merged_option h help)"
+[[ -z $help ]] || usage
+[[ ${#args[@]} -ge 1 ]] || usage 1
+
+container="${args[0]}"
+psargs=("${args[@]:1}")
+
+sid="$(sudo docker inspect --format '{{.State.Pid}}' "$container")"
+einfo "Container session pid is $sid"
+
+# Find all PIDs in this SID
+pids=($(ps -a -o pid=,sid= | grep -Po ".*(?= $sid\$)"))
+
+# Print each PID with its NSPid mapping, record longest seen
+longest_nspid=0
+function get_nspids()
+{
+  for pid in $@; do
+    pidrow=($(cat /proc/$pid/status | grep '^NSpid:'))
+    nspid=${pidrow[2]}
+    len=${#nspid}
+    if [[ $len -gt $longest_nspid ]]; then
+      longest_nspid=len
+    fi
+    echo $nspid
+  done
+}
+nspids=($(get_nspids ${pids[@]}))
+
+# Run ps with any additional args, filtering to these pids, but prefix result lines with nspid
+# FIXME This will break if you disable the header in your ps args
+i=-1
+cmd ps -p "${pids[*]}" "${psargs[@]}" | \
+  while IFS= read -r -d$'\n' line; do
+    pref=""
+    [[ $i -eq -1 ]] || pref="${nspids[i]}"
+    echo "$(printf %${longest_nspid}s "$pref") $line"
+    (( i++ )) || true
+  done
