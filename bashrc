@@ -1,5 +1,13 @@
 # -*- mode: sh; sh-basic-offset: 2; sh-indentation: 2; -*-
 
+if [[ $TERM_PROGRAM = Apple_Terminal ]]; then
+    PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+    if [[ -n $MANPATH ]]; then
+	export MANPATH=":$MANPATH"
+    fi
+    MANPATH="/usr/local/opt/coreutils/libexec/gnuman$MANPATH"
+fi
+
 # Uses util.sh from nephscripts
 if [ -r ~/bin/lib/util.sh ]; then
   source ~/bin/lib/util.sh
