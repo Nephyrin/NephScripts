@@ -15,6 +15,7 @@ eval app_args=("$(get_args)")
 # export MOZ_PROFILER_INTERVAL=10
 # export MOZ_PROFILER_MODE=combined
 # export MOZ_PROFILER_STACK_SCAN=0
+export MOZ_USE_XINPUT2=1
 
 plugin_container="$(get_option p)"
 
