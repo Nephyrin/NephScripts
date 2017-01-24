@@ -12,6 +12,15 @@
 ;; Disable silly "type Y-E-S" prompts
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Always answer yes to: File %s is %s on disk.  Make buffer %s, too?
+;; (There's no variable to control this)
+(defun neph-y-or-n-p (orig-func prompt &rest args)
+  (if (string-match "^File .* is .* on disk.  Make buffer .*, too\\? $"
+                    prompt)
+      t
+    (apply orig-func prompt args)))
+(advice-add 'y-or-n-p :around #'neph-y-or-n-p)
+
 ; This just makes things slower. Maybe useful on spinning disks?
 (setq cache-long-line-scans nil)
 (setq cache-long-scans nil)
