@@ -495,10 +495,7 @@
 (when (require 'rtags nil t)
   ;; Don't configure company without rtags available
   (add-to-list 'load-path "~/.emacs.d/company-mode")
-  (add-to-list 'load-path "~/.emacs.d/company-quickhelp")
-  (add-to-list 'load-path "~/.emacs.d/pos-tip")
   (require 'company)
-  (require 'company-quickhelp)
   (require 'company-rtags)
 
   (cl-defun popup-tip (string
@@ -572,7 +569,6 @@
 (defun company-mode-neph ()
   (interactive)
   (company-mode t)
-  (company-quickhelp-mode t)
   ;;(semantic-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 (add-hook 'c-mode-common-hook 'company-mode-neph)

@@ -163,6 +163,3 @@
 [submodule "emacs.d/evil"]
 	path = emacs.d/evil
 	url = https://github.com/emacsmirror/evil
-[submodule "emacs.d/company-quickhelp"]
-	path = emacs.d/company-quickhelp
-	url = https://github.com/expez/company-quickhelp

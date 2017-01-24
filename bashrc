@@ -227,14 +227,6 @@ fzvd() {
   fzfd "$VALVE_ROOT"
 }
 
-# Run fzf, store result into $fzret
-fzvar() {
-  if ! check_fzf; then return 1; fi
-  [[ -z ${fz+x} ]] || einfo "Previous \$fz -> $(printf %q "$fz")"
-  fz="$(fzf "$@")"
-  emsg "Set new \$fz  -> $(printf %q "$fz")"
-}
-
 _fzcd_int()
 {
   if ! check_fzf; then return 1; fi
