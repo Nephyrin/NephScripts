@@ -727,7 +727,7 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/rainbow-delimiters")
-(autoload 'rainbow-delimiters "rainbow-delimiters" "rainbow-delimiters" t)
+(autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
 
 ;;
 ;; Minimap
@@ -960,7 +960,7 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/fill-column-indicator")
-(autoload 'fill-column-indicator "fill-column-indicator" "fill-column-indicator" t)
+(autoload 'fci-mode "fill-column-indicator" "fci-mode" t)
 
 ;;
 ;; re-builder
