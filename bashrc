@@ -419,40 +419,37 @@ dcg()
 
 lowprio()
 {
-  if [ ! -z "$NEPH_CGROUP" ]; then
-    echo >&2 '!! Warning, leaving old cgroup '"$NEPH_CGROUP"
+  if [[ -n $NEPH_CGROUP ]]; then
+    ewarn "Warning, leaving old cgroup: $NEPH_CGROUP"
     dcg
   fi
   # Create and move into new low priority cgroup
-  lpcg
-  # Run command with minimal nice/ionice perms
+  lpcg lowprio-cg
+  # Run command with minimal nice/ionice perms (to get pretty blue colors in htop, if we're being
+  # honest)
   time ionice -c3 nice -n20 "$@"
   # Delete low prio group
   dcg
 }
 
-# Needs to be fixed for new CG commands
-#lpcg()
-#{
-#  local prio="$1"
-#  local mem="$2"
-#  [[ -n $prio ]] || prio=1
-#  [[ -n $mem ]] || mem=256M
-#  [[ -z $NEPH_CGROUP ]] && cg
-#  group=$NEPH_CGROUP
-#  group="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"
-#  [[ ! -d $group ]] && echo ":: '$group' is not a directory" && return
-#
-#  /bin/echo "$prio" > "$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/cpu.shares
-#
-#  local blkioweight="$NEPH_DEFAULT_CGROUP/$NEPH_CGROUP"/blkio.weight
-#  local memlimit="$NEPH_DEFAULT_CGROUP"/"$NEPH_CGROUP"/memory.soft_limit_in_bytes
-#
-# [[ ! -e $blkioweight ]] || /bin/echo 10   > $blkioweight
-# [[ ! -e $memlimit    ]] || /bin/echo "$mem" > $memlimit
-#
-#  echo ":: Created low prio cgroup with $prio cpu shares and $mem soft memory limit"
-#}
+lpcg()
+{
+  local name="$1";
+  local cpu="$2";
+  local blkio="$3";
+  if [[ $# -lt 1 || $# -gt 3 || -z $name ]]; then
+    eerr "Usage: lpcg <name> [<cpu shares = 20> [<blkio weight = 10>]]";
+    return 1;
+  fi;
+  [[ -n $cpu ]] || cpu=20;
+  [[ -n $blkio ]] || blkio=10;
+  cg "$name" cpu blkio || return 1;
+  local cgcpu=/sys/fs/cgroup/cpu/"$name";
+  local cgblkio=/sys/fs/cgroup/blkio/"$name";
+  echo $cpu > "$cgcpu"/cpu.shares;
+  echo $blkio > "$cgblkio"/blkio.weight;
+  estat "Setup cgroup $name with cpu.shares $cpu and blkio.weight $blkio"
+}
 
 cdcg()
 {
