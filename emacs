@@ -92,6 +92,13 @@
 (setq whitespace-style (quote (face trailing tabs)))
 
 ;;
+;; Mark & Mark Ring
+;;
+
+(global-set-key (kbd "C-x p") 'pop-to-mark-command)
+(setq set-mark-command-repeat-pop t)
+
+;;
 ;; Snippets
 ;;
 
