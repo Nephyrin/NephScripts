@@ -1157,17 +1157,19 @@
   (smart-tabs-mode 0)
   (c-set-offset 'case-label '+) ;; Indent case statements in switches
   (setq c-basic-offset 2)
+  (setq python-indent-offset 2)
   (setq c-default-style "linux")
   (setq sh-basic-offset 2)
   (setq sh-indentation 2)
   (setq indent-tabs-mode nil)
   (setq tab-width 2)
   (setq js-indent-level 2)
+  (setq css-indent-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (when (featurep 'rtags) (rtags-enable-standard-keybindings))
-  (setq fill-column 80)
+  (setq fill-column 100)
   ; (rainbow-delimiters-mode nil) ;; FIXME forces fontification
   ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
   (run-with-idle-timer 0.5 nil (lambda ()
@@ -1198,7 +1200,9 @@
   (setq sh-indentation 4)
   (setq tab-width 4)
   (setq js-indent-level 4)
-  (setq fill-column 120))
+  (setq python-indent-offset 4)
+  (setq fill-column 120)
+  (fci-mode t))
 
 ;; Default modes
 
