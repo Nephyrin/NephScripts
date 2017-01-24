@@ -419,9 +419,11 @@
 
 
 ;; RG version (needs helm-projectile-ag fix)
-;(setq helm-ag-base-command "rg --color=never --with-filename --no-heading")
-;(defun helm-ag--construct-ignore-option (pattern)
-;  (concat "-g !" pattern))
+;(setq helm-ag-base-command "rg --vimgrep --no-heading")
+;; Older fix:
+;;(setq helm-ag-base-command "rg --color=never --with-filename --no-heading")
+;;(defun helm-ag--construct-ignore-option (pattern)
+;;  (concat "-g !" pattern))
 
 ;; Most keybinds in projectile below
 
