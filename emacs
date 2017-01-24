@@ -1327,9 +1327,14 @@
 (global-set-key (kbd "C-z R") (lambda () (interactive) (revert-buffer t t)))
 
 ; Quick eval-defun
+(global-set-key (kbd "C-z e") 'eval-region)
 (global-set-key (kbd "C-z E") 'eval-defun)
-;(global-set-key (kbd "C-z G") 'gdb)
+
+(global-set-key (kbd "C-z C-S-G") 'gdb)
 (global-set-key (kbd "C-z M") 'gdb-many-windows)
+
+;; Delete trailing whitespace
+(global-set-key (kbd "C-z C-M-S-D") 'delete-trailing-whitespace)
 
 ; helm shortcuts
 (global-set-key (kbd "C-z C-f") 'helm-find-files)
@@ -1401,7 +1406,31 @@
   (yank)
   (call-interactively 'indent-region))
 
-(global-set-key (kbd "C-S-y") 'yank-and-indent)
+(defun smart-yank-before-line ()
+  "Yank starting on a new line previous to this, indent, and end at the beginning of said line"
+  (interactive)
+  (beginning-of-line)
+  ;; If this isn't a blank line, open a new line before
+  (if (not (looking-at "\\s-*$"))
+      (open-line 1)
+    ;; Otherwise just clear said
+    (delete-horizontal-space))
+
+  ;; Do yank, but return to here
+  (save-excursion
+    (yank)
+    (call-interactively 'indent-region)
+    ;; Was the last line of this yank whitespace? Nuke it.
+    (when (save-excursion
+            (beginning-of-line)
+            (looking-at "\\s-*$"))
+      (kill-whole-line)))
+
+  ;; Go to indent
+  (back-to-indentation))
+
+(global-set-key (kbd "C-S-Y") 'yank-and-indent)
+(global-set-key (kbd "M-Y") 'smart-yank-before-line)
 
 (defun move-line-up ()
   "Move the current line up."
