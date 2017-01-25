@@ -1449,15 +1449,73 @@
   (indent-according-to-mode))
 (global-set-key [(control shift down)] 'move-line-down)
 
+(defun smart-expand-region-to-lines ()
+  "Expand the current region to line breaks if and only if it
+     already contains all non-whitespace in that region"
+  (interactive)
+    ;; Elasticly expand the region to move entire discrete lines if the beginning and end of the
+    ;; region contain those whole lines except for white-space
+    (let* ((o-point (point))
+           (o-mark (if mark-active (mark) o-point))
+           (point-first (< o-point o-mark)) ; Is the point at the begining or end of the region
+           (region-start (if point-first o-point o-mark))
+           (region-end (if point-first o-mark o-point))
+           (end-is-newline (save-excursion
+                             (goto-char region-end)
+                             (or (looking-at "\\s-*$") (looking-back "^"))))
+           (start-is-newline (save-excursion
+                               (goto-char region-start)
+                               (looking-back "^\\s-*"))))
+      (when (and start-is-newline end-is-newline)
+        ;; Both start and end contain the entire region's lines but for whitespace, expand region
+
+    (defun move-region-down (start end n)
+    ;; Start
+        (goto-char region-start)
+        (beginning-of-line)
+        (setq region-start (point))
+        ;; End
+        (goto-char region-end)
+        (when (not (looking-back "^")) ; Already a new line, don't be two
+          (end-of-line)
+          ;; Open a newline if we're at the end of the buffer, otherwise forward one
+          (if (= (point-max) (point))
+              (newline)
+            (forward-char 1))
+          (setq region-end (point)))
+        ;; Adjust point/mark
+        (if point-first
+            (progn (goto-char region-start)
+                   (set-mark region-end))
+          (set-mark region-start)))))
+
 (defun move-region (start end n)
   "Move the current region up or down by N lines."
   (interactive "r\np")
-  (let ((line-text (delete-and-extract-region start end)))
-    (forward-line n)
-    (let ((start (point)))
-      (insert line-text)
-      (setq deactivate-mark nil)
-      (set-mark start))))
+  (if mark-active
+      (progn
+        (let ((line-text (delete-and-extract-region start end)))
+          (next-line n)
+          (let ((start (point)))
+            (insert line-text)
+            (setq deactivate-mark nil)
+            (set-mark start))))
+    ;; Mark not active, just move without touching
+    (next-line n)))
+
+(defun smart-move-current-region-up (n)
+  "Move the current region up by N lines, smart expanding to line
+     breaks with smart-expand-region-to-lines first."
+  (interactive "p")
+  (smart-expand-region-to-lines)
+  (move-region (point) (mark) (if (null n) -1 (- n))))
+
+(defun smart-move-current-region-down (n)
+  "Move the current region up by N lines, smart expanding to line
+     breaks with smart-expand-region-to-lines first."
+  (interactive "p")
+  (smart-expand-region-to-lines)
+  (move-region (point) (mark) (if (null n) 1 n)))
 
 (defun move-region-up (start end n)
   "Move the current line up by N lines."
@@ -1469,8 +1527,8 @@
   (interactive "r\np")
   (move-region start end (if (null n) 1 n)))
 
-(global-set-key (kbd "M-P") 'move-region-up)
-(global-set-key (kbd "M-N") 'move-region-down)
+(global-set-key (kbd "M-P") 'smart-move-current-region-up)
+(global-set-key (kbd "M-N") 'smart-move-current-region-down)
 
 (defun open-next-line (arg)
   "Move to the next line and then opens a line.
