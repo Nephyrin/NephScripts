@@ -1469,8 +1469,7 @@
       (when (and start-is-newline end-is-newline)
         ;; Both start and end contain the entire region's lines but for whitespace, expand region
 
-    (defun move-region-down (start end n)
-    ;; Start
+        ;; Start
         (goto-char region-start)
         (beginning-of-line)
         (setq region-start (point))
