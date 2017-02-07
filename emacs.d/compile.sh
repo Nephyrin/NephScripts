@@ -8,20 +8,23 @@ cd "$(dirname "$0")"
 
 cmd mkdir -pv "$PWD/neph-autoloads/"
 
+# Seomthing in here complains if this doesn't exist yet
+cmd touch ede-projects.el
+
 estat Compiling Magit
-( cmd cd magit && cmd make )
+[[ ! -f magit/Makefile ]] || ( cmd cd magit && cmd make )
 
 estat Compiling CEDET
-( cmd cd cedet-git && cmd make )
+[[ ! -f cedet-git/Makefile ]] || ( cmd cd cedet-git && cmd make )
 
 estat Compiling Helm
-( cmd cd helm && cmd make)
+[[ ! -f helm/Makefile ]] || ( cmd cd helm && cmd make)
 
 estat Compiling ECB
-( cmd cd ecb && cmd make )
+[[ ! -f ecb/Makefile ]] || ( cmd cd ecb && cmd make )
 
 estat Compiling Evil
-( cmd cd evil && cmd make )
+[[ ! -f evil/Makefile ]] || ( cmd cd evil && cmd make )
 
 estat Making Evil autoloads
 cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-evil-autoload.el\"))  \
