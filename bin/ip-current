@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e
+. ~/bin/lib/util.sh
+
+usage() {
+  local out
+  if [[ -n $1 ]]; then
+    # Error
+    out() { ewarn "$@"; }
+  else
+    out() { einfo "$@"; }
+  fi
+  out "Usage: find-current-ip [options]"
+  out "  -a / --all                 Show all possible IPs, instead of best-guess for public IP"
+  out "  -d / --device              Show \"device ip\" pair for each IP"
+  out "  -h / --help                Show this usage message"
+  [[ -n $1 ]] || exit 0
+  exit 1
+}
+
+parse_args find-current-ip adh all,device,help "$@"
+
+all="$(get_merged_option a all)"
+device="$(get_merged_option d device)"
+help="$(get_merged_option h help)"
+[[ -z $help ]] || usage
+# Takes no args
+[[ $(num_args) -eq 0 ]] || { eerr Takes no arguments; usage 1; }
+
+awkprint='print ipary[1]'
+[[ -z $device ]] || awkprint='printf "%s %s\n", dev, ipary[1]'
+
+awkend='exit'
+[[ -z $all ]] || awkend=''
+
+# Run thing
+ip addr show scope global up | awk '
+  match($0, /^[0-9]+: ([^:\s]+): /, devary) { dev=devary[1] }
+  match($0, /^ *inet ([0-9\.]+)\//, ipary) {
+    '"$awkprint"'
+    '"$awkend"'
+  }
+'
