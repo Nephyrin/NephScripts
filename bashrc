@@ -688,4 +688,5 @@ unaff()
     done
 }
 
-[ ! -f ~/neph/priv/bashrc ] || . ~/neph/priv/bashrc
+[[ ! -f ~/neph/priv/bashrc ]] || . ~/neph/priv/bashrc
+[[ ! -f ~/.bashrc.local ]] || . ~/.bashrc.local
