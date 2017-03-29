@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+. ~/bin/lib/util.sh
+
+prefixes=(x86_64-pc-linux-gnu-)
+compilers=(cc c++ cpp g++ gcc clang clang++)
+
+unset tmpdir
+clean() { [[ -z $tmpdir ]] || cmd rm -rf "$tmpdir"; }
+tmpdir="$(mktemp -d --tmpdir ccache.prefix.XXX)"
+
+ccache="$(which ccache || die "Couldn't find ccache")"
+
+for prefix in "" "${prefixes[@]}"; do
+  for compiler in "${compilers[@]}"; do
+    cmd ln -sv "$ccache" "$tmpdir/${prefix}${compiler}"
+  done
+done
+
+cmd export PATH="$tmpdir:$PATH"
+cmd "$@"
