@@ -39,6 +39,10 @@ cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/projectile/projectile
 estat Making helm-projectile autoloads
 cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/helm-projectile/helm-projectile.el\" t \"$PWD/neph-autoloads/neph-helm-projectile-autoload.el\")"
 
+estat Making Irony-mode autoloads
+cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-irony-autoload.el\"))  \
+                                  (update-directory-autoloads \"$PWD/irony-mode\"))"
+
 estat Compiling remaining modules in directory
 cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"
 

@@ -166,3 +166,15 @@
 [submodule "emacs.d/company-quickhelp"]
 	path = emacs.d/company-quickhelp
 	url = https://github.com/expez/company-quickhelp
+[submodule "emacs.d/irony-mode"]
+	path = emacs.d/irony-mode
+	url = https://github.com/Sarcasm/irony-mode
+[submodule "emacs.d/company-irony"]
+	path = emacs.d/company-irony
+	url = https://github.com/Sarcasm/company-irony
+[submodule "emacs.d/flycheck-irony"]
+	path = emacs.d/flycheck-irony
+	url = https://github.com/Sarcasm/flycheck-irony
+[submodule "emacs.d/flycheck"]
+	path = emacs.d/flycheck
+	url = https://github.com/flycheck/flycheck

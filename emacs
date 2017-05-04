@@ -487,6 +487,29 @@
 ;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
 
+;; Irony-mode
+(add-to-list 'load-path "~/.emacs.d/flycheck")
+(add-to-list 'load-path "~/.emacs.d/irony-mode")
+(add-to-list 'load-path "~/.emacs.d/company-irony")
+(add-to-list 'load-path "~/.emacs.d/flycheck-irony")
+(require 'neph-irony-autoload)
+
+;; Flycheck
+(autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
+
+;; FIXME irony-mode breaks on headers due to that missing (car found)
+
+;; Load flycheck-irony if both flycheck and irony get enabled
+(defun neph-flycheck-irony-setup ()
+  "Load flycheck-irony if both irony and flycheck are loaded."
+  (when (and (featurep 'flycheck)
+             (featurep 'irony)
+             (not (featurep 'flycheck-irony)))
+    (require 'flycheck-irony)
+    (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
+(with-eval-after-load "irony" (neph-flycheck-irony-setup))
+
 ;; popup.el for rtags tooltips
 (add-to-list 'load-path "~/.emacs.d/popup-el")
 (autoload 'popup "popup" "Popup tooltip thing." t)
@@ -500,6 +523,8 @@
   (require 'company)
   (require 'company-quickhelp)
   (require 'company-rtags)
+  ;; If we wanted to use rtags instead of irony-mode above
+  ;;(with-eval-after-load "flycheck" (require flycheck-rtags))
 
   (cl-defun popup-tip (string
                        &key
@@ -536,11 +561,11 @@
 
   (setq rtags-autostart-diagnostics t)
   (setq rtags-find-file-case-insensitive t)
-  (setq rtags-show-containing-function nil)
+  (setq rtags-show-containing-function t)
 
-  (setq rtags-enable-unsaved-reparsing t)
+  (setq rtags-enable-unsaved-reparsing nil)
   (rtags-set-periodic-reparse-timeout nil)
-  (setq rtags-completions-timer-interval 0.5) ; This seems to cause stutter if reparsing is happening
+  (setq rtags-completions-timer-interval nil) ; This seems to cause stutter if reparsing is happening
 
   (setq rtags-tooltips-enabled nil)
   (setq rtags-display-current-error-as-tooltip nil)
@@ -1167,6 +1192,8 @@
   (setq css-indent-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
+  (flycheck-mode t)
+  (electric-pair-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (when (featurep 'rtags) (rtags-enable-standard-keybindings))
   (setq fill-column 100)
@@ -1204,6 +1231,16 @@
   (setq fill-column 120)
   (fci-mode t))
 
+(defun neph-c-mode ()
+  (interactive)
+  (irony-mode t)
+  ;; Feed the projectile dir to irony-cdb before running its autosetup command to ensure it knows
+  ;; how to read this file
+  (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
+    (when (and projectile-dir (length projectile-dir))
+      (irony-cdb-json-add-compile-commands-path projectile-dir (concat projectile-dir "/compile_commands.json"))
+      (irony-cdb-autosetup-compile-options))))
+
 ;; Default modes
 
 (add-to-list 'auto-mode-alist '("/yaourtrc$" . sh-mode))
@@ -1229,6 +1266,7 @@
 (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
+(add-hook 'c-mode-common-hook 'neph-c-mode)
 
 ;;
 ;; IswitchBuffers
