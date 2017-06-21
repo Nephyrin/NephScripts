@@ -950,8 +950,8 @@
   "Neph modeline clean status face")
 (defface neph-modeline-which-func
   '((t (:inherit mode-line-face
-        :foreground "#866"
-        :height 80)))
+        :foreground "#666"
+        :height 90)))
   "Neph modeline which-func-mode face")
 (setq-default mode-line-format
               '(:eval
@@ -959,10 +959,6 @@
                  neph-modeline-bufstat
                  ;; Position
                  "%[%l:%c"
-                 ;; which-function
-                 (let ((which-func (and which-function-mode (fboundp 'which-function) (which-function))))
-                   (when (and which-func (not (string= "" which-func)))
-                      (propertize (concat " " which-func) 'face 'neph-modeline-which-func)))
                  ;; End brace for position
                  "%] "
                  ;; path
@@ -981,15 +977,27 @@
                  '(:propertize minor-mode-alist face neph-modeline-misc)
                  (when vc-mode (propertize (concat " /" vc-mode)
                                            'face 'neph-modeline-misc))
-                 ; Padding to righthand side
-                 (neph-fill-to 13)
-                 ; Percentage and modeline-hud
-                 "%p "
-                 ; Bonus hacky alignment, such that if the buffer is too narrow
-                 ; to show the hud, the height of the modeline stays the same
-                 (propertize " " 'display '(list (raise -0.30) (height 1.25)))
-                 (neph-modeline-hud 1.5 10)
+                 ;; righthand side
+                 (let ((rtags-status (if (featurep 'rtags)
+                                         (propertize (rtags-modeline) 'face 'neph-modeline-which-func)
+                                       "")))
+                   (list
+                    ;; Bonus hacky alignment, such that if the buffer is too narrow
+                    ;; to show the modeline below hud, the height of the modeline stays the same
+                    (propertize " " 'display '(list (raise -0.30) (height 1.25)))
+
+                    ;; Pad to right side
+                    (neph-fill-to (+ 9 (string-width rtags-status)))
+                    ;; rtags
+                    rtags-status
+                    ;; Percentage and modeline-hud
+                    "%p "
+                    (neph-modeline-hud 1.5 10)))
                  )))
+
+;; Force modeline updates when rtags status changes
+(when (featurep 'rtags)
+  (add-hook 'rtags-diagnostics-hook (function force-mode-line-update)))
 
 (defcustom neph-sticky-header nil "Event-updated portion of the header line")
 (defcustom neph-sticky-header-valid-range nil "Range of characters for which the current sticky header is valid")
@@ -1015,22 +1023,30 @@
                                             (regionEnd       (when needed (+ (line-end-position (+ endLineOffset 1))
                                                                              endColumn)))
                                             (lineStr         (when (and needed charStart charEnd)
-                                                               (buffer-substring charStart charEnd))))
+                                                               (replace-regexp-in-string "^[ \t\n]+" ""
+                                                                                         (buffer-substring charStart charEnd)))))
                                        (setq neph-sticky-header
-                                             (list
-                                              (if lineStr lineStr (propertize "- unknown -" 'face 'neph-modeline-misc))))
+                                              (if lineStr lineStr (propertize "- unknown -" 'face 'neph-modeline-misc)))
 
                                        (setq neph-sticky-header-valid-range
                                              (if (and regionStart regionEnd)
                                                  (cons regionStart regionEnd)
                                                nil))
-                                       (redisplay))))
+                                       (force-mode-line-update))))
 
 (setq-default header-line-format
-              '(:eval (when (and neph-sticky-header-valid-range
-                                 (>= (point) (car neph-sticky-header-valid-range))
-                                 (<= (point) (cdr neph-sticky-header-valid-range)))
-                        neph-sticky-header)))
+              '(:eval (let ((which-func (and which-function-mode (fboundp 'which-function) (which-function)))
+                            (valid-neph-sticky-header (and neph-sticky-header-valid-range
+                                                           (>= (point) (car neph-sticky-header-valid-range))
+                                                           (<= (point) (cdr neph-sticky-header-valid-range)))))
+                        (list
+                         "  "
+                         (when (and which-func
+                                    (not (string= "" which-func))
+                                    (or (not valid-neph-sticky-header)
+                                        (not (string-match-p (regexp-quote which-func) neph-sticky-header))))
+                           (propertize (concat which-func " ") 'face 'neph-modeline-which-func))
+                         (when valid-neph-sticky-header neph-sticky-header)))))
 ;;
 ;; God mode
 ;;
