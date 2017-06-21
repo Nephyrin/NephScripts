@@ -1714,7 +1714,8 @@
 (defun p4-edit-current ()
   "Checks out the current buffer and mark editable"
   (interactive)
-  (if (call-process "p4" nil nil nil "edit" (buffer-file-name))
+  (message "Attempting p4 edit %s" (buffer-file-name))
+  (if (= 0 (call-process "p4" nil nil nil "edit" (buffer-file-name)))
       (progn (read-only-mode 0)
              (message "p4 opened into default changeset"))
     (message "p4 edit failed")))
