@@ -1907,6 +1907,11 @@ beginning of it and the point to the end of it if so"
 
 (global-set-key (kbd "C-z T") 'touch-current-file)
 
+(defun neph-ia-bigfont ()
+  "Shorthand for changing font size for hdpi"
+  (interactive)
+  (set-default-font "DejaVu Sans Mono-16"))
+
 (defun neph-ia-server ()
   "Prompt for a server name, set server-name to that, start the server"
   (interactive)
