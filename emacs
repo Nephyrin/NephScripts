@@ -164,25 +164,21 @@
 (add-to-list 'load-path "~/.emacs.d/highlight-symbol")
 (require 'highlight-symbol)
 
-;; Fix this disaster ruining all perf
-(defun highlight-symbol-flush ()
-  ;; Do nothing
-  ;; (font-lock-flush)
-  )
-
-(defun highlight-symbol-add-symbol-with-face (symbol face)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward symbol nil t)
-      (let ((ov (make-overlay (match-beginning 0)
-                              (match-end 0))))
-        (overlay-put ov 'highlight-symbol t)
-        (overlay-put ov 'face face)))))
-
-(defun highlight-symbol-remove-symbol (_symbol)
-  (dolist (ov (overlays-in (point-min) (point-max)))
-    (when (overlay-get ov 'highlight-symbol)
-      (delete-overlay ov))))
+;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
+;; See https://github.com/nschum/highlight-symbol.el/issues/26
+;(defun highlight-symbol-add-symbol-with-face (symbol face)
+;  (save-excursion
+;    (goto-char (point-min))
+;    (while (re-search-forward symbol nil t)
+;      (let ((ov (make-overlay (match-beginning 0)
+;                              (match-end 0))))
+;        (overlay-put ov 'highlight-symbol t)
+;        (overlay-put ov 'face face)))))
+;
+;(defun highlight-symbol-remove-symbol (_symbol)
+;  (dolist (ov (overlays-in (point-min) (point-max)))
+;    (when (overlay-get ov 'highlight-symbol)
+;      (delete-overlay ov))))
 
 (global-set-key (kbd "C-z H") 'highlight-symbol)
 (global-set-key (kbd "C-z C-H") 'highlight-symbol-remove-all)
