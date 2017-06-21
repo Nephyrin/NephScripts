@@ -1588,6 +1588,17 @@
 (global-set-key (kbd "C-S-Y") 'yank-and-indent)
 (global-set-key (kbd "M-Y") 'smart-yank-before-line)
 
+(defun bookmark-current-line ()
+  "Bookmark the current line, using itself as the bookmark name"
+  (interactive)
+  (let ((line (thing-at-point 'line t)))
+    (when (string-match "[ \t\n]*$" line)
+      (setq line (replace-match "" nil nil line)))
+    (bookmark-set line)
+    (message (concat "Created bookmark: " line))))
+
+(global-set-key (kbd "C-z C-S-B") 'bookmark-current-line)
+
 (defun move-line-up ()
   "Move the current line up."
   (interactive)
