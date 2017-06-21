@@ -319,7 +319,6 @@
 
 ; Paste not yank
 (add-hook 'term-mode-hook (lambda ()
-                            (hl-line-mode nil)
                             (define-key term-raw-map (kbd "C-y") 'term-paste)))
 
 ;;
@@ -1363,6 +1362,18 @@
 
 (global-set-key (kbd "C-z S") 'sudoize-buffer)
 (global-set-key (kbd "C-z C-S") 'drop-sudo)
+
+;;
+;; Term mode
+;;
+
+;; Global hl-line-mode block
+(add-hook 'eshell-mode-hook (lambda ()
+                                    (setq-local global-hl-line-mode
+                                                nil)))
+(add-hook 'term-mode-hook (lambda ()
+                                    (setq-local global-hl-line-mode
+                                                nil)))
 
 ;;
 ;; isearch tweaks
