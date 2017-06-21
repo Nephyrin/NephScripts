@@ -1199,7 +1199,9 @@
 (helm-projectile-on)
 (setq projectile-enable-caching t)
 
-(let ((neph-ignored-patterns '("*.o" "*.P" "*.dwo")))
+(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
+                               "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
+                               "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
   (setq projectile-generic-command (concat "find . -type f "
                                            (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
                                                       neph-ignored-patterns " -and ")
