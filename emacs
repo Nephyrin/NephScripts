@@ -1153,8 +1153,6 @@
         (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
     (message "!! astyle command not installed/available")))
 
-(global-set-key (kbd "C-z C-S-B") 'astyle-beautify-region)
-
 ;;
 ;; js-beautify
 ;;
