@@ -160,6 +160,8 @@ fi
 # Aliases & shorthand
 #
 
+nts() { gawk '{ print strftime("[%Y-%m-%d %H:%M:%S]"), $0 }'; }
+
 pn() { promptnote "$@"; }
 
 if ( ! which pidof && which pgrep ) &>/dev/null; then
