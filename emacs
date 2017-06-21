@@ -562,61 +562,91 @@
 (autoload 'popup "popup" "Popup tooltip thing." t)
 
 ;; Rtags is installed separate from NephScripts, don't assume it is available
-(when (require 'rtags nil t)
-  ;; Don't configure company without rtags available
-  (add-to-list 'load-path "~/.emacs.d/company-mode")
-  (add-to-list 'load-path "~/.emacs.d/company-quickhelp")
-  (add-to-list 'load-path "~/.emacs.d/pos-tip")
-  (require 'company)
-  (require 'company-quickhelp)
-  (require 'company-rtags)
-  ;; If we wanted to use rtags instead of irony-mode above
-  ;;(with-eval-after-load "flycheck" (require flycheck-rtags))
+(if (require 'rtags nil t)
+    (progn
+      ;; Don't configure company without rtags available
+      (add-to-list 'load-path "~/.emacs.d/company-mode")
+      (add-to-list 'load-path "~/.emacs.d/company-quickhelp")
+      (add-to-list 'load-path "~/.emacs.d/pos-tip")
+      (require 'company)
+      (require 'company-quickhelp)
+      (require 'company-rtags)
+      ;; If we wanted to use rtags instead of irony-mode above
+      ;;(with-eval-after-load "flycheck" (require flycheck-rtags))
 
-  (cl-defun popup-tip (string
-                       &key
-                       point
-                       (around t)
-                       width
-                       (height 15)
-                       min-height
-                       max-width
-                       truncate
-                       margin
-                       margin-left
-                       margin-right
-                       scroll-bar
-                       parent
-                       parent-offset
-                       nowait
-                       nostrip
-                       prompt
-                       &aux tip lines)
-    (tooltip-show string))
+      ;; Workaround to disable fci-mode when company is active
+      (defun on-off-fci-before-company(command)
+        (when (string= "show" command)
+          (turn-off-fci-mode))
+        (when (string= "hide" command)
+          (turn-on-fci-mode)))
+      (advice-add 'company-call-frontends :before #'on-off-fci-before-company)
 
-  (add-to-list 'company-backends 'company-rtags)
+      (cl-defun popup-tip (string
+                           &key
+                           point
+                           (around t)
+                           width
+                           (height 15)
+                           min-height
+                           max-width
+                           truncate
+                           margin
+                           margin-left
+                           margin-right
+                           scroll-bar
+                           parent
+                           parent-offset
+                           nowait
+                           nostrip
+                           prompt
+                           &aux tip lines)
+        (tooltip-show string))
 
-  (setq company-idle-delay nil)
+      (add-to-list 'company-backends 'company-rtags)
 
-  (setq company-rtags-max-wait 10000)
-  (setq rtags-completions-enabled t) ; Needed?
-  (setq rtags-track-container t)
-  (setq company-rtags-use-async nil)
+      (setq company-idle-delay nil)
 
-  (setq rtags-use-helm nil)
-  (setq rtags-max-bookmark-count 10)
+      (setq company-async-timeout 10000)
+      (setq company-rtags-max-wait 10000)
+      (setq rtags-completions-enabled t) ; Needed?
+      (setq rtags-track-container t)
+      (setq company-rtags-use-async nil)
 
-  (setq rtags-autostart-diagnostics t)
-  (setq rtags-find-file-case-insensitive t)
-  (setq rtags-show-containing-function t)
+      (setq rtags-use-helm nil)
+      (setq rtags-max-bookmark-count 10)
 
-  (setq rtags-enable-unsaved-reparsing nil)
-  (rtags-set-periodic-reparse-timeout nil)
-  (setq rtags-completions-timer-interval nil) ; This seems to cause stutter if reparsing is happening
+      (setq rtags-autostart-diagnostics t)
+      (setq rtags-find-file-case-insensitive t)
+      (setq rtags-show-containing-function t)
 
-  (setq rtags-tooltips-enabled nil)
-  (setq rtags-display-current-error-as-tooltip nil)
-  (setq rtags-display-summary-as-tooltip nil))
+      (setq rtags-enable-unsaved-reparsing nil)
+      (rtags-set-periodic-reparse-timeout nil)
+      (setq rtags-completions-timer-interval nil) ; This seems to cause stutter if reparsing is happening
+
+      (setq rtags-tooltips-enabled nil)
+      (setq rtags-display-current-error-as-tooltip nil)
+      (setq rtags-display-summary-as-tooltip nil)
+
+      ;; When using rtags provide a backend to irony
+      (defun irony-cdb-rtags-neph (command &rest args)
+        (cl-case command
+          (get-compile-options (irony-cdb-rtags-neph--get-compile-options))))
+
+      (defun irony-cdb-rtags-neph--get-compile-options ()
+        (let ((path (rtags-buffer-file-name)))
+          (when path
+            (with-temp-buffer
+              (rtags-call-rc :path path "--sources" path "--compilation-flags-only" "--compilation-flags-pwd" "--compilation-flags-split-line")
+              (let* ((str (buffer-substring-no-properties (point-min) (point-max)))
+                     (result (split-string str "\n" t))
+                     (pwdraw (car-safe result))
+                     (pwd (when (and pwdraw (string= (substring pwdraw 0 5) "pwd: ")) (substring pwdraw 5))))
+                (when pwd
+                  (list (cons (butlast (nthcdr 2 result)) pwd))))))))
+  ;; No rtags
+  ;; Provide the irony backend but make it always return nuh
+  (defun irony-cdb-rtags-neph (command &rest args) nil)))
 
 ;; Semantic
 ; (require 'semantic)
