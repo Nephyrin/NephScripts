@@ -263,7 +263,7 @@ _fzcd_int()
 # Shorthand rdp
 rdp()
 {
-  rdesktop -x l -g 1920x1200 -a 32 "$@"
+  cmd xfreerdp /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
 }
 
 # Change to git toplevel directory or error
