@@ -492,8 +492,8 @@
 (add-to-list 'load-path "~/.emacs.d/phi-search")
 (autoload 'phi-search "phi-search" "Phi Search." t)
 
-(global-set-key (kbd "C-c C-s") 'phi-search)
-(global-set-key (kbd "C-c C-r") 'phi-search-backward)
+(global-set-key (kbd "C-S-s") 'phi-search)
+(global-set-key (kbd "C-S-r") 'phi-search-backward)
 
 ;; See also
 ;;phi-search-additional-keybinds
