@@ -16,6 +16,15 @@ estat "Python version is $pyver"
 export PYTHONPATH="$PWD/powerline/lib/python${pyver}/site-packages/"
 prefix="$PWD/powerline/"
 
+unset tmpdir
+cleanup() { [[ -z $tmpdir ]] || rm -rv "$tmpdir"; }
+trap cleanup EXIT SIGINT
+tmpdir="$(mktemp -d --tmp buildPowerlineXXX)"
+einfo tmpdir is "$tmpdir"
+echo '#!/bin/bash'$'\n''set -ex'$'\n''clang "$@"' >> "$tmpdir"/cc
+cmd chmod +x "$tmpdir/cc"
+export PATH="$tmpdir:$PATH"
+
 cmd mkdir -pv "$PYTHONPATH"
 cmd cd powerline.git
 cmd python ./setup.py install --prefix="$prefix"
