@@ -178,3 +178,6 @@
 [submodule "emacs.d/flycheck"]
 	path = emacs.d/flycheck
 	url = https://github.com/flycheck/flycheck
+[submodule "emacs.d/fzf"]
+	path = emacs.d/fzf
+	url = https://github.com/bling/fzf.el

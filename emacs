@@ -433,6 +433,15 @@
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
 
 ;;
+;; FZF
+;;
+
+(add-to-list 'load-path "~/.emacs.d/fzf")
+(require 'fzf)
+(global-set-key (kbd "C-z C-S-f") 'fzf)
+(setq fzf/args "--no-hscroll --margin=0,1,1,0 --print-query -x")
+
+;;
 ;; Helm AG
 ;;
 
