@@ -181,3 +181,6 @@
 [submodule "emacs.d/fzf"]
 	path = emacs.d/fzf
 	url = https://github.com/bling/fzf.el
+[submodule "emacs.d/htmlize"]
+	path = emacs.d/htmlize
+	url = https://github.com/hniksic/emacs-htmlize

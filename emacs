@@ -235,7 +235,8 @@
 ;; Htmlize
 ;;
 
-(load-file "~/.emacs.d/htmlize.el")
+(add-to-list 'load-path "~/.emacs.d/htmlize")
+(autoload 'htmlize-buffer "htmlize" "htmlize" t)
 
 ;; Hacky thing to htmlize a region and send it straight to browser
 (defun neph-html-region ()
