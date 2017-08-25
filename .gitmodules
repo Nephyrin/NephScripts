@@ -184,3 +184,6 @@
 [submodule "emacs.d/htmlize"]
 	path = emacs.d/htmlize
 	url = https://github.com/hniksic/emacs-htmlize
+[submodule "emacs.d/emacs-async"]
+	path = emacs.d/emacs-async
+	url = https://github.com/jwiegley/emacs-async

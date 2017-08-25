@@ -11,6 +11,9 @@ cmd mkdir -pv "$PWD/neph-autoloads/"
 # Seomthing in here complains if this doesn't exist yet
 cmd touch ede-projects.el
 
+estat Compiling Async
+[[ ! -f emacs-async/Makefile ]] || ( cmd cd emacs-async && cmd make )
+
 estat Compiling Magit
 [[ ! -f magit/Makefile ]] || ( cmd cd magit && cmd make )
 
@@ -18,7 +21,7 @@ estat Compiling CEDET
 [[ ! -f cedet-git/Makefile ]] || ( cmd cd cedet-git && cmd make )
 
 estat Compiling Helm
-[[ ! -f helm/Makefile ]] || ( cmd cd helm && cmd make)
+[[ ! -f helm/Makefile ]] || ( cmd cd helm && cmd make LOADPATH="-L . -L ../emacs-async/" )
 
 estat Compiling ECB
 [[ ! -f ecb/Makefile ]] || ( cmd cd ecb && cmd make )

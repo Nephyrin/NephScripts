@@ -351,6 +351,7 @@
 ;; Helm
 ;;
 
+(add-to-list 'load-path "~/.emacs.d/emacs-async") ; helm dep
 (add-to-list 'load-path "~/.emacs.d/helm")
 (require 'helm-autoloads)
 ;;(require 'helm)
