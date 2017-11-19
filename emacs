@@ -3,6 +3,7 @@
 ;;
 ;; Misc
 ;;
+(require 'cl)
 
 (add-to-list 'load-path "~/.emacs.d/neph-autoloads")
 ;; Load this before something tries to load built-in CEDET libraries
@@ -204,7 +205,7 @@
          (name (if name name "neph-buffer-command"))
          (buf (generate-new-buffer (concat name ": " cmd))))
     (switch-to-buffer buf nil t)
-    (insert-string (concat "<command: " cmd ">"))
+    (insert (concat "<command: " cmd ">"))
     (newline)
     (let ((proc (start-process-shell-command
                  (concat name "-proc")
@@ -217,7 +218,7 @@
             (with-current-buffer (process-buffer process)
               (rename-buffer (concat (buffer-name) " <command finished>"))
               (newline)
-              (insert-string "<command finished>")
+              (insert "<command finished>")
               (when ,callback
                 (apply ,callback (list process)))
               (goto-char (point-min)))))))))
@@ -239,27 +240,41 @@
 (autoload 'htmlize-buffer "htmlize" "htmlize" t)
 
 ;; Hacky thing to htmlize a region and send it straight to browser
+;;(defun neph-html-region ()
+;;  (interactive)
+;;  (let* ((regionp (region-active-p))
+;;         (beg (and regionp (region-beginning)))
+;;         (end (and regionp (region-end)))
+;;         (buf (current-buffer))
+;;         ;; poor man's with-temp-killring (requires let*)
+;;         (kill-ring (list "temp kill ring"))
+;;         (kill-ring-yank-pointer kill-ring))
+;;    (with-temp-buffer
+;;      ;;(switch-to-buffer (current-buffer) nil t)
+;;      (rename-buffer "*Neph HTMLIZE Temp Buffer*" t)
+;;      (font-lock-mode -1) ;; We want to keep the face properties from the source buffer always
+;;      (insert-buffer-substring-as-yank buf beg end)
+;;      (with-current-buffer (htmlize-buffer)
+;;        (write-file "~/.emacs.d/htmlize-temp.htm"))))
+;;        ;;(kill-buffer)))
+;;    ;; This is the way the help actually suggests you prevent it from opening this buffer.
+;;    (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+;;                                      display-buffer-alist)))
+;;      (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
+
 (defun neph-html-region ()
   (interactive)
-  (let* ((regionp (region-active-p))
-         (beg (and regionp (region-beginning)))
-         (end (and regionp (region-end)))
-         (buf (current-buffer))
-         ;; poor man's with-temp-killring (requires let*)
-         (kill-ring (list "temp kill ring"))
-         (kill-ring-yank-pointer kill-ring))
-    (with-temp-buffer
-      ;;(switch-to-buffer (current-buffer) nil t)
-      (rename-buffer "*Neph HTMLIZE Temp Buffer*" t)
-      (font-lock-mode -1) ;; We want to keep the face properties from the source buffer always
-      (insert-buffer-substring-as-yank buf beg end)
-      (with-current-buffer (htmlize-buffer)
-        (write-file "~/.emacs.d/htmlize-temp.htm"))))
-        ;;(kill-buffer)))
-    ;; This is the way the help actually suggests you prevent it from opening this buffer.
-    (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
-                                      display-buffer-alist)))
-      (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
+  (let ((fci (and (boundp 'fci-mode) fci-mode)))
+    (when fci (turn-off-fci-mode))
+    (with-current-buffer
+        (htmlize-region (point) (mark))
+      (write-file "~/.emacs.d/htmlize-temp.htm"))
+    (when fci (turn-off-fci-mode)))
+  ;;(kill-buffer)))
+  ;; This is the way the help actually suggests you prevent it from opening this buffer.
+  (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+                                    display-buffer-alist)))
+    (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
 
 ;;
 ;; htmlfontify
@@ -438,6 +453,8 @@
 ;; FZF
 ;;
 
+;; TODO: Submit FZF upstream, make submodule
+;; See fzf.el for wrapping ansi-term
 (add-to-list 'load-path "~/.emacs.d/fzf")
 (require 'fzf)
 (global-set-key (kbd "C-z C-S-f") 'fzf)
@@ -633,7 +650,6 @@
 
       (setq rtags-enable-unsaved-reparsing nil)
       (rtags-set-periodic-reparse-timeout nil)
-      (setq rtags-completions-timer-interval nil) ; This seems to cause stutter if reparsing is happening
 
       (setq rtags-tooltips-enabled nil)
       (setq rtags-display-current-error-as-tooltip nil)
@@ -654,10 +670,10 @@
                      (pwdraw (car-safe result))
                      (pwd (when (and pwdraw (string= (substring pwdraw 0 5) "pwd: ")) (substring pwdraw 5))))
                 (when pwd
-                  (list (cons (butlast (nthcdr 2 result)) pwd))))))))
+                  (list (cons (append '("-Wextra") (delete "-fpch-preprocess"  (nbutlast (nthcdr 3 result) 3))) pwd)))))))))
   ;; No rtags
   ;; Provide the irony backend but make it always return nuh
-  (defun irony-cdb-rtags-neph (command &rest args) nil)))
+  (defun irony-cdb-rtags-neph (command &rest args) nil))
 
 ;; Semantic
 ; (require 'semantic)
@@ -1210,6 +1226,16 @@
 (helm-projectile-on)
 (setq projectile-enable-caching t)
 
+;; If -alt appears in the path preceeding the final component, append -alt to the name
+;; e.g. ~/git-alt/project shows up differently from ~/git/project
+;; (Incredibly specific to the author's workflow)
+;; A more robust version would be to feed known projects into uniquify
+(setq projectile-project-name-function (lambda (root)
+                                         (let ((default-name (projectile-default-project-name root)))
+                                           (if (string-match "-alt.*/" root)
+                                               (concat default-name "-alt")
+                                             default-name))))
+
 (let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
                                "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
                                "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
@@ -1301,6 +1327,15 @@
   (setq c-basic-offset 2)
   (setq python-indent-offset 2)
   (setq c-default-style "linux")
+  ;; Indent one-liners but not others
+  ;;
+  ;; Unless we just created a brace pair, assume {} is about to become multi-line and let
+  ;; electric-brace move it back over.
+  (c-set-offset 'substatement-open (lambda (foo)
+                                     (when (not (and (looking-back "{") (looking-at "}")))
+                                       (c-indent-one-line-block foo))))
+  ;; Don't indent inline definitions in e.g. classes, except for one liners
+  (c-set-offset 'inline-open 'c-indent-one-line-block)
   (setq sh-basic-offset 2)
   (setq sh-indentation 2)
   (setq indent-tabs-mode nil)
@@ -1314,11 +1349,12 @@
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (when (featurep 'rtags) (rtags-enable-standard-keybindings))
   (setq fill-column 100)
-  ; (rainbow-delimiters-mode nil) ;; FIXME forces fontification
-  ;; This is awful, still needed? I think something was forcing these to fontify the whole buffer instantly, making new files janky
+  ;; This is awful, still needed? Something was forcing fontify on the whole buffer instantly,
+  ;; making new files janky
   (run-with-idle-timer 0.5 nil (lambda ()
-                               (color-identifiers-mode t)
-                               (fic-mode t))))
+                                 (rainbow-delimiters-mode t) ;; FIXME forces fontification always maybe?
+                                 (color-identifiers-mode t)
+                                 (fic-mode t))))
 
 ;; Currently just the base config
 (defun neph-space-cfg ()
@@ -1360,9 +1396,10 @@
 
 ;; Default modes
 
-(add-to-list 'auto-mode-alist '("/yaourtrc$" . sh-mode))
-(add-to-list 'auto-mode-alist '("/PKGBUILD$" . sh-mode))
-(add-to-list 'auto-mode-alist '("/bash(rc|_profile)$" . sh-mode))
+(add-to-list 'auto-mode-alist '("/yaourtrc\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("\\.ma?k\\'" . makefile-mode))
+(add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
 ;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
 (defun neph-js-mode-hook ()
   (if (and (stringp buffer-file-name)
@@ -1544,6 +1581,60 @@
                                   (setq debug-on-quit t)
                                   (message "Enabled debug-on-error and debug-on-quit"))))
 
+;; Bonus align keys
+
+;; align-regexp but defaults to complex mode interactively
+(defun align-regexp-complex (&rest rest)
+  "Invoke align-regexp in complex mode"
+  (interactive)
+  (let ((current-prefix-arg 1))
+    (if (called-interactively-p 'any)
+        (call-interactively 'align-regexp rest)
+      (apply 'align-regexp rest))))
+
+(defun neph-align-protobuf-message ()
+  "Helper to align a protobuf message"
+  (interactive)
+  (indent-region (region-beginning) (region-end))
+  ;; Prefix regexp that matches a field line of a protobuf message, quoted or not
+  (let ((protoline "^\\s-*\\(//\\)?\\s-*\\(optional\\|repeated\\)")
+        ;; Version that requires it be quoted
+        (protoline-quoted "^\\s-*\\(//\\)\\s-*\\(optional\\|repeated\\)")
+        ;; How many groups does the match-a-protoline prefix have
+        (protoline-groups 2)
+        ;; Which replace string refers to the field type
+        (protoline-type-group 2))
+    ;; Fix any commented out lines to have the comment as the first few characters with indentation
+    ;; after -- Protobuf messages may have many commented out fields, and this leaves them aligned
+    ;; with the live fields nicely.
+    (let ((start (region-beginning))
+          (end (region-end)))
+      (save-excursion
+        (goto-char start)
+        (while (re-search-forward protoline-quoted end t)
+          (replace-match (concat "//	" (format "\\%d" protoline-type-group)))))
+
+    ;; Align the field name after optional/repeated
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline "\\s-+[^[:space:]]+\\(\\s-+\\)")
+                  (+ protoline-groups 1) 1 nil)
+    ;; Align the first =
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline ".*?\\(\\s-*\\)=")
+                  (+ protoline-groups 1) 1 nil)
+    ;; Align the start of the trailing comment
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//")
+                  (+ protoline-groups 2) 1 nil)
+    ;; Align the interior of the comment in case we have old code where the contents were aligned
+    ;; after the //
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//\\(\\s-*\\)")
+                  (+ protoline-groups 3) 1 nil))))
+
+(global-set-key (kbd "C-z C-a") 'align-regexp)
+(global-set-key (kbd "C-z a") 'neph-align-regexp-u)
+
 ; Toggle case of the next letter
 (defun toggle-case ()
   "Toggle the casing of the character under point"
@@ -1556,7 +1647,7 @@
           (insert (if (eq curchar curcapped)
                       (downcase curchar)
                     curcapped))))))
-(global-set-key (kbd "C-z C-c") 'toggle-case)
+(global-set-key (kbd "M-u") 'toggle-case)
 
 ;; merge-next-line
 (defun merge-next-line (arg)
@@ -1732,6 +1823,10 @@
     (message "p4 edit failed")))
 (global-set-key (kbd "C-z C-e") 'p4-edit-current)
 
+;; Take slash away from electric indent ('electric-slash)
+(define-key c-mode-base-map "/" 'self-insert-command)
+;; (global-set-key (kbd "/") 'self-insert-command)
+
 ;; Custom binds for existing commands
 (global-set-key (kbd "C-c C-j") 'term-line-mode)
 (global-set-key (kbd "C-c C-k") 'term-char-mode)
@@ -1842,23 +1937,20 @@ with a special case for when you are within a word"
         (forward-word (* inc (- arg 1))))
     (forward-word (- inc))))
 
-(defun forward-to-word (&optional arg)
-    "Move backwards to the *beginning* of the next recognized
-word. This is a combination of (forward-word) (backward-word)
-with a special case for when you are within a word"
+(defun neph-kill-to-word (&optional arg)
+  "Like kill word, but behaes like forward-to-word rather than
+forward-word to find the boundry"
   (interactive "^p")
-  (let ((original-point (point))
-        (n (or arg 1))
-        (inc (if (< (or arg 1) 0) -1 1)))
-    (forward-word inc)
-    (forward-word (- inc))
-    (if (or (and (> n 0) (<= (point) original-point))
-            (and (< n 0) (>= (point) original-point)))
-        (forward-word (* 2 inc))
-      (forward-word inc))
-    (if (or (> n 1) (< n -1))
-        (forward-word (* inc (- arg 1))))
-    (forward-word (- inc))))
+  (save-excursion
+    (set-mark (point))
+    (forward-to-word arg)
+    (kill-region (mark) (point))))
+
+(defun neph-backward-kill-to-word (&optional arg)
+  "Like kill word, but behaes like forward-to-word rather than
+forward-word to find the boundry"
+  (interactive "^p")
+  (neph-kill-to-word (- (or arg 1))))
 
 (defun mark-current-word (&optional arg)
     "Determines if you are over a word, and moves the mark to the
@@ -1882,6 +1974,8 @@ beginning of it and the point to the end of it if so"
 (global-set-key (kbd "M-@") 'mark-current-word)
 (global-set-key (kbd "M-B") 'backward-to-word)
 (global-set-key (kbd "M-F") 'forward-to-word)
+(global-set-key (kbd "M-D") 'neph-kill-to-word)
+(global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
 
 (defun mark-current-line (&optional arg)
   "Mark the current line without moving the cursor"
@@ -2089,8 +2183,27 @@ beginning of it and the point to the end of it if so"
     (if (string= neph-theme "tango")
         (load-theme 'tango t)
       ;; Else just forward to load-theme
-      (load-theme neph-theme))))
+      (load-theme (intern neph-theme))))
+  (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
+    (color-identifiers:refresh))
+  (when (and (boundp 'fci-mode) fci-mode)
+    (fci-mode nil)
+    (fci-mode t))
+  (when (and (boundp 'linum-mode) linum-mode)
+    (linum-mode nil)
+    (linum-mode t))
+  (redisplay))
 (load-neph-theme default-neph-theme)
+
+(defun neph-whiteboard-mode ()
+  "Enter or exit whiteboard mode"
+  (interactive)
+  (if (member 'ample-zen custom-enabled-themes)
+      (progn (load-neph-theme "whiteboard")
+             (global-whitespace-mode -1))
+    (load-neph-theme "ample-zen")
+    (global-whitespace-mode t)))
+(global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
 
 ;; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
@@ -2133,3 +2246,36 @@ beginning of it and the point to the end of it if so"
 ;;                     :background "#333"
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-backends
+   (quote
+    (company-irony company-rtags company-bbdb company-nxml company-css company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+                   (company-dabbrev-code company-gtags company-etags company-keywords)
+                   company-oddmuse company-dabbrev)))
+ '(debug-on-error t)
+ '(debug-on-quit nil)
+ '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
+ '(flycheck-checker-error-threshold nil)
+ '(gdb-many-windows nil)
+ '(helm-exit-idle-delay 0)
+ '(helm-input-idle-delay 0.0)
+ '(ido-vertical-define-keys (quote C-n-and-C-p-only))
+ '(irony-cdb-compilation-databases
+   (quote
+    (irony-cdb-rtags-neph irony-cdb-libclang irony-cdb-clang-complete)))
+ '(irony-completion-availability-filter (quote (available deprecated notaccessible notavailable)))
+ '(phi-search-limit 5000)
+ '(rtags-follow-symbol-try-harder nil)
+ '(rtags-imenu-syntax-highlighting nil)
+ '(rtags-reparse-timeout 1)
+ '(set-mark-command-repeat-pop t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
