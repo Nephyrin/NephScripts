@@ -52,9 +52,6 @@
 [submodule "bin/ninja.git"]
 	path = bin/ninja.git
 	url = https://github.com/martine/ninja.git
-[submodule "emacs.d/git-modes"]
-	path = emacs.d/git-modes
-	url = https://github.com/magit/git-modes
 [submodule "emacs.d/god-mode"]
 	path = emacs.d/god-mode
 	url = https://github.com/chrisdone/god-mode
