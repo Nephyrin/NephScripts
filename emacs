@@ -35,7 +35,9 @@
 (setq x-select-enable-primary nil)
 (setq x-select-enable-clipboard t)
 (setq mouse-drag-copy-region nil)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+(when (boundp 'x-cut-buffer-or-selection-value)
+  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
+
 ;(global-set-key (kbd "C-{") 'clipboard-yank)
 ;(global-set-key (kbd "C-}") 'clipboard-kill-ring-save)
 ;(global-set-key (kbd "C-M-}") 'clipboard-kill-region)
@@ -1824,7 +1826,8 @@
 (global-set-key (kbd "C-z C-e") 'p4-edit-current)
 
 ;; Take slash away from electric indent ('electric-slash)
-(define-key c-mode-base-map "/" 'self-insert-command)
+(eval-after-load 'cc-mode
+  '(define-key c-mode-base-map "/" 'self-insert-command))
 ;; (global-set-key (kbd "/") 'self-insert-command)
 
 ;; Custom binds for existing commands
@@ -2208,6 +2211,9 @@ beginning of it and the point to the end of it if so"
 ;; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
 (set-face-attribute 'default nil :height 96)
+(when (eq system-type 'darwin)
+  (set-face-attribute 'default nil :family "Monaco")
+  (set-face-attribute 'default nil :height 120))
 (put 'downcase-region 'disabled nil)
 
 
