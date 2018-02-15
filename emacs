@@ -1449,6 +1449,8 @@
 (defun neph-base-cfg ()
   (linum-mode t)
   (smart-tabs-mode 0)
+  (c-set-offset 'cpp-macro 0 nil) ;; Indent preprocessor macros with code instead of
+                                  ;; beggining-of-line
   (c-set-offset 'case-label '+) ;; Indent case statements in switches
   (setq c-basic-offset 2)
   (setq python-indent-offset 2)
