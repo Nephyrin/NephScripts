@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+args=("$@")
+i=0
+prio=0
+while [[ $(( i + 1 )) -lt ${#args[@]} ]]; do
+  numeric='^[0-9]+$'
+  opt="${args[i]}"
+  arg="${args[i+1]}"
+
+  if [[ $opt = "--priority" && $arg =~ $numeric ]]; then
+    prio=$arg
+  fi
+  (( ++i ))
+done
+
+if [[ $prio -gt 5 ]]; then
+  # Higher than compile, lower than rest of system
+  cgroup=rp-interactive
+  blkio_weight=40
+  cpu_shares=400
+else
+  cgroup=rp
+  blkio_weight=10
+  cpu_shares=20
+fi
+
+mkdir -p /sys/fs/cgroup/{cpu,blkio}/"$cgroup"
+echo "$cpu_shares" > /sys/fs/cgroup/cpu/"$cgroup"/cpu.shares
+echo "$blkio_weight" > /sys/fs/cgroup/blkio/"$cgroup"/blkio.weight
+echo $$ > /sys/fs/cgroup/cpu/"$cgroup"/cgroup.procs
+echo $$ > /sys/fs/cgroup/blkio/"$cgroup"/cgroup.procs
+
+/usr/bin/rp "$@"

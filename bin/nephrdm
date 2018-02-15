@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+. "$(dirname "$0")"/lib/util.sh
+
+#  --unload-timer 30
+
+
+#cmd gdb -ex "handle SIGPIPE noprint nostop pass" -ex run --args \
+export NEPH_RP="$HOME/bin/nephrp"
+cmd rdm --rp-path "$HOME/bin/nephrp" --error-limit 0 --rp-nice-value 10 \
+        --progress --disable-sighandler --completion-no-filter --default-argument "-Wextra" \
+        --validate-file-maps \
+        "$@" 2>/dev/null
+
+# --pch-enabled
+# --completion-cache-size 20 --completion-logs \
+# --disallow-multiple-sources
+#-I /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include -I /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed
