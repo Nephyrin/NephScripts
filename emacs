@@ -681,7 +681,69 @@
 
       (setq rtags-autostart-diagnostics t)
       (setq rtags-find-file-case-insensitive t)
+      ;; FIXME rtags bug, it tries to do this but ends up not? Commented out, I think turned out unnecessary
+      ;;(add-hook 'window-configuration-change-hook 'rtags-update-buffer-list)
+
+      ;; FIXME: Messy, kinda works. Remaining problem is the results-buffer-other-window behavior --
+      ;; we ideally want to wrap rtags-switch-to-buffer *within* handle-results-buffer, and do more
+      ;; logic on where to open the results window it is trying to other-window-open
+      ;;
+      ;; I think the logic we want is split-current-pane-if-sensible-always
+
       (setq rtags-show-containing-function t)
+      (defun neph-rtags-split-window ()
+        ;;(message "neph-rtags-split-window!")
+        ;;(message "Trying default split with %d" split-height-threshold)
+        (let ((window (split-window-sensibly)))
+          ;;(message "Called!")
+          (if window window
+            ;;(message "Trying lessened-height split")
+            (let ((split-height-threshold 80))
+              (split-window-sensibly)))))
+      (defun neph-rtags-other-window ()
+        ;;(message "neph-rtags-other-window!")
+        (if (boundp 'neph-rtags-original-command-window)
+            (if (eq neph-rtags-original-command-window (get-buffer-window rtags-buffer-name))
+                (progn
+                  ;;(message "other-window: Falling back to split")
+                  (neph-rtags-split-window))
+              ;;(message "other-window: Using original")
+              neph-rtags-original-command-window)
+          ;;(message "other-window: using other-window 1")
+          (other-window 1)))
+
+      (setq rtags-popup-results-buffer t)
+      (setq rtags-results-buffer-other-window t)
+      (setq rtags-split-window-function 'neph-rtags-split-window)
+      (setq rtags-other-window-function 'neph-rtags-other-window)
+
+      (defadvice rtags-find-references-at-point (around neph-rtags-find-references-at-point activate)
+        ;;(message "find-references-at-point advice!")
+        ;;(let ((neph-rtags-original-command-window (selected-window)))
+          ad-do-it)
+      (defadvice rtags-handle-results-buffer (around neph-rtags-handle-results-buffer activate)
+        ;;(message "ADVICE rtags-handle-results-buffer")
+        ad-do-it)
+
+      (defadvice rtags-select (around neph-rtags-select activate)
+        ;;(message "ADVICE rtags-select")
+        ad-do-it)
+      (defadvice rtags-switch-to-buffer (around neph-rtags-switch-to-buffer activate)
+        ;;(message "ADVICE rtags-switch-to-buffer")
+        ad-do-it)
+      (defadvice rtags-select-other-window (around neph-rtags-select-other-window activate)
+        ;;(message "ADVICE rtags-select-other-window")
+        ad-do-it)
+      (defadvice rtags-jump-to-first-match (around neph-rtags-jump-to-first-match activate)
+        ;;(message "ADVICE rtags-jump-to-first-match")
+        ad-do-it)
+      (defadvice rtags-goto-location (around neph-rtags-goto-location activate)
+        ;;(message "ADVICE rtags-goto-location")
+        ad-do-it)
+      (defadvice rtags-rtags-show-target-in-other-window (around neph-rtags-rtags-show-target-in-other-window activate)
+        ;;(message "ADVICE rtags-rtags-show-target-in-other-window")
+        ad-do-it)
+
 
       (setq rtags-enable-unsaved-reparsing nil)
       (rtags-set-periodic-reparse-timeout nil)
@@ -747,25 +809,20 @@
 
 (when (featurep 'rtags)
   ;; FIXME need to also wrap rtags-references-tree, then rtags-goto-location needs to deactivate it so single-item matches don't asplode.
-  (defadvice rtags-references-tree (around neph-rtags-references-tree activate)
-    (let* ((neph-in-references-tree t)
-           (neph-original-split-height-threshold split-height-threshold)
-           (split-height-threshold 70))
-      ;;(message (concat "rtags-references-tree with height " (number-to-string split-height-threshold)))
-      ad-do-it))
-  (defadvice rtags-handle-results-buffer (around neph-rtags-handle-results-buffer activate)
-    (let* ((neph-original-split-height-threshold split-height-threshold)
-           (split-height-threshold 70))
-      ;;(message (concat "rtags-handle-results-buffer with height " (number-to-string split-height-threshold)))
-      ad-do-it))
-  (defadvice rtags-goto-location (around neph-rtags-goto-location activate)
-    (let ((split-height-threshold (if (boundp 'neph-original-split-height-threshold)
-                                      neph-original-split-height-threshold
-                                    split-height-threshold)))
-      ;;(message (concat "rtags-goto-location with height " (number-to-string split-height-threshold)))
-      (if (boundp 'neph-in-references-tree)
-          (rtags-select-and-remove-rtags-buffer))
-      ad-do-it))
+  ;;(defadvice rtags-references-tree (around neph-rtags-references-tree activate)
+  ;;  (let* ((neph-in-references-tree t)
+  ;;         (neph-original-split-height-threshold split-height-threshold)
+  ;;         (split-height-threshold 70))
+  ;;    ;;(message (concat "rtags-references-tree with height " (number-to-string split-height-threshold)))
+  ;;    ad-do-it))
+  ;;(defadvice rtags-goto-location (around neph-rtags-goto-location activate)
+  ;;  (let ((split-height-threshold (if (boundp 'neph-original-split-height-threshold)
+  ;;                                    neph-original-split-height-threshold
+  ;;                                  split-height-threshold)))
+  ;;    ;;(message (concat "rtags-goto-location with height " (number-to-string split-height-threshold)))
+  ;;    (if (boundp 'neph-in-references-tree)
+  ;;        (rtags-select-and-remove-rtags-buffer))
+  ;;    ad-do-it))
 
   (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
   (global-set-key (kbd "C-z M-r") 'rtags-reparse-file)
@@ -1040,26 +1097,33 @@
                  (when vc-mode (propertize (concat " /" vc-mode)
                                            'face 'neph-modeline-misc))
                  ;; righthand side
-                 (let ((rtags-status (if (featurep 'rtags)
-                                         (propertize (rtags-modeline) 'face 'neph-modeline-which-func)
-                                       "")))
-                   (list
-                    ;; Bonus hacky alignment, such that if the buffer is too narrow
-                    ;; to show the modeline below hud, the height of the modeline stays the same
-                    (propertize " " 'display '(list (raise -0.30) (height 1.25)))
 
-                    ;; Pad to right side
-                    (neph-fill-to (+ 9 (string-width rtags-status)))
-                    ;; rtags
-                    rtags-status
-                    ;; Percentage and modeline-hud
-                    "%p "
-                    (neph-modeline-hud 1.5 10)))
-                 )))
+                 ;; For disabled rtags
+                 ;; (let ((rtags-status (if (featurep 'rtags)
+                 ;;                    (propertize (rtags-modeline) 'face 'neph-modeline-which-func)
+                 ;;                  "")))
+                 (list
+                  ;; Bonus hacky alignment, such that if the buffer is too narrow
+                  ;; to show the modeline below hud, the height of the modeline stays the same
+                  (propertize " " 'display '(list (raise -0.30) (height 1.25)))
+
+                  ;; Pad to right side
+                  (neph-fill-to 9)
+
+                  ;; Disabled rtags
+                  ;; (neph-fill-to (+ 9 (string-width rtags-status))) ;; Instead of fill-to above
+                  ;; rtags-status
+
+                  ;; Percentage and modeline-hud
+                  "%p "
+                  (neph-modeline-hud 1.5 10)))
+                ))
 
 ;; Force modeline updates when rtags status changes
-(when (featurep 'rtags)
-  (add-hook 'rtags-diagnostics-hook (function force-mode-line-update)))
+;;(when (featurep 'rtags)
+;;  (add-hook 'rtags-diagnostics-hook (lambda ()
+;;                                      (force-mode-line-update)
+;;                                      (message "RTAGS DIAGNOSTICS"))))
 
 (defcustom neph-sticky-header nil "Event-updated portion of the header line")
 (defcustom neph-sticky-header-valid-range nil "Range of characters for which the current sticky header is valid")
@@ -2309,8 +2373,6 @@ beginning of it and the point to the end of it if so"
  '(irony-completion-availability-filter (quote (available deprecated notaccessible notavailable)))
  '(phi-search-limit 5000)
  '(rtags-follow-symbol-try-harder nil)
- '(rtags-imenu-syntax-highlighting nil)
- '(rtags-reparse-timeout 1)
  '(set-mark-command-repeat-pop t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
