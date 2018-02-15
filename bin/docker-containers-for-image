@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+. ~/bin/lib/util.sh
+
+# FIXME TODO
+# FIXME - filter ancestor does not do what we want, we only want direct users
+ewarn "$(sh_c 1)$(basename "$0")$(sh_c) is a WIP"
+search="$1"
+cmd sudo docker ps -a --format "{{.ID}}.{{.Image}}" | cmd grep -Po "^[a-f0-9]{12}(?=\.${search}\$)"
