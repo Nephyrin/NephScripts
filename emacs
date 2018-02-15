@@ -1514,13 +1514,12 @@
 
 (defun neph-c-mode ()
   (interactive)
-  (irony-mode t)
   ;; Feed the projectile dir to irony-cdb before running its autosetup command to ensure it knows
-  ;; how to read this file
   (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
     (when (and projectile-dir (length projectile-dir))
       (irony-cdb-json-add-compile-commands-path projectile-dir (concat projectile-dir "/compile_commands.json"))
-      (irony-cdb-autosetup-compile-options))))
+      (irony-cdb-autosetup-compile-options)
+      (irony-mode t))))
 
 ;; Default modes
 
@@ -1548,7 +1547,8 @@
 (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
-(add-hook 'c-mode-common-hook 'neph-c-mode)
+(add-hook 'c-mode-hook 'neph-c-mode)
+(add-hook 'c++-mode-hook 'neph-c-mode)
 
 ;;
 ;; IswitchBuffers
