@@ -66,7 +66,7 @@ sh_c()
   [ ! -z "$c" ] || c=0
   [ ! -z "$b" ] || [ $c -eq 0 ] || b=0
   [ -z "$b" ] || b="$b;"
-  echo -n -e "\e[$b${c}m"
+  echo -n $'\e['"$b${c}m"
 }
 
 estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
