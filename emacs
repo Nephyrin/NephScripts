@@ -2388,8 +2388,6 @@ beginning of it and the point to the end of it if so"
     (company-irony company-rtags company-bbdb company-nxml company-css company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
                    (company-dabbrev-code company-gtags company-etags company-keywords)
                    company-oddmuse company-dabbrev)))
- '(debug-on-error t)
- '(debug-on-quit nil)
  '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
  '(flycheck-checker-error-threshold nil)
  '(gdb-many-windows nil)
