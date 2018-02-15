@@ -81,8 +81,26 @@ eerr()    { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
 eerr2()   { echo >&2 "  $(sh_c 31 1)~>$(sh_c) $*"; }
 eerrint() { eerr "$@"; return 1; }
 
+edivider() {
+  local n="$1"
+  local char="$2"
+  [[ $n =~ ^[0-9]+$ ]] || n=3
+  [[ -n $char ]] || char=-
+
+  local run="$(($n / ${#char}))"
+  local change="$(( n - ( run * ${#char} ) ))"
+
+  local line
+  [[ $run -lt 1 ]] || line="$(eval printf -- \\"$char"%.0s {1..$run})"
+  local tail="${char[@]:0:$change}"
+  echo >&2 "$(sh_c 90)${line}${tail}$(sh_c)"
+}
+
 # Shows "+ command" as stderr, info style
-showcmd() { echo >&2 "$(sh_c 30 1)+$(sh_c) $(sh_quote "$@")"; }
+showcmd() { showcmd_unquoted "$(sh_quote "$@")"; }
+# Shows "+ command" but unquoted, e.g. for displaying things that are going to be eval'd or where
+# you are manually formatting the displayed command.
+showcmd_unquoted() { echo >&2 "$(sh_c 30 1)+$(sh_c) $*"; }
 # Shows "`#` command" as stdout, copy-pasteable by user (`#` is a bash no-op)
 offercmd() { echo "$(sh_c 30 1)\`#\`$(sh_c) $(sh_quote "$@")"; }
 # showcmd and also actually run it
@@ -93,7 +111,9 @@ scmd() { showcmd "$@"; "$@" 2>/dev/null; }
 # showcmd and actually run it, with stdout to /dev/null
 qcmd() { showcmd "$@"; "$@" >/dev/null; }
 # showcmd and actually run it, with all output to /dev/null
-xcmd() { showcmd "$@"; "$@" &>/dev/null; }
+qqcmd() { showcmd "$@"; "$@" &>/dev/null; }
+# eval quoted command, showing the eval'd version
+ecmd() { showcmd_unquoted "$@"; eval "$@"; }
 
 die() { eerr "$*"; exit 1; }
 
