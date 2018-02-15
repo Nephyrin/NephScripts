@@ -403,7 +403,16 @@ rand32()
   echo $r
 }
 
-dcg()
+_setcgname()
+{
+  local name="$1"
+  export NEPH_CGROUP=$name
+  # 3 italic, 90 grey, 23 cancel italic yay
+  NEPH_CGROUP_PS1='\['$(sh_c 3 90)'\]'$NEPH_CGROUP'\['$(sh_c 23)'\]'" "
+  _reprompt
+}
+
+leavecg()
 {
   if [[ -z $NEPH_DEFAULT_CGROUP || -z $NEPH_CGROUP ]]; then
     eerr "Invalid cgroup"
@@ -412,19 +421,52 @@ dcg()
 
   local dir
   for dir in "$NEPH_CGROUP_ROOT"/*; do
-    [[ -d $dir/$NEPH_CGROUP ]] || continue
-
-    local task
-    # FIXME This is race-y
-    for task in $(cat "$dir/$NEPH_CGROUP/tasks"); do
-      cmd echo $task > $dir/tasks 2>/dev/null # Some tasks will follow their parent
-    done
-    cmd rmdir "$dir/$NEPH_CGROUP"
+    if [[ ! -L $dir && -d $dir/$NEPH_CGROUP ]]; then
+      einfo "Removing self from $dir/$NEPH_CGROUP"
+      echo "$$" > "$dir/tasks" 2>/dev/null
+    fi
   done
 
   unset NEPH_CGROUP
   unset NEPH_CGROUP_PS1
   _reprompt
+}
+
+dcg()
+{
+  local wascg="$NEPH_CGROUP"
+  leavecg "$@" || return 1
+
+  local dir
+  for dir in "$NEPH_CGROUP_ROOT"/*; do
+    [[ ! -L $dir && -d $dir/$wascg ]] || continue
+    cmd rmdir "$dir/$wascg"
+    if [[ -d $dir/$wascg ]]; then
+      eerr "Failed to delete $dir/$wascg - has other processes:"
+      cmd ps -p $(cat "$dir/$wascg/cgroup.procs")
+    fi
+  done
+}
+
+jcg()
+{
+  if [[ -z $NEPH_DEFAULT_CGROUP  ]]; then
+    eerr "Invalid cgroup config"
+    return 1
+  fi
+
+  local name="$1";
+  if [[ $# -lt 1 || -z $name ]]; then
+    eerr "Usage: jcg <name>";
+    return 1;
+  fi;
+
+  local dir
+  for dir in "$NEPH_CGROUP_ROOT"/*; do
+    [[ ! -d $dir/$name ]] || ecmd echo \$\$ \> "$dir/$name/cgroup.procs"
+  done
+
+  _setcgname "$name"
 }
 
 lowprio()
@@ -544,10 +586,8 @@ cg()
   for type in "${types[@]}"; do
     echo $$ > "$NEPH_CGROUP_ROOT"/"$type"/"$name"/cgroup.procs
   done
-  export NEPH_CGROUP=$name
-  # 3 italic, 90 grey, 23 cancel italic yay
-  NEPH_CGROUP_PS1='\['$(sh_c 3 90)'\]'$NEPH_CGROUP'\['$(sh_c 23)'\]'" "
-  _reprompt
+
+  _setcgname $name
 }
 
 lcg()
