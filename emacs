@@ -494,6 +494,39 @@
 ;; it disabled the Right Thing™ seems to happen on my systems.
 (setq helm-ag-base-command (concat helm-ag-base-command " --noaffinity"))
 
+;; Keys to walk a visible helm-ag buffer
+(defun neph-helm-ag-next (arg)
+  (interactive "P")
+  (let* ((direction (if arg -1 1))
+         (agbuf (get-buffer "*helm ag results*"))
+         (agwin (get-buffer-window agbuf)))
+    (flet ((notdone () (if (and (looking-at "$") (looking-back "^"))
+                           (progn (message "End of results") nil)
+                         t))
+           (move () (next-logical-line direction) (beginning-of-line)))
+      (when agbuf
+        (if agwin
+            (progn (select-window agwin)
+                   (move)
+                   (when (notdone)
+                     (helm-ag-mode-jump-other-window)))
+          (switch-to-buffer agbuf)
+          (move)
+          (when (notdone)
+            (helm-ag-mode-jump)))))))
+(defun neph-helm-ag-prev (arg)
+  (interactive "P")
+  (neph-helm-ag-next (if arg nil 1)))
+(defun neph-helm-ag-update ()
+  (interactive)
+  (let ((agbuf (get-buffer "*helm ag results*")))
+    (when agbuf
+      (with-current-buffer agbuf
+        (helm-ag--update-save-results)))))
+(global-set-key (kbd "C-M-z C-M-n") 'neph-helm-ag-next)
+(global-set-key (kbd "C-M-z C-M-p") 'neph-helm-ag-prev)
+(global-set-key (kbd "C-M-z C-M-g") 'neph-helm-ag-update)
+
 
 ;; RG version (needs helm-projectile-ag fix)
 ;(setq helm-ag-base-command "rg --vimgrep --no-heading")
