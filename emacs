@@ -758,17 +758,44 @@
           (get-compile-options (irony-cdb-rtags-neph--get-compile-options))))
 
       (defun irony-cdb-rtags-neph--get-compile-options ()
-        (let ((path (rtags-buffer-file-name)))
-          (when path
-            (with-temp-buffer
-              (rtags-call-rc :path path "--sources" path "--compilation-flags-only" "--compilation-flags-pwd" "--compilation-flags-split-line")
-              (let* ((str (buffer-substring-no-properties (point-min) (point-max)))
-                     (result (split-string str "\n" t))
-                     (pwdraw (car-safe result))
-                     (pwd (when (and pwdraw (string= (substring pwdraw 0 5) "pwd: ")) (substring pwdraw 5))))
-                (when pwd
-                  (list (cons (append '("-Wextra") (delete "-fpch-preprocess"  (nbutlast (nthcdr 3 result) 3))) pwd)))))))))
-  ;; No rtags
+        (if (rtags-is-running)
+          (let ((path (rtags-buffer-file-name)))
+            (when path
+              (with-temp-buffer
+                (rtags-call-rc :path path "--sources" path "--compilation-flags-only" "--compilation-flags-pwd" "--compilation-flags-split-line")
+                (let* ((str (buffer-substring-no-properties (point-min) (point-max)))
+                       (result (split-string str "\n" t))
+                       (pwdraw (car-safe result))
+                       (pwd (when (and pwdraw (string= (substring pwdraw 0 5) "pwd: ")) (substring pwdraw 5))))
+                  (when pwd
+                    (list (cons
+                           (append '("-Wextra" "-ferror-limit=0")
+                                   (delete "-fpch-preprocess"
+                                           ;; Stripping first two (c++ -c) and last 3 (-o output
+                                           ;; input) args for just the file specific compilation
+                                           ;; flags
+                                           (butlast
+                                            (nthcdr
+                                             2
+                                             ;; Strip leading pwd: and take everything up to
+                                             ;; the next pwd:
+                                             ;;
+                                             ;; (multi-compile mode -- pwd: means start of
+                                             ;; next mode for file)
+                                             ;;
+                                             ;; TODO: Ideally we'd somehow combine the
+                                             ;; multiple entries
+                                             (seq-take-while
+                                              (lambda (e)
+                                                (not (string-prefix-p "pwd: " e)))
+                                              (nthcdr 1 result)))
+                                            ;; (v-- end of butlast)
+                                            3)))
+                           pwd)))))))
+          ;; Else, warn and nill
+          (message "irony-cdb-rtags-neph: No RDM, cannot pull flags for this file")
+          nil)))
+  ;; Else - No rtags
   ;; Provide the irony backend but make it always return nuh
   (defun irony-cdb-rtags-neph (command &rest args) nil))
 
