@@ -49,9 +49,6 @@
 [submodule "moz/hacky.mk"]
 	path = moz/hacky.mk
 	url = https://github.com/bgirard/hacky.mk.git
-[submodule "bin/ninja.git"]
-	path = bin/ninja.git
-	url = https://github.com/martine/ninja.git
 [submodule "emacs.d/god-mode"]
 	path = emacs.d/god-mode
 	url = https://github.com/chrisdone/god-mode
