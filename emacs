@@ -635,8 +635,11 @@
              (not (featurep 'flycheck-irony)))
     (require 'flycheck-irony)
     (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
-(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
-(with-eval-after-load "irony" (neph-flycheck-irony-setup))
+
+;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
+
+;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
+;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
 
 ;; popup.el for rtags tooltips
 (add-to-list 'load-path "~/.emacs.d/popup-el")
