@@ -215,6 +215,34 @@ cghax()
   cmd sudo chmod -v g+w /sys/fs/cgroup/{cpu,blkio,memory}/{.,cgroup.procs,tasks}
 }
 
+# Shorthand for invoking date --date="A" [B]
+# If passing additional arguments, show the results of date --date="A" with and without them
+ddate() {
+  if [[ $# -eq 0 ]]; then
+    cmd date
+  else
+    [[ $# -le 1 ]] || cmd date --date="$1"
+    cmd date --date="$1" "${@:2}"
+  fi
+}
+
+# Print a timestamp or timestamp for a date
+tt() {
+  local date
+  if [[ $# -eq 0 ]]; then
+    date="now"
+  elif [[ $# -eq 1 && $1 =~ ^[0-9]+$ ]]; then
+    date="@$1"
+  else
+    # Treat as date
+    date="$*"
+  fi
+  einfo "Parsed"
+  date --date="$date" || return
+  einfo "Timestamp"
+  date --date="$date" +%s
+}
+
 #
 # fzf stuff
 #
