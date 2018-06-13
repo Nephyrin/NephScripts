@@ -2448,6 +2448,8 @@ beginning of it and the point to the end of it if so"
     (company-irony company-rtags company-bbdb company-nxml company-css company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
                    (company-dabbrev-code company-gtags company-etags company-keywords)
                    company-oddmuse company-dabbrev)))
+ '(ediff-split-window-function (quote split-window-horizontally))
+ '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
  '(flycheck-checker-error-threshold nil)
  '(gdb-many-windows nil)
@@ -2459,8 +2461,10 @@ beginning of it and the point to the end of it if so"
     (irony-cdb-rtags-neph irony-cdb-libclang irony-cdb-clang-complete)))
  '(irony-completion-availability-filter (quote (available deprecated notaccessible notavailable)))
  '(phi-search-limit 5000)
+ '(reb-auto-match-limit 2000)
  '(rtags-follow-symbol-try-harder nil)
- '(set-mark-command-repeat-pop t))
+ '(set-mark-command-repeat-pop t)
+ '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
