@@ -646,7 +646,8 @@
 (autoload 'popup "popup" "Popup tooltip thing." t)
 
 ;; Rtags is installed separate from NephScripts, don't assume it is available
-(if (require 'rtags nil t)
+;; Don't load it in non-interactive mode, we don't want to issue calls to rc/etc.
+(if (and (not noninteractive) (require 'rtags nil t))
     (progn
       ;; Don't configure company without rtags available
       (add-to-list 'load-path "~/.emacs.d/company-mode")
@@ -1508,7 +1509,8 @@
   (setq web-mode-markup-indent-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
-  (flycheck-mode t)
+  ;; Breaks in noninteractive mode
+  (when (not noninteractive) (flycheck-mode t))
   (electric-pair-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (neph-set-whitespace-tab-override nil)
