@@ -279,6 +279,23 @@
                                     display-buffer-alist)))
     (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
 
+(defun neph-html-copy ()
+  (interactive)
+  (require 'htmlize)
+  (let ((fci (and (boundp 'fci-mode) fci-mode)))
+    (when fci (turn-off-fci-mode))
+    (with-current-buffer
+        (htmlize-region (point) (mark))
+      (write-file "~/.emacs.d/htmlize-temp.htm"))
+    (when fci (turn-off-fci-mode)))
+  ;;(kill-buffer)))
+  ;; This is the way the help actually suggests you prevent it from opening this buffer.
+  (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+                                    display-buffer-alist)))
+    (shell-command "xclip -quiet -i -selection clipboard -target text/html ~/.emacs.d/htmlize-temp.htm &")))
+
+;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
+
 ;;
 ;; htmlfontify
 ;;
