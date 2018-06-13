@@ -1467,6 +1467,18 @@
 ;; Neph mode. Aka enable defaults in programming modes
 ;;
 
+(defface neph-highlight-whitespace-tab '((t (:background "#442222")))
+  "Neph face to be used when whitespace-tab should be highlighted")
+
+(defun neph-set-whitespace-tab-override (override-face)
+  ;; Reset current overwrrite
+  (when (and (boundp 'neph-remapped-whitespace-tab-cookie) neph-remapped-whitespace-tab-cookie)
+    (face-remap-remove-relative neph-remapped-whitespace-tab-cookie))
+  ;; If passed, set new override
+  (when override-face
+    (setq neph-remapped-whitespace-tab-cookie
+          (face-remap-add-relative 'whitespace-tab override-face))))
+
 (defun neph-base-cfg ()
   (linum-mode t)
   (smart-tabs-mode 0)
@@ -1491,11 +1503,15 @@
   (setq tab-width 2)
   (setq js-indent-level 2)
   (setq css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-markup-indent-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
   (flycheck-mode t)
   (electric-pair-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
+  (neph-set-whitespace-tab-override nil)
   (when (featurep 'rtags) (rtags-enable-standard-keybindings))
   (setq fill-column 100)
   ;; This is awful, still needed? Something was forcing fontify on the whole buffer instantly,
@@ -1508,7 +1524,9 @@
 ;; Currently just the base config
 (defun neph-space-cfg ()
   (interactive)
-  (neph-base-cfg))
+  (neph-base-cfg)
+  ;; Remap whitespace-tab to the highlighted tab face
+  (neph-set-whitespace-tab-override 'neph-highlight-whitespace-tab))
 
 (defadvice align-regexp (around align-regexp-with-spaces activate)
   (let ((indent-tabs-mode nil))
@@ -1530,6 +1548,9 @@
   (setq tab-width 4)
   (setq js-indent-level 4)
   (setq python-indent-offset 4)
+  (setq web-mode-code-indent-offset 4)
+  (setq web-mode-markup-indent-offset 4)
+  (setq web-mode-css-indent-offset 4)
   (setq fill-column 120)
   (fci-mode t))
 
@@ -1571,6 +1592,24 @@
 (add-hook 'c-mode-hook 'neph-c-mode)
 (add-hook 'c++-mode-hook 'neph-c-mode)
 
+;; For web mode in tabs, we want to disable whitespace tabs because they conflict with the
+;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
+;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
+(defun neph-web-tab-cfg ()
+  (interactive)
+  (let ((filtered-whitespace-style (remove 'tabs whitespace-style)))
+    (setq-local whitespace-style filtered-whitespace-style))
+  (whitespace-mode nil)
+  (whitespace-mode t)
+  (neph-tab-cfg))
+(defun neph-web-space-cfg ()
+  (interactive)
+  (kill-local-variable 'whitespace-style)
+  (whitespace-mode nil)
+  (whitespace-mode t)
+  (neph-space-cfg))
+
+(add-hook 'web-mode-hook 'neph-web-tab-cfg)
 ;;
 ;; IswitchBuffers
 ;;
