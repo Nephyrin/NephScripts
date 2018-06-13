@@ -266,6 +266,7 @@
 
 (defun neph-html-region ()
   (interactive)
+  (require 'htmlize)
   (let ((fci (and (boundp 'fci-mode) fci-mode)))
     (when fci (turn-off-fci-mode))
     (with-current-buffer
