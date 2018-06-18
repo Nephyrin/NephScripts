@@ -188,8 +188,6 @@ iswine() { for x in wine exe; do pf "$x"; done; }
 
 xg() { x gedit "$@"; }
 xk() { x kate "$@"; }
-y() { yaourt "$@"; }
-yclean() { yaourt -Rs $(y -Qdtq) "$@"; }
 p() { sudo pacman "$@"; }
 
 dir() { x dolphin "$@"; }
