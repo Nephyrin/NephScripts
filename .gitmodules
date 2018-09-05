@@ -184,3 +184,12 @@
 [submodule "emacs.d/emacs-async"]
 	path = emacs.d/emacs-async
 	url = https://github.com/jwiegley/emacs-async
+[submodule "emacs.d/git-modes"]
+	path = emacs.d/git-modes
+	url = https://github.com/magit/git-modes
+[submodule "emacs.d/magit-popup"]
+	path = emacs.d/magit-popup
+	url = https://github.com/magit/magit-popup
+[submodule "emacs.d/magit-ghub"]
+	path = emacs.d/magit-ghub
+	url = https://github.com/magit/ghub

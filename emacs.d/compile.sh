@@ -15,7 +15,7 @@ estat Compiling Async
 [[ ! -f emacs-async/Makefile ]] || ( cmd cd emacs-async && cmd make )
 
 estat Compiling Magit
-[[ ! -f magit/Makefile ]] || ( cmd cd magit && cmd make )
+[[ ! -f magit/Makefile ]] || ( cmd cd magit && cmd make GHUB_DIR=$PWD/../magit-ghub )
 
 estat Compiling CEDET
 [[ ! -f cedet-git/Makefile ]] || ( cmd cd cedet-git && cmd make )
