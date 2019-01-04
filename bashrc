@@ -210,7 +210,7 @@ qvnc() { cmd vncviewer -QualityLevel 9 -NoJPEG -CompressLevel 6 "$@"; }
 # Until systemd has a not-shit interface to this. Cgmanager sux.
 cghax()
 {
-  cmd sudo chown -v root:johns /sys/fs/cgroup/{cpu,blkio,memory}/{.,cgroup.procs,tasks}
+  cmd sudo chown -v root:"$USER" /sys/fs/cgroup/{cpu,blkio,memory}/{.,cgroup.procs,tasks}
   cmd sudo chmod -v g+w /sys/fs/cgroup/{cpu,blkio,memory}/{.,cgroup.procs,tasks}
 }
 
