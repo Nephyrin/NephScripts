@@ -9,10 +9,16 @@ set -e
 #cmd gdb -ex "handle SIGPIPE noprint nostop pass" -ex run --args \
 export NEPH_RP="$HOME/bin/nephrp"
 cmd rdm --rp-path "$HOME/bin/nephrp" --error-limit 0 --rp-nice-value 10 \
-        --progress --disable-sighandler --completion-no-filter --default-argument "-Wextra" \
-        --validate-file-maps \
+        --progress --default-argument "-Wextra" \
+        --validate-file-maps --disable-sighandler \
         "$@" 2>/dev/null
 
+# --disable-sighandler
+# -R --no-libclang-include-path  --completion-diagnostics
+
+# --completion-no-filter --default-argument "-Wno-error" \
+  
+# --validate-file-maps --no-libclang-include-path -R \
 # --pch-enabled
 # --completion-cache-size 20 --completion-logs \
 # --disallow-multiple-sources
