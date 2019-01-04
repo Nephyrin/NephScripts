@@ -5,6 +5,9 @@
 ;;
 (require 'cl)
 
+;; Don't load outdated .elc files, it's basically never what was intended.
+(setq load-prefer-newer t)
+
 (add-to-list 'load-path "~/.emacs.d/neph-autoloads")
 ;; Load this before something tries to load built-in CEDET libraries
 ;; Removed CEDET is garbage jesus christ has anyone used this for non-toy development?
