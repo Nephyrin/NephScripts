@@ -168,6 +168,7 @@ fi
 # Aliases & shorthand
 #
 
+rcl() { reset; clear; }
 nts() { gawk '{ print strftime("[%Y-%m-%d %H:%M:%S]"), $0 }'; }
 
 pn() { promptnote "$@"; }
