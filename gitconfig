@@ -11,6 +11,7 @@
 
 [core]
   excludesfile = /home/johns/.gitignore
+  pager = bat -n
 
 # ; For git-repacking large files causing OOMs. These options all only affect
 # ; packing speed, not result, unless noted.
