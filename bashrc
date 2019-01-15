@@ -3,7 +3,7 @@
 if [[ $TERM_PROGRAM = Apple_Terminal ]]; then
     PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
     if [[ -n $MANPATH ]]; then
-	export MANPATH=":$MANPATH"
+      export MANPATH=":$MANPATH"
     fi
     MANPATH="/usr/local/opt/coreutils/libexec/gnuman$MANPATH"
 fi
