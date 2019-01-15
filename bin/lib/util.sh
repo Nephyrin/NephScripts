@@ -43,6 +43,23 @@ formatBytes() {
   echo
 }
 
+eprompt_yn() {
+  local msg="$1"
+  [[ -n $msg ]] || msg="Proceed?"
+  ewarnprompt "$msg [y/N] "
+  local reply
+  read -n 1 -r reply
+  echo >&2 "" # Clear prompt line
+  [[ $reply = y || $reply = Y ]] || return 1
+}
+
+promptcmd() {
+  emsg "Will execute:"
+  emsg "  $(sh_quote "$@")"
+  eprompt_yn 'Continue?' || return 1
+  cmd "$@"
+}
+
 # Tries to connect to keychain, invalidates SSH_AGENT vars if it cannot.
 try_keychain() {
   keyfile="$HOME/.keychain/$HOSTNAME-sh"
