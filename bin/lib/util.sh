@@ -75,11 +75,12 @@ try_keychain() {
   return 0
 }
 
+_sh_c_colors="$(tput colors || echo 0)"
 sh_c()
 {
-  [ ! -z "$NEPH_COLOR_TERM" ] || return
-  local c="$1"
-  local b="$2"
+  [[ $_sh_c_colors -gt 0 ]] || return
+  local c="${1:-}"
+  local b="${2:-}"
   [ ! -z "$c" ] || c=0
   [ ! -z "$b" ] || [ $c -eq 0 ] || b=0
   [ -z "$b" ] || b="$b;"
