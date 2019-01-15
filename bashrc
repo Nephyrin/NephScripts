@@ -317,13 +317,6 @@ gt() {
   [[ -z $top ]] || cmd cd "$top"
 }
 
-# 99% of my find invocations
-fn() {
-  local name="$1"
-  shift
-  find . -iname "*$name*" "$@"
-}
-
 pathadd() {
   if [[ $# -le 0 ]]; then
     ewarn "Usage: pathadd <path> [<path...>]"
