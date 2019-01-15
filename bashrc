@@ -199,6 +199,9 @@ lxx() { ls++ --potsf -tr "$@"; }
 ag() { $(which ag) --noaffinity "$@"; }
 agc() { ag --cpp "$@"; }
 
+# Shorthand readlink -f, with no args will resolve PWD
+rl() { local args=("$@"); [[ ${#args[@]} -gt 0 ]] || args=(.); readlink -f -- "${args[@]}"; }
+
 # Like cd, but do a { readlink -f } and cd to the ultimate target
 # With no argument, defaults to $PWD (unlike cd) to simply canonicalize current dir
 recd() { cd "$(readlink -f "${*-$(pwd)}")"; }
