@@ -218,6 +218,10 @@ cghax()
   cmd sudo chmod -v g+w /sys/fs/cgroup/{cpu,blkio,memory}/{.,cgroup.procs,tasks}
 }
 
+steamrt() {
+  cmd ~/.steam/steam/ubuntu12_32/steam-runtime/run.sh "$@"
+}
+
 # Shorthand for invoking date --date="A" [B]
 # If passing additional arguments, show the results of date --date="A" with and without them
 ddate() {
