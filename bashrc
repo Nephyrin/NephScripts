@@ -88,6 +88,9 @@ export MOZHG=mozilla-hg
 # Interactive tweaks
 #
 if [[ $- == *i* ]] ; then
+    # fzf, if around.  Probably should path-detect this better or something so it works on OS X/homebrew paths.
+    [[ ! -f /usr/share/fzf/key-bindings.bash ]] || source /usr/share/fzf/key-bindings.bash
+    [[ ! -f /usr/share/fzf/completion.bash ]] || source /usr/share/fzf/completion.bash
     # Keychain
     keyfile=~/".keychain/$(hostname)-sh"
     if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
