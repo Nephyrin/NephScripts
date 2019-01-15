@@ -298,7 +298,7 @@ _fzcd_int()
 # Shorthand rdp
 rdp()
 {
-  cmd xfreerdp /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
+  cmd xfreerdp /dynamic-resolution /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
 }
 
 # Change to git toplevel directory or error
