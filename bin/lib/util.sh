@@ -88,15 +88,27 @@ sh_c()
 }
 
 estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
-estat2()  { echo >&2 "  $(sh_c 34 1)->$(sh_c) $*"; }
+estat2()  { echo >&2 "   $(sh_c 34 1)->$(sh_c) $*"; }
 emsg()    { echo >&2 "$(sh_c 34 1)::$(sh_c) $*"; }
-emsg2()   { echo >&2 "  $(sh_c 34 1)->$(sh_c) $*"; }
+emsg2()   { echo >&2 "   $(sh_c 34 1)->$(sh_c) $*"; }
 ewarn()   { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
-ewarn2()  { echo >&2 "  $(sh_c 33 1)=>$(sh_c) $*"; }
+ewarn2()  { echo >&2 "   $(sh_c 33 1)=>$(sh_c) $*"; }
 einfo()   { echo >&2 "$(sh_c 30 1)::$(sh_c) $*"; }
-einfo2()  { echo >&2 "  $(sh_c 30 1)->$(sh_c) $*"; }
+einfo2()  { echo >&2 "   $(sh_c 30 1)->$(sh_c) $*"; }
 eerr()    { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
-eerr2()   { echo >&2 "  $(sh_c 31 1)~>$(sh_c) $*"; }
+eerr2()   { echo >&2 "   $(sh_c 31 1)~>$(sh_c) $*"; }
+ewarnprompt() { echo >&2 -n "$(sh_c 33 1)?$(sh_c) $*"; }
+_eblock() { local x; for x in "" "${@:2}" ""; do "$1" "$x"; done; }
+estat_block() { _eblock estat "$@"; }
+emsg_block()  { _eblock emsg  "$@"; }
+ewarn_block() { _eblock ewarn "$@"; }
+einfo_block() { _eblock einfo "$@"; }
+eerr_block()  { _eblock eerr  "$@"; }
+estat_title() { _eblock estat "$*"; }
+emsg_title()  { _eblock emsg  "$*"; }
+ewarn_title() { _eblock ewarn "$*"; }
+einfo_title() { _eblock einfo "$*"; }
+eerr_title()  { _eblock eerr  "$*"; }
 eerrint() { eerr "$@"; return 1; }
 
 edivider() {
@@ -133,7 +145,7 @@ qqcmd() { showcmd "$@"; "$@" &>/dev/null; }
 # eval quoted command, showing the eval'd version
 ecmd() { showcmd_unquoted "$@"; eval "$@"; }
 
-die() { eerr "$*"; exit 1; }
+die() { local msg="$*"; [[ -n $msg ]] || msg="script terminated"; eerr_title "$msg"; exit 1; }
 
 # Tries to find the running session for this user and steals its
 # DISPLAY/XAUTHORITY env
