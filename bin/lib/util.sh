@@ -79,12 +79,9 @@ _sh_c_colors="$(tput colors || echo 0)"
 sh_c()
 {
   [[ $_sh_c_colors -gt 0 ]] || return
-  local c="${1:-}"
-  local b="${2:-}"
-  [ ! -z "$c" ] || c=0
-  [ ! -z "$b" ] || [ $c -eq 0 ] || b=0
-  [ -z "$b" ] || b="$b;"
-  echo -n $'\e['"$b${c}m"
+  local args=("$@")
+  [[ ${#args[@]} -gt 0 ]] || args=(0)
+  ( IFS=\; && echo -n $'\e['"${args[*]}m"; );
 }
 
 estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
