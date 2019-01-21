@@ -203,13 +203,15 @@
 ;; Command helpers
 ;;
 
-(defun neph-buffer-command (cmd &optional name callback)
+(defun neph-buffer-command (cmd &optional name callback buffer-init-func)
   "Runs a command into a new buffer, noting when it finishes, with a callback"
   (interactive "MCommand: \n")
   (let* ((envcmd (concat "env -u NEPH_COLOR_TERM " cmd))
          (name (if name name "neph-buffer-command"))
          (buf (generate-new-buffer (concat name ": " cmd))))
     (switch-to-buffer buf nil t)
+    (when buffer-init-func (with-current-buffer buf
+                             (apply buffer-init-func nil)))
     (insert (concat "<command: " cmd ">"))
     (newline)
     (let ((proc (start-process-shell-command
@@ -277,25 +279,45 @@
       (write-file "~/.emacs.d/htmlize-temp.htm"))
     (when fci (turn-off-fci-mode)))
   ;;(kill-buffer)))
-  ;; This is the way the help actually suggests you prevent it from opening this buffer.
-  (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
-                                    display-buffer-alist)))
-    (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
+  (start-process-shell-command "neph-html-region" nil "chromium ~/.emacs.d/htmlize-temp.htm"))
 
 (defun neph-html-copy ()
   (interactive)
   (require 'htmlize)
-  (let ((fci (and (boundp 'fci-mode) fci-mode)))
+  (let ((fci (and (boundp 'fci-mode) fci-mode))
+        (ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode)))
     (when fci (turn-off-fci-mode))
+    (when ghl (global-hl-line-mode -1))
     (with-current-buffer
         (htmlize-region (point) (mark))
       (write-file "~/.emacs.d/htmlize-temp.htm"))
-    (when fci (turn-off-fci-mode)))
-  ;;(kill-buffer)))
-  ;; This is the way the help actually suggests you prevent it from opening this buffer.
-  (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
-                                    display-buffer-alist)))
-    (shell-command "xclip -quiet -i -selection clipboard -target text/html ~/.emacs.d/htmlize-temp.htm &")))
+    (when fci (turn-on-fci-mode))
+    (when ghl (global-hl-line-mode 1)))
+  ;; Awful awk script to reprocess htmlize output to be a style'd element rather than a full
+  ;; document.  Don't look directly into it.
+  (start-process-shell-command "neph-html-copy" nil
+                               (concat "awk -i inplace '/^ *<style/ { hitstyle=1; instyle=1; };"
+                                       "  /^ *<\\/style/ { instyle=0; };"
+                                       "  instyle && /^ *body {/"
+                                       "  {"
+                                       "    print gensub( /(^ *)body /,"
+                                       "                  \"\\\\1#cnp \", \"g\" ); next;"
+                                       "  }; "
+                                       "  instyle"
+                                       "  {"
+                                       "    print gensub( /(^ *)(\\.|a |a:|body )/,"
+                                       "                  \"\\\\1#cnp \\\\2\", \"g\" ); next;"
+                                       "  };"
+                                       "  /^ *<\\/?(body|html)/ {next}; /^ *<pre/ "
+                                       "  {"
+                                       "    print gensub(/^( *<pre)(.*)/,"
+                                       "                 \"\\\\1 id=\\\"cnp\\\"\\\\2\", \"g\");"
+                                       "    next"
+                                       "  }"
+                                       "  hitstyle { print; }'"
+                                       "  ~/.emacs.d/htmlize-temp.htm && "
+                                       "xclip -quiet -i -selection clipboard -target text/html"
+                                       "  ~/.emacs.d/htmlize-temp.htm")))
 
 ;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
 
