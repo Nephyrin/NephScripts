@@ -1307,11 +1307,13 @@
 (setq reb-re-syntax 'string)
 
 ;;
-;; Misc modes with no config
+;; Misc modes
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/fic-mode.git")
 (autoload 'fic-mode "fic-mode" "fic-mode" t)
+(with-eval-after-load "fic-mode"
+  (add-to-list 'fic-highlighted-words "XXX"))
 
 (add-to-list 'load-path "~/.emacs.d/git-gutter-fringe")
 (add-to-list 'load-path "~/.emacs.d/git-gutter")
