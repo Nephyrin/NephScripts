@@ -788,7 +788,8 @@
           ad-do-it)
       (defadvice rtags-handle-results-buffer (around neph-rtags-handle-results-buffer activate)
         ;;(message "ADVICE rtags-handle-results-buffer")
-        ad-do-it)
+        (let ((split-height-threshold 80))
+          ad-do-it))
 
       (defadvice rtags-select (around neph-rtags-select activate)
         ;;(message "ADVICE rtags-select")
