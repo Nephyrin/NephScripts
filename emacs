@@ -1424,11 +1424,19 @@
 ;; e.g. ~/git-alt/project shows up differently from ~/git/project
 ;; (Incredibly specific to the author's workflow)
 ;; A more robust version would be to feed known projects into uniquify
-(setq projectile-project-name-function (lambda (root)
-                                         (let ((default-name (projectile-default-project-name root)))
-                                           (if (string-match "-alt.*/" root)
-                                               (concat default-name "-alt")
-                                             default-name))))
+(defun neph-projectile-project-name (root)
+  "Neph hook for projectile-project-name"
+  (let ((default-name
+          (if (string-match "/main/$" root)
+              (concat
+               (projectile-default-project-name
+                (replace-regexp-in-string "/main/$" "" root))
+               "-main")
+            (projectile-default-project-name root))))
+    (if (string-match "-alt.*/" root)
+        (concat default-name "-alt")
+        default-name)))
+(setq projectile-project-name-function 'neph-projectile-project-name)
 
 (let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
                                "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
