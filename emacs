@@ -98,6 +98,22 @@
 (setq whitespace-style (quote (face trailing tabs)))
 
 ;;
+;; Electric mode tweaks
+;;
+
+;; Always inhibit when we're not facing whitespace
+(setq electric-pair-inhibit-predicate
+      (lambda (c)
+        (let ((whitespace-forward (looking-at "[ \n\t$]"))
+              (isquote (char-equal c ?\")))
+          (if (and whitespace-forward
+                   (or (not isquote) (looking-back "[ \n\t^]\"" 2)))
+              ;; quotes should only be electric if there's whitespace or a newline on either side
+              ;; Otherwise, if we're looking at whitespace only
+              (electric-pair-conservative-inhibit c)
+            t))))
+
+;;
 ;; Mark & Mark Ring
 ;;
 
