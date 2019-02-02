@@ -1410,15 +1410,23 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/projectile")
+(add-to-list 'load-path "~/.emacs.d/helm-projectile")
 (require 'neph-projectile-autoload)
 ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
 (setq helm-projectile-fuzzy-match nil)
-(add-to-list 'load-path "~/.emacs.d/helm-projectile")
 (require 'neph-helm-projectile-autoload)
-(projectile-global-mode t)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
-(setq projectile-enable-caching t)
+
+;; Additional autoloads for helm-projectile
+(autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
+(autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
+(autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
+
+(with-eval-after-load "projectile"
+  (setq projectile-completion-system 'helm)
+  (setq projectile-enable-caching t)
+  (projectile-global-mode t)
+  (with-eval-after-load "helm"
+    (helm-projectile-on)))
 
 ;; If -alt appears in the path preceeding the final component, append -alt to the name
 ;; e.g. ~/git-alt/project shows up differently from ~/git/project
@@ -1452,15 +1460,18 @@
 ;; helm prjoectile-ag with default args
 (defun helm-projectile-ag-cpp()
   (interactive)
-  (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp")))
+  (require 'helm-projectile)
+  (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
     (helm-projectile-ag)))
 (defun helm-projectile-ag-cpp-this-word()
   (interactive)
+  (require 'helm-projectile)
   (save-excursion
     (mark-current-word)
-    (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp")))
+    (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
       (helm-projectile-ag))))
 (defun helm-projectile-ag-this-word()
+  (require 'helm-projectile)
   (interactive)
   (save-excursion
     (mark-current-word)
@@ -1482,6 +1493,7 @@
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
 (global-set-key (kbd "C-z M-g") 'helm-projectile-ag-cpp)
 (global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
+(global-set-key (kbd "C-z C-M-G") 'helm-do-ag-buffers)
 (global-set-key (kbd "C-z g") 'helm-projectile-ag)
 (global-set-key (kbd "C-z G") 'helm-projectile-ag-this-word)
 ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
@@ -1491,13 +1503,14 @@
 (global-set-key (kbd "C-z p") 'helm-projectile-switch-project)
 ;(global-set-key (kbd "C-z C-p") 'helm-projectile)
 
-(define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
-                                                        (interactive)
-                                                        (with-helm-alive-p
-                                                          ;; For some reason we need to have a lambda swallow the options string or helm-ag breaks
-                                                          (helm-exit-and-execute-action (lambda (&optional options)
-                                                                                          (interactive)
-                                                                                          (helm-projectile-ag))))))
+(with-eval-after-load "helm-projectile"
+  (define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
+                                                          (interactive)
+                                                          (with-helm-alive-p
+                                                            ;; For some reason we need to have a lambda swallow the options string or helm-ag breaks
+                                                            (helm-exit-and-execute-action (lambda (&optional options)
+                                                                                            (interactive)
+                                                                                            (helm-projectile-ag)))))))
 ;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
 ;; (setq projectile-switch-project-action 'projectile-find-file)
 
