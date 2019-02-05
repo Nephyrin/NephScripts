@@ -2087,6 +2087,12 @@
 ;; (global-set-key (kbd "/") 'self-insert-command)
 
 ;; Custom binds for existing commands
+(global-set-key (kbd "C-z C-k") 'copy-to-register)
+(global-set-key (kbd "C-z k") 'insert-register)
+(global-set-key (kbd "C-z C-j") 'point-to-register)
+(global-set-key (kbd "C-z j") 'jump-to-register)
+(global-set-key (kbd "C-z C-w") 'window-configuration-to-register)
+
 (global-set-key (kbd "C-c C-j") 'term-line-mode)
 (global-set-key (kbd "C-c C-k") 'term-char-mode)
 (global-set-key (kbd "C-M-a") 'back-to-indentation)
