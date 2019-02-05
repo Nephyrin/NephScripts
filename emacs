@@ -2245,6 +2245,25 @@ beginning of it and the point to the end of it if so"
 (global-set-key (kbd "M-D") 'neph-kill-to-word)
 (global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
 
+(defun neph-pop-to-secondary ()
+  "Pop to secondary selection"
+  (interactive)
+  (let ((buf (overlay-buffer mouse-secondary-overlay)))
+    (when buf
+      (pop-to-buffer buf)
+      (goto-char (overlay-start mouse-secondary-overlay)))))
+
+;; Quick register movement.
+;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
+(global-set-key (kbd "C-z SPC") (lambda (&optional arg) (interactive "P")
+                                  (let ((reg (if (eq arg nil) 7 arg)))
+                                    (point-to-register reg)
+                                    (message "Set register %d" reg))))
+(global-set-key (kbd "C-z C-SPC") (lambda (&optional arg) (interactive "P")
+                                    (let ((reg (if (eq arg nil) 7 arg)))
+                                      (jump-to-register reg)
+                                      (message "Jump to register %d" reg))))
+
 (defun mark-current-line (&optional arg)
   "Mark the current line without moving the cursor"
   (interactive)
