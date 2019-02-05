@@ -1337,10 +1337,13 @@
   (if (buffer-file-name)
       (if (executable-find "p4vc")
           (let ((cmd (concat
-                      "env XDG_CURRENT_DESKTOP=gnome p4vc -c johns "
+                      "cd $(dirname " (shell-quote-argument (buffer-file-name)) ") && "
+                      "env XDG_CURRENT_DESKTOP=gnome p4vc "
                       (shell-quote-argument command)
                       " "
-                      (shell-quote-argument (buffer-file-name)))))
+                      (shell-quote-argument (buffer-file-name))
+                      "| tee /dev/null" ;; This works around some p4v bug where it fails when it has no stdout
+                      )))
             ;; This is the way the help actually suggests you prevent it from opening this buffer.
             (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
                                               display-buffer-alist)))
