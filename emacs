@@ -2496,7 +2496,7 @@ beginning of it and the point to the end of it if so"
 
 ;; Default font
 (set-face-attribute 'default nil :family "DejaVu Sans Mono")
-(set-face-attribute 'default nil :height 96)
+(set-face-attribute 'default nil :height 100)
 (when (eq system-type 'darwin)
   (set-face-attribute 'default nil :family "Monaco")
   (set-face-attribute 'default nil :height 120))
