@@ -2569,6 +2569,7 @@ beginning of it and the point to the end of it if so"
    (quote
     (irony-cdb-rtags-neph irony-cdb-libclang irony-cdb-clang-complete)))
  '(irony-completion-availability-filter (quote (available deprecated notaccessible notavailable)))
+ '(org-babel-load-languages (quote ((python . t) (shell . t) (emacs-lisp . t))))
  '(phi-search-limit 5000)
  '(reb-auto-match-limit 2000)
  '(rtags-follow-symbol-try-harder nil)
