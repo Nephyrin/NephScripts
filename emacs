@@ -140,15 +140,19 @@
 ;; Desktop saving
 ;;
 
+;; Autosave desktop as emacs-server-desktop for the server, otherwise leave
+;; disabled unless asked for
+(require 'desktop)
 (setq desktop-path '("~/.emacs.d/"))
-; Autosave desktop as emacs-server-desktop for the server, otherwise leave
-; disabled unless asked for
-;(if (or server-mode (daemonp))
-;    (progn
-;      (setq desktop-base-file-name "emacs-server-desktop")
-;      (setq desktop-save t)
-;      (desktop-save-mode 1))
-;  (setq desktop-base-file-name "emacs-desktop"))
+(setq desktop-base-file-name "emacs-desktop")
+(setq desktop-base-lock-name "emacs-desktop.lock")
+(setq desktop-restore-eager 0)
+(setq desktop-save t)
+(add-to-list 'desktop-globals-to-save 'register-alist)
+(when (or server-mode (daemonp))
+  (setq desktop-base-file-name "emacs-server-desktop")
+  (setq desktop-base-lock-name "emacs-server-desktop.lock")
+  (desktop-save-mode 1))
 
 ;;
 ;; Protobuf mode
