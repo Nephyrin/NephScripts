@@ -29,22 +29,28 @@ estat Compiling ECB
 estat Compiling Evil
 [[ ! -f evil/Makefile ]] || ( cmd cd evil && cmd make )
 
-estat Making Evil autoloads
-cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-evil-autoload.el\"))  \
-                                  (update-directory-autoloads \"$PWD/evil\"))"
+mkdir -pv "$PWD/neph-autoloads/"
 
-estat Making flyspell autoloads
-cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/flyspell-lazy/flyspell-lazy.el\" t \"$PWD/neph-autoloads/neph-flyspell-lazy-autoload.el\")"
+autoload_onefile() {
+  local name="$1"
+  estat Making "$name" autoloads
+  cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/$name/$name.el\" t \"$PWD/neph-autoloads/neph-$name-autoload.el\")"
+}
 
-estat Making projectile autoloads
-cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/projectile/projectile.el\" t \"$PWD/neph-autoloads/neph-projectile-autoload.el\")"
+autoload_dir() {
+  local name="$1"
+  local dir="$2"
+  [[ -n $dir ]] || dir=$name
+  cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-$name-autoload.el\"))  \
+                                  (update-directory-autoloads \"$PWD/$dir\"))"
 
-estat Making helm-projectile autoloads
-cmd emacs -q --batch --eval "(update-file-autoloads \"$PWD/helm-projectile/helm-projectile.el\" t \"$PWD/neph-autoloads/neph-helm-projectile-autoload.el\")"
+}
 
-estat Making Irony-mode autoloads
-cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-irony-autoload.el\"))  \
-                                  (update-directory-autoloads \"$PWD/irony-mode\"))"
+autoload_dir     evil
+autoload_onefile flyspell-lazy
+autoload_onefile projectile
+autoload_onefile helm-projectile
+autoload_dir     irony   irony-mode
 
 estat Compiling remaining modules in directory
 cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"
