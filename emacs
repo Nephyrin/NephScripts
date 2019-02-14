@@ -755,10 +755,11 @@
 
       ;; Workaround to disable fci-mode when company is active
       (defun on-off-fci-before-company(command)
-        (when (string= "show" command)
-          (turn-off-fci-mode))
-        (when (string= "hide" command)
-          (turn-on-fci-mode)))
+        (when (and (boundp 'fci-mode) fci-mode)
+          (when (string= "show" command)
+            (turn-off-fci-mode))
+          (when (string= "hide" command)
+            (turn-on-fci-mode))))
       (advice-add 'company-call-frontends :before #'on-off-fci-before-company)
 
       (cl-defun popup-tip (string
