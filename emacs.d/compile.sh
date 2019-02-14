@@ -51,6 +51,8 @@ autoload_onefile flyspell-lazy
 autoload_onefile projectile
 autoload_onefile helm-projectile
 autoload_dir     irony   irony-mode
+autoload_dir     company company-mode
+autoload_dir     ycmd    emacs-ycmd
 
 estat Compiling remaining modules in directory
 cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"

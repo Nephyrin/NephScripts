@@ -668,6 +668,48 @@
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
 ;;
+;; Company mode
+;;
+(add-to-list 'load-path "~/.emacs.d/company-mode")
+(add-to-list 'load-path "~/.emacs.d/company-quickhelp")
+(add-to-list 'load-path "~/.emacs.d/pos-tip")
+(require 'neph-company-autoload)
+
+(defun neph-company-setup ()
+  (interactive)
+  (company-mode t)
+  (company-quickhelp-mode t)
+  ;;(semantic-mode t)
+  (local-set-key (kbd "<C-tab>") 'company-complete))
+(add-hook 'c-mode-common-hook 'neph-company-setup)
+(add-hook 'python-mode-hook 'neph-company-setup)
+(add-hook 'lisp-mode-hook 'neph-company-setup)
+
+;;
+;; YouCompleteMe
+;;
+
+;; Deps
+(add-to-list 'load-path "~/.emacs.d/s.el")
+(add-to-list 'load-path "~/.emacs.d/f.el")
+(add-to-list 'load-path "~/.emacs.d/emacs-deferred")
+(add-to-list 'load-path "~/.emacs.d/emacs-request")
+
+(add-to-list 'load-path "~/.emacs.d/emacs-ycmd")
+(require 'neph-ycmd-autoload)
+
+(with-eval-after-load "company-ycmd" (company-ycmd-setup))
+(with-eval-after-load "ycmd"
+  (setq ycmd-server-command '("python" "/usr/share/ycmd/ycmd")))
+
+(defun neph-ycm-setup ()
+  (interactive)
+  (require 'company-ycmd)
+  (ycmd-mode 1))
+
+(add-hook 'python-mode-hook 'neph-ycm-setup)
+
+;;
 ;; C++ Helper mode(s) : Company/rtags/semantic
 ;;
 
@@ -705,10 +747,6 @@
 ;; Don't load it in non-interactive mode, we don't want to issue calls to rc/etc.
 (if (and (not noninteractive) (require 'rtags nil t))
     (progn
-      ;; Don't configure company without rtags available
-      (add-to-list 'load-path "~/.emacs.d/company-mode")
-      (add-to-list 'load-path "~/.emacs.d/company-quickhelp")
-      (add-to-list 'load-path "~/.emacs.d/pos-tip")
       (require 'company)
       (require 'company-quickhelp)
       (require 'company-rtags)
@@ -901,13 +939,6 @@
                                           (buffer-file-name)))))
   (company-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
-(defun company-mode-neph ()
-  (interactive)
-  (company-mode t)
-  (company-quickhelp-mode t)
-  ;;(semantic-mode t)
-  (local-set-key (kbd "<C-tab>") 'company-complete))
-(add-hook 'c-mode-common-hook 'company-mode-neph)
 
 ;; Keys for C++ completion and such
 ;;(global-set-key (kbd "C-z SPC") 'helm-semantic)

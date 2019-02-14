@@ -190,3 +190,18 @@
 [submodule "emacs.d/magit-ghub"]
 	path = emacs.d/magit-ghub
 	url = https://github.com/magit/ghub
+[submodule "emacs.d/emacs-ycmd"]
+	path = emacs.d/emacs-ycmd
+	url = https://github.com/abingham/emacs-ycmd
+[submodule "emacs.d/s.el"]
+	path = emacs.d/s.el
+	url = https://github.com/magnars/s.el
+[submodule "emacs.d/emacs-deferred"]
+	path = emacs.d/emacs-deferred
+	url = https://github.com/kiwanami/emacs-deferred
+[submodule "emacs.d/emacs-request"]
+	path = emacs.d/emacs-request
+	url = https://github.com/tkf/emacs-request
+[submodule "emacs.d/f.el"]
+	path = emacs.d/f.el
+	url = https://github.com/rejeep/f.el
