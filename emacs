@@ -412,6 +412,27 @@
                             (define-key term-raw-map (kbd "C-z C-z") 'term-send-raw-C-z)))
 
 ;;
+;; Emacs Interactive Notebook (jupyter)
+;;
+
+;; FIXME This should autoload, but the janky-AF http proxy disabling needs to be looked at
+;; (something inherits it during the load process and I can't stop it)
+(defun neph-load-ein ()
+  (interactive)
+  (setenv "HTTP_PROXY" nil)
+  (setenv "HTTPS_PROXY" nil)
+  (setenv "http_proxy" nil)
+  (setenv "https_proxy" nil)
+  (add-to-list 'load-path "~/neph/emacs.d/auto-complete")
+  (add-to-list 'load-path "~/neph/emacs.d/js2-mode")
+  (add-to-list 'load-path "~/neph/emacs.d/skewer-mode")
+  (add-to-list 'load-path "~/neph/emacs.d/emacs-web-server")
+  (add-to-list 'load-path "~/neph/emacs.d/emacs-websocket")
+  (add-to-list 'load-path "~/neph/emacs.d/emacs-ipython-notebook/lisp")
+  (require 'ein-notebook)
+  (define-key ein:notebook-mode-map (kbd "C-c <C-return>") 'ein:worksheet-execute-autoexec-cells))
+
+;;
 ;; ECB
 ;;
 

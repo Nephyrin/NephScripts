@@ -205,3 +205,21 @@
 [submodule "emacs.d/f.el"]
 	path = emacs.d/f.el
 	url = https://github.com/rejeep/f.el
+[submodule "emacs.d/emacs-websocket"]
+	path = emacs.d/emacs-websocket
+	url = https://github.com/ahyatt/emacs-websocket
+[submodule "emacs.d/emacs-ipython-notebook"]
+	path = emacs.d/emacs-ipython-notebook
+	url = https://github.com/millejoh/emacs-ipython-notebook
+[submodule "emacs.d/auto-complete"]
+	path = emacs.d/auto-complete
+	url = https://github.com/auto-complete/auto-complete
+[submodule "emacs.d/skewer-mode"]
+	path = emacs.d/skewer-mode
+	url = https://github.com/skeeto/skewer-mode
+[submodule "emacs.d/emacs-web-server"]
+	path = emacs.d/emacs-web-server
+	url = https://github.com/skeeto/emacs-web-server
+[submodule "emacs.d/js2-mode"]
+	path = emacs.d/js2-mode
+	url = https://github.com/mooz/js2-mode
