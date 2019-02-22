@@ -184,7 +184,8 @@ hgreset() {
   [[ $# -eq 0 ]] || err "Unexpected arguments: $*"
   hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status
 }
-rv() { rsync -avy --partial --progress "$@"; }
+rv() { cmd rsync -avy --progress "$@"; }
+rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 
 iswine() { for x in wine exe; do pf "$x"; done; }
 
