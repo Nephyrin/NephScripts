@@ -91,6 +91,10 @@ if [[ $- == *i* ]] ; then
     # fzf, if around.  Probably should path-detect this better or something so it works on OS X/homebrew paths.
     [[ ! -f /usr/share/fzf/key-bindings.bash ]] || source /usr/share/fzf/key-bindings.bash
     [[ ! -f /usr/share/fzf/completion.bash ]] || source /usr/share/fzf/completion.bash
+    # Give fzf ctrl-t a bat preview if bat is available
+    ! type bat &>/dev/null || FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {}'"
+    ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
+
     # Keychain
     keyfile=~/".keychain/$(hostname)-sh"
     if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
