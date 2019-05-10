@@ -144,6 +144,7 @@
 ;; disabled unless asked for
 (require 'desktop)
 (setq desktop-path '("~/.emacs.d/"))
+(setq desktop-dirname "~/.emacs.d/")
 (setq desktop-base-file-name "emacs-desktop")
 (setq desktop-base-lock-name "emacs-desktop.lock")
 (setq desktop-restore-eager 0)
