@@ -1291,10 +1291,10 @@
                  ; Mode
                  " :: "
                  (propertize mode-name 'face 'neph-modeline-mode)
-                 ""
+                 ;;""
                  ; misc
                  '(:propertize mode-line-process face neph-modeline-misc)
-                 '(:propertize global-mode-string face neph-modeline-misc)
+                 '(global-mode-string (" " (:propertize global-mode-string face neph-modeline-misc)))
                  '(:propertize minor-mode-alist face neph-modeline-misc)
                  (when vc-mode (propertize (concat " /" vc-mode)
                                            'face 'neph-modeline-misc))
