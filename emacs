@@ -2078,6 +2078,8 @@
   (forward-line -2)
   (indent-according-to-mode))
 (global-set-key [(control shift up)] 'move-line-up)
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
 
 (defun move-line-down ()
   "Move the current line down."
@@ -2087,6 +2089,8 @@
   (forward-line -1)
   (indent-according-to-mode))
 (global-set-key [(control shift down)] 'move-line-down)
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
 
 (defun smart-expand-region-to-lines ()
   "Expand the current region to line breaks if and only if it
