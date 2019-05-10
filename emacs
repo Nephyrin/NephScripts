@@ -785,13 +785,19 @@
       ;;(with-eval-after-load "flycheck" (require flycheck-rtags))
 
       ;; Workaround to disable fci-mode when company is active
-      (defun on-off-fci-before-company(command)
-        (when (and (boundp 'fci-mode) fci-mode)
-          (when (string= "show" command)
-            (turn-off-fci-mode))
-          (when (string= "hide" command)
-            (turn-on-fci-mode))))
-      (advice-add 'company-call-frontends :before #'on-off-fci-before-company)
+      (defvar-local company-fci-mode-on-p nil)
+
+      (defun company-turn-off-fci (&rest ignore)
+        (when (boundp 'fci-mode)
+          (setq company-fci-mode-on-p fci-mode)
+          (when fci-mode (fci-mode -1))))
+
+      (defun company-maybe-turn-on-fci (&rest ignore)
+        (when company-fci-mode-on-p (fci-mode 1)))
+
+      (add-hook 'company-completion-started-hook 'company-turn-off-fci)
+      (add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
+      (add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
 
       (cl-defun popup-tip (string
                            &key
