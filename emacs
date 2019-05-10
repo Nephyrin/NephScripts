@@ -741,6 +741,15 @@
 (add-to-list 'load-path "~/.emacs.d/flycheck-irony")
 (require 'neph-irony-autoload)
 
+;; Bonus key to use counsel-irony if available
+(defun irony-mode-counsel-hook ()
+  (when (require 'counsel nil t)
+    (define-key irony-mode-map
+      ;;[remap completion-at-point] 'counsel-irony)
+      ;;[remap complete-symbol] 'counsel-irony)
+      (kbd "<C-M-tab>") 'counsel-irony)))
+(add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
+
 ;; Flycheck
 (autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
 
