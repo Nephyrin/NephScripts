@@ -1016,7 +1016,34 @@
   (global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
   (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
   (global-set-key (kbd "C-z C-S-R") 'rtags-rename-symbol)
+  (global-set-key (kbd "C-z C-l") 'neph-rtags-expand-auto)
 
+  ;; Rtags janky replace-auto-with-symbol.  Needs work -- only works if you're in the symbol name
+  ;; itself, and the declaraction is of the style (auto ... pFoo) and not something fancier like a
+  ;; function declaration (needs more support from rtags)
+  (defun neph-rtags-expand-auto ()
+    "Expands current auto symbol with its definition"
+    (interactive)
+      (save-excursion
+        (let ((symb (rtags-current-symbol))
+              (tok (rtags-current-token))
+              (word (current-word)))
+          ;; If we have a symbol, and it's not the same as the token, and we see [auto ...] before
+          ;; us and [... =] after.  This is because we only support the pretty basic case.
+          ;;
+          ;; Checking tok!=symb is because sometimes rtags will tell us the current symbol is just
+          ;; the token name when it hasn't parsed enough to have all the type information.
+          (if (and symb (not (string= symb "")) (not (string= symb tok))
+                   (looking-back "auto [^=]*") (looking-at ".*="))
+              (progn
+                (re-search-backward "[\t\s]auto[\t\s]")
+                (forward-char 1)
+                (set-mark (point))
+                (re-search-forward word)
+                (delete-region (mark) (point))
+                (insert symb))
+            ;; else
+            (message "Couldn't find auto symbol at point")))))
 
   (defun rtags-global-imenu ()
     (interactive)
