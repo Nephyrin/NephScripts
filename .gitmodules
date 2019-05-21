@@ -223,3 +223,6 @@
 [submodule "emacs.d/js2-mode"]
 	path = emacs.d/js2-mode
 	url = https://github.com/mooz/js2-mode
+[submodule "emacs.d/polymode"]
+	path = emacs.d/polymode
+	url = https://github.com/polymode/polymode
