@@ -479,6 +479,7 @@
 (global-set-key (kbd "C-z C-o") 'helm-occur)
 (global-set-key (kbd "C-z C-S-o") 'occur)
 (global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-z <C-tab>") 'helm-imenu)
 
 ;; Blows up helm on emacs 25 right now
 ;; (setq helm-follow-mode-persistent nil)
@@ -1010,7 +1011,7 @@
   (global-set-key (kbd "C-z C-/") (lambda () (interactive) (delete-windows-on rtags-buffer-name t)))
   (global-set-key (kbd "C-z C-n") 'rtags-next-match)
   (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
-  (global-set-key (kbd "C-z C-i") 'rtags-imenu)
+  (global-set-key (kbd "C-z <tab>") 'rtags-imenu)
   (global-set-key (kbd "C-z D") 'rtags-diagnostics)
   (global-set-key (kbd "C-z i") 'rtags-fixit)
   (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
