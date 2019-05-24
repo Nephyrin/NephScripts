@@ -2019,6 +2019,7 @@
                   (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//\\(\\s-*\\)")
                   (+ protoline-groups 3) 1 nil))))
 
+(global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)
 
