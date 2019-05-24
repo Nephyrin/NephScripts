@@ -329,7 +329,7 @@
                                        "    print gensub( /(^ *)(\\.|a |a:|body )/,"
                                        "                  \"\\\\1#cnp \\\\2\", \"g\" ); next;"
                                        "  };"
-                                       "  /^ *<\\/?(body|html)/ {next}; /^ *<pre/ "
+                                       "  /^ *<\\/?(body|html|head)/ {next}; /^ *<pre/ "
                                        "  {"
                                        "    print gensub(/^( *<pre)(.*)/,"
                                        "                 \"\\\\1 id=\\\"cnp\\\"\\\\2\", \"g\");"
