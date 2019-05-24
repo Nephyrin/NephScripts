@@ -29,6 +29,9 @@ estat Compiling ECB
 estat Compiling Evil
 [[ ! -f evil/Makefile ]] || ( cmd cd evil && cmd make )
 
+estat Compiling emacs-gdb
+[[ ! -f emacs-gdb/Makefile ]] || ( cmd cd emacs-gdb && cmd make )
+
 mkdir -pv "$PWD/neph-autoloads/"
 
 autoload_onefile() {
@@ -50,9 +53,10 @@ autoload_dir     evil
 autoload_onefile flyspell-lazy
 autoload_onefile projectile
 autoload_onefile helm-projectile
-autoload_dir     irony   irony-mode
-autoload_dir     company company-mode
-autoload_dir     ycmd    emacs-ycmd
+autoload_dir     irony        irony-mode
+autoload_dir     company      company-mode
+autoload_dir     ycmd         emacs-ycmd
+autoload_dir     weirdnox-gdb emacs-gdb
 
 estat Compiling remaining modules in directory
 cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"

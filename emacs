@@ -1076,7 +1076,7 @@
 (smart-tabs-insinuate 'c 'javascript 'c++)
 
 ;;
-;; GDB
+;; GDB - upstream gdb-mi, not to be confused with the weirdnox version below
 ;;
 
 ; (setq gdb-non-stop-setting nil)
@@ -1135,6 +1135,21 @@
 
 (global-set-key (kbd "C-z C-M-i") 'gdb-io-interrupt)
 (global-set-key (kbd "C-z C-M-c") 'gud-cont)
+
+;;
+;; emacs-gdb -- weirdNox's replacement for gdb-mi
+;;
+
+(add-to-list 'load-path "~/.emacs.d/hydra")
+(defun neph-load-weirdnox-gdb ()
+  (interactive)
+  (add-to-list 'load-path "~/.emacs.d/emacs-gdb")
+  (require 'gdb-mi)
+  (fmakunbound 'gdb)
+  (fmakunbound 'gdb-enable-debug))
+
+;;(require 'neph-weirdnox-gdb-autoload)
+;; FIXME automatically replace gdb-mi
 
 ;;
 ;; ido
