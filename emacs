@@ -121,6 +121,13 @@
 (setq set-mark-command-repeat-pop t)
 
 ;;
+;; Yaml mode
+;;
+(add-to-list 'load-path "~/.emacs.d/yaml-mode")
+(require 'neph-yaml-mode-autoload)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+
+;;
 ;; Snippets
 ;;
 

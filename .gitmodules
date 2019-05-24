@@ -232,3 +232,6 @@
 [submodule "emacs.d/hydra"]
 	path = emacs.d/hydra
 	url = https://github.com/abo-abo/hydra
+[submodule "emacs.d/yaml-mode"]
+	path = emacs.d/yaml-mode
+	url = https://github.com/yoshiki/yaml-mode

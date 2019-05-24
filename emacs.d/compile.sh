@@ -57,6 +57,7 @@ autoload_dir     irony        irony-mode
 autoload_dir     company      company-mode
 autoload_dir     ycmd         emacs-ycmd
 autoload_dir     weirdnox-gdb emacs-gdb
+autoload_dir     yaml-mode    yaml-mode
 
 estat Compiling remaining modules in directory
 cmd emacs --batch --eval "(load-file \"~/.emacs\")" --eval "(byte-recompile-directory \"$PWD\" 0)"
