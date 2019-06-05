@@ -426,13 +426,34 @@
 (add-to-list 'load-path "~/neph/emacs.d/emacs-websocket")
 (add-to-list 'load-path "~/neph/emacs.d/emacs-ipython-notebook/lisp")
 (defun neph-load-ein ()
+  "Janky function to load ein late."
   (interactive)
   (setenv "HTTP_PROXY" nil)
   (setenv "HTTPS_PROXY" nil)
   (setenv "http_proxy" nil)
   (setenv "https_proxy" nil)
   (require 'ein-notebook)
-  (define-key ein:notebook-mode-map (kbd "C-c <C-return>") 'ein:worksheet-execute-autoexec-cells))
+  (define-key ein:notebook-mode-map (kbd "C-c <C-return>") 'ein:worksheet-execute-autoexec-cells)
+  (define-key ein:notebook-mode-map (kbd "C-c <C-S-return>") 'neph-ein-restart-and-autoexec))
+
+(defun neph-ein-restart-and-autoexec ()
+  "Restart the current notebook's kernel and then execute all autoexec cells."
+  (interactive)
+  ;; This inlines ein:kernel-restart-session since it doesn't take a callback.
+  (ein:aif ein:%notebook%
+    (let ((kernel (ein:$notebook-kernel it)))
+      (ein:kernel-delete-session
+       kernel
+       (lambda (kernel)
+         (ein:events-trigger (ein:$kernel-events kernel) 'status_restarting.Kernel)
+         (ein:kernel-retrieve-session
+          kernel 0
+          (lambda (kernel)
+            (ein:events-trigger (ein:$kernel-events kernel)
+                                'status_restarted.Kernel)
+            (ein:notebook-execute-autoexec-cells ein:%notebook%))))))
+    (message "Not in notebook buffer")))
+
 
 ;;
 ;; ECB
