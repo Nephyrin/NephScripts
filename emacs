@@ -1879,6 +1879,12 @@
 (global-set-key (kbd "C-z C-S") 'drop-sudo)
 
 ;;
+;; Artist mode
+;;
+(global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
+
+
+;;
 ;; Yaml mode
 ;;
 (add-to-list 'load-path "~/.emacs.d/yaml-mode")
