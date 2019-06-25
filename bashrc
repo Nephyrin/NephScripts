@@ -27,7 +27,7 @@ fi
 _list_contains() {
   local s
   local IFS=":"
-  eval s=(\$$1)
+  eval s=\(\$"$1"\)
   for x in "${s[@]}"; do
     [ "$2" != "$x" ] || return 0
   done
@@ -85,9 +85,9 @@ export MOZHG=mozilla-hg
 [ ! -f ~/bin/lib/moz.sh ] || source ~/bin/lib/moz.sh
 
 #
-# Interactive tweaks
+# Bash-specific interactive tweaks
 #
-if [[ $- == *i* ]] ; then
+if [[ -n $BASH && -n $BASH_VERSION && $- == *i* ]] ; then
     # fzf, if around.  Probably should path-detect this better or something so it works on OS X/homebrew paths.
     [[ ! -f /usr/share/fzf/key-bindings.bash ]] || source /usr/share/fzf/key-bindings.bash
     [[ ! -f /usr/share/fzf/completion.bash ]] || source /usr/share/fzf/completion.bash
@@ -197,6 +197,7 @@ xg() { x gedit "$@"; }
 xk() { x kate "$@"; }
 p() { sudo pacman "$@"; }
 
+! alias dir &>/dev/null || unalias dir
 dir() { x dolphin "$@"; }
 
 rebash() { source ~/.bashrc "$@"; }
@@ -332,6 +333,25 @@ pathadd() {
   for item in "$@"; do
     _list_push PATH "$(readlink -f "$item")"
   done
+}
+
+_is_bash() { [[ -n $BASH && -n $BASH_VERSION ]]; }
+_is_zsh() { [[ -n $ZSH && -n $ZSH_VERSION ]]; }
+
+# Print the word corresponding to type for supported shells
+_get_type() {
+  local type
+  local arg="$1"
+  if _is_bash; then
+    type -t "$arg"
+  elif _is_zsh; then
+    echo ${$(whence -w $arg)[2]}
+  fi
+}
+
+# Is given type a function
+_is_func() {
+  [[ $# -ge 1 && $(_get_type "$*") = function ]]
 }
 
 # This is necessary so that NEPH_CGROUP_PS1 and MOZ_PS1 are expanded now, such
