@@ -303,12 +303,15 @@
   (start-process-shell-command "neph-html-region" nil "chromium ~/.emacs.d/htmlize-temp.htm"))
 
 (defun neph-html-copy ()
+  "Copy the selected region to the clipboard as html.  Requires awk and xclip be available."
   (interactive)
   (require 'htmlize)
+  ;; Detect some modes that clash with htmlize, set mode to inline-css for maximal CnP compatibility
   (let ((fci (and (boundp 'fci-mode) fci-mode))
         (ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode))
         (htmlize-output-type 'inline-css)
         (htmlize-pre-style 't))
+    ;; Disable incompatible modes, run htmlize, re-enable
     (when fci (turn-off-fci-mode))
     (when ghl (global-hl-line-mode -1))
     (with-current-buffer
