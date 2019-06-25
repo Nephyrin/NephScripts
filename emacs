@@ -1684,6 +1684,7 @@
           (face-remap-add-relative 'whitespace-tab override-face))))
 
 (defun neph-base-cfg ()
+  "Set minor modes and buffer-local settings for a coding-mode buffer."
   (linum-mode t)
   (smart-tabs-mode 0)
   (c-set-offset 'cpp-macro 0 nil) ;; Indent preprocessor macros with code instead of
@@ -1712,13 +1713,14 @@
   (setq web-mode-markup-indent-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
+  (fci-mode t)
   ;; Breaks in noninteractive mode
   (when (not noninteractive) (flycheck-mode t))
   (electric-pair-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (neph-set-whitespace-tab-override nil)
   (when (featurep 'rtags) (rtags-enable-standard-keybindings))
-  (setq fill-column 100)
+  (setq fill-column 120)
   ;; This is awful, still needed? Something was forcing fontify on the whole buffer instantly,
   ;; making new files janky
   (run-with-idle-timer 0.5 nil (lambda ()
@@ -1728,6 +1730,7 @@
 
 ;; Currently just the base config
 (defun neph-space-cfg ()
+  "Set minor modes and config for coding-mode buffer using default space indentation."
   (interactive)
   (neph-base-cfg)
   ;; Remap whitespace-tab to the highlighted tab face
@@ -1743,6 +1746,7 @@
 
 ;; Tabs, 4 wide with 4 indent to match e.g. default VS style. Smart-tabs.
 (defun neph-tab-cfg ()
+  "Set minor modes and config for a coding-mode buffer using VS-compatible tab indentation."
   (interactive)
   (neph-base-cfg)
   (smart-tabs-mode t)
@@ -1755,18 +1759,23 @@
   (setq python-indent-offset 4)
   (setq web-mode-code-indent-offset 4)
   (setq web-mode-markup-indent-offset 4)
-  (setq web-mode-css-indent-offset 4)
-  (setq fill-column 120)
-  (fci-mode t))
+  (setq web-mode-css-indent-offset 4))
 
 (defun neph-c-mode ()
+  "Set minor modes and config for c-language buffers."
   (interactive)
   ;; Feed the projectile dir to irony-cdb before running its autosetup command to ensure it knows
   (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
     (when (and projectile-dir (length projectile-dir))
+      ;; Irony
       (irony-cdb-json-add-compile-commands-path projectile-dir (concat projectile-dir "/compile_commands.json"))
       (irony-cdb-autosetup-compile-options)
-      (irony-mode t))))
+      (irony-mode t)
+      ;;
+      ;; Alternate: ycmd (doesn't always work as well as irony, but has fuzzy matching)
+      ;;
+      ;; (ycmd-mode t)
+      )))
 
 ;; Default modes
 
@@ -1777,17 +1786,14 @@
 (add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
 ;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
 (defun neph-js-mode-hook ()
+  "Set minor modes and buffer-local configuration for js language buffers."
   (if (and (stringp buffer-file-name)
            (string-match "\\.\\(v[pg]c\\|res\\)\\'" buffer-file-name))
       (neph-tab-cfg)
     (neph-space-cfg)))
 (add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
 (add-hook 'js-mode-hook 'neph-js-mode-hook)
-
 (add-hook 'sh-mode-hook 'neph-space-cfg)
-
-
-
 (add-hook 'python-mode-hook 'neph-space-cfg)
 (add-hook 'java-mode-hook 'neph-space-cfg)
 (add-hook 'lisp-mode-hook 'neph-space-cfg)
