@@ -306,7 +306,9 @@
   (interactive)
   (require 'htmlize)
   (let ((fci (and (boundp 'fci-mode) fci-mode))
-        (ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode)))
+        (ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode))
+        (htmlize-output-type 'inline-css)
+        (htmlize-pre-style 't))
     (when fci (turn-off-fci-mode))
     (when ghl (global-hl-line-mode -1))
     (with-current-buffer
@@ -314,28 +316,12 @@
       (write-file "~/.emacs.d/htmlize-temp.htm"))
     (when fci (turn-on-fci-mode))
     (when ghl (global-hl-line-mode 1)))
-  ;; Awful awk script to reprocess htmlize output to be a style'd element rather than a full
-  ;; document.  Don't look directly into it.
+  ;; Awful awk script to skip all the doctype/html/body/head document tags and just select the 'pre'
+  ;; tag, then stuff it onto the clipboard
   (start-process-shell-command "neph-html-copy" nil
-                               (concat "awk -i inplace '/^ *<style/ { hitstyle=1; instyle=1; };"
-                                       "  /^ *<\\/style/ { instyle=0; };"
-                                       "  instyle && /^ *body {/"
-                                       "  {"
-                                       "    print gensub( /(^ *)body /,"
-                                       "                  \"\\\\1#cnp \", \"g\" ); next;"
-                                       "  }; "
-                                       "  instyle"
-                                       "  {"
-                                       "    print gensub( /(^ *)(\\.|a |a:|body )/,"
-                                       "                  \"\\\\1#cnp \\\\2\", \"g\" ); next;"
-                                       "  };"
-                                       "  /^ *<\\/?(body|html|head)/ {next}; /^ *<pre/ "
-                                       "  {"
-                                       "    print gensub(/^( *<pre)(.*)/,"
-                                       "                 \"\\\\1 id=\\\"cnp\\\"\\\\2\", \"g\");"
-                                       "    next"
-                                       "  }"
-                                       "  hitstyle { print; }'"
+                               (concat "awk -i inplace '/^ *<pre/ { inpre=1; };"
+                                       "  /^ *<\\/pre/ { inpre=0; print };"
+                                       "  inpre { print };'"
                                        "  ~/.emacs.d/htmlize-temp.htm && "
                                        "xclip -quiet -i -selection clipboard -target text/html"
                                        "  ~/.emacs.d/htmlize-temp.htm")))
