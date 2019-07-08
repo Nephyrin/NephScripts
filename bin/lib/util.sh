@@ -223,10 +223,14 @@ sh_var()
 
 parse_args()
 {
-  if [ "$#" -lt 3 ]; then
+  if [[ $# -lt 3 ]]; then
     eerr "Internal error: incorrect usage of parse_args"
   fi
-  [ "$#" -gt 3 ] || return 0
+
+  _parse_args_options=()
+  _parse_args_values=()
+  _parse_args_args=()
+  [[ $# -gt 3 ]] || return 0
 
   local app_name="$1"
   local short_opts="$2"
@@ -234,9 +238,6 @@ parse_args()
 
   shift; shift; shift
 
-  _parse_args_options=()
-  _parse_args_values=()
-  _parse_args_args=()
   local parsed
 
   if ! parsed="$(getopt -n "$app_name" -o "$short_opts" -l "$long_opts" -- "$@")"; then
@@ -325,7 +326,7 @@ get_merged_option()
 get_option()
 {
   local opt_name="$1"
-  local default="$2"
+  local default="${2-}"
   local i=0
   while [ $i -lt ${#_parse_args_options[@]} ]; do
     if [ "${_parse_args_options[$i]}" = "$opt_name" ]; then
