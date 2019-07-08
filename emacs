@@ -393,13 +393,13 @@
   "Send a raw Control-z value to term."
   (interactive)
   (term-send-raw-string (kbd "C-z")))
-(add-hook 'term-mode-hook (lambda ()
-                            ;; Use real paste not yank by default for key
-                            (define-key term-raw-map (kbd "C-y") 'term-paste)
-                            ;; Allow C-z to escape
-                            (define-key term-raw-map (kbd "C-z") nil)
-                            ;; But make C-z C-z send a real C-z
-                            (define-key term-raw-map (kbd "C-z C-z") 'term-send-raw-C-z)))
+
+(with-eval-after-load 'term
+  (define-key term-raw-map (kbd "C-y") 'term-paste)
+  ;; Allow C-z to escape
+  (define-key term-raw-map (kbd "C-z") nil)
+  ;; But make C-z C-z send a real C-z
+  (define-key term-raw-map (kbd "C-z C-z") 'term-send-raw-C-z))
 
 ;;
 ;; Emacs Interactive Notebook (jupyter)
