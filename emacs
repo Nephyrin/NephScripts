@@ -2740,6 +2740,7 @@ beginning of it and the point to the end of it if so"
                    company-oddmuse company-dabbrev)))
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(ein:completion-backend (quote ein:use-company-backend))
  '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
  '(flycheck-checker-error-threshold nil)
  '(gdb-many-windows nil)
