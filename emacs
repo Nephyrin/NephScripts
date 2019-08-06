@@ -1986,6 +1986,10 @@
                                   (interactive)
                                   (other-window 1)))
 
+;; Diff current changes
+(global-set-key (kbd "C-z C-S-D") 'diff-buffer-with-file)
+(global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
+
 ;; Debug mode
 (global-set-key (kbd "C-z C-M-D") (lambda ()
                                 (interactive)
