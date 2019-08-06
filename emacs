@@ -2058,6 +2058,17 @@
                   (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//\\(\\s-*\\)")
                   (+ protoline-groups 3) 1 nil))))
 
+(defun neph-align-smss-table ()
+  "Helper to align a copied table from SMSS."
+  (interactive)
+  (let ((tab-width 1))
+    (align-regexp (region-beginning) (region-end)
+                  (concat "\\(" (kbd "TAB") "+\\)") 1 1 t)
+    (save-excursion
+      (while (re-search-forward (kbd "TAB") (region-end) t)
+        (replace-match " ")))))
+
+(global-set-key (kbd "C-z C-M-s") 'neph-align-smss-table)
 (global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)
