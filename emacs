@@ -1991,17 +1991,21 @@
 (global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
 
 ;; Debug mode
-(global-set-key (kbd "C-z C-M-D") (lambda ()
-                                (interactive)
-                                ;; If in mismatched state, default to enabling the disabled one
-                                (if (and debug-on-error debug-on-quit)
-                                    (progn
-                                      (setq debug-on-error nil)
-                                      (setq debug-on-quit nil)
-                                      (message "Disabled debug-on-error and debug-on-quit"))
-                                  (setq debug-on-error t)
-                                  (setq debug-on-quit t)
-                                  (message "Enabled debug-on-error and debug-on-quit"))))
+(defun neph-toggle-debug ()
+  "Helper to toggle 'debug-on-error' and 'debug-on-quit' modes."
+  (interactive)
+  ;; If in mismatched state, default to disabling the enabled one
+  (if (or debug-on-error debug-on-quit)
+      (progn
+        (setq debug-on-error nil)
+        (setq debug-on-quit nil)
+        (message "Disabled debug-on-error and debug-on-quit"))
+    (setq debug-on-error t)
+    (setq debug-on-quit t)
+    (message "Enabled debug-on-error and debug-on-quit")))
+
+;; Keybind for enabling debug stuff quickly when I'm mad at something hanging.  Which is always.
+(global-set-key (kbd "C-z C-M-S-Q") 'neph-toggle-debug)
 
 ;; Bonus align keys
 
