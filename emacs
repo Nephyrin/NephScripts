@@ -2555,11 +2555,12 @@ beginning of it and the point to the end of it if so"
 ;; Package
 ;;
 
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" .
-               "http://marmalade-repo.org/packages/"))
-(package-initialize)
+;; Disabled
+;;(require 'package)
+;;(add-to-list 'package-archives
+;;             '("marmalade" .
+;;               "http://marmalade-repo.org/packages/"))
+;;(package-initialize)
 
 ;;
 ;; Line numbers
