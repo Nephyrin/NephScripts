@@ -16,6 +16,9 @@ usage() {
   out "  -v / --verbose             Show steps"
   out "  -i / --ignore-case         Pass --ignore-case to pgrep"
   out "  -f / --full                Pass --full to pgrep"
+  out "  -l / --long                Pass longer-form default arguments to ps [-Hf]"
+  out "  -b / --basic               Pass basic-form default arguments to ps"
+  out "                               [-o pid=,cmd= -H]"
   out "  -P / --pgrep-args          Pass additional arguments to pgrep"
   out ""
   out "pf combines pgrep and ps to allow you to search for running processes while"
@@ -30,14 +33,24 @@ usage() {
 }
 
 # Parse args
-parse_args pf hvifP: help,verbose,ignore-case,full,pgrep-args: "$@" || usage 1
+parse_args pf hviflbP: help,verbose,ignore-case,full,long,basic,pgrep-args: "$@" || usage 1
 
 eval args=("$(get_args)")
 
 ignore_case="$(get_merged_option i ignore-case)"
 full="$(get_merged_option f full)"
+long="$(get_merged_option l long)"
+basic="$(get_merged_option b basic)"
 pgrep_args=($(get_merged_option P pgrep-args))
 verbose="$(get_merged_option v verbose)"
+
+# sanity
+[[ -z $basic || -z $long ]] || { eerr_title "--basic/-b and --long/-l do not make sense together"; usage 1; }
+
+psargs=("${args[@]:1}")
+# Prepend so explicit ones can override
+[[ -z $basic ]] || psargs=(-o pid=,cmd= -H "${psargs[@]}")
+[[ -z $long ]] || psargs=(-Hf "${psargs[@]}")
 
 # Swallow cmd() if not verbose
 [[ -n $verbose ]] || cmd() { "$@"; }
@@ -52,8 +65,6 @@ verbose="$(get_merged_option v verbose)"
 pattern="${args[0]}"
 [[ -n $pattern && ${#args[@]} -ge 1 ]] || usage 1
 
-psargs=("${args[@]:1}")
-
 output="$(cmd pgrep "${pgrep_args[@]}" "$pattern")"
 # Account for --pgrep-args="-l". Don't spawn egrep while pgrep is running or
 # it'll find the egrep pid depending on the pattern.
@@ -61,4 +72,10 @@ pids=($(echo "$output" | cmd egrep -o '^[0-9]+'))
 
 [[ ${#pids[@]} -ne 0 ]] || exit 1
 
-cmd ps -p "${pids[*]}" "${psargs[@]}"
+# Do the thing, catch failure
+pscmd=(ps -p "${pids[*]}" "${psargs[@]}")
+if ! cmd "${pscmd[@]}"; then
+  psret=$?
+  eerr_block "ps failed, command was:" "  $(sh_quote "${pscmd[@]}")"
+  exit $psret
+fi
