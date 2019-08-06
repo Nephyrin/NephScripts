@@ -2563,6 +2563,14 @@ beginning of it and the point to the end of it if so"
 ;;(package-initialize)
 
 ;;
+;; PlantUML
+;;
+
+;; Default install path from package
+(setq org-plantuml-jar-path
+      (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+
+;;
 ;; Line numbers
 ;;
 
