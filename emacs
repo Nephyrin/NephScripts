@@ -1799,6 +1799,8 @@
 (add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
 (add-hook 'js-mode-hook 'neph-js-mode-hook)
 (add-hook 'sh-mode-hook 'neph-space-cfg)
+(add-hook 'conf-space-mode-hook 'neph-space-cfg)
+(add-hook 'sql-mode-hook 'neph-space-cfg)
 (add-hook 'python-mode-hook 'neph-space-cfg)
 (add-hook 'java-mode-hook 'neph-space-cfg)
 (add-hook 'lisp-mode-hook 'neph-space-cfg)
