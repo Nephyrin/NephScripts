@@ -2450,6 +2450,11 @@ with a special case for when you are within a word"
         (forward-word (* inc (- arg 1))))
     (forward-word (- inc))))
 
+(defun backward-whitespace (&optional arg)
+  "'forward-whitespace' but with ARG inverted."
+  (interactive "^p")
+  (forward-whitespace (* -1 (or arg 1))))
+
 (defun neph-kill-to-word (&optional arg)
   "Like kill word, but behaes like forward-to-word rather than
 forward-word to find the boundry"
