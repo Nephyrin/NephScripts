@@ -2065,14 +2065,74 @@
 (defun neph-align-smss-table ()
   "Helper to align a copied table from SMSS."
   (interactive)
-  (let ((tab-width 1))
+  (let ((tab-width 1)
+        (start (region-beginning))
+        (end (region-end)))
     (align-regexp (region-beginning) (region-end)
                   (concat "\\(" (kbd "TAB") "+\\)") 1 1 t)
     (save-excursion
+      (goto-char start)
+      (set-mark end)
       (while (re-search-forward (kbd "TAB") (region-end) t)
         (replace-match " ")))))
 
+(defun neph-markdownify-smss-table ()
+  "Helper to transform a copied table from SMSS to markdown."
+  (interactive)
+  (save-excursion
+    (let ((start (region-beginning))
+          (end (region-end)))
+      ;; Ensure mark is at the end
+      (set-mark end)
+      (goto-char start)
+      ;; Skip whitespace at start
+      (while (and (not (= (point) (point-max))) (looking-at "[[:space:]]*$"))
+        (beginning-of-line 2))
+      (setq start (point))
+      ;; TAB -> " | "
+      (while (re-search-forward (kbd "TAB") (mark) t) (replace-match " | "))
+      (goto-char start)
+      ;; Wrap lines in | .. |
+      (while (re-search-forward "^\\(.\\)" (mark) t) (replace-match "| \\1"))
+      (goto-char start)
+      (while (and (not (= (point) (point-max))) ;; Make sure we're not on a non-terminated line at end of file
+                  (re-search-forward "\\(.\\)$" (mark) t))
+        (replace-match "\\1 |")
+        (when (not (= (point) (point-max))) (forward-char 1)))
+
+      ;; Align table
+      (align-regexp start (mark) "\\(\\ +\\)|" 1 1 t)
+
+      ;; Select first line
+      (setq end (region-end))
+      (goto-char start)
+      (set-mark (point))
+      (re-search-forward "$" end t)
+
+      ;; Duplicate first line for header divider
+      (when (and (< (point) end) (not (= (point) (mark))))
+        (let ((line (buffer-substring (region-beginning) (region-end)))
+              (end (region-end))
+              (tstart 0))
+          (newline)
+          (insert line)
+          (set-mark (point))
+          (beginning-of-line)
+
+          ;; Keep finding | Foo | columns and replace with an equal number of dashes
+          (setq tstart (+ 2 (point)))
+          (while (and (< (+ 2 (point)) (mark))
+                      (re-search-forward " \\([^|]+\\) |" (mark) t))
+            (let ((text (match-substitute-replacement "\\1")))
+              (backward-char 2)
+              (delete-region tstart (point))
+              (insert (replace-regexp-in-string "." "-" text))
+              (forward-char 2)
+              (setq tstart (+ 1 (point))))))))))
+
+
 (global-set-key (kbd "C-z C-M-s") 'neph-align-smss-table)
+(global-set-key (kbd "C-z C-M-S-S") 'neph-markdownify-smss-table)
 (global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)
