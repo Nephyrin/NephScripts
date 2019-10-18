@@ -1889,6 +1889,7 @@
 (add-to-list 'load-path "~/.emacs.d/yaml-mode")
 (require 'neph-yaml-mode-autoload)
 (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
 (with-eval-after-load "yaml-mode"
   (add-hook 'yaml-mode-hook 'neph-space-cfg))
 
