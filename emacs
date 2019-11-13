@@ -746,11 +746,76 @@
 (add-hook 'python-mode-hook 'neph-ycm-setup)
 
 ;;
-;; C++ Helper mode(s) : Company/rtags/semantic
+;; Yasnippet
 ;;
 
-;; Irony-mode
+(add-to-list 'load-path "~/.emacs.d/yasnippet")
+(require 'yasnippet)
+
+;;
+;; Flycheck
+;;
+
 (add-to-list 'load-path "~/.emacs.d/flycheck")
+(autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
+
+;;
+;; C++ Helper mode(s) : Company/lsp and associated helper libraries
+;;
+
+;; cquery
+(add-to-list 'load-path "~/.emacs.d/hydra")
+(add-to-list 'load-path "~/.emacs.d/ace-window")
+(add-to-list 'load-path "~/.emacs.d/pfuture")
+(add-to-list 'load-path "~/.emacs.d/avy")
+(add-to-list 'load-path "~/.emacs.d/lsp-mode")
+(add-to-list 'load-path "~/.emacs.d/emacs-ht")
+(add-to-list 'load-path "~/.emacs.d/emacs-spinner")
+(add-to-list 'load-path "~/.emacs.d/company-lsp")
+(add-to-list 'load-path "~/.emacs.d/treemacs/src/elisp")
+(add-to-list 'load-path "~/.emacs.d/treemacs/src/extra")
+(add-to-list 'load-path "~/.emacs.d/emacs-ccls")
+(add-to-list 'load-path "~/.emacs.d/dap-mode")
+(add-to-list 'load-path "~/.emacs.d/lsp-ui")
+(add-to-list 'load-path "~/.emacs.d/lsp-treemacs")
+(add-to-list 'load-path "~/.emacs.d/helm-lsp")
+(require 'lsp)
+(require 'company)
+(require 'company-quickhelp)
+(require 'company-lsp)
+(require 'lsp-treemacs)
+(require 'lsp-ui)
+(require 'dap-mode)
+(require 'ccls)
+(require 'helm-lsp)
+(setq ccls-executable "/usr/bin/ccls")
+(lsp-treemacs-sync-mode 1)
+
+;; Not sure if want, needs better colors setup
+;;(setq ccls-sem-highlight-method nil)
+;;(ccls-use-default-rainbow-sem-highlight)
+;; Current color-identifiers generated colors, for reference:
+;;   #aac69924d6db
+;;   #8edce123bde0
+;;   #99257000ffff
+;;   #c249adb6bf58
+;;   #ffffeb6c7001
+;;   #c249bf58adb7
+;;   #ffff70007001
+;;   #7001c248ffff
+;;   #ffff7000eb6d
+;;   #9925fffe7001
+
+;; Navigate? needs better binds.
+(global-set-key (kbd "C-z <C-left>") (lambda () (interactive) (ccls-navigate "U")))
+(global-set-key (kbd "C-z <C-right>") (lambda () (interactive) (ccls-navigate "D")))
+(global-set-key (kbd "C-z <C-up>") (lambda () (interactive) (ccls-navigate "L")))
+(global-set-key (kbd "C-z <C-down>") (lambda () (interactive) (ccls-navigate "R")))
+
+;;
+;; Irony-mode (deprecated)
+;;   DEPRECATED - going to drop if ccls + lsp keeps working well
+;;
 (add-to-list 'load-path "~/.emacs.d/irony-mode")
 (add-to-list 'load-path "~/.emacs.d/company-irony")
 (add-to-list 'load-path "~/.emacs.d/flycheck-irony")
@@ -765,9 +830,6 @@
       (kbd "<C-M-tab>") 'counsel-irony)))
 (add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
 
-;; Flycheck
-(autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
-
 ;; FIXME irony-mode breaks on headers due to that missing (car found)
 
 ;; Load flycheck-irony if both flycheck and irony get enabled
@@ -780,17 +842,21 @@
     (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
 
 ;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
-
 ;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
 ;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
 
-;; popup.el for rtags tooltips
+;;
+;; Rtags
+;;   DEPRECATED - going to drop if ccls + lsp keeps working well
+;;
+
+;; popup.el for rtags tooltips (needed anymore?)
 (add-to-list 'load-path "~/.emacs.d/popup-el")
 (autoload 'popup "popup" "Popup tooltip thing." t)
 
 ;; Rtags is installed separate from NephScripts, don't assume it is available
 ;; Don't load it in non-interactive mode, we don't want to issue calls to rc/etc.
-(if (and (not noninteractive) (require 'rtags nil t))
+(if (and (not noninteractive) (require 'rtags-disabled nil t))
     (progn
       (require 'company)
       (require 'company-quickhelp)
@@ -1153,7 +1219,6 @@
 ;; emacs-gdb -- weirdNox's replacement for gdb-mi
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/hydra")
 (defun neph-load-weirdnox-gdb ()
   (interactive)
   (add-to-list 'load-path "~/.emacs.d/emacs-gdb")
@@ -1585,6 +1650,7 @@
     (if (string-match "-alt.*/" root)
         (concat default-name "-alt")
         default-name)))
+
 (setq projectile-project-name-function 'neph-projectile-project-name)
 
 (let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
@@ -1773,9 +1839,11 @@
   (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
     (when (and projectile-dir (length projectile-dir))
       ;; Irony
-      (irony-cdb-json-add-compile-commands-path projectile-dir (concat projectile-dir "/compile_commands.json"))
-      (irony-cdb-autosetup-compile-options)
-      (irony-mode t)
+      ;; (irony-cdb-json-add-compile-commands-path projectile-dir (concat projectile-dir "/compile_commands.json"))
+      ;; (irony-cdb-autosetup-compile-options)
+      ;; (irony-mode t)
+      (lsp)
+      (flycheck-select-checker 'lsp-ui)
       ;;
       ;; Alternate: ycmd (doesn't always work as well as irony, but has fuzzy matching)
       ;;
@@ -2805,9 +2873,10 @@ beginning of it and the point to the end of it if so"
  ;; If there is more than one, they won't work right.
  '(company-backends
    (quote
-    (company-irony company-rtags company-bbdb company-nxml company-css company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
-                   (company-dabbrev-code company-gtags company-etags company-keywords)
-                   company-oddmuse company-dabbrev)))
+    (company-lsp company-irony company-ycmd company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+                 (company-dabbrev-code company-gtags company-etags company-keywords)
+                 company-oddmuse company-dabbrev)))
+ '(compilation-skip-threshold 2)
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(ein:completion-backend (quote ein:use-company-backend))

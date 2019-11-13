@@ -235,3 +235,45 @@
 [submodule "emacs.d/yaml-mode"]
 	path = emacs.d/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode
+[submodule "emacs.d/lsp-mode"]
+	path = emacs.d/lsp-mode
+	url = https://github.com/emacs-lsp/lsp-mode
+[submodule "emacs.d/emacs-ht"]
+	path = emacs.d/emacs-ht
+	url = https://github.com/Wilfred/ht.el
+[submodule "emacs.d/emacs-spinner"]
+	path = emacs.d/emacs-spinner
+	url = https://github.com/Malabarba/spinner.el
+[submodule "emacs.d/company-lsp"]
+	path = emacs.d/company-lsp
+	url = https://github.com/tigersoldier/company-lsp
+[submodule "emacs.d/lsp-treemacs"]
+	path = emacs.d/lsp-treemacs
+	url = https://github.com/emacs-lsp/lsp-treemacs
+[submodule "emacs.d/treemacs"]
+	path = emacs.d/treemacs
+	url = https://github.com/Alexander-Miller/treemacs
+[submodule "emacs.d/ace-window"]
+	path = emacs.d/ace-window
+	url = https://github.com/abo-abo/ace-window
+[submodule "emacs.d/avy"]
+	path = emacs.d/avy
+	url = https://github.com/abo-abo/avy
+[submodule "emacs.d/pfuture"]
+	path = emacs.d/pfuture
+	url = https://github.com/Alexander-Miller/pfuture
+[submodule "emacs.d/lsp-ui"]
+	path = emacs.d/lsp-ui
+	url = https://github.com/emacs-lsp/lsp-ui
+[submodule "emacs.d/emacs-ccls"]
+	path = emacs.d/emacs-ccls
+	url = https://github.com/MaskRay/emacs-ccls
+[submodule "emacs.d/dap-mode"]
+	path = emacs.d/dap-mode
+	url = https://github.com/emacs-lsp/dap-mode
+[submodule "emacs.d/helm-lsp"]
+	path = emacs.d/helm-lsp
+	url = https://github.com/emacs-lsp/helm-lsp
+[submodule "emacs.d/yasnippet"]
+	path = emacs.d/yasnippet
+	url = https://github.com/joaotavora/yasnippet
