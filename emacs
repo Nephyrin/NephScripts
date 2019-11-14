@@ -3,7 +3,16 @@
 ;;
 ;; Misc
 ;;
-(require 'cl)
+(require 'cl) ;; Used so xe and friends can run some crap
+
+(setq redisplay-dont-pause t)
+;;(setq inhibit-eval-during-redisplay nil)
+(setq fast-but-imprecise-scrolling t)
+(setq jit-lock-chunk-size 200)
+(setq jit-lock-defer-time 0)
+(setq jit-lock-stealth-load nil)
+(setq jit-lock-stealth-nice 0.01)
+(setq jit-lock-stealth-time 0.5)
 
 ;; Don't load outdated .elc files, it's basically never what was intended.
 (setq load-prefer-newer t)
