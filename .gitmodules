@@ -283,3 +283,6 @@
 [submodule "emacs.d/epl"]
 	path = emacs.d/epl
 	url = https://github.com/cask/epl
+[submodule "emacs.d/helm-swoop"]
+	path = emacs.d/helm-swoop
+	url = https://github.com/emacsorphanage/helm-swoop

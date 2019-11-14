@@ -571,6 +571,12 @@
 (setq fzf/args "--no-hscroll --margin=0,1,1,0 --print-query -x")
 
 ;;
+;; Helm Swoop
+;;
+(add-to-list 'load-path "~/.emacs.d/helm-swoop")
+(require 'helm-swoop)
+
+;;
 ;; Helm AG
 ;;
 
