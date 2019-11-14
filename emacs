@@ -2016,8 +2016,8 @@
       (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
 
 ;; Bound to shift + the window nav keys below
-(global-set-key (kbd "C-z C-S") (lambda () (interactive) (transpose-windows -1)))
-(global-set-key (kbd "C-z C-D") 'transpose-windows)
+(global-set-key (kbd "C-z C-S-S") (lambda () (interactive) (transpose-windows -1)))
+(global-set-key (kbd "C-z C-S-D") 'transpose-windows)
 
 ;; Revert without prompting
 (global-set-key (kbd "C-z R") (lambda () (interactive) (revert-buffer t t)))
