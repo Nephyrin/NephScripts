@@ -1,18 +1,27 @@
 #!/bin/bash
-# Number of frames visible
-frames="$(emacsclient --eval '(list-length (visible-frame-list))' 2>/dev/null)"
-if [ -z "$frames" ]; then
+
+set -e
+
+# Spawn daemon if not running
+if ! emacsclient --eval "()" &>/dev/null; then
+  # Not running, start daemon
   echo >&2 ":: Emacs isn't running, spawning now"
   emacs --daemon
 fi
-echo ":: Currently $frames frames"
-if [ "0$frames" -le 1 ]; then
-  # The 'eval' frame seems to count, so 1 means effectively none-visible, open
-  # a frame
-  emacsclient -c -n
+
+# Count GUI frames
+countguiframes="(length (seq-filter (lambda (f) (member (framep f) '(x ns w32))) (frame-list)))"
+frames="$(emacsclient --eval "$countguiframes" 2>/dev/null)"
+
+# Warn if it appears to be running but that failed for some reason, sometimes emacs is weird
+if [[ -z $frames ]]; then
+  echo >&2 "!! Emacs seems to be running but trying to ask it about running frames didn't work."
+  echo >&2 "!! Asking for a new frame."
 fi
 
-# And if we were passed paramaters, pass them
-if [ ! -z "$*" ]; then
+# If we have no gui frames, explicitly ask for one to be spawned, otherwise let it reuse.
+if [[ ${frames:-0} -lt 1 ]]; then
+  emacsclient -c -n "$@"
+else
   emacsclient -n "$@"
 fi
