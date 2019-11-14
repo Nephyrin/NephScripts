@@ -4,6 +4,7 @@
 
 (custom-theme-set-faces 'neph-ample-zen
                         '(linum ((t (:background "#222" :foreground "#555" :box nil))))
+                        '(web-mode-block-face ((t (:background "#181818"))))
                         '(mode-line ((t ( :background "#111"
                                           :foreground "#999"
                                           :box (:line-width 1 :color "#000" :style nil)))))
@@ -17,7 +18,7 @@
                                       :box (:line-width -1 :color "#777" :style nil))))
                         '(whitespace-tab ((t  :background "#242424" )))
                         '(region ((t :background "#303030" )))
-                        '(whitespace-trailing ((t :background "#662c2c")))
+                        '(whitespace-trailing ((t :background "#764c4c")))
                         '(cursor ((t :background "#D96E26" ))))
 
 ;; linum
