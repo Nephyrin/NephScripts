@@ -764,6 +764,8 @@
 ;;
 
 ;; cquery
+(add-to-list 'load-path "~/.emacs.d/epl")
+(add-to-list 'load-path "~/.emacs.d/pkg-info")
 (add-to-list 'load-path "~/.emacs.d/hydra")
 (add-to-list 'load-path "~/.emacs.d/ace-window")
 (add-to-list 'load-path "~/.emacs.d/pfuture")
@@ -779,6 +781,7 @@
 (add-to-list 'load-path "~/.emacs.d/lsp-ui")
 (add-to-list 'load-path "~/.emacs.d/lsp-treemacs")
 (add-to-list 'load-path "~/.emacs.d/helm-lsp")
+(require 'pkg-info)
 (require 'lsp)
 (require 'company)
 (require 'company-quickhelp)

@@ -277,3 +277,9 @@
 [submodule "emacs.d/yasnippet"]
 	path = emacs.d/yasnippet
 	url = https://github.com/joaotavora/yasnippet
+[submodule "emacs.d/pkg-info"]
+	path = emacs.d/pkg-info
+	url = https://github.com/emacsorphanage/pkg-info
+[submodule "emacs.d/epl"]
+	path = emacs.d/epl
+	url = https://github.com/cask/epl
