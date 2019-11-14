@@ -1943,8 +1943,8 @@
         (kill-buffer buffer))))
   (message "Dropped sudo buffers"))
 
-(global-set-key (kbd "C-z S") 'sudoize-buffer)
-(global-set-key (kbd "C-z C-S") 'drop-sudo)
+(global-set-key (kbd "C-z C-S-u") 'sudoize-buffer)
+(global-set-key (kbd "C-z C-M-S-u") 'drop-sudo)
 
 ;;
 ;; Artist mode
