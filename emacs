@@ -1255,7 +1255,7 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/minimap")
-(autoload 'minimap "minimap" "minimap" t)
+(autoload 'minimap-mode "minimap" "minimap" t)
 
 (with-eval-after-load "minimap"
               (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
