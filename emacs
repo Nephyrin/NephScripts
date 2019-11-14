@@ -793,6 +793,7 @@
 (require 'helm-lsp)
 (setq ccls-executable "/usr/bin/ccls")
 (lsp-treemacs-sync-mode 1)
+(setq lsp-ui-flycheck-enable t)
 
 ;; Not sure if want, needs better colors setup
 ;;(setq ccls-sem-highlight-method nil)
