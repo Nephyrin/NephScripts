@@ -585,6 +585,9 @@
 (add-to-list 'load-path "~/.emacs.d/helm-swoop")
 (require 'helm-swoop)
 
+(global-set-key (kbd "C-z M-s") 'helm-swoop)
+(global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
+
 ;;
 ;; Helm AG
 ;;
