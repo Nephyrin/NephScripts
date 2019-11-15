@@ -812,6 +812,7 @@
 (setq ccls-executable "/usr/bin/ccls")
 (lsp-treemacs-sync-mode 1)
 (setq lsp-ui-flycheck-enable t)
+(setq lsp-ui-peek-always-show t)
 
 (defun neph-lsp-reformat-definition ()
   "Reformat the definition under the cursor according to how LSP parsed it."
