@@ -813,6 +813,53 @@
 (lsp-treemacs-sync-mode 1)
 (setq lsp-ui-flycheck-enable t)
 
+(defun neph-lsp-reformat-definition ()
+  "Reformat the definition under the cursor according to how LSP parsed it."
+  (interactive)
+  ;; Request the "hover" of the thing under cursor, which is the expanded definition of it.
+  (let* ((hoverText (-some->> (lsp--text-document-position-params)
+                      (lsp--make-request "textDocument/hover")
+                      (lsp--send-request)
+                      (gethash "contents")
+                      (lsp-seq-first)
+                      (gethash "value")))
+         ;; Request the location/textual-range of the definition for the thing under cursor.
+         (defRange (-some->> (lsp--text-document-position-params)
+                     (lsp--make-request "textDocument/definition")
+                     (lsp--send-request)
+                     (car)
+                     (gethash "targetRange")
+                     (lsp--range-to-region)))
+         (defStart (car defRange))
+         (defEnd (cdr defRange)))
+    (if (and hoverText (<= defStart (point) defEnd))
+        ;;(message "Range: %s point: %s hover: %s" defRange point hoverText)
+        (save-excursion
+          (goto-char defStart)
+          (delete-region defStart defEnd)
+          (insert hoverText))
+      (message "No definition recognized under cursor. (save file, and make sure you're on the type name)"))))
+
+;; LSP UI keys, some are not used but reserved from equivalents in rtags configuration
+(global-set-key (kbd "C-z C-,")   'lsp-ui-peek-find-references)
+(global-set-key (kbd "C-z C-<")   'ccls-call-hierarchy)
+(global-set-key (kbd "C-z ,")     'lsp-find-references)
+(global-set-key (kbd "C-z <tab>") 'lsp-ui-imenu)
+(global-set-key (kbd "C-z D")     'flycheck-list-errors)
+(global-set-key (kbd "C-z C-l")   'neph-lsp-reformat-definition)
+;; (global-set-key (kbd "C-z C-.")           'rtags-find-symbol-at-point)
+;; (global-set-key (kbd "C-z M-r")           'rtags-reparse-file)
+;; (global-set-key (kbd "C-z C->")           'rtags-find-virtuals-at-point)
+;; (global-set-key (kbd "C-z .")             'rtags-find-symbol) ;; M-. works in lsp-mode, what should this do
+;; (global-set-key (kbd "C-z C-/")           'delete-xrefs-window-or-something) ;; Was the rtags bind to dismiss the references
+;; (global-set-key (kbd "C-z C-n")           'xref-next-line)
+;; (global-set-key (kbd "C-z C-p")           'xref-prev-line)
+;; (global-set-key (kbd "C-z i")             'rtags-fixit)
+;; (global-set-key (kbd "C-z I")             'rtags-fix-fixit-at-point)
+;; (global-set-key (kbd "C-z DEL")           'rtags-location-stack-back)
+;; (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
+;; (global-set-key (kbd "C-z C-S-R")         'rtags-rename-symbol)
+
 ;; Not sure if want, needs better colors setup
 ;;(setq ccls-sem-highlight-method nil)
 ;;(ccls-use-default-rainbow-sem-highlight)
