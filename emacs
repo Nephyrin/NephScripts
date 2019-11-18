@@ -809,6 +809,7 @@
 (require 'dap-mode)
 (require 'ccls)
 (require 'helm-lsp)
+(setq company-quickhelp-color-background "black")
 (setq ccls-executable "/usr/bin/ccls")
 (lsp-treemacs-sync-mode 1)
 (setq lsp-ui-flycheck-enable t)
