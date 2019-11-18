@@ -815,6 +815,14 @@
 (setq lsp-ui-flycheck-enable t)
 (setq lsp-ui-peek-always-show t)
 
+(setq ccls-args
+      (quote
+       ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
+       ("--init={\"clang\": {\"extraArgs\": [ \"-I/usr/lib/glib-2.0/include/\" ], \"excludeArgs\": [\"-frounding-math\", \"-march=pentium4\"]}}"
+        ;; Extra logging
+        "-log-file=/tmp/ccls.log"
+        "-v=1")))
+
 (defun neph-lsp-reformat-definition ()
   "Reformat the definition under the cursor according to how LSP parsed it."
   (interactive)
