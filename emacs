@@ -3,6 +3,11 @@
 ;;
 ;; Misc
 ;;
+
+;; Global libraries macros in here (and also )
+(add-to-list 'load-path "~/.emacs.d/emacs-ht")
+(require 'ht)
+
 (require 'cl) ;; Used so xe and friends can run some crap
 
 (setq redisplay-dont-pause t)
@@ -789,7 +794,6 @@
 (add-to-list 'load-path "~/.emacs.d/pfuture")
 (add-to-list 'load-path "~/.emacs.d/avy")
 (add-to-list 'load-path "~/.emacs.d/lsp-mode")
-(add-to-list 'load-path "~/.emacs.d/emacs-ht")
 (add-to-list 'load-path "~/.emacs.d/emacs-spinner")
 (add-to-list 'load-path "~/.emacs.d/company-lsp")
 (add-to-list 'load-path "~/.emacs.d/treemacs/src/elisp")
@@ -816,12 +820,15 @@
 (setq lsp-ui-peek-always-show t)
 
 (setq ccls-args
-      (quote
-       ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
-       ("--init={\"clang\": {\"extraArgs\": [ \"-I/usr/lib/glib-2.0/include/\" ], \"excludeArgs\": [\"-frounding-math\", \"-march=pentium4\"]}}"
-        ;; Extra logging
-        "-log-file=/tmp/ccls.log"
-        "-v=1")))
+      (list
+       (concat "--init=" (json-encode
+                          (ht ("index" (ht ("multiVersion" 1)))
+                              ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
+                              ("clang" (ht ("extraArgs" [-I/usr/lib/glib-2.0/include/])
+                                           ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
+       ;; Extra logging
+       "-log-file=/tmp/ccls.log"
+       "-v=1"))
 
 (defun neph-lsp-reformat-definition ()
   "Reformat the definition under the cursor according to how LSP parsed it."
