@@ -5,6 +5,7 @@
 ;;
 
 ;; Global libraries macros in here (and also )
+(add-to-list 'load-path "~/.emacs.d/dash") ; dependency of ht
 (add-to-list 'load-path "~/.emacs.d/emacs-ht")
 (require 'ht)
 
@@ -480,7 +481,6 @@
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/color-identifiers-mode")
-(add-to-list 'load-path "~/.emacs.d/dash") ; dependency
 (require 'color-identifiers-mode)
 
 ;;
