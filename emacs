@@ -1485,7 +1485,7 @@
                   (propertize " " 'display '(list (raise -0.30) (height 1.25)))
 
                   ;; Pad to right side
-                  (neph-fill-to 9)
+                  (neph-fill-to 5) ;; 9 if enabling hud
 
                   ;; Disabled rtags
                   ;; (neph-fill-to (+ 9 (string-width rtags-status))) ;; Instead of fill-to above
@@ -1493,7 +1493,8 @@
 
                   ;; Percentage and modeline-hud
                   "%p "
-                  (neph-modeline-hud 1.5 10)))
+                  ;; (neph-modeline-hud 1.5 10)
+                  ))
                 ))
 
 ;; Force modeline updates when rtags status changes
