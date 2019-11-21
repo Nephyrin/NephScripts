@@ -822,6 +822,11 @@
 (setq lsp-ui-flycheck-enable t)
 (setq lsp-ui-peek-always-show t)
 
+(setq ccls-sem-highlight-method 'font-lock)
+(ccls-use-default-rainbow-sem-highlight)
+;;(setq ccls-sem-highlight-method nil)
+;; We'll set these from the theme.  Uncomment for random themes.
+
 (setq ccls-args
       (list
        (concat "--init=" (json-encode
@@ -879,21 +884,6 @@
 ;; (global-set-key (kbd "C-z DEL")           'rtags-location-stack-back)
 ;; (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
 ;; (global-set-key (kbd "C-z C-S-R")         'rtags-rename-symbol)
-
-;; Not sure if want, needs better colors setup
-;;(setq ccls-sem-highlight-method nil)
-;;(ccls-use-default-rainbow-sem-highlight)
-;; Current color-identifiers generated colors, for reference:
-;;   #aac69924d6db
-;;   #8edce123bde0
-;;   #99257000ffff
-;;   #c249adb6bf58
-;;   #ffffeb6c7001
-;;   #c249bf58adb7
-;;   #ffff70007001
-;;   #7001c248ffff
-;;   #ffff7000eb6d
-;;   #9925fffe7001
 
 ;; Navigate? needs better binds.
 (global-set-key (kbd "C-z <C-left>") (lambda () (interactive) (ccls-navigate "U")))
