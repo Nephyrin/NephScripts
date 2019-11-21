@@ -872,6 +872,8 @@
 (global-set-key (kbd "C-z <tab>") 'lsp-ui-imenu)
 (global-set-key (kbd "C-z D")     'flycheck-list-errors)
 (global-set-key (kbd "C-z C-l")   'neph-lsp-reformat-definition)
+(global-set-key (kbd "C-z .")     'helm-lsp-workspace-symbol)        ;; Menu to find symbol in project
+;; (global-set-key (kbd "C-z >")     'helm-lsp-global-workspace-symbol) ;; Menu to find symbol in open projects
 ;; (global-set-key (kbd "C-z C-.")           'rtags-find-symbol-at-point)
 ;; (global-set-key (kbd "C-z M-r")           'rtags-reparse-file)
 ;; (global-set-key (kbd "C-z C->")           'rtags-find-virtuals-at-point)
@@ -886,10 +888,10 @@
 ;; (global-set-key (kbd "C-z C-S-R")         'rtags-rename-symbol)
 
 ;; Navigate? needs better binds.
-(global-set-key (kbd "C-z <C-left>") (lambda () (interactive) (ccls-navigate "U")))
+(global-set-key (kbd "C-z <C-left>")  (lambda () (interactive) (ccls-navigate "U")))
 (global-set-key (kbd "C-z <C-right>") (lambda () (interactive) (ccls-navigate "D")))
-(global-set-key (kbd "C-z <C-up>") (lambda () (interactive) (ccls-navigate "L")))
-(global-set-key (kbd "C-z <C-down>") (lambda () (interactive) (ccls-navigate "R")))
+(global-set-key (kbd "C-z <C-up>")    (lambda () (interactive) (ccls-navigate "L")))
+(global-set-key (kbd "C-z <C-down>")  (lambda () (interactive) (ccls-navigate "R")))
 
 ;;
 ;; Irony-mode (deprecated)
