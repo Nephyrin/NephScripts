@@ -577,12 +577,15 @@
 ;; FZF
 ;;
 
-;; TODO: Submit FZF upstream, make submodule
-;; See fzf.el for wrapping ansi-term
+;; FIXME Ignore stuff like .ccls-cache by customizing process-environment with defadvice:
+;;   (let ((process-environment
+;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
+;;               process-environment))
+
 (add-to-list 'load-path "~/.emacs.d/fzf")
 (require 'fzf)
 (global-set-key (kbd "C-z C-S-f") 'fzf)
-(setq fzf/args "--no-hscroll --margin=0,1,1,0 --print-query -x")
+(setq fzf/args "--no-hscroll --print-query -x")
 
 ;;
 ;; Helm Swoop
