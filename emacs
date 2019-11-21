@@ -743,9 +743,12 @@
   (company-quickhelp-mode t)
   ;;(semantic-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
-(add-hook 'c-mode-common-hook 'neph-company-setup)
-(add-hook 'python-mode-hook 'neph-company-setup)
-(add-hook 'lisp-mode-hook 'neph-company-setup)
+
+;; Turn on in these modes
+(add-hook 'c-mode-common-hook   'neph-company-setup)
+(add-hook 'python-mode-hook     'neph-company-setup)
+(add-hook 'lisp-mode-hook       'neph-company-setup)
+(add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
 
 ;;
 ;; YouCompleteMe
