@@ -286,3 +286,6 @@
 [submodule "emacs.d/helm-swoop"]
 	path = emacs.d/helm-swoop
 	url = https://github.com/emacsorphanage/helm-swoop
+[submodule "zsh.d/powerlevel10k"]
+	path = zsh.d/themes/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k
