@@ -736,12 +736,6 @@ van()
     yelp "man:$@" &>/dev/null &
 }
 
-x() {
-  [ ! -z "$NEPH_CGROUP" ] && echo >&2 ":: WARNING: In cgroup"
-  ("$@" >/dev/null 2>/dev/null &)
-}
-
-pic() { x gwenview "$@"; }
 avant() { pkill avant-window; x avant-window-navigator; }
 
 connectx()
