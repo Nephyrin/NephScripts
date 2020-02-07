@@ -111,5 +111,5 @@ bindkey '^T' autosuggest-toggle
 
 NEPH=~/neph
 NPRIV=~/neph/priv
-[[ ! -f $NEPH/aliases ]] || source "$NEPH"/aliases
-[[ ! -f $NPRIV/aliases ]] || source "$NPRIV"/aliases
+[[ ! -f $NEPH/aliases.sh ]] || source "$NEPH"/aliases.sh
+[[ ! -f $NPRIV/aliases.sh ]] || source "$NPRIV"/aliases.sh

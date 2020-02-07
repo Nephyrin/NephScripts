@@ -8,6 +8,9 @@ if [[ $TERM_PROGRAM = Apple_Terminal ]]; then
     MANPATH="/usr/local/opt/coreutils/libexec/gnuman$MANPATH"
 fi
 
+NEPH=~/neph
+NPRIV=~/neph/priv
+
 # Uses util.sh from nephscripts
 if [ -r ~/bin/lib/util.sh ]; then
   source ~/bin/lib/util.sh
@@ -771,5 +774,8 @@ unaff()
     done
 }
 
-[[ ! -f ~/neph/priv/bashrc ]] || . ~/neph/priv/bashrc
+[[ ! -f $NEPH/aliases.sh ]] || source "$NEPH"/aliases.sh
+[[ ! -f $NPRIV/aliases.sh ]] || source "$NPRIV"/aliases.sh
+
+[[ ! -f $NPRIV/bashrc ]] || . "$NPRIV"/bashrc
 [[ ! -f ~/.bashrc.local ]] || . ~/.bashrc.local
