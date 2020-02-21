@@ -333,7 +333,7 @@ pathadd() {
 }
 
 _is_bash() { [[ -n $BASH && -n $BASH_VERSION ]]; }
-_is_zsh() { [[ -n $ZSH && -n $ZSH_VERSION ]]; }
+_is_zsh() { [[ -n $ZSH_NAME && -n $ZSH_VERSION ]]; }
 
 # Print the word corresponding to type for supported shells
 _get_type() {
