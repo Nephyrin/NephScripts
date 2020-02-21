@@ -104,7 +104,5 @@ bindkey '^T' autosuggest-toggle
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-NEPH=~/neph
-NPRIV=~/neph/priv
 [[ ! -f $NEPH/aliases.sh ]] || source "$NEPH"/aliases.sh
 [[ ! -f $NPRIV/aliases.sh ]] || source "$NPRIV"/aliases.sh
