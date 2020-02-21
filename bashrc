@@ -98,15 +98,9 @@ if [[ -n $BASH && -n $BASH_VERSION && $- == *i* ]] ; then
     ! type bat &>/dev/null || FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {}'"
     ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
 
-    # Keychain
-    keyfile=~/".keychain/$(hostname)-sh"
-    if which keychain &>/dev/null && [ -f "$keyfile" ] && [ -f ~/.ssh/id_rsa ]; then
-      keychain --nogui ~/.ssh/id_rsa
-      . "$keyfile"
-    fi
-    unset keyfile
-    [ -f /proc/mdstat ] && cat /proc/mdstat
 
+    # Shared interactive shell startup
+    [[ ! -f "$NEPH"/interactive-shell-init.sh ]] || source "$NEPH"/interactive-shell-init.sh
 
     # Interactive shell options
     # Bash won't get SIGWINCH if another process is in the foreground.
