@@ -107,13 +107,13 @@
 	path = emacs.d/popup-el
 	url = https://github.com/auto-complete/popup-el
 [submodule "zsh.d/autosuggestions"]
-	path = zsh.d/autosuggestions
-	url = https://github.com/tarruda/zsh-autosuggestions
+	path = zsh.d/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
 [submodule "zsh.d/oh-my-zsh"]
 	path = zsh.d/oh-my-zsh
-	url = https://github.com/robbyrussell/oh-my-zsh.git
+	url = https://github.com/ohmyzsh/oh-my-zsh.git
 [submodule "zsh.d/syntax-highlighting"]
-	path = zsh.d/syntax-highlighting
+	path = zsh.d/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
 [submodule "emacs.d/ecb"]
 	path = emacs.d/ecb

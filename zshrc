@@ -55,7 +55,7 @@ export ZSH_CUSTOM=~/.zsh.d/
 # Custom plugins may be added to ~/.zsh.d/oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git compleat)
+plugins=(git compleat zsh-syntax-highlighting zsh-autosuggestions)
 
 # User configuration
 
@@ -87,18 +87,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.zsh.d/oh-my-zsh"
-
-
-# Has to be before autosuggest or errors occur
-source ~/.zsh.d/syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Setup zsh-autosuggestions
-source ~/.zsh.d/autosuggestions/autosuggestions.zsh
-
-# Enable autosuggestions automatically
-zle-line-init() {
-    zle autosuggest-start
-}
 
 zle -N zle-line-init
 
