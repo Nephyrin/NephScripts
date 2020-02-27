@@ -1,5 +1,12 @@
 #!/bin/bash
 
+
+#
+# These utilities try to remain compatible with both bash+zsh currently with minimal divergance.
+#
+n_is_bash() { [[ -n ${BASH-} && -n ${BASH_VERSION-} ]]; }
+n_is_zsh() { [[ -n ${ZSH_NAME-} && -n ${ZSH_VERSION-} ]]; }
+
 rightPad() {
   padding=$1
   shift
@@ -75,7 +82,11 @@ try_keychain() {
   return 0
 }
 
-_sh_c_colors="$([[ -n $TERM ]] && tput colors || echo 0)"
+n_tolower() { if n_is_zsh; then echo "${@:l}"; else echo "${@,,}"; fi; }
+n_toupper() { if n_is_zsh; then echo "${@:u}"; else echo "${@^^}"; fi; }
+
+_sh_c_colors=0
+[[ -n $TERM && -t 1 && $(n_tolower "$TERM") != dumb ]] && _sh_c_colors="$(tput colors 2>/dev/null || echo 0)"
 sh_c()
 {
   [[ $_sh_c_colors -gt 0 ]] || return
@@ -118,7 +129,7 @@ edivider() {
   local change="$(( n - ( run * ${#char} ) ))"
 
   local line
-  [[ $run -lt 1 ]] || line="$(eval printf -- \\"$char"%.0s {1..$run})"
+  [[ $run -lt 1 ]] || line="$(eval printf -- ${char@Q}%.0s {1..$run})"
   local tail="${char[@]:0:$change}"
   echo >&2 "$(sh_c 90)${line}${tail}$(sh_c)"
 }
@@ -206,9 +217,11 @@ require_commands()
 
 sh_quote()
 {
+  # In zsh we could do "echo ${@:q}", but the bash equivalent (${@@Q}) aggressively quotes everything so is less good
+  # for readable output.
   local args=()
   for arg in "$@"; do
-    args[${#args[@]}]="$(printf '%q' "$arg")"
+    args+=("$(printf '%q' "$arg")")
   done
   echo "${args[@]}"
 }
@@ -328,8 +341,8 @@ get_option()
   local opt_name="$1"
   local default="${2-}"
   local i=0
-  while [ $i -lt ${#_parse_args_options[@]} ]; do
-    if [ "${_parse_args_options[$i]}" = "$opt_name" ]; then
+  while [[ $i -lt ${#_parse_args_options[@]} ]]; do
+    if [[ ${_parse_args_options[$i]} = $opt_name ]]; then
       echo "${_parse_args_values[$i]}"
       return
     fi
