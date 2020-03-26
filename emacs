@@ -14,11 +14,11 @@
 (setq redisplay-dont-pause t)
 ;;(setq inhibit-eval-during-redisplay nil)
 (setq fast-but-imprecise-scrolling t)
-(setq jit-lock-chunk-size 200)
+(setq jit-lock-chunk-size 100)
 (setq jit-lock-defer-time 0)
 (setq jit-lock-stealth-load nil)
 (setq jit-lock-stealth-nice 0.01)
-(setq jit-lock-stealth-time 0.5)
+(setq jit-lock-stealth-time 0.2)
 
 ;; Don't load outdated .elc files, it's basically never what was intended.
 (setq load-prefer-newer t)
@@ -2824,14 +2824,6 @@ beginning of it and the point to the end of it if so"
 ;(defun linum-on()
 ;  (unless (or (minibufferp) (string-equal mode-name "Helm") (member major-mode linum-disabled-modes-list))
 ;    (linum-mode 1)))
-
-;;(setq jit-lock-chunk-size 50)
-;;(setq jit-lock-context-time 0.1)
-;;(setq jit-lock-contextually nil)
-;;(setq jit-lock-defer-time 0.1)
-;;(setq jit-lock-stealth-load nil)
-;;(setq jit-lock-stealth-nice 0.1)
-;;(setq jit-lock-stealth-time 0.1)
 
 ;
 (setq linum-delay t)
