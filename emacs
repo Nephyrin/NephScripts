@@ -847,7 +847,7 @@
 (setq ccls-args
       (list
        (concat "--init=" (json-encode
-                          (ht ("index" (ht ("multiVersion" 1)))
+                          (ht ;; No: 60G memory usage lol ("index" (ht ("multiVersion" 1)))
                               ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
                               ("clang" (ht ("extraArgs" [-I/usr/lib/glib-2.0/include/])
                                            ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
@@ -894,7 +894,6 @@
 ;; (global-set-key (kbd "C-z C-.")           'rtags-find-symbol-at-point)
 ;; (global-set-key (kbd "C-z M-r")           'rtags-reparse-file)
 ;; (global-set-key (kbd "C-z C->")           'rtags-find-virtuals-at-point)
-;; (global-set-key (kbd "C-z .")             'rtags-find-symbol) ;; M-. works in lsp-mode, what should this do
 ;; (global-set-key (kbd "C-z C-/")           'delete-xrefs-window-or-something) ;; Was the rtags bind to dismiss the references
 ;; (global-set-key (kbd "C-z C-n")           'xref-next-line)
 ;; (global-set-key (kbd "C-z C-p")           'xref-prev-line)
@@ -1895,7 +1894,8 @@
   ;; making new files janky
   (run-with-idle-timer 0.5 nil (lambda ()
                                  (rainbow-delimiters-mode t) ;; FIXME forces fontification always maybe?
-                                 (color-identifiers-mode t)
+                                 (when (not (and (boundp 'lsp-mode) lsp-mode))
+                                   (color-identifiers-mode t))
                                  (fic-mode t))))
 
 ;; Currently just the base config
@@ -1949,6 +1949,13 @@
       ;; (ycmd-mode t)
       )))
 
+(defun neph-lsp-mode ()
+  "Set minor modes and config for buffers using LSP."
+  (interactive)
+  ;; LSP provides variable coloring, so turn this off there
+  ;; (thus keeping it on for non-LSP languages)
+  (color-identifiers-mode 0))
+
 ;; Default modes
 
 (add-to-list 'auto-mode-alist '("/yaourtrc\\'" . sh-mode))
@@ -1978,6 +1985,8 @@
                                              ; something
 (add-hook 'c-mode-hook 'neph-c-mode)
 (add-hook 'c++-mode-hook 'neph-c-mode)
+
+(add-hook 'lsp-after-open-hook 'neph-lsp-mode)
 
 ;; For web mode in tabs, we want to disable whitespace tabs because they conflict with the
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
@@ -2985,6 +2994,7 @@ beginning of it and the point to the end of it if so"
     (company-lsp company-irony company-ycmd company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
                  (company-dabbrev-code company-gtags company-etags company-keywords)
                  company-oddmuse company-dabbrev)))
+ '(company-quickhelp-color-background "black")
  '(compilation-skip-threshold 2)
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
@@ -2996,15 +3006,30 @@ beginning of it and the point to the end of it if so"
  '(helm-input-idle-delay 0.0)
  '(ido-vertical-define-keys (quote C-n-and-C-p-only))
  '(irony-completion-availability-filter (quote (available deprecated notaccessible notavailable)))
- '(org-babel-load-languages (quote ((python . t) (shell . t) (emacs-lisp . t))))
+ '(lsp-enable-file-watchers nil)
+ '(lsp-ui-doc-alignment (quote window))
+ '(lsp-ui-doc-header t)
+ '(lsp-ui-doc-include-signature t)
+ '(lsp-ui-doc-position (quote top))
+ '(lsp-ui-peek-always-show t)
+ '(lsp-ui-peek-list-width 70)
+ '(markdown-command "marked")
+ '(org-babel-load-languages
+   (quote
+    ((plantuml . t)
+     (python . t)
+     (shell . t)
+     (emacs-lisp . t))))
  '(phi-search-limit 5000)
  '(reb-auto-match-limit 2000)
  '(rtags-follow-symbol-try-harder nil)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(ccls-code-lens-face ((t (:inherit shadow :height 0.7))))
+ '(ccls-code-lens-mouse-face ((t (:underline t)))))
