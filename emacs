@@ -2692,6 +2692,17 @@ beginning of it and the point to the end of it if so"
       (pop-to-buffer buf)
       (goto-char (overlay-start mouse-secondary-overlay)))))
 
+(defun sql-send-secondary ()
+  "Send the secondary selection to SQL buffer."
+  (interactive)
+  (let ((buf (overlay-buffer mouse-secondary-overlay)))
+    (when (eq buf (current-buffer))
+      (sql-send-region (overlay-start mouse-secondary-overlay)
+                       (overlay-end mouse-secondary-overlay)))))
+
+(with-eval-after-load "sql"
+  (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
+
 ;; Quick register movement.
 ;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
 (global-set-key (kbd "C-z SPC") (lambda (&optional arg) (interactive "P")
@@ -2755,8 +2766,16 @@ beginning of it and the point to the end of it if so"
   (interactive)
   (kill-new (buffer-file-name))
   (message "Copied buffer name to kill ring"))
-
 (global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
+
+(defun neph-xdg-open-this-file ()
+  "Pass the current file to xdg-open whynot."
+  (interactive)
+  (if (buffer-file-name)
+      (shell-command (concat "xdg-open " (shell-quote-argument (buffer-file-name))))
+    (message "!! This buffer has no associated file")))
+
+(global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
 
 (defun neph-show-file-coding ()
   (interactive)
@@ -2887,6 +2906,8 @@ beginning of it and the point to the end of it if so"
 (add-hook 'magit-blame-file-off (lambda() (fci-mode 1)))
 ;(global-set-key (kbd "C-z g") 'magit-status)
 (global-set-key (kbd "C-z L") 'magit-blame-mode)
+(global-set-key (kbd "C-z X") 'magit-ediff-stage)
+(global-set-key (kbd "C-z C") 'magit-commit)
 
 ;;
 ;; Theme
@@ -3003,6 +3024,7 @@ beginning of it and the point to the end of it if so"
  '(ein:completion-backend (quote ein:use-company-backend))
  '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
  '(flycheck-checker-error-threshold nil)
+ '(gdb-gud-control-all-threads t)
  '(gdb-many-windows nil)
  '(helm-exit-idle-delay 0)
  '(helm-input-idle-delay 0.0)
@@ -3025,6 +3047,7 @@ beginning of it and the point to the end of it if so"
  '(phi-search-limit 5000)
  '(reb-auto-match-limit 2000)
  '(rtags-follow-symbol-try-harder nil)
+ '(rtags-imenu-syntax-highlighting nil)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t))
 
