@@ -828,6 +828,8 @@
 (require 'company)
 (require 'company-quickhelp)
 (require 'company-lsp)
+(require 'treemacs)
+;;(require 'treemacs-projectile)
 (require 'lsp-treemacs)
 (require 'lsp-ui)
 (require 'dap-mode)
