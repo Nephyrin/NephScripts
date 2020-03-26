@@ -11,6 +11,7 @@ fi
 NEPH=~/neph
 NPRIV=~/neph/priv
 
+
 # Uses util.sh from nephscripts
 if [ -r ~/bin/lib/util.sh ]; then
   source ~/bin/lib/util.sh
@@ -91,13 +92,15 @@ export MOZHG=mozilla-hg
 # Bash-specific interactive tweaks
 #
 if [[ -n $BASH && -n $BASH_VERSION && $- == *i* ]] ; then
+
     # fzf, if around.  Probably should path-detect this better or something so it works on OS X/homebrew paths.
     [[ ! -f /usr/share/fzf/key-bindings.bash ]] || source /usr/share/fzf/key-bindings.bash
     [[ ! -f /usr/share/fzf/completion.bash ]] || source /usr/share/fzf/completion.bash
+    # The fzf scripts assume these are bound, don't piss off set -u mode.
+    FZF_CTRL_T_OPTS=; FZF_DEFAULT_OPTS=
     # Give fzf ctrl-t a bat preview if bat is available
     ! type bat &>/dev/null || FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {}'"
     ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
-
 
     # Shared interactive shell startup
     [[ ! -f "$NEPH"/interactive-shell-init.sh ]] || source "$NEPH"/interactive-shell-init.sh
@@ -109,6 +112,7 @@ if [[ -n $BASH && -n $BASH_VERSION && $- == *i* ]] ; then
     # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
     shopt -s checkwinsize
     shopt -s histappend
+
 
     # Set colorful PS1 only on colorful terminals.
     # dircolors --print-database uses its own built-in database
@@ -185,8 +189,6 @@ hgreset() {
   [[ $# -eq 0 ]] || err "Unexpected arguments: $*"
   hg strip 'roots(outgoing())' && hg up -C && hg purge --all && hg status
 }
-rv() { cmd rsync -avy --progress "$@"; }
-rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 
 iswine() { for x in wine exe; do pf "$x"; done; }
 
@@ -198,9 +200,6 @@ p() { sudo pacman "$@"; }
 dir() { x dolphin "$@"; }
 
 rebash() { source ~/.bashrc "$@"; }
-
-lx()  { ls++ --potsf     "$@"; }
-lxx() { ls++ --potsf -tr "$@"; }
 
 ag() { $(which ag) --noaffinity "$@"; }
 agc() { ag --cpp "$@"; }
@@ -309,7 +308,7 @@ _fzcd_int()
 # Shorthand rdp
 rdp()
 {
-  cmd xfreerdp /dynamic-resolution /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
+  cmd xfreerdp /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
 }
 
 # Change to git toplevel directory or error
@@ -332,16 +331,13 @@ pathadd() {
   done
 }
 
-_is_bash() { [[ -n $BASH && -n $BASH_VERSION ]]; }
-_is_zsh() { [[ -n $ZSH_NAME && -n $ZSH_VERSION ]]; }
-
 # Print the word corresponding to type for supported shells
 _get_type() {
   local type
   local arg="$1"
-  if _is_bash; then
+  if n_is_bash; then
     type -t "$arg"
-  elif _is_zsh; then
+  elif n_is_zsh; then
     echo ${$(whence -w $arg)[2]}
   fi
 }
@@ -665,52 +661,9 @@ java_memanalyze()
     fi
 }
 
-ct()
-{
-    dir=`mktemp -d -t nephtmp.XXXXXXX`
-    export NEPH_TEMP_DIR="$dir"
-    cd "$dir"
-    touch .nephtemp
-}
-
-clt()
-{
-  for x in /tmp/nephtmp.*; do
-    [ -d "$x" ] || continue
-    if [ -z "$(fuser "$x")" ]; then
-      echo ":: Removing $x"
-      rm -r $x
-    else
-      echo ":: Skipping $x (in use)"
-    fi
-  done
-  [ ! -z "$NEPH_TEMP_DIR" ] && [ ! -d "$NEPH_TEMP_DIR" ] && unset NEPH_TEMP_DIR
-}
-
-rt()
-{
-    if [ ! -z "$NEPH_TEMP_DIR" ] && [ -d "$NEPH_TEMP_DIR" ]; then
-        cd "$NEPH_TEMP_DIR"
-    else
-        unset NEPH_TEMP_DIR
-        echo ":: No temp dir in context"
-    fi
-}
-
 ipof() { host "$@" | awk '{print $(NF)}'; }
 
 nb() { nmblookup "$@" | tail -n+2 | head -n1 | grep -Eo "^[^ ]+"; }
-service() {
-    if which systemctl &>/dev/null; then
-        sudo systemctl --system daemon-reload
-        sudo systemctl $2 $1
-    elif [ -d /etc/rc.d ]; then
-        sudo /etc/rc.d/$1 $2;
-    else
-        echo >&2 "!! Don't know how to modify services on this system"
-        return 1
-    fi
-}
 
 say()
 {
