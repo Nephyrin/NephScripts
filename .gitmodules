@@ -289,3 +289,18 @@
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
+[submodule "emacs.d/mmm-mode"]
+	path = emacs.d/mmm-mode
+	url = https://github.com/purcell/mmm-mode
+[submodule "emacs.d/mmm-jinja2"]
+	path = emacs.d/mmm-jinja2
+	url = https://github.com/glynnforrest/mmm-jinja2
+[submodule "emacs.d/salt-mode"]
+	path = emacs.d/salt-mode
+	url = https://github.com/glynnforrest/salt-mode
+[submodule "emacs.d/xterm-color"]
+	path = emacs.d/xterm-color
+	url = https://github.com/atomontage/xterm-color
+[submodule "emacs.d/eterm-256color"]
+	path = emacs.d/eterm-256color
+	url = https://github.com/dieggsy/eterm-256color

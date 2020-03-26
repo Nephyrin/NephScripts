@@ -171,6 +171,16 @@
   (desktop-save-mode 1))
 
 ;;
+;; Xterm color
+;;
+(add-to-list 'load-path "~/.emacs.d/xterm-color")
+(require 'xterm-color)
+(add-to-list 'load-path "~/.emacs.d/eterm-256color")
+;(require 'eterm-256color) FIXME debug-init
+
+;(add-hook 'term-mode-hook #'eterm-256color-mode)
+
+;;
 ;; Protobuf mode
 ;;
 
@@ -2826,6 +2836,14 @@ beginning of it and the point to the end of it if so"
 ;
 (setq linum-delay t)
 (setq linum-eager nil)
+
+;;
+;; mmm/jinja/salt mode
+;;
+(add-to-list 'load-path "~/.emacs.d/mmm-mode")
+(add-to-list 'load-path "~/.emacs.d/mmm-jinja2")
+(add-to-list 'load-path "~/.emacs.d/salt-mode")
+(require 'salt-mode)
 
 ;;
 ;; zap-to-char
