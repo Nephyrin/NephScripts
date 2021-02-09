@@ -55,7 +55,11 @@ eprompt_yn() {
   [[ -n $msg ]] || msg="Proceed?"
   ewarnprompt "$msg [y/N] "
   local reply
-  read -n 1 -r reply
+  if n_is_zsh; then
+    read -k 1 -r reply
+  else
+    read -n 1 -r reply
+  fi
   echo >&2 "" # Clear prompt line
   [[ $reply = y || $reply = Y ]] || return 1
 }
