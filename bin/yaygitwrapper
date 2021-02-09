@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if which bat &>/dev/null; then
+  exec git -c core.pager="bat -n --paging=always" "$@"
+fi
+exec git -c core.pager="less -RF" "$@"
