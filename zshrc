@@ -2,6 +2,13 @@
 NEPH=~/neph
 NPRIV=~/neph/priv
 
+_neph_addtopath() {
+  local new="$1"
+  [[ ! -d $new || ${path[(ie)$new]} -le ${#path[@]} ]] || path+=($new)
+}
+_neph_addtopath $NEPH/bin
+_neph_addtopath $NPRIV/bin
+
 # Shared interactive shell startup.  Do before initializing instant-prompt. (so, this part not covered by instant-ness)
 [[ ! -f $NEPH/aliases.sh ]]                || source $NEPH/aliases.sh
 [[ ! -f $NEPH/interactive-shell-init.sh ]] || source $NEPH/interactive-shell-init.sh
