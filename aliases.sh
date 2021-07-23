@@ -2,6 +2,26 @@
 
 # WARNING: Shared aliases between bash/zsh, so needs to be compatible.
 
+# Throws every tunable at the job to beg it to compete for no resources.
+#
+# systemd-run is used to put it in a scope (and thus cgroup) with the cpu/io weight set to minimum.  The cgroup settings
+# only have an effect if you have cgroup control delegated to your user slice in systemd and are using cgroups v2,
+# however.
+#
+# nice is an older/simpler way to set CPU weight, which I believe is just factored in to the cgroup's weight in the
+# CFS/cgroups world.  Including it is a nice fallback if cgroups aren't setup per above.  It also causes some system
+# monitors to highlight the task as low priority, like htop, that don't currently know about cgroups.
+#
+# Finally, we set the scheduling priority of the task to 'idle'.  This kind of makes its weight a moot point.
+#
+# If kernel compiles still caused dropped frames running under this, I'm starting a crusade.
+lowprio() {
+  cmd systemd-run --user --scope         \
+                  --property=CPUWeight=1 \
+                  --property=IOWeight=1  \
+                  nice -n20 chrt -i 0 "$@"
+}
+
 x() {
   [ ! -z "$NEPH_CGROUP" ] && echo >&2 ":: WARNING: In cgroup"
   ("$@" >/dev/null 2>/dev/null &)
