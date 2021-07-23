@@ -3,8 +3,10 @@ NEPH=~/neph
 NPRIV=~/neph/priv
 
 # Shared interactive shell startup.  Do before initializing instant-prompt. (so, this part not covered by instant-ness)
-[[ ! -f $NEPH/interactive-shell-init.sh ]] || source "$NEPH"/interactive-shell-init.sh
-[[ ! -f $NPRIV/aliases.sh ]] || source "$NPRIV"/aliases.sh
+[[ ! -f $NEPH/aliases.sh ]]                || source $NEPH/aliases.sh
+[[ ! -f $NEPH/interactive-shell-init.sh ]] || source $NEPH/interactive-shell-init.sh
+[[ ! -f $NPRIV/zshrc ]]                    || source $NPRIV/zshrc
+[[ ! -f ~/.zshrc.local ]]                  || source ~/.zshrc.local
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]

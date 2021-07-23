@@ -19,6 +19,4 @@ if [[ $- == *i* ]]; then # Only if interactive
   # Include shared util commands for interactive mode
   [[ ! -f $NEPH/bin/lib/util.sh ]] || source "$NEPH"/bin/lib/util.sh
 
-  # Include aliases
-  [[ ! -f $NEPH/aliases.sh ]] || source "$NEPH"/aliases.sh
 fi

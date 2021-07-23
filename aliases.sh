@@ -58,3 +58,6 @@ service() {
 
 lx()  { ls++ --potsf     "$@"; }
 lxx() { ls++ --potsf -tr "$@"; }
+
+# Include local aliases
+[[ ! -f $HOME/.aliases.local.sh ]] || source "$HOME"/.aliases.local.sh
