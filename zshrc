@@ -113,4 +113,21 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# Stop writing history for this session
+prompt_nohist() {
+  [[ -z ${_nohist-} ]] || p10k segment -f 208 -i '⭐' -t 'nohist'
+}
 
+prompt_promptnote() {
+  [[ -z ${_NEPH_PN-} ]] || p10k segment -f 208 -i '⭐' -t $_NEPH_PN
+}
+
+zshaddhistory() { local args=(${=1}); [[ -z ${_nohist-} && "${args[1]}" != nohist ]] || return 1; }
+
+nohist()
+{
+  typeset -g _nohist=1
+  p10k reload
+}
+
+promptnote() { typeset -g _NEPH_PN="$1" && p10k reload; }
