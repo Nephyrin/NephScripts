@@ -1,0 +1,10 @@
+#!/bin/bash
+
+die() { echo >&2 "!! $*"; exit 1; }
+
+unset tmpdir
+cleanup() { [[ -z ${tmpdir-} || ! -d ${tmpdir-} ]] || rm -rf --one-file-system -- "$tmpdir"; }
+tmpdir=$(mktemp --tmpdir -d ffk.XXX)
+[[ -n $tmpdir && -d $tmpdir ]] || die "Couldn't make a tmpdir"
+
+systemd-run --user --same-dir --collect -- firefox -profile "$tmpdir" -kiosk "$*"
