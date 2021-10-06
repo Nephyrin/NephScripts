@@ -1,9 +1,12 @@
 #!/bin/bash
 
+set -euo pipefail
+
 die() { echo >&2 "!! $*"; exit 1; }
 
 unset tmpdir
 cleanup() { [[ -z ${tmpdir-} || ! -d ${tmpdir-} ]] || rm -rf --one-file-system -- "$tmpdir"; }
+trap cleanup EXIT
 tmpdir=$(mktemp --tmpdir -d ffk.XXX)
 [[ -n $tmpdir && -d $tmpdir ]] || die "Couldn't make a tmpdir"
 
