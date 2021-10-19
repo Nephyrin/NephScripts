@@ -22,9 +22,41 @@ lowprio() {
                   nice -n20 chrt -i 0 "$@"
 }
 
+# Run a command detached from the shell, with no connection to the tty or return code, etc..
+# Can return failure if the given arguments don't map to a runnable command, and will still print the relevant error.
+#
+# Commands that parse to a valid file/function/etc, but cannot be launched -- e.g. due to permissions errors -- will
+# still silently succeed.  This is a limitation of bash/zsh as far as I can tell: that class of failure is simply the
+# same as the application failing early.
+#
+# Ex: A `chmod ugo=x` shell script will be parsed as valid by `command -v`, but hit a permissions error prior to bash
+# creating a child process to run it.  From the shell's perspective, that command simply failed quickly, and any
+# complaining the shell itself writes to stderr is part of the command's output.
 x() {
-  [ ! -z "$NEPH_CGROUP" ] && echo >&2 ":: WARNING: In cgroup"
-  ("$@" >/dev/null 2>/dev/null &)
+  # Warn if you're accidentally launching something in a cgroup (since that is not detached) using the neph cgroup
+  # functions.
+  [[ -z $NEPH_CGROUP ]] || ewarn "WARNING: In cgroup"
+
+  # If `command -v` doesn't think this parses as something runnable, just run it bare so the shell-level
+  # error/error-code occurs.  This means that `x some_typo --args` doesn't silently succeed, but errors exactly as
+  # `some_typo --args` would.
+  if command -v "$@" &>/dev/null; then
+    ( "$@" &>/dev/null & disown || true ) # disown could fail if the job didn't start for a reason other than it not
+                                          # being a valid command.  I'm not sure if there's a way in bash/zsh to say
+                                          # "show me all the errors up to opening/exec'ing the command"
+  else
+    "$@"
+  fi
+}
+
+# spawns a command with systemd-run, like x() but good for spawning something in the desktop session with proper
+# cgrouping and such like top-level apps enjoy.
+s()
+{
+  # --user - as this user, not system-level command
+  # --same-dir - keep this working directory
+  # --collect - don't leave failed units around for inspection
+  cmd systemd-run --user --same-dir --collect -- "$@"
 }
 
 pic() { x gwenview "$@"; }
