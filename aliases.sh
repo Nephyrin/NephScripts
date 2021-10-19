@@ -59,6 +59,14 @@ s()
   cmd systemd-run --user --same-dir --collect -- "$@"
 }
 
+# Re-execute or switch shell (to load new configs or whatever clearly)
+#
+# if $SHELL is unset or missing you could `exec /proc/self/exe`, but that's weird enough that an alias shouldn't just do
+# it (consider if $SHELL is a wrapper)
+reload() { cmd exec -- "$SHELL"; }
+rezsh() { cmd exec zsh; }
+rebash() { cmd exec bash; }
+
 pic() { x gwenview "$@"; }
 
 rv() { cmd rsync -avy --progress "$@"; }
