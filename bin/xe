@@ -71,6 +71,8 @@ defvar elisp <<ENDELISP
                       (car displayframes)
                     ;; If making a frame, we need to mark it nowait so it will not try to exit emacs on close.
                     (make-frame-on-display display '((client . nowait))))))
+  ;; Bring frame to foreground if necessary
+  (raise-frame)
   ;; Visit the file
   (find-file file))
 ENDELISP
