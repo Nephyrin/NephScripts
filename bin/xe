@@ -22,8 +22,9 @@ set -euo pipefail
 ##
 
 # Usage
-[[ $# -eq 1 ]] || die "Usage: xe <file>"
+[[ $# -eq 1 && -n "${1-}" ]] || die "Usage: xe <file>"
 file="$1"
+[[ ${file[0]} = / ]] || file="$PWD/$file"
 
 # Use paired 'ec' to use current terminal
 [[ -n ${DISPLAY-} ]] || ewarn "xe: no \$DISPLAY set, defaulting to :0"
