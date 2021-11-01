@@ -14,40 +14,35 @@ set -euo pipefail
 ## xe: Do-what-I-mean command to open the given file in a GUI emacs frame on the current display, creating one if none
 ## are present.  Additionally spawns the emacs daemon if it is not running.
 ##
-##  This is *almost* just `emacsclient -a '' -d "$DISPLAY" -n "$file"` -- but there is no "create if not found" option
-##  and no return code to determine that, so we need to write our own elisp script for that behavior.
-##
-## If '-d' returned failure on no display, this whole script would just be an alias for:
-##   emacsclient -a '' -d "$DISPLAY" -n "$file" || emacsclient -c -a '' -d "$DISPLAY" -n "$file"
+##  This is *almost* just `emacsclient -a '' -n "$file"` -- but there is no "create if not found" option and no return
+##  code to determine that, so we need to write our own elisp script for that behavior.  Emacsclient also tries to set
+##  windows to be bound to the daemon, so closing them exits it, which is also dumb.
 ##
 
 # Usage
 [[ $# -eq 1 && -n "${1-}" ]] || die "Usage: xe <file>"
 file="$1"
-[[ ${file[0]} = / ]] || file="$PWD/$file"
+[[ ${file:0:1} = / ]] || file="$PWD/$file"
 
-# Use paired 'ec' to use current terminal
+# Use paired 'ec' command for terminal.  We don't want to auto-fallback to terminal mode emacs because xe is expected to
+# be non-blocking, I pass things to the GUI session from random terminals often enough for this to make sense.
 [[ -n ${DISPLAY-} ]] || ewarn "xe: no \$DISPLAY set, defaulting to :0"
 DISPLAY=${DISPLAY-:0}
 
 # There's no proper way to pass quoted data to emacsclient (other than like, making a fifo/file and reading it in
-# elisp), but the quoting format is pretty simple so I think this is complete.
-#
+# elisp), but the quoting format is pretty simple so I think this is complete.  This file has so many comments because
+# emacs sucks at this oh man.
 #   https://www.gnu.org/software/emacs/manual/html_node/elisp/Syntax-for-Strings.html
 elisp_string() {
   local dat="$*"
-
   # \ -> \\
   dat=${dat//\\/\\\\}
   # " -> \"
   dat=${dat//\"/\\\"}
-
   printf "\"%s\"" "$dat"
 }
 
-# Load a var from stdin
 defvar() { IFS='' read -r -d '' "$*" || true; }
-
 efile=$(elisp_string "$file")
 edisplay=$(elisp_string "$DISPLAY")
 
@@ -55,30 +50,32 @@ edisplay=$(elisp_string "$DISPLAY")
 #
 # In order, will select:
 # - Selected frame in emacs, if it is on this display
-# - The first frame on this display (as returned by (frames-on-display-list))
+# - The first visible frame on this display
 # - A new frame on this display
 #
 # ... and then call (find-file)
 defvar elisp <<ENDELISP
 (let* ((file $efile)
        (display $edisplay)
-       (displayframes (seq-filter 'frame-visible-p (frames-on-display-list display))))
-  ;; When the currently selected frame isn't a gui frame, find or spawn one
+       ;; Cannot use frames-on-display-list as it errors if there are none.  It also thinks terminal windows are on
+       ;; "display :0" if they were launched with $DISPLAY set, as some kind of malicious compliance, so check the frame
+       ;; type.
+       (displayframes (filtered-frame-list
+                       (lambda (frame)
+                         (and (frame-visible-p frame)
+                              (member (framep frame) '(x ns w32))
+                              (equal (frame-parameter frame 'display) display))))))
   (when (not (member (selected-frame) displayframes))
-    ;; Select the frist frame on this display or make one
-    ;; TODO is there a most-recently-used flag we could look for if there are multiple?
+    ;; The currently selected frame isn't a matching gui frame, select or spawn one
     (select-frame (if (> (length displayframes) 0)
+                      ;; Just use the first one if some exist
                       (car displayframes)
-                    ;; If making a frame, we need to mark it nowait so it will not try to exit emacs on close.
+                    ;; Otherwise make a new one.  We need to mark it nowait so it will not try to exit emacs on close.
                     (make-frame-on-display display '((client . nowait))))))
-  ;; Bring frame to foreground if necessary
-  (raise-frame)
-  ;; Visit the file
-  (find-file file))
+  ;; Actually load the file and focus the frame
+  (find-file file)
+  (raise-frame))
 ENDELISP
 
 # -a '' causes emacsclient to spawn the daemon if it isn't running
-#
-# We don't care about the output, but we cannot use `-n` because we want emacsclient to connect with the current
-# value of $DISPLAY for the duration of the eval, or we wont be able to spawn frames here.
 emacsclient -a '' --eval "$elisp" >/dev/null
