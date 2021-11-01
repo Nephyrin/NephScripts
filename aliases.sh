@@ -32,6 +32,8 @@ lowprio() {
 # Ex: A `chmod ugo=x` shell script will be parsed as valid by `command -v`, but hit a permissions error prior to bash
 # creating a child process to run it.  From the shell's perspective, that command simply failed quickly, and any
 # complaining the shell itself writes to stderr is part of the command's output.
+#
+# Update: The s() alias below is a better way to do this in a systemd system.
 x() {
   # Warn if you're accidentally launching something in a cgroup (since that is not detached) using the neph cgroup
   # functions.
@@ -40,7 +42,7 @@ x() {
   # If `command -v` doesn't think this parses as something runnable, just run it bare so the shell-level
   # error/error-code occurs.  This means that `x some_typo --args` doesn't silently succeed, but errors exactly as
   # `some_typo --args` would.
-  if command -v "$@" &>/dev/null; then
+  if command -v "${1-}" &>/dev/null; then
     ( "$@" &>/dev/null & disown || true ) # disown could fail if the job didn't start for a reason other than it not
                                           # being a valid command.  I'm not sure if there's a way in bash/zsh to say
                                           # "show me all the errors up to opening/exec'ing the command"
