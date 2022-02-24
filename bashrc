@@ -56,12 +56,7 @@ _list_push PATH "$HOME/neph/priv/bin"
 NEPH_CGROUP_ROOT=/sys/fs/cgroup
 NEPH_DEFAULT_CGROUP="$NEPH_CGROUP_ROOT"/cpu
 
-export BROWSER="firefox '%s'"
-export EDITOR="ec"
 [ -z "$XAUTHORITY" ] && export XAUTHORITY=$HOME/.Xauthority
-
-export CCACHE_DIR=$HOME/.ccache
-export CCACHE_COMPRESS=1
 
 # CPAN
 export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
@@ -92,16 +87,6 @@ export MOZHG=mozilla-hg
 # Bash-specific interactive tweaks
 #
 if [[ -n $BASH && -n $BASH_VERSION && $- == *i* ]] ; then
-
-    # fzf, if around.  Probably should path-detect this better or something so it works on OS X/homebrew paths.
-    [[ ! -f /usr/share/fzf/key-bindings.bash ]] || source /usr/share/fzf/key-bindings.bash
-    [[ ! -f /usr/share/fzf/completion.bash ]] || source /usr/share/fzf/completion.bash
-    # The fzf scripts assume these are bound, don't piss off set -u mode.
-    FZF_CTRL_T_OPTS=; FZF_DEFAULT_OPTS=
-    # Give fzf ctrl-t a bat preview if bat is available
-    ! type bat &>/dev/null || FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {}'"
-    ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
-
     # Shared interactive shell startup
     [[ ! -f "$NEPH"/interactive-shell-init.sh ]] || source "$NEPH"/interactive-shell-init.sh
 
