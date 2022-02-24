@@ -18,6 +18,26 @@
 [[ ! -o 'no_brace_expand' ]] || p10k_config_opts+=('no_brace_expand')
 'builtin' 'setopt' 'no_aliases' 'no_sh_glob' 'brace_expand'
 
+
+##
+## Custom prompt things
+##
+
+# When history is redirected
+prompt_neph_nohist() {
+  [[ -z ${_nohist-} ]] || p10k segment -f 208 -i '⭐' -t 'nohist'
+}
+
+# Prompt note
+prompt_neph_promptnote() {
+  [[ -z ${_NEPH_PN-} ]] || p10k segment -f 208 -i '⭐' -t $_NEPH_PN
+}
+
+# toolbox
+prompt_neph_container() {
+  [[ -z ${_neph_container_name+x} ]] || p10k segment -f 205 -i '⬢' -t $_neph_container_name
+}
+
 () {
   emulate -L zsh
   setopt no_unset extended_glob
@@ -33,10 +53,19 @@
     local LC_ALL=${${(@M)$(locale -a):#*.(utf|UTF)(-|)8}[1]:-en_US.UTF-8}
   fi
 
+  ##
+  ## Init custom elements
+  ##
+  if [[ -r /run/.containerenv && ! -d /run/.containerenv ]]; then
+    local container_name=$(unset name && source /run/.containerenv &>/dev/null && echo -n "${name-}" || true)
+    [[ -z ${container_name:-} ]] || typeset -g _neph_container_name=$container_name
+  fi
+
   # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-    nohist
-    promptnote
+    neph_nohist
+    neph_promptnote
+    neph_container
     os_icon                 # os identifier
     context                 # user@hostname
     vcs                     # git status

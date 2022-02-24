@@ -1,3 +1,9 @@
+#!/bin/zsh
+
+###
+### Init, load local config file, neph stuff, stuff shared with bash
+###
+
 # Path to nephscripts and private
 NEPH=~/neph
 NPRIV=~/neph/priv
@@ -21,6 +27,10 @@ _neph_addtopath $NPRIV/bin
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+###
+### oh-my-zsh
+###
 
 # Path to your oh-my-zsh installation.
 export ZSH=~/.zsh.d/oh-my-zsh
@@ -80,30 +90,9 @@ plugins=(git compleat zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.zsh.d/oh-my-zsh"
+###
+### P10K
+###
 
 # use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
 # zsh-autosuggestions is designed to be unobtrusive)
@@ -122,12 +111,35 @@ prompt_promptnote() {
   [[ -z ${_NEPH_PN-} ]] || p10k segment -f 208 -i '⭐' -t $_NEPH_PN
 }
 
+# use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
+# zsh-autosuggestions is designed to be unobtrusive)
+# (conflicts with fzf)
+# bindkey '^T' autosuggest-toggle
 zshaddhistory() { local args=(${=1}); [[ -z ${_nohist-} && "${args[1]}" != nohist ]] || return 1; }
+
+_p10k_reload() { ! whence p10k &>/dev/null || p10k reload; }
 
 nohist()
 {
   typeset -g _nohist=1
-  p10k reload
+  _p10k_reload
 }
 
-promptnote() { typeset -g _NEPH_PN="$1" && p10k reload; }
+promptnote() { typeset -g _NEPH_PN="$1" && _p10k_reload; }
+
+zshaddhistory() { local args=(${=1}); [[ "${args[1]}" != nohist ]] || return 1; }
+
+nohist()
+{
+  local file=${1:+/tmp/zsh.$1}
+  typeset -g _nohist=1
+  HISTFILE=${file:-$(mktemp --tmpdir zsh.XXX)}
+  _p10k_reload
+}
+
+###
+### Custom ZSH binds and aliases
+###
+
+bindkey "^O" accept-and-hold
+bindkey "^N" accept-and-infer-next-history
