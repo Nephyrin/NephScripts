@@ -69,57 +69,70 @@ reload() { cmd exec -- "$SHELL"; }
 rezsh() { cmd exec zsh; }
 rebash() { cmd exec bash; }
 
-pic() { x gwenview "$@"; }
+pic() { s gwenview "$@"; }
 
 rv() { cmd rsync -avy --progress "$@"; }
 rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 
+iswine()
+{
+  local winepids=($(egrep -lzEi '^WINELOADERNOEXEC=' /proc/*/environ 2>/dev/null \
+                      | sed -r 's/^\/proc\/([0-9]+)\/environ$/\1/'))
+  [[ ${#winepids[@]} -gt 0 ]] && cmd ps -fp "${winepids[@]}" || ewarn No wine processes found
+}
+
 ct()
 {
-    dir=`mktemp -d -t nephtmp.XXXXXXX`
+    dir=$(mktemp -d -t nephtmp.XXXXXXX)
     export NEPH_TEMP_DIR="$dir"
     cd "$dir"
-    touch .nephtemp
 }
 
 clt()
 {
-  for x in /tmp/nephtmp.*; do
-    [ -d "$x" ] || continue
-    if [ -z "$(fuser "$x")" ]; then
-      echo ":: Removing $x"
-      rm -r $x
+  # (This matches how mktemp picks)
+  local tmpdir=${TMPDIR:-/tmp}
+  for x in "$tmpdir"/nephtmp.*; do
+    [[ -d $x ]] || continue
+    local pids
+    pids=($(lsof -Fp +D "$x" | tr -d p))
+    if [[ -z $pids ]]; then
+      estat "Removing $x"
+      cmd rm -rf --one-file-system -- "$x"
+      # If this is our cached directory nuke it
+      [[ $x != ${NEPH_TEMP_DIR-} ]] || unset NEPH_TEMP_DIR
     else
-      echo ":: Skipping $x (in use)"
+      estat "Skipping $x, in use:"
+      ps -p "${pids[@]}" | einfo_pipe
     fi
   done
-  [ ! -z "$NEPH_TEMP_DIR" ] && [ ! -d "$NEPH_TEMP_DIR" ] && unset NEPH_TEMP_DIR
 }
 
 rt()
 {
-    if [ ! -z "$NEPH_TEMP_DIR" ] && [ -d "$NEPH_TEMP_DIR" ]; then
-        cd "$NEPH_TEMP_DIR"
-    else
-        unset NEPH_TEMP_DIR
-        echo ":: No temp dir in context"
-    fi
+  if [[ -n $NEPH_TEMP_DIR && -d $NEPH_TEMP_DIR ]]; then
+    cd -- "$NEPH_TEMP_DIR"
+  else
+    unset NEPH_TEMP_DIR
+    estat "No temp dir in context"
+  fi
 }
 
 service() {
-    if which systemctl &>/dev/null; then
-        sudo systemctl --system daemon-reload
-        sudo systemctl $2 $1
-    elif [ -d /etc/rc.d ]; then
-        sudo /etc/rc.d/$1 $2;
-    else
-        echo >&2 "!! Don't know how to modify services on this system"
-        return 1
-    fi
+  if which systemctl &>/dev/null; then
+    cmd sudo systemctl -- "$2" "$1"
+  elif [[ -d /etc/rc.d ]]; then
+    cmd sudo /etc/rc.d/"$1" "$2";
+  else
+    eerr "Don't know how to modify services on this system"
+    return 1
+  fi
 }
 
 lx()  { ls++ --potsf     "$@"; }
 lxx() { ls++ --potsf -tr "$@"; }
+
+v() { cmd youtube-dl "$@"; }
 
 # Include local aliases
 [[ ! -f $HOME/.aliases.local.sh ]] || source "$HOME"/.aliases.local.sh
