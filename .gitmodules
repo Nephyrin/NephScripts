@@ -304,3 +304,6 @@
 [submodule "emacs.d/eterm-256color"]
 	path = emacs.d/eterm-256color
 	url = https://github.com/dieggsy/eterm-256color
+[submodule "emacs.d/magit-transient"]
+	path = emacs.d/magit-transient
+	url = https://github.com/magit/transient
