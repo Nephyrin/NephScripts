@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 source ~/bin/lib/util.sh
 
@@ -11,26 +11,31 @@ cmd mkdir -pv "$PWD/neph-autoloads/"
 # Seomthing in here complains if this doesn't exist yet
 cmd touch ede-projects.el
 
-estat Compiling Async
-[[ ! -f emacs-async/Makefile ]] || ( cmd cd emacs-async && cmd make )
+on_err() { ret=$?; eerr "Failed, see above"; exit $ret; }
+trap on_err ERR
 
-estat Compiling Magit
-[[ ! -f magit/Makefile ]] || ( cmd cd magit && cmd make GHUB_DIR=$PWD/../magit-ghub )
+compile() {
+  if [[ -f "$1"/Makefile ]]; then
+    estat "Compiling $1"
+    ( cmd cd "$1" && cmd make -j$(nproc) "${@:2}" )
+  else
+    ewarn "No makefile for $1, skipping"
+  fi
+}
 
-estat Compiling CEDET
-[[ ! -f cedet-git/Makefile ]] || ( cmd cd cedet-git && cmd make )
-
-estat Compiling Helm
-[[ ! -f helm/Makefile ]] || ( cmd cd helm && cmd make LOADPATH="-L . -L ../emacs-async/" )
-
-estat Compiling ECB
-[[ ! -f ecb/Makefile ]] || ( cmd cd ecb && cmd make )
-
-estat Compiling Evil
-[[ ! -f evil/Makefile ]] || ( cmd cd evil && cmd make )
-
-estat Compiling emacs-gdb
-[[ ! -f emacs-gdb/Makefile ]] || ( cmd cd emacs-gdb && cmd make )
+compile dash
+compile git-modes
+compile magit-ghub
+compile magit-popup
+compile magit-transient
+compile with-editor
+compile emacs-async
+compile magit LOAD_PATH="-L . -L $PWD/magit-transient/lisp -L $PWD/magit-ghub/lisp -L $PWD/with-editor/lisp -L $PWD/dash"
+compile cedet-git
+compile helm LOADPATH="-L . -L ../emacs-async/"
+compile ecb
+compile evil
+compile emacs-gdb
 
 mkdir -pv "$PWD/neph-autoloads/"
 
@@ -42,9 +47,9 @@ autoload_onefile() {
 
 autoload_dir() {
   local name="$1"
-  local dir="$2"
+  local dir="${2-}"
   [[ -n $dir ]] || dir=$name
-  cmd emacs -q --batch --eval "(let ((generated-autoload-file \"$PWD/neph-autoloads/neph-$name-autoload.el\"))  \
+  cmd emacs -q --batch --eval "(progn (setq generated-autoload-file \"$PWD/neph-autoloads/neph-$name-autoload.el\")  \
                                   (update-directory-autoloads \"$PWD/$dir\"))"
 
 }
