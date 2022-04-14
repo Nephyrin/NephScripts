@@ -2898,10 +2898,13 @@ beginning of it and the point to the end of it if so"
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/git-modes")
+(add-to-list 'load-path "~/.emacs.d/magit-transient/lisp")
 (add-to-list 'load-path "~/.emacs.d/magit-popup")
-(add-to-list 'load-path "~/.emacs.d/magit-ghub")
+(add-to-list 'load-path "~/.emacs.d/magit-ghub/lisp")
 (add-to-list 'load-path "~/.emacs.d/magit/lisp")
-(add-to-list 'load-path "~/.emacs.d/with-editor") ;; Part of magit project, dep
+(add-to-list 'load-path "~/.emacs.d/treepy")
+(add-to-list 'load-path "~/.emacs.d/with-editor/lisp") ;; Part of magit project, dep
+(require 'with-editor)
 (require 'magit)
 (require 'magit-blame)
 (add-hook 'magit-blame-file-on (lambda() (fci-mode -1)))
