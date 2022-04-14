@@ -310,3 +310,6 @@
 [submodule "emacs.d/treepy"]
 	path = emacs.d/treepy
 	url = https://github.com/volrath/treepy.el
+[submodule "emacs.d/helm-rg"]
+	path = emacs.d/helm-rg
+	url = https://github.com/cosmicexplorer/helm-rg
