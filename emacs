@@ -611,11 +611,13 @@
 (global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
 
 ;;
-;; Helm AG
+;; Helm AG and Helm RG
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/helm-ag")
+(add-to-list 'load-path "~/.emacs.d/helm-rg")
 (require 'helm-ag)
+(require 'helm-rg)
 
 (setq helm-ag-insert-at-point t)
 ;; (setq helm-ag-always-set-extra-option t)
