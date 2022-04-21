@@ -473,18 +473,18 @@
 ;; ECB
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/ecb")
-(require 'ecb)
-(setq ecb-show-sources-in-directories-buffer 'always)
-(setq ecb-layout-name "left7")
-(setq ecb-tip-of-the-day nil)
-(setq ecb-windows-width 0.1)
-
-;; Quiet startup warning
-(setq ecb-options-version "2.40")
-
-(global-set-key (kbd "C-z q") 'ecb-activate)
-(global-set-key (kbd "C-z Q") 'ecb-deactivate)
+;(add-to-list 'load-path "~/.emacs.d/ecb")
+;(require 'ecb)
+;(setq ecb-show-sources-in-directories-buffer 'always)
+;(setq ecb-layout-name "left7")
+;(setq ecb-tip-of-the-day nil)
+;(setq ecb-windows-width 0.1)
+;
+;;; Quiet startup warning
+;(setq ecb-options-version "2.40")
+;
+;(global-set-key (kbd "C-z q") 'ecb-activate)
+;(global-set-key (kbd "C-z Q") 'ecb-deactivate)
 
 ;;
 ;; Color identifiers mode
