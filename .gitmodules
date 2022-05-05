@@ -313,3 +313,6 @@
 [submodule "emacs.d/helm-rg"]
 	path = emacs.d/helm-rg
 	url = https://github.com/cosmicexplorer/helm-rg
+[submodule "emacs.d/rust-mode"]
+	path = emacs.d/rust-mode
+	url = https://github.com/rust-lang/rust-mode
