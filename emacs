@@ -4,6 +4,9 @@
 ;; Misc
 ;;
 
+;; Don't load outdated .elc files, it's basically never what was intended.
+(setq load-prefer-newer t)
+
 ;; Global libraries macros in here (and also )
 (add-to-list 'load-path "~/.emacs.d/dash") ; dependency of ht
 (add-to-list 'load-path "~/.emacs.d/emacs-ht")
@@ -20,13 +23,7 @@
 (setq jit-lock-stealth-nice 0.01)
 (setq jit-lock-stealth-time 0.2)
 
-;; Don't load outdated .elc files, it's basically never what was intended.
-(setq load-prefer-newer t)
-
 (add-to-list 'load-path "~/.emacs.d/neph-autoloads")
-;; Load this before something tries to load built-in CEDET libraries
-;; Removed CEDET is garbage jesus christ has anyone used this for non-toy development?
-; (load-file "~/.emacs.d/cedet-git/cedet-devel-load.el")
 
 ;; Disable silly "type Y-E-S" prompts
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -111,6 +108,16 @@
 ; Options list of whitespace to mess with, 'face' option uses faces per type
 ; instead of replacement chars
 (setq whitespace-style (quote (face trailing tabs)))
+
+;;
+;; Libraries.  These are all dumped on the path before loading things
+;;
+
+(add-to-list 'load-path "~/.emacs.d/bui.el")
+(add-to-list 'load-path "~/.emacs.d/compat.el")
+(add-to-list 'load-path "~/.emacs.d/emacs-spinner")
+(add-to-list 'load-path "~/.emacs.d/s.el")
+(add-to-list 'load-path "~/.emacs.d/f.el")
 
 ;;
 ;; Electric mode tweaks
@@ -242,6 +249,14 @@
 (setq highlight-symbol-idle-delay 0.3)
 
 ;;
+;; Rust mode
+;;
+
+(add-to-list 'load-path "~/.emacs.d/rust-mode")
+(add-to-list 'load-path "~/.emacs.d/rustic")
+(require 'rustic)
+
+;;
 ;; Lua mode
 ;;
 
@@ -337,12 +352,9 @@
 (defun neph-html-region ()
   (interactive)
   (require 'htmlize)
-  (let ((fci (and (boundp 'fci-mode) fci-mode)))
-    (when fci (turn-off-fci-mode))
-    (with-current-buffer
-        (htmlize-region (point) (mark))
-      (write-file "~/.emacs.d/htmlize-temp.htm"))
-    (when fci (turn-off-fci-mode)))
+  (with-current-buffer
+      (htmlize-region (point) (mark))
+    (write-file "~/.emacs.d/htmlize-temp.htm"))
   ;;(kill-buffer)))
   (start-process-shell-command "neph-html-region" nil "chromium ~/.emacs.d/htmlize-temp.htm"))
 
@@ -351,17 +363,14 @@
   (interactive)
   (require 'htmlize)
   ;; Detect some modes that clash with htmlize, set mode to inline-css for maximal CnP compatibility
-  (let ((fci (and (boundp 'fci-mode) fci-mode))
-        (ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode))
+  (let ((ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode))
         (htmlize-output-type 'inline-css)
         (htmlize-pre-style 't))
     ;; Disable incompatible modes, run htmlize, re-enable
-    (when fci (turn-off-fci-mode))
     (when ghl (global-hl-line-mode -1))
     (with-current-buffer
         (htmlize-region (point) (mark))
       (write-file "~/.emacs.d/htmlize-temp.htm"))
-    (when fci (turn-on-fci-mode))
     (when ghl (global-hl-line-mode 1)))
   ;; Awful awk script to skip all the doctype/html/body/head document tags and just select the 'pre'
   ;; tag, then stuff it onto the clipboard
@@ -618,7 +627,7 @@
 (add-to-list 'load-path "~/.emacs.d/fzf")
 (require 'fzf)
 (global-set-key (kbd "C-z C-S-f") 'fzf)
-(setq fzf/args "--no-hscroll --print-query -x")
+(setq fzf/args "--no-hscroll --print-query -x --no-unicode")
 
 ;;
 ;; Helm Swoop
@@ -667,7 +676,7 @@
 (defun neph-helm-ag-next (arg)
   (interactive "P")
   (let* ((direction (if arg -1 1))
-         (agbuf (get-buffer "*helm ag results*"))
+         (agbuf (or (get-buffer "*helm ag results*") (get-buffer "*hgrep*")))
          (agwin (get-buffer-window agbuf)))
     (flet ((notdone () (if (and (looking-at "$") (looking-back "^"))
                            (progn (message "End of results") nil)
@@ -794,28 +803,26 @@
 (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
 
 ;;
-;; YouCompleteMe
+;; YouCompleteMe (deprecated for LSP, remove?)
 ;;
 
 ;; Deps
-(add-to-list 'load-path "~/.emacs.d/s.el")
-(add-to-list 'load-path "~/.emacs.d/f.el")
-(add-to-list 'load-path "~/.emacs.d/emacs-deferred")
-(add-to-list 'load-path "~/.emacs.d/emacs-request")
+;;(add-to-list 'load-path "~/.emacs.d/emacs-deferred")
+;;(add-to-list 'load-path "~/.emacs.d/emacs-request")
 
-(add-to-list 'load-path "~/.emacs.d/emacs-ycmd")
-(require 'neph-ycmd-autoload)
-
-(with-eval-after-load "company-ycmd" (company-ycmd-setup))
-(with-eval-after-load "ycmd"
-  (setq ycmd-server-command '("python" "/usr/share/ycmd/ycmd")))
-
-(defun neph-ycm-setup ()
-  (interactive)
-  (require 'company-ycmd)
-  (ycmd-mode 1))
-
-(add-hook 'python-mode-hook 'neph-ycm-setup)
+;;(add-to-list 'load-path "~/.emacs.d/emacs-ycmd")
+;;(require 'neph-ycmd-autoload)
+;;
+;;(with-eval-after-load "company-ycmd" (company-ycmd-setup))
+;;(with-eval-after-load "ycmd"
+;;  (setq ycmd-server-command '("python" "/usr/share/ycmd/ycmd")))
+;;
+;;(defun neph-ycm-setup ()
+;;  (interactive)
+;;  (require 'company-ycmd)
+;;  (ycmd-mode 1))
+;;
+;;(add-hook 'python-mode-hook 'neph-ycm-setup)
 
 ;;
 ;; Yasnippet
@@ -843,31 +850,46 @@
 (add-to-list 'load-path "~/.emacs.d/pfuture")
 (add-to-list 'load-path "~/.emacs.d/avy")
 (add-to-list 'load-path "~/.emacs.d/lsp-mode")
-(add-to-list 'load-path "~/.emacs.d/emacs-spinner")
-(add-to-list 'load-path "~/.emacs.d/company-lsp")
+(add-to-list 'load-path "~/.emacs.d/lsp-mode/clients")
 (add-to-list 'load-path "~/.emacs.d/treemacs/src/elisp")
 (add-to-list 'load-path "~/.emacs.d/treemacs/src/extra")
 (add-to-list 'load-path "~/.emacs.d/emacs-ccls")
 (add-to-list 'load-path "~/.emacs.d/dap-mode")
+(add-to-list 'load-path "~/.emacs.d/posframe")
 (add-to-list 'load-path "~/.emacs.d/lsp-ui")
+(add-to-list 'load-path "~/.emacs.d/lsp-pyright")
 (add-to-list 'load-path "~/.emacs.d/lsp-treemacs")
 (add-to-list 'load-path "~/.emacs.d/helm-lsp")
 (require 'pkg-info)
 (require 'lsp)
 (require 'company)
 (require 'company-quickhelp)
-(require 'company-lsp)
 (require 'treemacs)
 ;;(require 'treemacs-projectile)
 (require 'lsp-treemacs)
 (require 'lsp-ui)
+(require 'lsp-ui-flycheck)
+(require 'lsp-headerline)
+(require 'lsp-modeline)
+(require 'lsp-diagnostics)
+(require 'lsp-pyright)
 (require 'dap-mode)
+(require 'dap-ui)
+(require 'dap-mouse)
 (require 'ccls)
 (require 'helm-lsp)
 (setq company-quickhelp-color-background "black")
 (setq ccls-executable "/usr/bin/ccls")
+
 (lsp-treemacs-sync-mode 1)
-(setq lsp-ui-flycheck-enable t)
+(setq lsp-ui-doc-show-with-cursor t)
+(setq lsp-lens-enable nil)
+
+
+;; FIXME?
+;;(with-eval-after-load 'lsp-mode
+;;  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+
 (setq lsp-ui-peek-always-show t)
 
 (setq ccls-sem-highlight-method 'font-lock)
@@ -1003,21 +1025,6 @@
       (require 'company-rtags)
       ;; If we wanted to use rtags instead of irony-mode above
       ;;(with-eval-after-load "flycheck" (require flycheck-rtags))
-
-      ;; Workaround to disable fci-mode when company is active
-      (defvar-local company-fci-mode-on-p nil)
-
-      (defun company-turn-off-fci (&rest ignore)
-        (when (boundp 'fci-mode)
-          (setq company-fci-mode-on-p fci-mode)
-          (when fci-mode (fci-mode -1))))
-
-      (defun company-maybe-turn-on-fci (&rest ignore)
-        (when company-fci-mode-on-p (fci-mode 1)))
-
-      (add-hook 'company-completion-started-hook 'company-turn-off-fci)
-      (add-hook 'company-completion-finished-hook 'company-maybe-turn-on-fci)
-      (add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci)
 
       (cl-defun popup-tip (string
                            &key
@@ -1559,6 +1566,9 @@
 (setq-default mode-line-format
               '(:eval
                 (list
+                 ;; Bonus hacky alignment, such that if the buffer is too narrow
+                 ;; to show the modeline below hud, the height of the modeline stays the same
+                 (propertize "\u200d" 'display '(list (raise -0.30) (height 1.25)))
                  neph-modeline-bufstat
                  ;; Position
                  "%[%l:%c"
@@ -1572,14 +1582,14 @@
                                             'neph-modeline-id-inactive))
                  ; Mode
                  " :: "
-                 (propertize mode-name 'face 'neph-modeline-mode)
+                 '(:propertize mode-name face neph-modeline-mode)
                  ;;""
                  ; misc
                  '(:propertize mode-line-process face neph-modeline-misc)
                  '(global-mode-string (" " (:propertize global-mode-string face neph-modeline-misc)))
                  '(:propertize minor-mode-alist face neph-modeline-misc)
                  (when vc-mode (propertize (concat " /" vc-mode)
-                                           'face 'neph-modeline-misc))
+                                         'face 'neph-modeline-misc))
                  ;; righthand side
 
                  ;; For disabled rtags
@@ -1587,12 +1597,8 @@
                  ;;                    (propertize (rtags-modeline) 'face 'neph-modeline-which-func)
                  ;;                  "")))
                  (list
-                  ;; Bonus hacky alignment, such that if the buffer is too narrow
-                  ;; to show the modeline below hud, the height of the modeline stays the same
-                  (propertize " " 'display '(list (raise -0.30) (height 1.25)))
-
                   ;; Pad to right side
-                  (neph-fill-to 5) ;; 9 if enabling hud
+                  (neph-fill-to 9) ;; 9 if enabling hud
 
                   ;; Disabled rtags
                   ;; (neph-fill-to (+ 9 (string-width rtags-status))) ;; Instead of fill-to above
@@ -1600,7 +1606,7 @@
 
                   ;; Percentage and modeline-hud
                   "%p "
-                  ;; (neph-modeline-hud 1.5 10)
+                  (neph-modeline-hud 1.5 10)
                   ))
                 ))
 
@@ -1683,13 +1689,6 @@
 (setq mouse-wheel-follow-mouse 't)
 (setq scroll-step 1)
 (setq scroll-conservatively 10000)
-
-;;
-;; fci-mode
-;;
-
-(add-to-list 'load-path "~/.emacs.d/fill-column-indicator")
-(autoload 'fci-mode "fill-column-indicator" "fci-mode" t)
 
 ;;
 ;; re-builder
@@ -1946,6 +1945,7 @@
 (defun neph-base-cfg ()
   "Set minor modes and buffer-local settings for a coding-mode buffer."
   (linum-mode t)
+  (yas-minor-mode t)
   (smart-tabs-mode 0)
   (c-set-offset 'cpp-macro 0 nil) ;; Indent preprocessor macros with code instead of
                                   ;; beggining-of-line
@@ -1973,7 +1973,7 @@
   (setq web-mode-markup-indent-offset 2)
   (git-gutter-mode t)
   (rainbow-mode t)
-  (fci-mode t)
+  (display-fill-column-indicator-mode)
   ;; Breaks in noninteractive mode
   (when (not noninteractive) (flycheck-mode t))
   (electric-pair-mode t)
@@ -2033,7 +2033,6 @@
       ;; (irony-cdb-autosetup-compile-options)
       ;; (irony-mode t)
       (lsp)
-      (flycheck-select-checker 'lsp-ui)
       ;;
       ;; Alternate: ycmd (doesn't always work as well as irony, but has fuzzy matching)
       ;;
@@ -2045,7 +2044,9 @@
   (interactive)
   ;; LSP provides variable coloring, so turn this off there
   ;; (thus keeping it on for non-LSP languages)
-  (color-identifiers-mode 0))
+  ;; FIXME actually only ccls does and it's off
+  (color-identifiers-mode 0)
+  )
 
 ;; Default modes
 
@@ -2073,6 +2074,7 @@
 (add-hook 'java-mode-hook 'neph-space-cfg)
 (add-hook 'lisp-mode-hook 'neph-space-cfg)
 (add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
+(add-hook 'rustic-mode-hook 'neph-space-cfg)
 (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
@@ -2129,14 +2131,16 @@
   (auto-save-mode -1))
 
 (defun sudoize-buffer ()
-  "Reopens the current file with sudo"
+  "Reopens the current file with sudo."
   (interactive)
-  (set-visited-file-name
-   (concat "/sudo::/" (buffer-file-name)))
+  ;; By default changing the visited file name counts as a modification, but this should be the same file.
+  (with-silent-modifications
+    (set-visited-file-name
+     (concat "/sudo::/" (buffer-file-name))))
   (toggle-read-only 0))
 
 (defun drop-sudo ()
-  "Drops tramp sudo sessions"
+  "Drops tramp sudo sessions."
   (interactive)
   (dolist (buffer (buffer-list))
     (let ((name (buffer-name buffer)))
@@ -2608,10 +2612,13 @@
   "Checks out the current buffer and mark editable"
   (interactive)
   (message "Attempting p4 edit %s" (buffer-file-name))
-  (if (= 0 (call-process "p4" nil nil nil "edit" (buffer-file-name)))
-      (progn (read-only-mode 0)
-             (message "p4 opened into default changeset"))
-    (message "p4 edit failed")))
+  (let ((default-directory (file-name-directory (buffer-file-name)))
+        (process-environment (copy-sequence process-environment)))
+    (setenv "P4CONFIG" "P4CONFIG")
+    (if (= 0 (call-process "p4" nil nil nil "edit" (buffer-file-name)))
+        (progn (read-only-mode 0)
+               (message "p4 opened into default changeset"))
+      (message "p4 edit failed"))))
 (global-set-key (kbd "C-z C-e") 'p4-edit-current)
 
 ;; Take slash away from electric indent ('electric-slash)
@@ -2750,10 +2757,19 @@ forward-word to find the boundry"
     (kill-region (mark) (point))))
 
 (defun neph-backward-kill-to-word (&optional arg)
-  "Like kill word, but behaes like forward-to-word rather than
-forward-word to find the boundry"
-  (interactive "^p")
+  "Like 'kill-word', but behaves like 'forward-to-word'.
+\(Rather than 'forward-word', to find the boundry.)
+ARG has the same meaning as 'kill-word' otherwise."
+  (interactive "p")
   (neph-kill-to-word (- (or arg 1))))
+
+(defun neph-backward-kill-line (&optional arg)
+  "Like `kill-line' but inverts meaning of ARG.
+
+This includes the special ARG value of zero (vs nil) to reverse direction on the
+same line (see `kill-line')."
+  (interactive "P")
+  (kill-line (and (not (= (or arg 1) 0)) (- (or arg 0)))))
 
 (defun neph-mark-current-word (&optional arg)
     "Determines if you are over a word, and moves the mark to the
@@ -2773,6 +2789,7 @@ beginning of it and the point to the end of it if so"
   (interactive)
   (kill-new (current-word)))
 
+(global-set-key (kbd "C-S-U") 'neph-backward-kill-line)
 (global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
 (global-set-key (kbd "M-@") 'neph-mark-current-word)
 (global-set-key (kbd "M-B") 'backward-to-word)
@@ -3010,8 +3027,6 @@ beginning of it and the point to the end of it if so"
 (require 'with-editor)
 (require 'magit)
 (require 'magit-blame)
-(add-hook 'magit-blame-file-on (lambda() (fci-mode -1)))
-(add-hook 'magit-blame-file-off (lambda() (fci-mode 1)))
 ;(global-set-key (kbd "C-z g") 'magit-status)
 (global-set-key (kbd "C-z L") 'magit-blame-mode)
 (global-set-key (kbd "C-z X") 'magit-ediff-stage)
@@ -3052,9 +3067,6 @@ beginning of it and the point to the end of it if so"
       (load-theme (intern neph-theme))))
   (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
     (color-identifiers:refresh))
-  (when (and (boundp 'fci-mode) fci-mode)
-    (fci-mode nil)
-    (fci-mode t))
   (when (and (boundp 'linum-mode) linum-mode)
     (linum-mode nil)
     (linum-mode t))
@@ -3138,6 +3150,8 @@ beginning of it and the point to the end of it if so"
  '(ido-vertical-define-keys 'C-n-and-C-p-only)
  '(irony-completion-availability-filter '(available deprecated notaccessible notavailable))
  '(lsp-enable-file-watchers nil)
+ '(lsp-enable-semantic-highlighting t)
+ '(lsp-rust-analyzer-server-display-inlay-hints t)
  '(lsp-ui-doc-alignment 'window)
  '(lsp-ui-doc-header t)
  '(lsp-ui-doc-include-signature t)

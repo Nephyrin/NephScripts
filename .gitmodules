@@ -4,9 +4,6 @@
 [submodule "bin/git-bz-moz"]
 	path = bin/git-bz-moz
 	url = https://github.com/jlebar/git-bz-moz.git
-[submodule "emacs.d/fill-column-indicator"]
-	path = emacs.d/fill-column-indicator
-	url = https://github.com/alpaker/Fill-Column-Indicator.git
 [submodule "bin/gti-git"]
 	path = bin/gti-git
 	url = https://github.com/rwos/gti.git
@@ -81,7 +78,7 @@
 	url = https://github.com/trapd00r/Term-ExtendedColor
 [submodule "emacs.d/markdown-mode"]
 	path = emacs.d/markdown-mode
-	url = http://jblevins.org/git/markdown-mode.git
+	url = git@github.com:jrblevin/markdown-mode.git
 [submodule "emacs.d/company-mode"]
 	path = emacs.d/company-mode
 	url = https://github.com/company-mode/company-mode
@@ -97,9 +94,6 @@
 [submodule "emacs.d/function-args"]
 	path = emacs.d/function-args
 	url = https://github.com/abo-abo/function-args
-[submodule "emacs.d/cedet-git"]
-	path = emacs.d/cedet-git
-	url = http://git.code.sf.net/p/cedet/git
 [submodule "emacs.d/swiper"]
 	path = emacs.d/swiper
 	url = https://github.com/abo-abo/swiper
@@ -244,9 +238,6 @@
 [submodule "emacs.d/emacs-spinner"]
 	path = emacs.d/emacs-spinner
 	url = https://github.com/Malabarba/spinner.el
-[submodule "emacs.d/company-lsp"]
-	path = emacs.d/company-lsp
-	url = https://github.com/tigersoldier/company-lsp
 [submodule "emacs.d/lsp-treemacs"]
 	path = emacs.d/lsp-treemacs
 	url = https://github.com/emacs-lsp/lsp-treemacs
@@ -313,6 +304,21 @@
 [submodule "emacs.d/helm-rg"]
 	path = emacs.d/helm-rg
 	url = https://github.com/cosmicexplorer/helm-rg
+[submodule "emacs.d/posframe"]
+	path = emacs.d/posframe
+	url = git@github.com:tumashu/posframe.git
+[submodule "emacs.d/bui.el"]
+	path = emacs.d/bui.el
+	url = git@github.com:alezost/bui.el.git
+[submodule "emacs.d/rustic"]
+	path = emacs.d/rustic
+	url = git@github.com:brotzeit/rustic.git
 [submodule "emacs.d/rust-mode"]
 	path = emacs.d/rust-mode
 	url = https://github.com/rust-lang/rust-mode
+[submodule "emacs.d/lsp-pyright"]
+	path = emacs.d/lsp-pyright
+	url = https://github.com/emacs-lsp/lsp-pyright
+[submodule "emacs.d/compat.el"]
+	path = emacs.d/compat.el
+	url = git@github.com:phikal/compat.el.git

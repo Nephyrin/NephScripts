@@ -19,6 +19,7 @@
                         '(whitespace-tab ((t  :background "#242424" )))
                         '(region ((t :background "#303030" )))
                         '(whitespace-trailing ((t :background "#764c4c")))
+                        '(fill-column-indicator ((t :background nil :foreground "#444")))
                         '(cursor ((t :background "#D96E26" ))))
 
 ;; linum

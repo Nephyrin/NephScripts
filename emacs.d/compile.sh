@@ -15,6 +15,7 @@ on_err() { ret=$?; eerr "Failed, see above"; exit $ret; }
 trap on_err ERR
 
 compile() {
+  [[ ! -d .git ]] || git clean -xfdn .
   if [[ -f "$1"/Makefile ]]; then
     estat "Compiling $1"
     ( cmd cd "$1" && cmd make -j$(nproc) "${@:2}" )
@@ -25,13 +26,8 @@ compile() {
 
 compile dash
 compile git-modes
-compile magit-ghub
-compile magit-popup
-compile magit-transient
 compile with-editor
 compile emacs-async
-compile magit LOAD_PATH="-L . -L $PWD/magit-transient/lisp -L $PWD/magit-ghub/lisp -L $PWD/with-editor/lisp -L $PWD/dash"
-compile cedet-git
 compile helm LOADPATH="-L . -L ../emacs-async/"
 compile ecb
 compile evil
