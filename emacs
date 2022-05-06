@@ -2055,6 +2055,8 @@
 (add-to-list 'auto-mode-alist '("\\.sch\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
+;; Default .j2 files to conf-mode, though these are jinja files that could be anything
+(add-to-list 'auto-mode-alist '("\\.j2\\'" . conf-mode))
 ;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
 (defun neph-js-mode-hook ()
   "Set minor modes and buffer-local configuration for js language buffers."
