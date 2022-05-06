@@ -2877,6 +2877,14 @@ beginning of it and the point to the end of it if so"
   (interactive)
   (message (symbol-name buffer-file-coding-system)))
 
+(defun neph-increment ()
+  (interactive)
+  (message (number-to-string (string-to-number (buffer-substring (mark) (point)))))
+  (let (num (string-to-number (buffer-substring (mark) (point))))
+    (save-excursion
+      (kill-region (mark) (point))
+      (insert (number-to-string (+ num 1))))))
+
 (global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
 
 ;; Disabled (requires semantic)
