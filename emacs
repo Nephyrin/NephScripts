@@ -752,6 +752,14 @@
 ;; Swiper
 ;;
 
+(defun neph-swiper-current-word ()
+  "Start swiper with the current word"
+  (interactive)
+  (let ((current-word (save-excursion
+                         (neph-mark-current-word)
+                         (buffer-substring (mark) (point)))))
+    (swiper current-word)))
+
 (add-to-list 'load-path "~/.emacs.d/swiper")
 (autoload 'swiper "swiper" "Swiper popup thing" t)
 (global-set-key (kbd "C-z s") 'swiper)
