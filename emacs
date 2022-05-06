@@ -1863,14 +1863,14 @@
   (interactive)
   (require 'helm-projectile)
   (save-excursion
-    (mark-current-word)
+    (neph-mark-current-word)
     (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
       (helm-projectile-ag))))
 (defun helm-projectile-ag-this-word()
   (require 'helm-projectile)
   (interactive)
   (save-excursion
-    (mark-current-word)
+    (neph-mark-current-word)
     (helm-projectile-ag)))
 (defadvice helm-projectile-find-file (around helm-projectile-find-file-no-case activate)
   (let ((helm-case-fold-search nil))
@@ -2748,7 +2748,7 @@ forward-word to find the boundry"
   (interactive "^p")
   (neph-kill-to-word (- (or arg 1))))
 
-(defun mark-current-word (&optional arg)
+(defun neph-mark-current-word (&optional arg)
     "Determines if you are over a word, and moves the mark to the
 beginning of it and the point to the end of it if so"
   (interactive "^p")
@@ -2767,7 +2767,7 @@ beginning of it and the point to the end of it if so"
   (kill-new (current-word)))
 
 (global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
-(global-set-key (kbd "M-@") 'mark-current-word)
+(global-set-key (kbd "M-@") 'neph-mark-current-word)
 (global-set-key (kbd "M-B") 'backward-to-word)
 (global-set-key (kbd "M-F") 'forward-to-word)
 (global-set-key (kbd "M-D") 'neph-kill-to-word)
