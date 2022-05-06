@@ -3120,44 +3120,48 @@ beginning of it and the point to the end of it if so"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
  '(company-backends
-   (quote
-    (company-lsp company-irony company-ycmd company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+   '(company-lsp company-irony company-ycmd company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
                  (company-dabbrev-code company-gtags company-etags company-keywords)
-                 company-oddmuse company-dabbrev)))
+                 company-oddmuse company-dabbrev))
  '(company-quickhelp-color-background "black")
  '(compilation-skip-threshold 2)
- '(ediff-split-window-function (quote split-window-horizontally))
- '(ediff-window-setup-function (quote ediff-setup-windows-plain))
- '(ein:completion-backend (quote ein:use-company-backend))
- '(electric-pair-inhibit-predicate (quote electric-pair-conservative-inhibit))
+ '(ediff-split-window-function 'split-window-horizontally)
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ '(ein:completion-backend 'ein:use-company-backend)
  '(flycheck-checker-error-threshold nil)
  '(gdb-gud-control-all-threads t)
  '(gdb-many-windows nil)
  '(helm-exit-idle-delay 0)
  '(helm-input-idle-delay 0.0)
- '(ido-vertical-define-keys (quote C-n-and-C-p-only))
- '(irony-completion-availability-filter (quote (available deprecated notaccessible notavailable)))
+ '(ido-vertical-define-keys 'C-n-and-C-p-only)
+ '(irony-completion-availability-filter '(available deprecated notaccessible notavailable))
  '(lsp-enable-file-watchers nil)
- '(lsp-ui-doc-alignment (quote window))
+ '(lsp-ui-doc-alignment 'window)
  '(lsp-ui-doc-header t)
  '(lsp-ui-doc-include-signature t)
- '(lsp-ui-doc-position (quote top))
+ '(lsp-ui-doc-position 'top)
  '(lsp-ui-peek-always-show t)
  '(lsp-ui-peek-list-width 70)
  '(markdown-command "marked")
- '(org-babel-load-languages
-   (quote
-    ((plantuml . t)
-     (python . t)
-     (shell . t)
-     (emacs-lisp . t))))
+ '(org-agenda-files '("~/.emacs.d/notes-holo.org"))
+ '(org-babel-load-languages '((plantuml . t) (python . t) (shell . t) (emacs-lisp . t)))
  '(phi-search-limit 5000)
  '(reb-auto-match-limit 2000)
  '(rtags-follow-symbol-try-harder nil)
  '(rtags-imenu-syntax-highlighting nil)
+ '(safe-local-variable-values
+   '((eval c-set-offset 'arglist-cont-nonempty
+           '(c-lineup-gcc-asm-reg c-lineup-arglist))
+     (eval c-set-offset 'arglist-close 0)
+     (eval c-set-offset 'arglist-intro '++)
+     (eval c-set-offset 'case-label 0)
+     (eval c-set-offset 'statement-case-open 0)
+     (eval c-set-offset 'substatement-open 0)))
  '(set-mark-command-repeat-pop t)
- '(show-paren-mode t))
+ '(show-paren-mode t)
+ '(warning-suppress-types '((comp))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
