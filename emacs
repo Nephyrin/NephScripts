@@ -874,26 +874,38 @@
 (ccls-use-default-rainbow-sem-highlight)
 ;;(setq ccls-sem-highlight-method nil)
 ;; We'll set these from the theme.  Uncomment for random themes.
-
 (setq ccls-args
       (list
        (concat "--init=" (json-encode
                           (ht ;; No: 60G memory usage lol ("index" (ht ("multiVersion" 1)))
                               ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
-                              ("clang" (ht ("extraArgs" [-I/usr/lib/glib-2.0/include/])
+                              ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
                                            ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
        ;; Extra logging
        "-log-file=/tmp/ccls.log"
        "-v=1"))
 
+(defun neph-clear-text-properties ()
+  "Reset all text properties in the buffer."
+  (interactive)
+  (with-silent-modifications (set-text-properties (buffer-end 0) (buffer-end 1) nil)))
+
+(defun neph-lsp-reset ()
+  "Reconnects to LSP, fixing annoying CCLS highlighting bug."
+  (interactive)
+  (lsp-disconnect)
+  (neph-clear-text-properties)
+  (lsp))
+
 (defun neph-lsp-reformat-definition ()
   "Reformat the definition under the cursor according to how LSP parsed it."
   (interactive)
   ;; Request the "hover" of the thing under cursor, which is the expanded definition of it.
-  (let* ((hoverText (-some->> (lsp--text-document-position-params)
+  (let* ((hoverContents (-some->> (lsp--text-document-position-params)
                       (lsp--make-request "textDocument/hover")
                       (lsp--send-request)
-                      (gethash "contents")
+                      (gethash "contents")))
+         (hoverText (-some->> (seq-subseq hoverContents -1)
                       (lsp-seq-first)
                       (gethash "value")))
          ;; Request the location/textual-range of the definition for the thing under cursor.
