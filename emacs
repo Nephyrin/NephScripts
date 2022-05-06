@@ -116,17 +116,22 @@
 ;; Electric mode tweaks
 ;;
 
-;; Always inhibit when we're not facing whitespace
+;; Custom inhibits on top of the normal behavior, since some choices are pretty bad by default.
 (setq electric-pair-inhibit-predicate
       (lambda (c)
-        (let ((whitespace-forward (looking-at "[ \n\t$]"))
-              (isquote (char-equal c ?\")))
-          (if (and whitespace-forward
-                   (or (not isquote) (looking-back "[ \n\t^]\"" 2)))
-              ;; quotes should only be electric if there's whitespace or a newline on either side
-              ;; Otherwise, if we're looking at whitespace only
-              (electric-pair-conservative-inhibit c)
-            t))))
+        (let ((whitespace-forward (or (looking-at "[ \n\t\"]") (looking-at "$")))
+              (whitespace-backward (or (eq (point) 2) (looking-back "[ \n\t]." 2)))
+              (is-quote (char-equal c ?\")))
+          ;; Inhibit quotes unless there is whitespace on either side of the point.
+          ;;
+          ;; Inhibit non-quotes unless there is whitespace ahead fo the point (because `foo(` should work, but `foo"' is
+          ;; less sensical for auto-pairing)
+          (if (or (not whitespace-forward)
+                  (and (not whitespace-backward) is-quote))
+              ;; Inhibit
+              t
+            ;; Otherwise chain to normal inhibit behavior
+            (electric-pair-conservative-inhibit c)))))
 
 ;;
 ;; Mark & Mark Ring
