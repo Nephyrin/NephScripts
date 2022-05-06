@@ -2410,7 +2410,12 @@
     ;; else - inactive region
     (message "No region selected")))
 
+(defun neph-run-makepkg-g-on-region (start end)
+    "Run `makepkg -g 2>/dev/null` on region specified as START and END (defaults to marked region)."
+  (interactive (list (region-beginning) (region-end)))
+  (shell-command-on-region start end "makepkg -g 2>/dev/null" 1 1))
 
+(global-set-key (kbd "C-z C-M-S-M") 'neph-run-makepkg-g-on-region)
 (global-set-key (kbd "C-z C-M-s") 'neph-align-smss-table)
 (global-set-key (kbd "C-z C-M-S-S") 'neph-markdownify-smss-table-yank)
 (global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
