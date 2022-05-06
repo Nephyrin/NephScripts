@@ -601,7 +601,7 @@
            "staging_latest_good.txt")))
 
 (when (functionp 'remove-duplicates)
-(remove-duplicates grep-find-ignored-files :test 'string=))
+  (remove-duplicates grep-find-ignored-files :test 'string=))
 
 ;; Use ncdu to look at not-ignored files in a directory in this list:
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
