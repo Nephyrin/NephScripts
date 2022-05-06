@@ -290,6 +290,20 @@
      (delete-trailing-whitespace)
      (highlight-regexp "^Change" 'git-commit-note))))
 
+;; FIXME We force-wrap env around it in neph-buffer-command
+(defun neph-evmk (args)
+  "Runs the p4inter command with args"
+  (interactive "Mevmk: \n")
+  (neph-buffer-command
+   (concat "evmk " args)
+   "neph-evmk"
+   ;; callback
+   nil
+   ;; buffer-init-func
+   (lambda ()
+     (font-lock-mode t)
+     (compilation-minor-mode t))))
+
 ;;
 ;; Htmlize
 ;;
