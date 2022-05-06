@@ -1265,6 +1265,54 @@
             ;; else
             (message "Couldn't find auto symbol at point")))))
 
+  (defun rtags-test-menu ()
+    "Test help text"
+    (rtags-location-stack-push)
+    (let* ((helm-source-grep
+            (helm-build-async-source
+                (capitalize (helm-grep-command t))
+              :header-name (lambda (name)
+                             "Rtags global menu thing")
+              :candidates-process (lambda ()
+                                    (with-temp-buffer
+                                      (rtags-call-rc ;; "--imenu"
+                                       "--list-symbols"
+                                       init
+                                       "-Y" "--imenu"
+                                       (if rtags-wildcard-symbol-names "--wildcard-symbol-names"))
+                                      (eval (read (buffer-string)))) )
+              :filter-one-by-one 'helm-grep-filter-one-by-one
+              :candidate-number-limit 9999
+              :nohighlight t
+              :mode-line helm-grep-mode-line-string
+              ;; We need to specify keymap here and as :keymap arg [1]
+              ;; to make it available in further resuming.
+              :keymap helm-grep-map
+              :history 'helm-grep-history
+              :action (helm-make-actions
+                       "Find file" 'helm-grep-action
+                       "Find file other frame" 'helm-grep-other-frame
+                       (lambda () (and (locate-library "elscreen")
+                                       "Find file in Elscreen"))
+                       'helm-grep-jump-elscreen
+                       "Save results in grep buffer" 'helm-grep-save-results
+                       "Find file other window" 'helm-grep-other-window)
+              :persistent-action 'helm-grep-persistent-action
+              :persistent-help "Jump to line (`C-u' Record in mark ring)"
+              :requires-pattern 2)))
+      (helm
+       :sources 'helm-source-grep
+       :input (if (region-active-p)
+                  (buffer-substring-no-properties (region-beginning) (region-end))
+                (thing-at-point 'symbol))
+       :buffer (format "*helm %s*" (if use-ack-p
+                                       "ack"
+                                     "grep"))
+       :default-directory (projectile-project-root)
+       :keymap helm-grep-map
+       :history 'helm-grep-history
+       :truncate-lines t)))
+
   (defun rtags-global-imenu ()
     (interactive)
     (rtags-location-stack-push)
