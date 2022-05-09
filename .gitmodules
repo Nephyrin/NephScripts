@@ -127,9 +127,6 @@
 [submodule "emacs.d/helm-projectile"]
 	path = emacs.d/helm-projectile
 	url = https://github.com/bbatsov/helm-projectile
-[submodule "bin/diff-so-fancy.git"]
-	path = bin/diff-so-fancy.git
-	url = https://github.com/stevemao/diff-so-fancy
 [submodule "emacs.d/phi-search"]
 	path = emacs.d/phi-search
 	url = https://github.com/zk-phi/phi-search
