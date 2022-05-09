@@ -1,5 +1,0 @@
-#!/bin/bash
-
-set -e
-# Git's nicer diff can be used with --no-index to diff random things, combine with diff-so-fancy for nice diffs
-git diff --no-index --color=always "$@" | diff-so-fancy | less --tabs=1,5 -R
