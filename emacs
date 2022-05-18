@@ -881,6 +881,9 @@
 (setq company-quickhelp-color-background "black")
 (setq ccls-executable "/usr/bin/ccls")
 
+;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
+(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+
 (lsp-treemacs-sync-mode 1)
 (setq lsp-ui-doc-show-with-cursor t)
 (setq lsp-lens-enable nil)
@@ -2022,22 +2025,12 @@
   (setq web-mode-markup-indent-offset 4)
   (setq web-mode-css-indent-offset 4))
 
-(defun neph-c-mode ()
-  "Set minor modes and config for c-language buffers."
+(defun neph-lsp-if-projectile ()
+  "Invoke lsp if this buffer is a projectile project."
   (interactive)
-  ;; Feed the projectile dir to irony-cdb before running its autosetup command to ensure it knows
   (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
     (when (and projectile-dir (length projectile-dir))
-      ;; Irony
-      ;; (irony-cdb-json-add-compile-commands-path projectile-dir (concat projectile-dir "/compile_commands.json"))
-      ;; (irony-cdb-autosetup-compile-options)
-      ;; (irony-mode t)
-      (lsp)
-      ;;
-      ;; Alternate: ycmd (doesn't always work as well as irony, but has fuzzy matching)
-      ;;
-      ;; (ycmd-mode t)
-      )))
+      (lsp))))
 
 (defun neph-lsp-mode ()
   "Set minor modes and config for buffers using LSP."
@@ -2078,8 +2071,12 @@
 (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
-(add-hook 'c-mode-hook 'neph-c-mode)
-(add-hook 'c++-mode-hook 'neph-c-mode)
+
+;; Modes to try to auto-start lsp in, if they're part of a project
+(add-hook 'c-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'c++-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'sh-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'python-mode-hook 'neph-lsp-if-projectile)
 
 (add-hook 'lsp-after-open-hook 'neph-lsp-mode)
 
