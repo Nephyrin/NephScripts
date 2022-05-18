@@ -71,6 +71,9 @@ rebash() { cmd exec bash; }
 
 pic() { s gwenview "$@"; }
 
+gdiff() { cmd git diff --no-index "$@"; }
+pd() { git diff --no-index --color=always "$@" | diff-so-fancy; }
+
 rv() { cmd rsync -avy --progress "$@"; }
 rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 
