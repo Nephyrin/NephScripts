@@ -4,6 +4,11 @@
 
 (custom-theme-set-faces 'neph-ample-zen
                         '(linum ((t (:background "#222" :foreground "#555" :box nil))))
+                        '(line-number ((t (:background "#222" :foreground "#555" :box nil))))
+                        '(line-number-major-tick ((t (:inherit 'line-number
+                                                               :foreground "#666"))))
+                        '(line-number-minor-tick ((t (:inherit 'line-number
+                                                               :foreground "#666"))))
                         '(web-mode-block-face ((t (:background "#181818"))))
                         '(mode-line ((t ( :background "#111"
                                           :foreground "#999"
@@ -24,6 +29,10 @@
 
 ;; linum
 (custom-theme-set-variables 'neph-ample-zen
+                            '(display-line-numbers-grow-only t)
+                            '(display-line-numbers-width 6)
+                            '(display-line-numbers-major-tick 10)
+                            '(display-line-numbers-minor-tick 2)
                             '(linum-format " %5d  ")
                             '(fci-rule-color "#444"))
 

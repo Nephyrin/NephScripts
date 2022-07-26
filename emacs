@@ -1955,7 +1955,7 @@
 
 (defun neph-base-cfg ()
   "Set minor modes and buffer-local settings for a coding-mode buffer."
-  (linum-mode t)
+  (display-line-numbers-mode t)
   (yas-minor-mode t)
   (smart-tabs-mode 0)
   (c-set-offset 'cpp-macro 0 nil) ;; Indent preprocessor macros with code instead of
@@ -2978,17 +2978,17 @@ beginning of it and the point to the end of it if so"
 ;; Line numbers
 ;;
 
-(setq linum-format " %d ")
-(require 'linum)
-;(global-linum-mode 1)
-;(setq linum-disabled-modes-list '(term-mode))
-;(defun linum-on()
-;  (unless (or (minibufferp) (string-equal mode-name "Helm") (member major-mode linum-disabled-modes-list))
-;    (linum-mode 1)))
-
-;
-(setq linum-delay t)
-(setq linum-eager nil)
+;; OLD: linum
+;; (setq linum-format " %d ")
+;; (require 'linum)
+;; (setq linum-delay t)
+;; (setq linum-eager nil)
+;;;; Disabled even when linum was active:
+;; (global-linum-mode 1)
+;; (setq linum-disabled-modes-list '(term-mode))
+;; (defun linum-on()
+;;   (unless (or (minibufferp) (string-equal mode-name "Helm") (member major-mode linum-disabled-modes-list))
+;;     (linum-mode 1)))
 
 ;;
 ;; mmm/jinja/salt mode
@@ -3072,9 +3072,9 @@ beginning of it and the point to the end of it if so"
       (load-theme (intern neph-theme))))
   (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
     (color-identifiers:refresh))
-  (when (and (boundp 'linum-mode) linum-mode)
-    (linum-mode nil)
-    (linum-mode t))
+  (when (and (boundp 'display-line-numbers-mode) display-line-numbers-mode)
+    (display-line-numbers-mode nil)
+    (display-line-numbers-mode t))
   (redisplay))
 (load-neph-theme default-neph-theme)
 
@@ -3144,6 +3144,8 @@ beginning of it and the point to the end of it if so"
                  company-oddmuse company-dabbrev))
  '(company-quickhelp-color-background "black")
  '(compilation-skip-threshold 2)
+ '(display-line-numbers-grow-only t)
+ '(display-line-numbers-width 6)
  '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(ein:completion-backend 'ein:use-company-backend)
