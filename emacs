@@ -3148,9 +3148,9 @@ beginning of it and the point to the end of it if so"
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(company-backends
-   '(company-lsp company-irony company-ycmd company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
-                 (company-dabbrev-code company-gtags company-etags company-keywords)
-                 company-oddmuse company-dabbrev))
+   '(company-capf company-irony company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+                  (company-dabbrev-code company-gtags company-etags company-keywords)
+                  company-oddmuse company-dabbrev))
  '(company-quickhelp-color-background "black")
  '(compilation-skip-threshold 2)
  '(display-line-numbers-grow-only t)
