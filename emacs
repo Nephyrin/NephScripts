@@ -639,13 +639,16 @@
 (global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
 
 ;;
-;; Helm AG and Helm RG
+;; Helm AG and Helm RG and RG they're all different
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/helm-ag")
 (add-to-list 'load-path "~/.emacs.d/helm-rg")
+(add-to-list 'load-path "~/.emacs.d/wgrep") ;; For rg.el
+(add-to-list 'load-path "~/.emacs.d/rg.el")
 (require 'helm-ag)
 (require 'helm-rg)
+(require 'rg)
 
 (setq helm-ag-insert-at-point t)
 ;; (setq helm-ag-always-set-extra-option t)

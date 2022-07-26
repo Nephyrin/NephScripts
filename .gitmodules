@@ -319,3 +319,9 @@
 [submodule "emacs.d/compat.el"]
 	path = emacs.d/compat.el
 	url = git@github.com:phikal/compat.el.git
+[submodule "emacs.d/rg.el"]
+	path = emacs.d/rg.el
+	url = git@github.com:dajva/rg.el.git
+[submodule "emacs.d/wgrep"]
+	path = emacs.d/wgrep
+	url = git@github.com:mhayashi1120/Emacs-wgrep.git
