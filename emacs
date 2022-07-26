@@ -15,7 +15,7 @@
 (require 'cl) ;; Used so xe and friends can run some crap
 
 (setq redisplay-dont-pause t)
-;;(setq inhibit-eval-during-redisplay nil)
+(setq inhibit-eval-during-redisplay nil)
 (setq fast-but-imprecise-scrolling t)
 (setq jit-lock-chunk-size 100)
 (setq jit-lock-defer-time 0)
