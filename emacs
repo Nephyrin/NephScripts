@@ -2302,6 +2302,15 @@
         (call-interactively 'align-regexp rest)
       (apply 'align-regexp rest))))
 
+(defun neph-run-python (python-code)
+  "Run PYTHON-CODE as python and return the stdout."
+  (interactive "sPython: ")
+  (with-temp-buffer
+    (set-mark (point))
+    (insert python-code)
+    (shell-command-on-region (point) (mark) "python -" (current-buffer) t)
+    (buffer-substring (point) (mark))))
+
 (defun neph-align-protobuf-message ()
   "Helper to align a protobuf message"
   (interactive)
