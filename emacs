@@ -1858,12 +1858,17 @@
 ;; Default
 ;; (setq projectile-indexing-method 'alien)
 
-;; helm prjoectile-ag with default args
+;; helm projectile-ag/rg with default args
 (defun helm-projectile-ag-cpp()
   (interactive)
   (require 'helm-projectile)
   (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
     (helm-projectile-ag)))
+(defun helm-projectile-rg-cpp()
+  (interactive)
+  (require 'helm-projectile)
+  (let ((helm-rg-default-extra-args (split-string-and-unquote "-t cpp -t c")))
+    (call-interactively 'helm-projectile-rg)))
 (defun helm-projectile-ag-cpp-this-word()
   (interactive)
   (require 'helm-projectile)
@@ -1892,10 +1897,10 @@
 
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
-(global-set-key (kbd "C-z M-g") 'helm-projectile-ag-cpp)
+(global-set-key (kbd "C-z M-g") 'helm-projectile-rg-cpp)
 (global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
 (global-set-key (kbd "C-z C-M-G") 'helm-do-ag-buffers)
-(global-set-key (kbd "C-z g") 'helm-projectile-ag)
+(global-set-key (kbd "C-z g") 'helm-projectile-rg)
 (global-set-key (kbd "C-z G") 'helm-projectile-ag-this-word)
 ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
 (global-set-key (kbd "C-z C-G") 'projectile-grep)
