@@ -137,6 +137,13 @@ nohist()
   _p10k_reload
 }
 
+
+###
+### fzf binds if installed
+###
+
+[[ ! -f /usr/share/fzf/key-bindings.zsh ]] || source /usr/share/fzf/key-bindings.zsh
+
 ###
 ### Custom ZSH binds and aliases
 ###
