@@ -9,6 +9,9 @@ if [[ $- == *i* ]]; then # Only if interactive
   export CCACHE_DIR=$HOME/.ccache
   export CCACHE_COMPRESS=1
 
+  # fx
+  export FX_THEME=3
+
   # Keychain
   _neph_keychain=~/".keychain/$(hostname)-sh"
   if command -v keychain &>/dev/null && [[ -f $_neph_keychain && -f ~/.ssh/id_rsa ]]; then
