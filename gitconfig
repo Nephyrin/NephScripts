@@ -53,8 +53,12 @@
 [push]
   default = simple
 [alias]
+  fcl = "!cd \"${GIT_PREFIX:-.}\" && set -x && git reset -- \"$@\" && git checkout -f -- \"$@\" #"
   mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
   ll = log --oneline --decorate
+  lp = log --patch
+  lpd = log --patch .
+  llp = log --patch --oneline --decorate
   st = status --ignore-submodule=untracked
   pff = pull --ff-only
   cm = commit -m
@@ -68,6 +72,9 @@
   current-branch = "! x() { if [[ $# -ne 0 ]]; then echo >&2 \"!! current-branch takes no arguments\"; return 1; fi; local f=\"$(git rev-parse --symbolic-full-name HEAD)\" && local b=\"${f#refs/heads/}\" && if [[ $b = $f ]]; then return 1; else echo \"$b\"; fi; }; x"
   dsf = "!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy  | less --tabs=4 -RFX; }; f"
   fetchpr = fetch origin +refs/pull/*/head:refs/remotes/origin/pr/*
+  dc = diff --cached
+  ap = add -p .
+  hmr = "!x() { ( set -e; source ~/bin/lib/util.sh; [[ $# -le 1 ]] || die \"usage: git hmr [remote branch name]\"; local b; b=$(git symbolic-ref HEAD --short); [[ ${b:-main} != main ]] || die \"Not pushing no branch/main\"; local target=$b; [[ ${target#johns/} != \"$target\" ]] || target=johns/$target;cmd git push -u origin HEAD:\"$target\"; cmd xdg-open \"https://gitlab.steamos.cloud/holo/holo/-/merge_requests/new?merge_request%5Bsource_branch%5D=$target${1:+&merge_request%5Btarget_branch%5D=$1}\"; ); }; x"
 
 [column]
   ui = auto
