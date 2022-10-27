@@ -21,6 +21,11 @@ _neph_addtopath() {
 _neph_addtopath $NEPH/bin
 _neph_addtopath $NPRIV/bin
 
+# Add things here in chain-loaded files to execute them after p10k
+_neph_zsh_post_init_funcs=()
+_neph_zsh_post_init() { _neph_zsh_post_init_funcs+=($@); }
+
+
 # Shared interactive shell startup.  Do before initializing instant-prompt. (so, this part not covered by instant-ness)
 [[ ! -f $NEPH/aliases.sh ]]                || source $NEPH/aliases.sh
 [[ ! -f $NEPH/interactive-shell-init.sh ]] || source $NEPH/interactive-shell-init.sh
@@ -156,6 +161,15 @@ nohist()
 
 bindkey "^O" accept-and-hold
 bindkey "^N" accept-and-infer-next-history
+
+
+###
+### Post-init stuff from loaded files
+###
+
+for func in ${_neph_zsh_post_init_funcs[@]}; do
+  $func
+done
 
 # Profiling: Uncomment line at top too
 # zprof > ~/.cache/neph-zprof
