@@ -58,6 +58,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
+# p10k "helpfully" wgets binaries for gitstatus from the internet if it wants to.  Thanks guys, real high quality.
+GITSTATUS_AUTO_INSTALL=0
+
+# Just grab this from AUR if you want it
+GITSTATUS_DAEMON=/usr/share/gitstatus/usrbin/gitstatusd
+[[ -e $GITSTATUS_DAEMON ]] || _POWERLEVEL9K_DISABLE_GITSTATUS=1
+
 # Uncomment the following line to disable bi-weekly auto-update checks.
 DISABLE_AUTO_UPDATE="true"
 
