@@ -4,6 +4,12 @@
 ### Init, load local config file, neph stuff, stuff shared with bash
 ###
 
+# Profiling: Uncomment lines at bottom too
+# zmodload zsh/zprof
+
+# This seems to just make the prompt slower at startup? May be a bad interaction with gitstatusd.
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
+
 # Path to nephscripts and private
 NEPH=~/neph
 NPRIV=~/neph/priv
@@ -150,3 +156,7 @@ nohist()
 
 bindkey "^O" accept-and-hold
 bindkey "^N" accept-and-infer-next-history
+
+# Profiling: Uncomment line at top too
+# zprof > ~/.cache/neph-zprof
+# zmodload -u zsh/zprof
