@@ -52,6 +52,8 @@
 
 [push]
   default = simple
+  autoSetupRemote = true
+
 [alias]
   fcl = "!cd \"${GIT_PREFIX:-.}\" && set -x && git reset -- \"$@\" && git checkout -f -- \"$@\" #"
   mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
@@ -78,11 +80,21 @@
 
 [column]
   ui = auto
+
 [pull]
-  ff = true
+  ff = only
+
 [diff]
   algorithm = patience
 
+[rerere]
+  enable = true
+  enabled = true
+
+[rebase]
+  autoStash = true
+[init]
+  defaultBranch = main
 [diff-so-fancy]
   stripLeadingSymbols = false
   first-run = false
