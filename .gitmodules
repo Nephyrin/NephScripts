@@ -325,3 +325,9 @@
 [submodule "emacs.d/wgrep"]
 	path = emacs.d/wgrep
 	url = git@github.com:mhayashi1120/Emacs-wgrep.git
+[submodule "emacs.d/lsp-docker"]
+	path = emacs.d/lsp-docker
+	url = git@github.com:emacs-lsp/lsp-docker.git
+[submodule "emacs.d/yaml.el"]
+	path = emacs.d/yaml.el
+	url = git@github.com:zkry/yaml.el.git
