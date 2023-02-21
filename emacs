@@ -541,6 +541,11 @@
 ;;(require 'helm-files)
 
 (helm-mode 1)
+
+;; Since 215005e25718 helm's default score func is just crazy broken
+;; and puts really-fuzzy matches above extremely-direct matches
+(setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
+
 (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
 (global-set-key (kbd "M-x") 'helm-M-x)
 
