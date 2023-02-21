@@ -6,6 +6,11 @@
 
 ;; Don't load outdated .elc files, it's basically never what was intended.
 (setq load-prefer-newer t)
+(require 'comp)
+(setq native-comp-speed 3)
+;; Set to block native compilation. Also need to nuke the ~/.emacs.d/eln-cache folder.
+;;(add-to-list 'native-comp-bootstrap-deny-list ".*")
+;;(add-to-list 'native-comp-deferred-compilation-deny-list ".*")
 
 ;; Global libraries macros in here (and also )
 (add-to-list 'load-path "~/.emacs.d/dash") ; dependency of ht
