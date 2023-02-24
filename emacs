@@ -3245,7 +3245,8 @@ beginning of it and the point to the end of it if so"
  '(rtags-follow-symbol-try-harder nil)
  '(rtags-imenu-syntax-highlighting nil)
  '(safe-local-variable-values
-   '((eval c-set-offset 'arglist-cont-nonempty
+   '((highlight-80+-columns . 100)
+     (eval c-set-offset 'arglist-cont-nonempty
            '(c-lineup-gcc-asm-reg c-lineup-arglist))
      (eval c-set-offset 'arglist-close 0)
      (eval c-set-offset 'arglist-intro '++)
