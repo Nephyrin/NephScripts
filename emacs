@@ -2087,6 +2087,7 @@
   (setq sh-basic-offset 4)
   (setq sh-indentation 4)
   (setq tab-width 4)
+  (setq lua-indent-level 4)
   (setq js-indent-level 4)
   (setq python-indent-offset 4)
   (setq web-mode-code-indent-offset 4)
