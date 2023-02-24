@@ -4,10 +4,14 @@
 ;; Misc
 ;;
 
+;; TODO Make ~/.emacs a stub that sets up auto-compile and native comp and then loads ~/.emacs.d/init.el
+;; That'll make sure the functions defined here are compiled and so on.
+
 ;; Don't load outdated .elc files, it's basically never what was intended.
 (setq load-prefer-newer t)
 (require 'comp)
 (setq native-comp-speed 3)
+(setq native-comp-always-compile t)
 ;; Set to block native compilation. Also need to nuke the ~/.emacs.d/eln-cache folder.
 ;;(add-to-list 'native-comp-bootstrap-deny-list ".*")
 ;;(add-to-list 'native-comp-deferred-compilation-deny-list ".*")
