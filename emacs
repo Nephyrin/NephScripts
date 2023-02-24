@@ -665,6 +665,42 @@
 (require 'helm-rg)
 (require 'rg)
 
+;; Define a minor mode to lock rg bounce buffers into read-only and provide some quick access keys
+;;
+;; Pressing the default bind (C-c C-e) will turn off this mode and unlock helm-rg--bounce's editing mode, which is
+;; useful, but not by default when I just want a persistent buffer to visit search results.
+(defun neph-rg-bounce-navigation-mode-handler ()
+  "Default hook for neph-rg-bounce-navigation-mode."
+  (if neph-rg-bounce-navigation-mode
+      (progn
+        (message "Neph: Visit Mode")
+        (read-only-mode 1))
+    (message "Neph: Edit Mode")
+    (read-only-mode -1)))
+(define-minor-mode neph-rg-bounce-navigation-mode
+  "Mode that puts helm-rg bounce buffers into read-only navigation rather than editing."
+  :keymap '())
+(add-hook 'neph-rg-bounce-navigation-mode-hook 'neph-rg-bounce-navigation-mode-handler)
+(define-key helm-rg--bounce-mode-map (kbd "C-c C-e") #'neph-rg-bounce-navigation-mode)
+
+(define-key neph-rg-bounce-navigation-mode-map (kbd "g") #'helm-rg--bounce-refresh)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "r") #'helm-rg--bounce-refresh-current-file)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "d") #'helm-rg--bounce-dump)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "D") #'helm-rg--bounce-dump-current-file)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "RET")
+  ;; This function always calls 'alternate-method', so let bind that to normal method for the "normal visit" keybind.
+  (lambda () (interactive)
+    (let ((helm-rg-display-buffer-alternate-method
+           helm-rg-display-buffer-normal-method))
+      (helm-rg--visit-current-file-for-bounce))))
+(define-key neph-rg-bounce-navigation-mode-map (kbd "C-o") #'helm-rg--visit-current-file-for-bounce)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "e") #'helm-rg--expand-match-context)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "E") #'helm-rg--spread-match-context)
+(define-key neph-rg-bounce-navigation-mode-map (kbd "q") #'kill-this-buffer)
+
+;; Defaults on
+(add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
+
 (setq helm-ag-insert-at-point t)
 ;; (setq helm-ag-always-set-extra-option t)
 
@@ -3182,6 +3218,7 @@ beginning of it and the point to the end of it if so"
  '(flycheck-checker-error-threshold nil)
  '(helm-exit-idle-delay 0)
  '(helm-input-idle-delay 0.0)
+ '(helm-rg-input-min-search-chars 1)
  '(ido-vertical-define-keys 'C-n-and-C-p-only)
  '(irony-completion-availability-filter '(available deprecated notaccessible notavailable))
  '(lsp-enable-file-watchers nil)
