@@ -549,6 +549,7 @@
 ;; Since 215005e25718 helm's default score func is just crazy broken
 ;; and puts really-fuzzy matches above extremely-direct matches
 (setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
+;;Default: (setq helm-fuzzy-default-score-fn 'helm-fuzzy-flex-style-score)
 
 (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -1872,7 +1873,7 @@
 (add-to-list 'load-path "~/.emacs.d/helm-projectile")
 (require 'neph-projectile-autoload)
 ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
-(setq helm-projectile-fuzzy-match nil)
+;;(setq helm-projectile-fuzzy-match nil)
 (require 'neph-helm-projectile-autoload)
 
 ;; Additional autoloads for helm-projectile
@@ -3220,6 +3221,7 @@ beginning of it and the point to the end of it if so"
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(ein:completion-backend 'ein:use-company-backend)
  '(flycheck-checker-error-threshold nil)
+ '(helm-candidate-number-limit 1000)
  '(helm-exit-idle-delay 0)
  '(helm-input-idle-delay 0.0)
  '(helm-rg-input-min-search-chars 1)
