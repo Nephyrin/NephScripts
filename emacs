@@ -642,6 +642,8 @@
 (global-set-key (kbd "C-z C-S-f") 'fzf)
 (setq fzf/args "--no-hscroll --print-query -x --no-unicode")
 
+(setq fzf/window-height 50)
+
 ;;
 ;; Helm Swoop
 ;;
