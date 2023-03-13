@@ -2108,7 +2108,7 @@
   (interactive)
   (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
     (when (and projectile-dir (length projectile-dir))
-      (lsp))))
+      (lsp-deferred))))
 
 (defun neph-lsp-mode ()
   "Set minor modes and config for buffers using LSP."
