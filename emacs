@@ -1500,6 +1500,15 @@
 (ido-mode t)
 (ido-vertical-mode 1)
 
+;; Something keeps disabling this silently.
+;; Intercept it and print a backtrace.
+(defun neph-ido-mode (&optional arg)
+  "Advice to intercept `'ido-mode`' (with ARG) turning itself off and print a backtrace."
+  (when (and (not (called-interactively-p))
+             (not ido-mode))
+    (debug nil "NEPH: Something disabled ido-mode")))
+(advice-add 'ido-mode :after #'neph-ido-mode)
+
 ;;
 ;; Rainbow Delimiters
 ;;
