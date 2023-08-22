@@ -29,7 +29,7 @@ compile git-modes
 compile with-editor
 compile emacs-async
 compile helm LOADPATH="-L . -L ../emacs-async/"
-compile ecb
+# compile ecb
 compile evil
 compile emacs-gdb
 
@@ -51,9 +51,9 @@ autoload_dir() {
 }
 
 autoload_dir     evil
-autoload_onefile flyspell-lazy
-autoload_onefile projectile
-autoload_onefile helm-projectile
+autoload_dir flyspell-lazy
+autoload_dir projectile
+autoload_dir helm-projectile
 autoload_dir     irony        irony-mode
 autoload_dir     company      company-mode
 autoload_dir     ycmd         emacs-ycmd
