@@ -643,8 +643,11 @@
 ;;               process-environment))
 
 (add-to-list 'load-path "~/.emacs.d/fzf")
+(setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
+(setenv "FZF_DEFAULT_OPTS" nil)
 (require 'fzf)
 (global-set-key (kbd "C-z C-S-f") 'fzf)
+(global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
 (setq fzf/args "--no-hscroll --print-query -x --no-unicode")
 
 (setq fzf/window-height 50)
