@@ -938,6 +938,9 @@
 (require 'lsp-headerline)
 (require 'lsp-modeline)
 (require 'lsp-diagnostics)
+
+;; Pyright settings are snapshot on library load??
+(setq lsp-pyright-multi-root nil)
 (require 'lsp-pyright)
 (require 'dap-mode)
 (require 'dap-cpptools)
