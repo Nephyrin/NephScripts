@@ -184,8 +184,6 @@ p() { sudo pacman "$@"; }
 ! alias dir &>/dev/null || unalias dir
 dir() { x dolphin "$@"; }
 
-rebash() { source ~/.bashrc "$@"; }
-
 ag() { $(which ag) --noaffinity "$@"; }
 agc() { ag --cpp "$@"; }
 
@@ -290,12 +288,6 @@ _fzcd_int()
 # Misc utility functions
 #
 
-# Shorthand rdp
-rdp()
-{
-  cmd xfreerdp /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
-}
-
 # Change to git toplevel directory or error
 gt() {
   local top
@@ -360,7 +352,7 @@ _reprompt_command() {
     if [[ -n $_NEPH_PN ]]; then
       NEPH_TERM_TITLE="[$_NEPH_PN] $NEPH_TERM_TITLE"
     fi
-    if [[ $HOSTNAME != $(hostname) ]]; then
+    if [[ $HOSTNAME != $(n_hostname) ]]; then
       NEPH_TERM_TITLE='${HOSTNAME%%.*}: '"$NEPH_TERM_TITLE"
     fi
 
@@ -672,17 +664,6 @@ van()
 }
 
 avant() { pkill avant-window; x avant-window-navigator; }
-
-connectx()
-{
-  eval $(
-    set -e
-    . ~/bin/lib/util.sh
-    get_x_session
-    echo -n "export " && sh_var DISPLAY
-    echo -n "export " && sh_var XAUTHORITY
-  )
-}
 
 boost()
 {

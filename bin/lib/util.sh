@@ -7,6 +7,36 @@
 n_is_bash() { [[ -n ${BASH-} && -n ${BASH_VERSION-} ]]; }
 n_is_zsh() { [[ -n ${ZSH_NAME-} && -n ${ZSH_VERSION-} ]]; }
 
+# Find currently set hostname if possible, trying tools for a few different environments.
+#
+# Some minimal linux systems, especially containers, but also e.g. a minimal Arch install, don't have a `hostname`
+# binary.  I think BSD environments almost always will.
+#
+# The culprit is probably the systemd `hostnamectl` being a replacement -- except it cannot function if systemd is not
+# init, so various container/chroot environments remain a problem.  Why that tool would not fall back to the system call
+# so it was a proper superset of `hostname` is beyond me.
+#
+# We can read from /proc on linux hosts which saves us in most minimal-container situations.  Your weird cygwin
+# environment without a hostname binary might not be covered by this -- patches welcome for other obscure cases.
+n_hostname() {
+  [[ $# -eq 0 ]] || eerr "Internal error: n_hostname takes no arguments"
+  if command -v hostname &>/dev/null; then
+    # Everyone should have this but many containers don't
+    # I think OS X/BSDs will almost always though.
+    hostname
+  elif [[ -e /proc/sys/kernel/hostname ]]; then
+    # Linux systems/containers without hostname command
+    cat /proc/sys/kernel/hostname
+  elif command -v hostnamectl &>/dev/null && systemctl status &>/dev/null; then
+    # Systemd/hostnamectl.  This command will fail if systemd isn't init (containers)
+    # But are there even systemd systems that aren't linux or work without /proc?
+    hostnamectl hostname
+  else
+    eerr "Internal script error: Do not know how to lookup hostnames on this system"
+    return 1
+  fi
+}
+
 rightPad() {
   padding=$1
   shift
@@ -48,6 +78,16 @@ formatBytes() {
     printf "%${pad}s" " "
   fi
   echo
+}
+
+eprompt() {
+  local msg="$1"
+  [[ -n $msg ]] || msg="?"
+  ewarnprompt "$msg "
+  local reply
+  read -r reply
+  echo >&2 "" # Clear prompt line
+  printf "%s" "$reply"
 }
 
 eprompt_yn() {
@@ -98,6 +138,10 @@ sh_c()
   [[ ${#args[@]} -gt 0 ]] || args=(0)
   ( IFS=\; && echo -n $'\e['"${args[*]}m"; );
 }
+
+info_raw() { printf >&2 "%s" "$*"; }
+info() { printf >&2 "%s\n" "$*"; }
+info_linebreak() { printf >&2 "\n"; }
 
 estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
 estat2()  { echo >&2 "   $(sh_c 34 1)->$(sh_c) $*"; }
@@ -159,23 +203,8 @@ ecmd() { showcmd_unquoted "$@"; eval "$@"; }
 
 die() { local msg="$*"; [[ -n $msg ]] || msg="script terminated"; eerr_title "$msg"; exit 1; }
 
-# Tries to find the running session for this user and steals its
-# DISPLAY/XAUTHORITY env
-get_x_session()
-{
-  pid=$(pgrep -o -u $USER gnome-session || true)
-  [ -z "$pid" ] && pid=$(pgrep -o -u $USER xfce4-session || true)
-  [ -z "$pid" ] && pid=$(pgrep -o -u $USER kded4 || true)
-  if [ ! -z "$pid" ]; then
-    echo >&2 ":: Stealing env from $pid"
-    export $(cat /proc/$pid/environ | grep -z XAUTHORITY)
-    export $(cat /proc/$pid/environ | grep -z DISPLAY)
-  else
-      export XAUTHORITY=$HOME/.Xauthority
-  fi
-  [ ! -z "$DISPLAY" ] || export DISPLAY=:0
-  [ ! -z "$XAUTHORITY" ] || export XAUTHORITY=$HOME/.Xauthority
-}
+# Internal error to util.sh
+_interr() { die "Internal script error${*:+: $*}"; }
 
 sh_is_callable_thing()
 {
@@ -260,7 +289,7 @@ parse_args()
   if ! parsed="$(getopt -n "$app_name" -o "$short_opts" -l "$long_opts" -- "$@")"; then
     return 1
   fi
-  eval parsed=("$parsed")
+  eval parsed=\("$parsed"\)
   local i=0
   while [ $i -lt ${#parsed[@]} ]; do
     local arg="${parsed[$i]}"
@@ -360,10 +389,20 @@ has_option()
 {
   local opt_name="$1"
   local opt
-  for opt in ${_parse_args_options[@]}; do
+  for opt in "${_parse_args_options[@]}"; do
     [[ $opt != $opt_name ]] || return 0
   done
   # Not found
+  return 1
+}
+
+# Like has_option, but true if any one of these exists
+has_merged_option()
+{
+  local opt
+  for opt in "$@"; do
+    has_option "$opt" && return 0
+  done
   return 1
 }
 
@@ -383,3 +422,58 @@ get_args()
 {
   sh_quote "${_parse_args_args[@]}"
 }
+
+## FIXME WIP
+##
+## Guided script - lets you push some commands with comments and then execute them or view them
+##
+## Each item pushed can be:
+##  - cmd <arg> [arg...]: runs a command with the 'cmd' function (in run mode) or shows it with 'showcmd' in display mode
+##                        mode.  Hint: use `cmd eval "foo | bar"` for nested pipelines/indirection/etc.
+##  - comment <message>: A comment displayed between running or showing commands.
+##
+## Example:
+##   # Setup a set of commands in variable mycmds
+##   unset mycmds
+##   n_cmds mycmds comment "Make directory and enter"
+##   n_cmds mycmds cmd mkdir foo
+##   n_cmds mycmds cmd cd foo
+##   n_cmds mycmds comment "Touch a sentinel file"
+##   n_cmds mycmds cmd touch ./.created_by_script_or_something
+##
+##   # Show a proposed script to the user
+##   estat "Would run the following"
+##   n_cmds_show mycmds
+##   # Offer to run them now
+##   eprompt_yn "Proceed?" && n_cmds_run mycmds
+# n_cmds() {
+#   [[ $# -ge 2 ]] || _interr "Invalid usage of n_cmds, too few arguments (args were: ${*@Q})"
+#   declare -Anl -- var="$1"         || _interr "Invalid variable named passed to n_cmds"
+#   local newlen=$(( var[len] + 1 )) || _interr
+#   var[$newlen]=("${*:2@Q}")        || _interr
+#   var[len]=$newlen                 || _interr
+# }
+# 
+# _n_docmds() {
+#   local doit=$1
+#   local cmds=("${@:2}")
+#   for c in "${cmds[@]}"; do
+#     # FIXME
+#     eval c="($c)"
+#     type="${c[0]}"
+#     if [[ $type = comment ]]; then
+#       einfo "${c[@]:1}"
+#     elif [[ $type = cmd ]]; then
+#       if [[ -n $doit ]]; then
+#         cmd "${c[@]:1}"
+#       else
+#         showcmd "${c[@]:1}"
+#       fi
+#     fi
+#   done
+# }
+# 
+
+# Unset internal functions
+unset _interr
+
