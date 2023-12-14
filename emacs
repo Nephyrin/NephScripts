@@ -973,10 +973,11 @@
 (setq ccls-args
       (list
        (concat "--init=" (json-encode
-                          (ht ;; No: 60G memory usage lol ("index" (ht ("multiVersion" 1)))
-                              ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
-                              ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
-                                           ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
+                          (ht
+                           ;; ("index" (ht ("multiVersion" 1))) ;; 60G memory usage lol
+                           ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
+                           ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
+                                        ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
        ;; Extra logging
        "-log-file=/tmp/ccls.log"
        "-v=1"))
@@ -997,6 +998,7 @@
   "Reformat the definition under the cursor according to how LSP parsed it."
   (interactive)
   ;; Request the "hover" of the thing under cursor, which is the expanded definition of it.
+  ;; FIXME this is only true in ccls
   (let* ((hoverContents (-some->> (lsp--text-document-position-params)
                       (lsp--make-request "textDocument/hover")
                       (lsp--send-request)
@@ -1028,6 +1030,7 @@
 (global-set-key (kbd "C-z <tab>") 'lsp-ui-imenu)
 (global-set-key (kbd "C-z D")     'flycheck-list-errors)
 (global-set-key (kbd "C-z C-l")   'neph-lsp-reformat-definition)
+(global-set-key (kbd "C-z RET")   'helm-lsp-code-actions)
 (global-set-key (kbd "C-z .")     'helm-lsp-workspace-symbol)        ;; Menu to find symbol in project
 ;; (global-set-key (kbd "C-z >")     'helm-lsp-global-workspace-symbol) ;; Menu to find symbol in open projects
 ;; (global-set-key (kbd "C-z C-.")           'rtags-find-symbol-at-point)
@@ -3252,6 +3255,7 @@ beginning of it and the point to the end of it if so"
  '(lsp-ui-doc-position 'top)
  '(lsp-ui-peek-always-show t)
  '(lsp-ui-peek-list-width 70)
+ '(lsp-ui-sideline-show-code-actions t)
  '(markdown-command "marked")
  '(org-agenda-files '("~/.emacs.d/notes-holo.org"))
  '(org-babel-load-languages '((plantuml . t) (python . t) (shell . t) (emacs-lisp . t)))
