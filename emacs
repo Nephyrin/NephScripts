@@ -381,7 +381,7 @@
     ;; Disable incompatible modes, run htmlize, re-enable
     (when ghl (global-hl-line-mode -1))
     (with-current-buffer
-        (htmlize-region (point) (mark))
+        (htmlize-region (region-beginning) (region-end))
       (write-file "~/.emacs.d/htmlize-temp.htm"))
     (when ghl (global-hl-line-mode 1)))
   ;; Awful awk script to skip all the doctype/html/body/head document tags and just select the 'pre'
