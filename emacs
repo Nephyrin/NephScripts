@@ -127,6 +127,7 @@
 (add-to-list 'load-path "~/.emacs.d/emacs-spinner")
 (add-to-list 'load-path "~/.emacs.d/s.el")
 (add-to-list 'load-path "~/.emacs.d/f.el")
+(add-to-list 'load-path "~/.emacs.d/editorconfig")
 
 ;;
 ;; Electric mode tweaks
@@ -863,6 +864,12 @@
 (add-hook 'python-mode-hook     'neph-company-setup)
 (add-hook 'lisp-mode-hook       'neph-company-setup)
 (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
+
+;;
+;; Copilot
+;;
+(add-to-list 'load-path "~/.emacs.d/copilot")
+(require 'copilot)
 
 ;;
 ;; YouCompleteMe (deprecated for LSP, remove?)

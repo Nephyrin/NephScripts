@@ -331,3 +331,9 @@
 [submodule "emacs.d/yaml.el"]
 	path = emacs.d/yaml.el
 	url = git@github.com:zkry/yaml.el.git
+[submodule "emacs.d/editorconfig"]
+	path = emacs.d/editorconfig
+	url = git@github.com:editorconfig/editorconfig-emacs.git
+[submodule "emacs.d/copilot"]
+	path = emacs.d/copilot
+	url = git@github.com:zerolfx/copilot.el.git
