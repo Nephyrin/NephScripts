@@ -233,6 +233,12 @@
 (global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
 
 ;;
+;; Indent bars
+;;
+(add-to-list 'load-path "~/.emacs.d/indent-bars")
+(require 'indent-bars)
+
+;;
 ;; Highlight Symbol
 ;;
 (add-to-list 'load-path "~/.emacs.d/highlight-symbol")
