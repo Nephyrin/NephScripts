@@ -218,23 +218,6 @@ ddate() {
   fi
 }
 
-# Print a timestamp or timestamp for a date
-tt() {
-  local date
-  if [[ $# -eq 0 ]]; then
-    date="now"
-  elif [[ $# -eq 1 && $1 =~ ^[0-9]+$ ]]; then
-    date="@$1"
-  else
-    # Treat as date
-    date="$*"
-  fi
-  einfo "Parsed"
-  date --date="$date" || return
-  einfo "Timestamp"
-  date --date="$date" +%s
-}
-
 #
 # fzf stuff
 #
