@@ -169,6 +169,12 @@ nohist()
 bindkey "^O" accept-and-hold
 bindkey "^N" accept-and-infer-next-history
 
+###
+### Atuin
+###
+
+eval "$(atuin init zsh --disable-up-arrow || true)"
+bindkey ^q atuin-up-search
 
 ###
 ### Post-init stuff from loaded files
