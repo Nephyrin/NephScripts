@@ -340,3 +340,6 @@
 [submodule "emacs.d/indent-bars"]
 	path = emacs.d/indent-bars
 	url = git@github.com:jdtsmith/indent-bars.git
+[submodule "emacs.d/auto-compile"]
+	path = emacs.d/auto-compile
+	url = https://github.com/emacscollective/auto-compile

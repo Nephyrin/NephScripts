@@ -12,6 +12,10 @@
 (require 'comp)
 (setq native-comp-speed 3)
 (setq native-comp-always-compile t)
+(add-to-list 'load-path "~/.emacs.d/auto-compile")
+(require 'auto-compile)
+(auto-compile-on-load-mode)
+(auto-compile-on-save-mode)
 ;; Set to block native compilation. Also need to nuke the ~/.emacs.d/eln-cache folder.
 ;;(add-to-list 'native-comp-bootstrap-deny-list ".*")
 ;;(add-to-list 'native-comp-deferred-compilation-deny-list ".*")
