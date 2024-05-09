@@ -14,9 +14,12 @@ typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
 NEPH=~/neph
 NPRIV=~/neph/priv
 
+# aliases.sh and such expects all shell types to provide this
 _neph_addtopath() {
-  local new="$1"
-  [[ ! -d $new || ${path[(ie)$new]} -le ${#path[@]} ]] || path+=($new)
+  local new
+  for new in "$@"; do
+    [[ ! -d $new || ${path[(ie)$new]} -le ${#path[@]} ]] || path+=($new)
+  done
 }
 _neph_addtopath $NEPH/bin
 _neph_addtopath $NPRIV/bin

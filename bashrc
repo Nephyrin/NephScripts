@@ -53,6 +53,14 @@ _list_push PATH "$HOME/bin"
 _list_push PATH "$HOME/.local/bin"
 _list_push PATH "$HOME/neph/priv/bin"
 
+# aliases.sh and such expects all shell types to provide this
+_neph_addtopath() {
+  local item
+  for item in "$@"; do
+    _list_push PATH "$item"
+  done
+}
+
 NEPH_CGROUP_ROOT=/sys/fs/cgroup
 NEPH_DEFAULT_CGROUP="$NEPH_CGROUP_ROOT"/cpu
 
