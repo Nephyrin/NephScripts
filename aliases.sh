@@ -82,6 +82,8 @@ t() {
   tmux renamew "$*" &>/dev/null || true
 }
 
+brs() { s dolphin -- "$@"; }
+
 # zdir <archive> [dirname]
 #
 # Unarchive something into a directory named after the zip file (without extention, using `autounzip` utility from
@@ -201,6 +203,14 @@ nenv() {
   fi
 }
 
+uricopy() {
+  local file=$(realpath -e -- "$1")
+  local uri
+  uri="file://$file"
+  einfo "copying $uri"
+  printf %s "$uri" | wl-copy -t text/uri-list
+}
+
 # Re-execute or switch shell (to load new configs or whatever clearly)
 reload() {
   # $SHELL is the user's login shell, not what is currently running interactively.
@@ -213,7 +223,9 @@ reload() {
 rezsh() { cmd exec zsh; }
 rebash() { cmd exec bash; }
 
-pic() { s gwenview "$@"; }
+pic() { s qimgv "$@"; }
+
+rand32() { shuf -i 0-$(( 2**32 - 1 )) -n 1; }
 
 gdiff() { cmd git diff --no-index "$@"; }
 pd() { git diff --no-index --color=always "$@" | diff-so-fancy | less --tabs=4 -RFX; }
@@ -227,11 +239,32 @@ rdp()
   cmd xfreerdp /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
 }
 
+winepids()
+{
+  local pids=($(egrep -lzEi '^WINELOADERNOEXEC=' /proc/*/environ 2>/dev/null \
+                 | sed -r 's/^\/proc\/([0-9]+)\/environ$/\1/'))
+  echo "${pids[@]}"
+}
+
+
 iswine()
 {
-  local winepids=($(egrep -lzEi '^WINELOADERNOEXEC=' /proc/*/environ 2>/dev/null \
-                      | sed -r 's/^\/proc\/([0-9]+)\/environ$/\1/'))
-  [[ ${#winepids[@]} -gt 0 ]] && cmd ps -fp "${winepids[@]}" || ewarn No wine processes found
+  local winepids=($(winepids))
+  if [[ ${#winepids[@]} -gt 0 ]]; then
+    cmd ps -fp "${winepids[@]}"
+  else
+    ewarn No wine processes found
+  fi
+}
+
+killwine()
+{
+  local winepids=($(winepids))
+  if [[ ${#winepids[@]} -gt 0 ]]; then
+    cmd kill "${1--9}" "${winepids[@]}"
+  else
+    ewarn No wine processes found
+  fi
 }
 
 ct()
@@ -246,9 +279,28 @@ clt()
   # (This matches how mktemp picks)
   local tmpdir=${TMPDIR:-/tmp}
   for x in "$tmpdir"/nephtmp.*; do
-    [[ -d $x ]] || continue
+    if [[ ! -d $x || -L $x ]]; then
+      ewarn "$x: Not a simple directory, ignoring"
+      continue
+    fi
+    if findmnt -m "$x" &>/dev/null; then
+      ewarn "$x: Appears to be a mount point, ignoring"
+      continue
+    fi
+
     local pids
-    pids=($(lsof -Fp +D "$x" | tr -d p))
+    # +D    Scan directory hierarchy for open files
+    # -x f  Also cross into mountpoints within
+    # -Fp   Output pid
+    #
+    # TODO If there's any mounts in here we should probably not clean it up. --one-file-system will avoid accidentally
+    #      nuking them, but we'll fail to finish cleaning the directory anyway.
+    #
+    # FIXME If something is mounted directly on the nephtmp.xxx folder, we're going to nuke it inappropriately I think.
+    #  findmnt -T "$x"     should be null, don't touch mountpoints
+    #  findmnt -T "$x" -R  Should find everything mounted under the same mount (probably /tmp) -- grep for our prefix?
+    #                      Make sure we're not a symlink?
+    pids=($(lsof -x f -Fp +D "$x" | tr -d p))
     if [[ -z $pids ]]; then
       estat "Removing $x"
       cmd rm -rf --one-file-system -- "$x"
@@ -285,7 +337,24 @@ service() {
 lx()  { ls++ --potsf     "$@"; }
 lxx() { ls++ --potsf -tr "$@"; }
 
-v() { cmd youtube-dl "$@"; }
+v() {
+  local json
+  if ! json=$(cmd yt-dlp --no-simulate -J "$@"); then
+    eerr "yt-dlp failed, see above"
+    return 1
+  fi
+
+  local filename
+  filename=$(jq -r '.requested_downloads[0]._filename | select(type == "string")' <<< "$json")
+  if [[ -z $filename ]]; then
+    jq <<< "$json"
+    eerr "yt-dlp didn't return a URL, see JSON dump above"
+    return 1
+  fi
+
+  filename="file://$PWD/$filename"
+  cmd systemd-run --user --collect -- bash -c "exec wl-copy --foreground -t 'text/uri-list' <<< $(sh_quote $filename)"
+}
 
 # Print a timestamp or timestamp for a date
 tt() {
