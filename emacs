@@ -3277,6 +3277,7 @@ beginning of it and the point to the end of it if so"
                   company-oddmuse company-dabbrev))
  '(company-quickhelp-color-background "black")
  '(compilation-skip-threshold 2)
+ '(copilot-max-char 1000000)
  '(dap-auto-configure-features
    '(sessions locals breakpoints expressions repl controls tooltip))
  '(display-line-numbers-grow-only t)
