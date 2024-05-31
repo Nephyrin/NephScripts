@@ -1596,17 +1596,23 @@
               'face 'neph-modeline-hud))
 
 ;; TODO set this only when buffer path changes, rather than per frame
+(defun neph-cache-projectile-info ()
+  "Cache projectile-project-root and project-name once for spammy non-critical things like modeline"
+  (when (and (featurep 'projectile) (projectile-project-name))
+    (setq-local neph-cached-projectile-project-root (projectile-project-root))
+    (setq-local neph-cached-projectile-project-name (projectile-project-name))))
+(add-hook 'find-file-hook 'neph-cache-projectile-info)
 (setq neph-modeline-path
       '(:eval (let* ((rawname (buffer-file-name))
                      (bufname (if rawname (propertize rawname 'face 'neph-modeline-path) nil))
                      ;; Paths to replace. Of the form ((search replace) ...)
                      (replacements `((,(getenv "HOME") "~"))))
                 ;; Also replace projectile root with project name when available
-                (when (and (featurep 'projectile) (projectile-project-p))
+                (when (and (featurep 'projectile) (bound-and-true-p neph-cached-projectile-project-root))
                   (add-to-list 'replacements
                                (list
-                                (projectile-project-root)
-                                (concat (projectile-project-name) "/"))))
+                                neph-cached-projectile-project-root
+                                (concat neph-cached-projectile-project-name "/"))))
                 (if bufname
                     (progn
                       ;; Trim filename from path
