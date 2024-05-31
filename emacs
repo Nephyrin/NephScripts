@@ -959,6 +959,7 @@
 (add-to-list 'load-path "~/.emacs.d/lsp-pyright")
 (add-to-list 'load-path "~/.emacs.d/lsp-treemacs")
 (add-to-list 'load-path "~/.emacs.d/helm-lsp")
+(setq lsp-pyright-multi-root nil)
 (require 'lsp-treemacs)
 (require 'treemacs)
 (require 'treemacs-mouse-interface)
