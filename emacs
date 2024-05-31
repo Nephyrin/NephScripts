@@ -1527,10 +1527,10 @@
 ;; emacs-gdb -- weirdNox's replacement for gdb-mi
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/emacs-gdb")
-(fmakunbound 'gdb)
-(fmakunbound 'gdb-enable-debug)
-(load-library "gdb-mi")
+; (add-to-list 'load-path "~/.emacs.d/emacs-gdb")
+; (fmakunbound 'gdb)
+; (fmakunbound 'gdb-enable-debug)
+; (load-library "gdb-mi")
 
 ;;(require 'neph-weirdnox-gdb-autoload)
 ;; FIXME automatically replace gdb-mi
