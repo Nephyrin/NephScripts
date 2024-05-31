@@ -1941,13 +1941,6 @@
 (autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
 (autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
 
-(with-eval-after-load "projectile"
-  (setq projectile-completion-system 'helm)
-  (setq projectile-enable-caching t)
-  (projectile-global-mode t)
-  (with-eval-after-load "helm"
-    (helm-projectile-on)))
-
 ;; If -alt appears in the path preceeding the final component, append -alt to the name
 ;; e.g. ~/git-alt/project shows up differently from ~/git/project
 ;; (Incredibly specific to the author's workflow)
@@ -1965,18 +1958,26 @@
         (concat default-name "-alt")
         default-name)))
 
-(setq projectile-project-name-function 'neph-projectile-project-name)
+(with-eval-after-load "projectile"
+  (setq projectile-completion-system 'helm)
+  (setq projectile-generic-command "fd . --hidden -0")
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-project-name-function 'neph-projectile-project-name)
+  (setq projectile-enable-caching t)
+  (setq projectile-files-cache-expire 3600)
+  (projectile-global-mode t)
+  (with-eval-after-load "helm"
+    (helm-projectile-on)))
 
-(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
-                               "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
-                               "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
-  (setq projectile-generic-command (concat "find . -type f "
-                                           (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
-                                                      neph-ignored-patterns " -and ")
-                                           " -print0")))
 
-;; Default
-;; (setq projectile-indexing-method 'alien)
+;;(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
+;;                               "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
+;;                               "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
+;;  (setq projectile-generic-command (concat "find . -type f "
+;;                                           (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
+;;                                                      neph-ignored-patterns " -and ")
+;;                                           " -print0")))
+
 
 ;; helm projectile-ag/rg with default args
 (defun helm-projectile-ag-cpp()
