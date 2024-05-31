@@ -877,6 +877,7 @@
 ;; Turn on in these modes
 (add-hook 'c-mode-common-hook   'neph-company-setup)
 (add-hook 'python-mode-hook     'neph-company-setup)
+(add-hook 'python-ts-mode-hook  'neph-company-setup)
 (add-hook 'lisp-mode-hook       'neph-company-setup)
 (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
 
