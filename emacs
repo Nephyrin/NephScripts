@@ -3063,7 +3063,7 @@ beginning of it and the point to the end of it if so"
 (defface hl-line '((t (:background "Gray")))
   "Face to use for `hl-line-face'." :group 'hl-line)
 (setq hl-line-face 'hl-line)
-(global-hl-line-mode t)
+;(global-hl-line-mode t)
 
 ;;
 ;; ace-jump-mode
