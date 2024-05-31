@@ -2194,6 +2194,7 @@
 (add-hook 'conf-space-mode-hook 'neph-space-cfg)
 (add-hook 'sql-mode-hook 'neph-space-cfg)
 (add-hook 'python-mode-hook 'neph-space-cfg)
+(add-hook 'python-ts-mode-hook 'neph-space-cfg)
 (add-hook 'java-mode-hook 'neph-space-cfg)
 (add-hook 'lisp-mode-hook 'neph-space-cfg)
 (add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
@@ -2207,6 +2208,7 @@
 (add-hook 'c++-mode-hook 'neph-lsp-if-projectile)
 (add-hook 'sh-mode-hook 'neph-lsp-if-projectile)
 (add-hook 'python-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'python-ts-mode-hook 'neph-lsp-if-projectile)
 
 (add-hook 'lsp-after-open-hook 'neph-lsp-mode)
 
