@@ -241,6 +241,11 @@
 ;;
 (add-to-list 'load-path "~/.emacs.d/indent-bars")
 (require 'indent-bars)
+(setq indent-bars-width-frac 0.1)
+
+;; SiGnIfiCaNt WhItEsPaCe
+(add-hook 'python-mode-hook 'indent-bars-mode)
+(add-hook 'python-ts-mode-hook 'indent-bars-mode)
 
 ;;
 ;; Highlight Symbol
