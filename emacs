@@ -1931,10 +1931,15 @@
 
 (add-to-list 'load-path "~/.emacs.d/projectile")
 (add-to-list 'load-path "~/.emacs.d/helm-projectile")
-(require 'neph-projectile-autoload)
-;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
-;;(setq helm-projectile-fuzzy-match nil)
-(require 'neph-helm-projectile-autoload)
+
+;; In server mode, let's just load it synchronously
+(if (daemonp)
+    (progn
+      (require 'projectile)
+      (require 'helm-projectile))
+  (require 'neph-projectile-autoload)
+  (require 'neph-helm-projectile-autoload))
+
 
 ;; Additional autoloads for helm-projectile
 (autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
@@ -1959,12 +1964,16 @@
         default-name)))
 
 (with-eval-after-load "projectile"
+  ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
+  (setq helm-projectile-fuzzy-match nil)
+
   (setq projectile-completion-system 'helm)
   (setq projectile-generic-command "fd . --hidden -0")
   (setq projectile-indexing-method 'alien)
   (setq projectile-project-name-function 'neph-projectile-project-name)
   (setq projectile-enable-caching t)
-  (setq projectile-files-cache-expire 3600)
+  ;; caching big projects still very slow even with fd
+  ;(setq projectile-files-cache-expire 3600)
   (projectile-global-mode t)
   (with-eval-after-load "helm"
     (helm-projectile-on)))
