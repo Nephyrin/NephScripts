@@ -3257,7 +3257,7 @@ beginning of it and the point to the end of it if so"
 (require 'with-editor)
 (require 'magit)
 (require 'magit-blame)
-;(global-set-key (kbd "C-z g") 'magit-status)
+(global-set-key (kbd "C-z C-<return>") 'magit-status)
 (global-set-key (kbd "C-z L") 'magit-blame-mode)
 (global-set-key (kbd "C-z X") 'magit-ediff-stage)
 (global-set-key (kbd "C-z C") 'magit-commit)
