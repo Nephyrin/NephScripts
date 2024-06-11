@@ -2076,6 +2076,7 @@ explicit input."
     ad-do-it))
 
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
+(global-set-key (kbd "C-c p a") 'projectile-find-other-file) ;; did projectile drop this bind or did I break loading its map, who knows
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
 (global-set-key (kbd "C-z M-g") 'helm-projectile-rg-cpp)
 (global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
