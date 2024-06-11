@@ -2319,7 +2319,7 @@ explicit input."
 ;;
 
 (require 'tramp)
-(setq tramp-default-method "ssh")
+(setq tramp-default-method "sshx")
 ; No auto-save
 (defun tramp-set-auto-save ()
   (auto-save-mode -1))
