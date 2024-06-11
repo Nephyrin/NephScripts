@@ -84,6 +84,16 @@ t() {
 
 brs() { s dolphin -- "$@"; }
 
+# enhanced reset
+#  - rmcup exits alternate screen mode that utilities leave on. In theory typing this in some nested bash-in-ncurses app
+#    might break it, but things like tmux emulate the nested terminal, so you're not breaking the outer tmux session.
+#    Fixes panes in tmux randomly not scrolling correctly anymore (since all shell interaction is on the alternate
+#    screen and not contributing to scrollback)
+ereset() {
+  cmd reset
+  cmd tput rmcup
+}
+
 # zdir <archive> [dirname]
 #
 # Unarchive something into a directory named after the zip file (without extention, using `autounzip` utility from
