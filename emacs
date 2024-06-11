@@ -20,6 +20,9 @@
 ;;(add-to-list 'native-comp-bootstrap-deny-list ".*")
 ;;(add-to-list 'native-comp-deferred-compilation-deny-list ".*")
 
+;; donut
+(setq ring-bell-function 'ignore)
+
 ;; Global libraries macros in here (and also )
 (add-to-list 'load-path "~/.emacs.d/dash") ; dependency of ht
 (add-to-list 'load-path "~/.emacs.d/emacs-ht")
