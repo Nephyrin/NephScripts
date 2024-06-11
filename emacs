@@ -2233,11 +2233,16 @@ explicit input."
 
 ;; Default modes
 
+(defun neph-bash-mode ()
+  "Invokes 'sh-mode' but defaulting to bash."
+  (sh-mode)
+  (sh-set-shell "bash"))
+
 (add-to-list 'auto-mode-alist '("/yaourtrc\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("/bash-fc.[^/]+\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.ma?k\\'" . makefile-mode))
 (add-to-list 'auto-mode-alist '("\\.sch\\'" . c-mode))
-(add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . neph-bash-mode))
 (add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
 ;; Default .j2 files to conf-mode, though these are jinja files that could be anything
 (add-to-list 'auto-mode-alist '("\\.j2\\'" . conf-mode))
