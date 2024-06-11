@@ -3228,7 +3228,7 @@ beginning of it and the point to the end of it if so"
 ;;
 
 ; Make zap-to-char zap-up-to-char
-(defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
+(defadvice zap-to-char (after my-zap-to-char-advice (arg char &optional interactive) activate)
   "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
   you are deleting forward, the CHAR is replaced and the point is
   put before CHAR"
