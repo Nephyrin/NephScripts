@@ -106,8 +106,12 @@
 (when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
 
-(setq split-width-threshold 170)
-(setq split-height-threshold 1000)
+(setq split-width-threshold 240)
+(setq split-height-threshold 50)
+;; TODO customize display-buffer alist so we don't split frames too aggressively for browsing top-level buffers, but do
+;; for things like xref popups.  Might require also tweaking split-window-sensibly or overriding the split-window
+;; parameters when entering display buffer with a top-level vs widget window.
+;; (setq display-buffer-alist '("\\*Async Shell Command\\*" (display-buffer-no-window))
 
 (require 'speedbar)
 (speedbar-change-initial-expansion-list "buffers")
