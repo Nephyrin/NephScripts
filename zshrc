@@ -62,6 +62,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # CASE_SENSITIVE="true"
 
 # p10k "helpfully" wgets binaries for gitstatus from the internet if it wants to.  Thanks guys, real high quality.
+GITSTATUS_LOG_LEVEL=DEBUG
 GITSTATUS_AUTO_INSTALL=0
 
 # Just grab this from AUR if you want it
@@ -157,7 +158,6 @@ nohist()
   HISTFILE=${file:-$(mktemp --tmpdir zsh.XXX)}
   _p10k_reload
 }
-
 
 ###
 ### fzf binds if installed
