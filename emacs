@@ -2394,11 +2394,11 @@ If this is a local file, turn it into a tramp file file with said information."
 
 ;; Global hl-line-mode block
 (add-hook 'eshell-mode-hook (lambda ()
-                                    (setq-local global-hl-line-mode
-                                                nil)))
+                              (setq-local global-hl-line-mode
+                                          nil)))
 (add-hook 'term-mode-hook (lambda ()
-                                    (setq-local global-hl-line-mode
-                                                nil)))
+                            (setq-local global-hl-line-mode
+                                        nil)))
 
 ;;
 ;; isearch tweaks
