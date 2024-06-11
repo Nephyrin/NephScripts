@@ -2330,8 +2330,11 @@ explicit input."
   ;; By default changing the visited file name counts as a modification, but this should be the same file.
   (with-silent-modifications
     (set-visited-file-name
-     (concat "/sudo::/" (buffer-file-name))))
-  (toggle-read-only 0))
+     (neph-prepend-tramp-hop (buffer-file-name) "sudo" "root" "")))
+  ;; Re-run this since we're probably in read-only mode and hooks didn't initialize expecting tramp etc..
+  ;; Read-only is auto-enabled but not auto-disabled, so start with it off before re-running normal mode.
+  (read-only-mode 0)
+  (normal-mode))
 
 (defun drop-sudo ()
   "Drops tramp sudo sessions."
@@ -2344,6 +2347,30 @@ explicit input."
 
 (global-set-key (kbd "C-z C-S-u") 'sudoize-buffer)
 (global-set-key (kbd "C-z C-M-S-u") 'drop-sudo)
+
+(defun neph-prepend-tramp-hop (filename method user host)
+  "Given a FILENAME, prepend a hop to the tramp chain with METHOD USER and HOST.
+If this is a local file, turn it into a tramp file file with said information."
+  (let ((is-tramp-file (tramp-tramp-file-p filename))
+        (localname filename)
+        (hop nil))
+    (if is-tramp-file
+        ;; Already tramp, parse the struct and stuff its data into the sub-hop
+        (with-parsed-tramp-file-name filename vec
+          ;; This is the only part of the structure not part of the "hop" string, so we can just make a new
+          ;; structure and turn the old one into a hop string within it.
+          (setq localname vec-localname)
+          ;; tramp-make-tramp-hop-name will consider nested hops, so we're just pushing the whole struct down one
+          ;; nesting level.
+          (setq hop (tramp-make-tramp-hop-name vec))))
+    ;; Now make the new file string
+    (tramp-make-tramp-file-name
+     (make-tramp-file-name
+      :method method
+      :user user
+      :host host
+      :localname localname
+      :hop hop))))
 
 ;;
 ;; Artist mode
