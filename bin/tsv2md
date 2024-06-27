@@ -1,0 +1,51 @@
+#!/bin/env python3
+
+# Takes tab separated values from stdin (e.g. copies from spreadsheets, most things that c)
+
+# Written by ChatGPT4 with minimal prompting.
+
+import sys
+import csv
+
+def read_tsv_from_stdin():
+    reader = csv.reader(sys.stdin, delimiter='\t')
+    data = [row for row in reader]
+    cols = max(len(row) for row in data)
+    # Pad all rows to same length
+    data = [row + ([""] * (cols - len(row))) for row in data]
+    return data
+
+def calculate_column_widths(data):
+    widths = [0] * len(data[0])
+    for row in data:
+        for idx, col in enumerate(row):
+            widths[idx] = max(widths[idx], len(col))
+    return widths
+
+def format_table_row(row, widths):
+    formatted_row = "|"
+    for idx, col in enumerate(row):
+        formatted_row += f" {col.ljust(widths[idx])} |"
+    return formatted_row
+
+def print_aligned_markdown_table(data):
+    if not data or not data[0]:
+        return
+
+    widths = calculate_column_widths(data)
+    separator_row = ["-" * width for width in widths]
+    header_row = "+-" + "-+-".join(separator_row) + "-+"
+
+    print(header_row)
+    print(format_table_row(data[0], widths))
+    print(format_table_row(separator_row, widths))
+    for row in data[1:]:
+        print(format_table_row(row, widths))
+    print(header_row)
+
+def main():
+    data = read_tsv_from_stdin()
+    print_aligned_markdown_table(data)
+
+if __name__ == "__main__":
+    main()
