@@ -2102,6 +2102,12 @@ explicit input."
 ;; (setq projectile-switch-project-action 'projectile-find-file)
 
 ;;
+;; php-mode
+;;
+(add-to-list 'load-path "~/.emacs.d/php-mode/lisp")
+(require 'php-mode)
+
+;;
 ;; Web-mode
 ;;
 
