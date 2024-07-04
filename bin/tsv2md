@@ -1,11 +1,13 @@
 #!/bin/env python3
+# -*- mode: python; indent-tabs-mode: nil; python-indent-offset: 4 -*-
 
 # Takes tab separated values from stdin (e.g. copies from spreadsheets, most things that c)
 
-# Written by ChatGPT4 with minimal prompting.
+# originally written by ChatGPT4 one-shot, which is neat
 
 import sys
 import csv
+import argparse
 
 def read_tsv_from_stdin():
     reader = csv.reader(sys.stdin, delimiter='\t')
@@ -28,24 +30,32 @@ def format_table_row(row, widths):
         formatted_row += f" {col.ljust(widths[idx])} |"
     return formatted_row
 
-def print_aligned_markdown_table(data):
+def print_aligned_markdown_table(data, print_border):
     if not data or not data[0]:
         return
 
     widths = calculate_column_widths(data)
     separator_row = ["-" * width for width in widths]
-    header_row = "+-" + "-+-".join(separator_row) + "-+"
 
-    print(header_row)
+    if print_border:
+        border_row = "+-" + "-+-".join(separator_row) + "-+"
+        print(border_row)
+
     print(format_table_row(data[0], widths))
     print(format_table_row(separator_row, widths))
     for row in data[1:]:
         print(format_table_row(row, widths))
-    print(header_row)
+
+    if print_border:
+        print(border_row)
 
 def main():
+    parser = argparse.ArgumentParser(description='Generate a markdown table from TSV input.')
+    parser.add_argument('--no-border', action='store_true', help='Omit the top and bottom borders in the markdown table.')
+    args = parser.parse_args()
+
     data = read_tsv_from_stdin()
-    print_aligned_markdown_table(data)
+    print_aligned_markdown_table(data, not args.no_border)
 
 if __name__ == "__main__":
     main()

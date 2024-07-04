@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-printf '%s' "$*" | "$(dirname -- "$0")"/tsv2md
+printf '%s' "$*" | "$(dirname -- "$0")"/tsv2md --no-border
