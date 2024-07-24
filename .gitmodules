@@ -346,3 +346,12 @@
 [submodule "emacs.d/php-mode"]
 	path = emacs.d/php-mode
 	url = git@github.com:emacs-php/php-mode.git
+[submodule "emacs.d/consult"]
+	path = emacs.d/consult
+	url = https://github.com/minad/consult.git
+[submodule "emacs.d/vertico"]
+	path = emacs.d/vertico
+	url = https://github.com/minad/vertico.git
+[submodule "emacs.d/counsel-projectile"]
+	path = emacs.d/counsel-projectile
+	url = https://github.com/ericdanan/counsel-projectile.git
