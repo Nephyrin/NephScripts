@@ -603,6 +603,27 @@ explicit input."
 (require 'color-identifiers-mode)
 
 ;;
+;; Consult/Vertico
+;;
+(add-to-list 'load-path "~/.emacs.d/consult")
+(add-to-list 'load-path "~/.emacs.d/vertico")
+(add-to-list 'load-path "~/.emacs.d/counsel-projectile")
+
+;; WIP
+;;(require 'consult)
+;;(require 'vertico)
+;;(require 'counsel-projectile)
+
+;;
+;; Project
+;;
+
+;; WIP, replace projectile? Might not have the things we want
+;;(require 'project)
+
+;;(global-set-key (kbd "C-z M-f") 'project-find-file)
+
+;;
 ;; Helm
 ;;
 
@@ -994,6 +1015,9 @@ explicit input."
 ;; C++ Helper mode(s) : Company/lsp and associated helper libraries
 ;;
 
+;; This nonsense has to be set before any LSP stuff loads?
+(setenv "LSP_USE_PLISTS" "true")
+
 ;; cquery
 (add-to-list 'load-path "~/.emacs.d/epl")
 (add-to-list 'load-path "~/.emacs.d/pkg-info")
@@ -1041,7 +1065,11 @@ explicit input."
 (require 'ccls)
 (require 'helm-lsp)
 (setq company-quickhelp-color-background "black")
-(setq ccls-executable "/usr/bin/ccls")
+
+;; LSP performance recommended
+(setq read-process-output-max 1048576)
+(setq gc-cons-threshold 100000000)
+
 
 ;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
 (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
@@ -1057,21 +1085,29 @@ explicit input."
 
 (setq lsp-ui-peek-always-show t)
 
-(setq ccls-sem-highlight-method 'font-lock)
-(ccls-use-default-rainbow-sem-highlight)
+(with-eval-after-load 'ccls
+  (setq ccls-executable "/usr/bin/ccls")
+  (ccls-use-default-rainbow-sem-highlight)
+  (setq ccls-sem-highlight-method 'font-lock)
 ;;(setq ccls-sem-highlight-method nil)
 ;; We'll set these from the theme.  Uncomment for random themes.
-(setq ccls-args
-      (list
-       (concat "--init=" (json-encode
-                          (ht
-                           ;; ("index" (ht ("multiVersion" 1))) ;; 60G memory usage lol
-                           ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
-                           ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
-                                        ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
-       ;; Extra logging
-       "-log-file=/tmp/ccls.log"
-       "-v=1"))
+  (setq ccls-args
+        (list
+         (concat "--init=" (json-encode
+                            (ht
+                             ;; ("index" (ht ("multiVersion" 1))) ;; 60G memory usage lol
+                             ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
+                             ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
+                                          ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
+         ;; Extra logging
+         "-log-file=/tmp/ccls.log"
+         "-v=1")))
+
+;; ~/.config/clangd/config.yaml:
+;; # https://clangd.llvm.org/config
+;;   CompileFlags:
+;;     Add: [-Wall]
+(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--enable-config" "--all-scopes-completion" "--background-index"))
 
 (defun neph-clear-text-properties ()
   "Reset all text properties in the buffer."
@@ -1116,11 +1152,13 @@ explicit input."
 
 ;; LSP UI keys, some are not used but reserved from equivalents in rtags configuration
 (global-set-key (kbd "C-z C-,")   'lsp-ui-peek-find-references)
+(global-set-key (kbd "C-z C-.")   'xref-find-definitions)
+(global-set-key (kbd "M-.")       'lsp-ui-peek-find-definitions)
 (global-set-key (kbd "C-z C-<")   'ccls-call-hierarchy)
 (global-set-key (kbd "C-z ,")     'lsp-find-references)
 (global-set-key (kbd "C-z <tab>") 'lsp-ui-imenu)
 (global-set-key (kbd "C-z D")     'flycheck-list-errors)
-(global-set-key (kbd "C-z C-l")   'neph-lsp-reformat-definition)
+(global-set-key (kbd "C-z C-l")   'neph-lsp-reset)
 (global-set-key (kbd "C-z RET")   'helm-lsp-code-actions)
 (global-set-key (kbd "C-z .")     'helm-lsp-workspace-symbol)        ;; Menu to find symbol in project
 ;; (global-set-key (kbd "C-z >")     'helm-lsp-global-workspace-symbol) ;; Menu to find symbol in open projects
@@ -1141,6 +1179,20 @@ explicit input."
 (global-set-key (kbd "C-z <C-right>") (lambda () (interactive) (ccls-navigate "D")))
 (global-set-key (kbd "C-z <C-up>")    (lambda () (interactive) (ccls-navigate "L")))
 (global-set-key (kbd "C-z <C-down>")  (lambda () (interactive) (ccls-navigate "R")))
+
+;;
+;; Fix intelephense
+;;
+
+;; The vscode extension allows passing this based on the intelephense.maxMemory setting (which isn't actually an
+;; intelephense setting and glues this --max-old-space-size option into some node launching glue somewhere.)
+(with-eval-after-load "lsp-php"
+  (setq lsp-intelephense-server-command
+        (list "env" "NODE_OPTIONS=\"--max-old-space-size=24000\""
+              ;; Default path lookup the package does -- by putting 'env' first it breaks the register-time looking up
+              ;; of the path to the nested server, which isn't on PATH if it's auto-installed.
+              (or (executable-find "intelephense") (lsp-package-path 'intelephense))
+              "--stdio")))
 
 ;;
 ;; Irony-mode (deprecated)
@@ -1579,13 +1631,13 @@ explicit input."
 ;;(global-set-key (kbd "C-z C-M-c") 'gud-cont)
 
 ;;
-;; emacs-gdb -- weirdNox's replacement for gdb-mi
+;; emacs-gdb -- weirdNox's replacement for gdb-mi. kinda bad.
 ;;
 
-; (add-to-list 'load-path "~/.emacs.d/emacs-gdb")
-; (fmakunbound 'gdb)
-; (fmakunbound 'gdb-enable-debug)
-; (load-library "gdb-mi")
+(add-to-list 'load-path "~/.emacs.d/emacs-gdb")
+;; (fmakunbound 'gdb)
+;; (fmakunbound 'gdb-enable-debug)
+(load-library "gdb-mi")
 
 ;;(require 'neph-weirdnox-gdb-autoload)
 ;; FIXME automatically replace gdb-mi
@@ -1595,19 +1647,22 @@ explicit input."
 ;;
 
 (add-to-list 'load-path "~/.emacs.d/ido-vertical-mode")
-(autoload 'ido "ido" "Ido thing." t)
-(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
-(ido-mode t)
+(require 'ido)
+(require 'ido-vertical-mode)
+;(autoload 'ido "ido" "Ido thing." t)
+;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
 (ido-vertical-mode 1)
 
-;; Something keeps disabling this silently.
-;; Intercept it and print a backtrace.
-(defun neph-ido-mode (&optional arg)
-  "Advice to intercept `'ido-mode`' (with ARG) turning itself off and print a backtrace."
-  (when (and (not (called-interactively-p))
-             (not ido-mode))
-    (debug nil "NEPH: Something disabled ido-mode")))
-(advice-add 'ido-mode :after #'neph-ido-mode)
+;; global ido-mode is incompatible with helm mode, but we just want it for find file.  Which, annoyingly, gets
+;; intercepted by helm...
+(defun neph-ido-find-file ()
+  "Call 'ido-find-file' with ido enabled, then return to previous state."
+  (interactive)
+  (let ((was-ido-mode ido-mode))
+    (ido-mode t)
+    (unwind-protect (call-interactively 'ido-find-file)
+      (when (not was-ido-mode) (ido-mode -1)))))
+(global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
 
 ;;
 ;; Rainbow Delimiters
@@ -1987,6 +2042,9 @@ explicit input."
 (add-to-list 'load-path "~/.emacs.d/projectile")
 (add-to-list 'load-path "~/.emacs.d/helm-projectile")
 
+;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
+(setq helm-projectile-fuzzy-match nil)
+
 ;; In server mode, let's just load it synchronously
 (if (daemonp)
     (progn
@@ -2000,6 +2058,7 @@ explicit input."
 (autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
 (autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
 (autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
+(setq projectile-switch-project-action 'projectile-find-file)
 
 ;; If -alt appears in the path preceeding the final component, append -alt to the name
 ;; e.g. ~/git-alt/project shows up differently from ~/git/project
@@ -2019,19 +2078,22 @@ explicit input."
         default-name)))
 
 (with-eval-after-load "projectile"
-  ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
-  (setq helm-projectile-fuzzy-match nil)
-
+  (setq projectile-project-root-files
+        (remove "?*.sln" projectile-project-root-files))
   (setq projectile-completion-system 'helm)
-  (setq projectile-generic-command "fd . --hidden -0")
+  (setq projectile-generic-command "fd . -E '/.*cache' --hidden -0")
   (setq projectile-indexing-method 'alien)
   (setq projectile-project-name-function 'neph-projectile-project-name)
-  (setq projectile-enable-caching t)
+  (setq projectile-enable-caching nil)
   ;; caching big projects still very slow even with fd
   ;(setq projectile-files-cache-expire 3600)
   (projectile-global-mode t)
   (with-eval-after-load "helm"
-    (helm-projectile-on)))
+    ;; This just wraps some stuff with 'helpers' like helm-projectile-find-file which is hella slow because it tries to
+    ;; pull in dired too and such.  Should bind/turn on those things one and a time if they're handy, otherwise projectile
+    ;; commands already use the helm completion backend.
+    ;;(helm-projectile-on)
+    ))
 
 
 ;;(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
@@ -2052,7 +2114,12 @@ explicit input."
 (defun helm-projectile-rg-cpp()
   (interactive)
   (require 'helm-projectile)
-  (let ((helm-rg-default-extra-args (split-string-and-unquote "-t cpp -t c")))
+  (let ((helm-rg-default-extra-args (append helm-rg-default-extra-args (split-string-and-unquote "-t cpp -t c"))))
+    (call-interactively 'helm-projectile-rg)))
+(defun helm-projectile-rg-php()
+  (interactive)
+  (require 'helm-projectile)
+  (let ((helm-rg-default-extra-args (append helm-rg-default-extra-args (split-string-and-unquote "-t php"))))
     (call-interactively 'helm-projectile-rg)))
 (defun helm-projectile-ag-cpp-this-word()
   (interactive)
@@ -2080,6 +2147,7 @@ explicit input."
   (let ((helm-case-fold-search nil))
     ad-do-it))
 
+;; WIP migrating to project.el as possible
 (global-set-key (kbd "C-z M-f") 'projectile-find-file)
 (global-set-key (kbd "C-c p a") 'projectile-find-other-file) ;; did projectile drop this bind or did I break loading its map, who knows
 (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
@@ -2111,6 +2179,10 @@ explicit input."
 ;;
 (add-to-list 'load-path "~/.emacs.d/php-mode/lisp")
 (require 'php-mode)
+
+(add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
+(add-hook 'php-mode-hook 'neph-tab-cfg)
+(add-hook 'php-mode-hook 'neph-lsp-if-projectile)
 
 ;;
 ;; Web-mode
@@ -2148,6 +2220,10 @@ explicit input."
 (defun neph-base-cfg ()
   "Set minor modes and buffer-local settings for a coding-mode buffer."
   (display-line-numbers-mode t)
+  (setq truncate-lines t) ;; Lines go off screen
+  ;; Alternative, wrap at whitespace.
+  ;; With neither, hard-wraps at whatever char
+  ;; (visual-line-mode)
   (yas-minor-mode t)
   (smart-tabs-mode 0)
   (c-set-offset 'cpp-macro 0 nil) ;; Indent preprocessor macros with code instead of
@@ -2180,6 +2256,7 @@ explicit input."
   ;; Breaks in noninteractive mode
   (when (not noninteractive) (flycheck-mode t))
   (electric-pair-mode t)
+  (electric-indent-mode t)
   ;;(highlight-symbol-mode t) ;; Forces fontify maybe?
   (neph-set-whitespace-tab-override nil)
   (when (featurep 'rtags) (rtags-enable-standard-keybindings))
@@ -2879,8 +2956,8 @@ If this is a local file, turn it into a tramp file file with said information."
 (global-set-key (kbd "C-M-a") 'back-to-indentation)
 (global-set-key (kbd "C-S-k") 'kill-whole-line)
 ; Make ret auto-indent, but S-RET bypass
-(define-key global-map (kbd "RET") 'newline-and-indent)
-(global-set-key (kbd "<C-return>") 'newline)
+;(define-key global-map (kbd "RET") 'newline)
+(global-set-key (kbd "<C-return>") 'electric-indent-just-newline)
 ;; Merge with previous line
 (global-set-key (kbd "C-M-S-k") 'delete-indentation)
 
@@ -3374,6 +3451,7 @@ beginning of it and the point to the end of it if so"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
+ '(auto-compile-verbose t)
  '(company-backends
    '(company-capf company-irony company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
                   (company-dabbrev-code company-gtags company-etags company-keywords)
@@ -3395,6 +3473,10 @@ beginning of it and the point to the end of it if so"
  '(ido-vertical-define-keys 'C-n-and-C-p-only)
  '(irony-completion-availability-filter '(available deprecated notaccessible notavailable))
  '(lsp-enable-file-watchers nil)
+ '(lsp-enable-on-type-formatting nil)
+ '(lsp-intelephense-files-associations ["*.php" "*.phtml" "*.js" "*.css"])
+ '(lsp-intelephense-paths-include ["../common"])
+ '(lsp-intelephense-php-version "7.4.3")
  '(lsp-pyright-multi-root nil)
  '(lsp-rust-analyzer-server-display-inlay-hints t)
  '(lsp-semantic-tokens-enable t)
@@ -3402,7 +3484,7 @@ beginning of it and the point to the end of it if so"
  '(lsp-ui-doc-header t)
  '(lsp-ui-doc-include-signature t)
  '(lsp-ui-doc-position 'top)
- '(lsp-ui-peek-always-show t)
+ '(lsp-ui-peek-always-show nil)
  '(lsp-ui-peek-list-width 70)
  '(lsp-ui-sideline-show-code-actions t)
  '(markdown-command "marked")
