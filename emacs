@@ -250,6 +250,9 @@
 (require 'indent-bars)
 (setq indent-bars-width-frac 0.1)
 
+;; FIXME using emacs pgtk has broken stipple rendering until emacs 30. Remove this after that.
+(setq indent-bars-prefer-character t)
+
 ;; SiGnIfiCaNt WhItEsPaCe
 (add-hook 'python-mode-hook 'indent-bars-mode)
 (add-hook 'python-ts-mode-hook 'indent-bars-mode)
