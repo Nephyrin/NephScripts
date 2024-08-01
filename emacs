@@ -742,6 +742,8 @@ explicit input."
 (require 'helm-rg)
 (require 'rg)
 
+(setq helm-rg-default-extra-args '("--max-columns=120" "--max-columns-preview"))
+
 ;; Define a minor mode to lock rg bounce buffers into read-only and provide some quick access keys
 ;;
 ;; Pressing the default bind (C-c C-e) will turn off this mode and unlock helm-rg--bounce's editing mode, which is
