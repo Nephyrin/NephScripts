@@ -1741,7 +1741,7 @@ If FORCE is not specified, toggle the current state."
 ;; Mode line
 ;;
 
-(require 'neph-modeline-util "~/.emacs.d/neph-modeline-util.el")
+(require 'neph-modeline-util)
 (defun neph-fill-to (reserve)
   `(:eval (propertize " " 'display '(space :align-to (- right-margin
                                                         ,reserve)))))
@@ -3484,7 +3484,6 @@ beginning of it and the point to the end of it if so"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
- '(auto-compile-verbose t)
  '(company-backends
    '(company-capf company-irony company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
                   (company-dabbrev-code company-gtags company-etags company-keywords)
@@ -3627,7 +3626,5 @@ beginning of it and the point to the end of it if so"
  '(ccls-code-lens-face ((t (:inherit shadow :height 0.7))))
  '(ccls-code-lens-mouse-face ((t (:underline t)))))
 
-
-;;(byte-compile-file "~/.emacs.d/init.el")
-(provide 'init)
-;;; init.el ends here
+(provide 'neph-init)
+;;; neph-init.el ends here
