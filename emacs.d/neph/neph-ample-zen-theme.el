@@ -25,7 +25,8 @@
                         '(region ((t :background "#303030" )))
                         '(whitespace-trailing ((t :background "#764c4c")))
                         '(fill-column-indicator ((t :background nil :foreground "#444")))
-                        '(cursor ((t :background "#D96E26" ))))
+                        '(cursor ((t :background "#D96E26" )))
+                        '(lsp-inlay-hint-face ((t :foreground "#555" :height 0.7))))
 
 ;; linum
 (custom-theme-set-variables 'neph-ample-zen
