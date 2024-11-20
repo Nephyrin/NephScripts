@@ -1,3 +1,6 @@
+;; This nonsense has to be set before *any* LSP stuff is touched or loaded by e.g. compile-directory
+(setenv "LSP_USE_PLISTS" "true")
+
 ;; Don't load outdated .elc files, it's basically never what was intended.
 (setq load-prefer-newer t)
 

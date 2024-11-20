@@ -958,9 +958,6 @@ explicit input."
 ;; C++ Helper mode(s) : Company/lsp and associated helper libraries
 ;;
 
-;; This nonsense has to be set before any LSP stuff loads?
-(setenv "LSP_USE_PLISTS" "true")
-
 ;; cquery
 (setq lsp-pyright-multi-root nil)
 (require 'lsp-treemacs)
