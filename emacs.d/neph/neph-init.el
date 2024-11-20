@@ -19,7 +19,7 @@
   ""
   (interactive))
 
-(setq redisplay-dont-pause nil)
+(setq redisplay-dont-pause t)
 (setq inhibit-eval-during-redisplay nil)
 (setq fast-but-imprecise-scrolling t)
 (setq jit-lock-chunk-size 100)
