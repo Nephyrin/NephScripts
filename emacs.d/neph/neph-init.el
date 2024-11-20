@@ -1122,6 +1122,9 @@ explicit input."
          "-log-file=/tmp/ccls.log"
          "-v=1")))
 
+;; Default off
+(add-to-list 'lsp-disabled-clients 'ccls)
+
 (defun neph-toggle-ccls-client (&optional force)
   "Toggle the ccls LSP client.
 If FORCE is 'nil, enable ccls (remove from disabled list).
@@ -1148,7 +1151,7 @@ If FORCE is not specified, toggle the current state."
 ;; # https://clangd.llvm.org/config
 ;;   CompileFlags:
 ;;     Add: [-Wall]
-(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--enable-config" "--all-scopes-completion" "--background-index" "--rename-file-limit=0"))
+(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--enable-config" "--all-scopes-completion" "--background-index" "--rename-file-limit=0" "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
 
 (defun neph-clear-text-properties ()
   "Reset all text properties in the buffer."
