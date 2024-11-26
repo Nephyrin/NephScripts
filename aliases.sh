@@ -246,7 +246,8 @@ rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 # Shorthand rdp
 rdp()
 {
-  cmd xfreerdp /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 /v:"$1" "${@:2}"
+  cmd xfreerdp3 /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 \
+                /auth-pkg-list:'!kerberos' /gfx:AVC444:on,progressive:on /v:"$1" "${@:2}"
 }
 
 winepids()
