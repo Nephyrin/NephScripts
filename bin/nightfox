@@ -1,8 +1,14 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-source "$(dirname "$0")"/lib/util.sh
+# Electron apps fucking hang if the browser they invoke outputs anything on either pipe JFC
+exec &>/dev/null
+
+source "$(dirname -- "$0")"/lib/util.sh
+
+# Prepend script's directory to the path
+export PATH="$(readlink -f -- "$(dirname -- "$0")")${PATH:+:$PATH}"
 
 parse_args nightfox 'grp' 'no-omtc,slowscript' "$@"
 eval app_args=("$(get_args)")
@@ -15,7 +21,14 @@ eval app_args=("$(get_args)")
 # export MOZ_PROFILER_INTERVAL=10
 # export MOZ_PROFILER_MODE=combined
 # export MOZ_PROFILER_STACK_SCAN=0
-export MOZ_USE_XINPUT2=1
+export MOZ_USE_XINPUT2=0
+#export GDK_DPI_SCALE=1.7
+# Destroy FFX
+export __GL_THREADED_OPTIMIZATIONS=0
+export GDK_BACKEND=wayland
+export MOZ_ENABLE_WAYLAND=1
+# Breaks all font rendering if you don't have the right xdg-desktop-portal-{gnome,gtk}
+export GTK_USE_PORTAL=1
 
 plugin_container="$(get_option p)"
 
