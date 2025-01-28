@@ -276,10 +276,34 @@ rv() { cmd rsync -avy --progress "$@"; }
 rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 
 # Shorthand rdp
+# Tries to find xfreerdp2 or 3 as a fallback (which performs much worse) and launches it with sane options
 rdp()
 {
-  cmd xfreerdp3 /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 \
-                /auth-pkg-list:'!kerberos' /gfx:AVC444:on,progressive:on /v:"$1" "${@:2}"
+  local rdpcmd
+  local rdparg=()
+  if command -v xfreerdp2 &>/dev/null; then
+    rdpcmd=xfreerdp2
+  elif command -v xfreerdp &>/dev/null; then
+    rdpcmd=xfreerdp
+  elif command -v xfreerdp3 &>/dev/null; then
+    rdpcmd=xfreerdp3
+  else
+    eerr "Couldn't find xfreerdp binary"
+    return 1
+  fi
+
+  if $rdpcmd --version 2>/dev/null | grep -q 'version 2'; then
+    estat "Found xfreerdp v2.x, preferring"
+    rdparg=(/gfx:AVC444)
+  else
+    # v3 lags and chugs 1000% CPU with gfx pipeline for some reason, prefer rfx. v2 is great at it...?
+    estat "Couldn't find xfreerdp v2.x, assuming v3"
+    # Also it tries to init kerberos which nobody wants
+    rdparg=(/rfx /auth-pkg-list:'!kerberos')
+  fi
+
+  cmd $rdpcmd /dynamic-resolution /scale-desktop:140 /scale:140 /scale-device:140 /clipboard /w:1920 /h:1200 \
+              "${rdparg[@]}" /v:"$1" "${@:2}"
 }
 
 winepids()
