@@ -7,6 +7,18 @@
 # Profiling: Uncomment lines at bottom too
 # zmodload zsh/zprof
 
+# Bail out on old ZSH versions (e.g. containers) before loading p10k/ohmyzsh which will blow up
+if [[ ${ZSH_VERSION%.*} -lt 5 ]]; then
+  if [[ -n ${container-} && $- == *i* ]] && command -v bash &>/dev/null; then
+    # If we're specifically launching interactively in a old container, and bash is here, just slide over there.
+    echo 2>&1 "!! old zsh version in container, bouncing to bash"
+    exec bash -i
+  else
+    echo 2>&1 "!! old zsh version, cutting zshrc short"
+    return 0
+  fi
+fi
+
 # This seems to just make the prompt slower at startup? May be a bad interaction with gitstatusd.
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
 
