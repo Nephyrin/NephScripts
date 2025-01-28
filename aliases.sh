@@ -33,7 +33,7 @@ lowprio() {
 # creating a child process to run it.  From the shell's perspective, that command simply failed quickly, and any
 # complaining the shell itself writes to stderr is part of the command's output.
 #
-# Update: The s() alias below is a better way to do this in a systemd system.
+# The s() alias below is often a better way to do this in a systemd system.
 x() {
   # Warn if you're accidentally launching something in a cgroup (since that is not detached) using the neph cgroup
   # functions.
@@ -42,6 +42,8 @@ x() {
   # If `command -v` doesn't think this parses as something runnable, just run it bare so the shell-level
   # error/error-code occurs.  This means that `x some_typo --args` doesn't silently succeed, but errors exactly as
   # `some_typo --args` would.
+  #
+  # See warning above -- some classes of command will silently fail
   if command -v "${1-}" &>/dev/null; then
     ( "$@" &>/dev/null & )
   else
@@ -56,7 +58,8 @@ s()
   # --user - as this user, not system-level command
   # --same-dir - keep this working directory
   # --collect - don't leave failed units around for inspection
-  cmd systemd-run --user --same-dir --collect -- "$@"
+  # --property=ExitType=cgroup - Don't tear down the whole tree when the initial pid exits
+  cmd systemd-run --user --same-dir --collect --property=ExitType=cgroup -- "$@"
 }
 
 # spawns a detached command with systemd-run, but *without* preserving working directory.
@@ -65,7 +68,7 @@ s()
 # This is useful for spawning long-running things that don't care about working directory, without accidentally keeping
 # a reference to random temp directories or external mounts etc related to that process.
 S() {
-  cmd systemd-run --user --collect -- "$@"
+  cmd systemd-run --user --collect --property=ExitType=cgroup -- "$@"
 }
 
 # Set window title and tmux tab name
@@ -192,15 +195,26 @@ ncleanenv() {
   cmd exec env -i "${vars[@]}" "$execshell"
 }
 
+# nenv
+#   check for a systemd user session and import its environment, then re-exec/reload the shell
+#   useful for e.g. acquiring DISPLAY from an ssh environment or desync'd tmux session
+#
+# see also `systemd-run --user --shell`, which is going to connect you to a scope'd unit/shell in that environment
 nenv() {
-  local env
-  # If we don't even have a session bus try to find the default one for our user
-  if [[ -z $(sh -c 'printf %s "${DBUS_SESSION_BUS_ADDRESS-}"') ]]; then
-    local uid && uid=$(id -u)
-    local bus=/run/user/$uid/bus
-    [[ -n $uid && -e $bus ]] && export DBUS_SESSION_BUS_ADDRESS=unix:path=$bus
-  fi
+  if [[ $# -ne 0 ]]; then eerr "nenv takes no arguments"; return 1; fi
 
+  # If we don't even have a session bus try to find the default one for our user
+  #
+  # XXX: I don't remember why I added this, `systemctl --user` will try the default path already. It may not have
+  #      previously.
+
+  # if [[ -z ${DBUS_SESSION_BUS_ADDRESS-} ]]; then
+  #   local uid && uid=$(id -u)
+  #   local bus=/run/user/$uid/bus
+  #   [[ -n $uid && -e $bus ]] && export DBUS_SESSION_BUS_ADDRESS=unix:path=$bus
+  # fi
+
+  local env
   if env=$(systemctl --user show-environment 2>/dev/null); then
     # systemctl outputs this in bash/zsh-compatible escaped format with one variable per line.  Prepend 'export' to each
     # line.  Careful of bash/zsh differences here
@@ -208,23 +222,41 @@ nenv() {
     env=${env:+export $env}
     eval "$env"
     einfo "New env: DISPLAY=${DISPLAY:-<empty/unset>} WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-<empty/unset>}"
-    # Now reload zsh since we just stomped PATH etc
+    # Now re-exec shell since we just stomped PATH etc
     reload
   fi
 }
 
+# use wl-copy to throw a file on the clipboard as a file:// uri, which will be handled by most things that handle random
+# pastes of images/videos/etc..
+#
+# Doesn't try to also provide it as a full video/mp4 and etc etc
 uricopy() {
-  local file=$(realpath -e -- "$1")
-  local uri
-  uri="file://$file"
+  local file && file=$(realpath -e -- "$1")
+  local uri && uri="file://$file"
   einfo "copying $uri"
   printf %s "$uri" | wl-copy -t text/uri-list
 }
 
 # Re-execute or switch shell (to load new configs or whatever clearly)
+#
+# If no shell is provided, re-execs current shell
 reload() {
-  # $SHELL is the user's login shell, not what is currently running interactively.
-  local shell && shell=$(readlink -f /proc/$$/exe);
+  local shell
+  if [[ $# -ge 1 ]]; then
+    shell=$(command -v "$1")
+    if [[ -z $shell || ${shell:0:1} != / ]]; then
+      eerr "Given shell '$1' doesn't resolve to a binary"
+      return 1
+    fi
+  else
+    # note that $SHELL is the user's login shell, not what is currently running interactively
+    shell=/proc/$$/exe
+  fi
+  if ! shell=$(cmd realpath -e -- "$shell"); then
+    eerr "Couldn't resolve shell to execute"
+    return 1
+  fi
   local args
   # If we're a "login" shell use -l to re-exec too
   [[ $- = *l* ]] && args="-l"
