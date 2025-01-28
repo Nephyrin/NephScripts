@@ -319,13 +319,13 @@ _is_func() {
 # that \[\] escapes can be recognized, rather than literally in the prompt,
 # wherien they would not be after expansion.
 BASE_PS1="$PS1"
+_reprompt_hooks=()
 _reprompt() {
-  if [[ $(type -t _priv_reprompt) = function ]]; then
-    _priv_reprompt
-  else
-    unset PRIV_PS1
-  fi
   PS1="$_NEPH_PN_PS1$NEPH_CGROUP_PS1$PRIV_PS1$MOZ_PS1$NEPH_GIT_PS1$BASE_PS1"
+  local hook
+  for hook in "${_reprompt_hooks[@]}"; do
+    $hook
+  done
 }
 _reprompt
 

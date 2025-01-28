@@ -28,12 +28,14 @@ _neph_addtopath $NPRIV/bin
 _neph_zsh_post_init_funcs=()
 _neph_zsh_post_init() { _neph_zsh_post_init_funcs+=($@); }
 
-
 # Shared interactive shell startup.  Do before initializing instant-prompt. (so, this part not covered by instant-ness)
-[[ ! -f $NEPH/aliases.sh ]]                || source $NEPH/aliases.sh
-[[ ! -f $NEPH/interactive-shell-init.sh ]] || source $NEPH/interactive-shell-init.sh
-[[ ! -f $NPRIV/zshrc ]]                    || source $NPRIV/zshrc
-[[ ! -f ~/.zshrc.local ]]                  || source ~/.zshrc.local
+_neph_maybe_source() { [[ ! -f "$1" ]] || source "$1"; }
+_neph_maybe_source $NEPH/aliases.sh
+_neph_maybe_source $NEPH/interactive-shell-init.sh
+_neph_maybe_source $NPRIV/zshrc
+_neph_maybe_source ~/.zshrc.local
+_neph_maybe_source /usr/share/doc/git-extras/git-extras-completion.zsh
+unset _neph_maybe_source
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
