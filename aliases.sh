@@ -16,10 +16,17 @@
 #
 # If kernel compiles still caused dropped frames running under this, I'm starting a crusade.
 lowprio() {
-  cmd systemd-run --user --scope         \
-                  --property=CPUWeight=1 \
-                  --property=IOWeight=1  \
-                  nice -n20 chrt -i 0 "$@"
+    # The bash nesting nonsense is to set io.prio.class, since systemd currently doesn't let you set IOSchedulerClass on
+    # scope units, but that's the only way to have seamless environment inheritence.
+    # shellcheck disable=SC2016 # ON PURPOSE THANK YOU SHELLCHECK
+    local setcg='( _cg=$(cat /proc/self/cgroup) && echo idle > /sys/fs/cgroup/${_cg#*::}/io.prio.class; )'
+    cmd systemd-run --user --scope \
+                    --expand-environment=no \
+                    --property=MemoryHigh=50% \
+                    --property=CPUWeight=1 \
+                    --property=IOWeight=1 \
+                    nice -n20 chrt -i 0 ionice -c 3 \
+                    bash -c "$setcg && exec $(sh_quote "$@")"
 }
 
 # Run a command detached from the shell, with no connection to the tty or return code, etc..
