@@ -440,5 +440,13 @@ tt() {
   date --date="$date" +%s
 }
 
+# quickly select a bunch of local git branches to nuke
+git-fzf-delete-branches() {
+  local branch
+  for branch in $(git branch -l | grep -Eo '[^ ]+$' | fzf --multi); do
+    cmd git branch -d -- "$branch"
+  done
+}
+
 # Include local aliases
 [[ ! -f $HOME/.aliases.local.sh ]] || source "$HOME"/.aliases.local.sh
