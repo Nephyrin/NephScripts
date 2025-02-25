@@ -355,3 +355,9 @@
 [submodule "emacs.d/counsel-projectile"]
 	path = emacs.d/counsel-projectile
 	url = https://github.com/ericdanan/counsel-projectile.git
+[submodule "emacs.d/dape"]
+	path = emacs.d/dape
+	url = https://github.com/svaante/dape.git
+[submodule "emacs.d/jsonrpc"]
+	path = emacs.d/jsonrpc
+	url = https://github.com/emacs-straight/jsonrpc.git
