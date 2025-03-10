@@ -3278,6 +3278,21 @@ beginning of it and the point to the end of it if so"
 
 (global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
 
+;; kmacro-bind-to-key but wraps it in with-undo-amalgamate so it binds it as one atomic do/undo action
+(defun neph-kmacro-bind-to-key-amalgamate ()
+  (interactive)
+  ;; Hook kmacro-ring-head that kmacro-bind-to-key uses to get the last macro, return a lambda instead that calls it
+  ;; with undo-amalgamate. The macro `, fuckery means we call (kmacro-ring-head) at binding time and embed it in the
+  ;; returned lambda
+  (cl-letf* (((symbol-function 'kmacro-ring-head)
+              `(lambda ()
+                 (lambda () (interactive)
+                   (with-undo-amalgamate (funcall ,(kmacro-ring-head)))))))
+    (call-interactively 'kmacro-bind-to-key)))
+
+;; Non-hooked version is C-x C-k b
+(global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
+
 ;; Disabled (requires semantic)
 ;;(defun jump-to-container ()
 ;;  (interactive)
