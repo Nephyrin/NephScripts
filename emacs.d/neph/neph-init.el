@@ -978,15 +978,23 @@ explicit input."
 ;; Pyright settings are snapshot on library load??
 (setq lsp-pyright-multi-root nil)
 (require 'lsp-pyright)
-(require 'dap-mode)
-(require 'dap-cpptools)
-(require 'dap-ui)
-(require 'dap-mouse)
-(require 'dap-hydra)
+;;(require 'dap-mode)
+;;(require 'dap-cpptools)
+;;(require 'dap-ui)
+;;(require 'dap-mouse)
+;;(require 'dap-hydra)
+(require 'jsonrpc)
+(require 'dape)
 (require 'helm-lsp)
 (require 'lsp)
 ;;(require 'lsp-clangd)
 (require 'ccls)
+
+
+;; Dape config
+(add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+(setq dape-inlay-hints t)
+(setq dape-cwd-function 'projectile-project-root)
 
 (defun neph-hook-client-init (client func)
   "Add a post-call hook FUNC to the given lsp CLIENT."
@@ -1058,9 +1066,9 @@ explicit input."
             (setcar orig-result command-from-exec-path))
           (message "Using emacs-lsp-booster for %s!" orig-result)
           (cons "emacs-lsp-booster" orig-result))
+      (message "NOT using lsp-booster")
       orig-result)))
 (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
-
 
 (setq company-quickhelp-color-background "black")
 
