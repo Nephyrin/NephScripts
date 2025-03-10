@@ -1768,13 +1768,12 @@ If FORCE is not specified, toggle the current state."
       '(:eval (let* ((rawname (buffer-file-name))
                      (bufname (if rawname (propertize rawname 'face 'neph-modeline-path) nil))
                      ;; Paths to replace. Of the form ((search replace) ...)
-                     (replacements `((,(getenv "HOME") "~"))))
+                     (replacements (list (list (getenv "HOME") "~"))))
                 ;; Also replace projectile root with project name when available
                 (when (and (featurep 'projectile) (bound-and-true-p neph-cached-projectile-project-root))
-                  (add-to-list 'replacements
-                               (list
-                                neph-cached-projectile-project-root
-                                (concat neph-cached-projectile-project-name "/"))))
+                  (cl-pushnew (list neph-cached-projectile-project-root
+                                    (concat neph-cached-projectile-project-name "/"))
+                              replacements))
                 (if bufname
                     (progn
                       ;; Trim filename from path
@@ -1795,6 +1794,7 @@ If FORCE is not specified, toggle the current state."
                       ;; Return
                       bufname)
                   ""))))
+
 (setq neph-modeline-bufstat
       '(:eval (cond (buffer-read-only
                      (propertize " RO " 'face 'neph-modeline-stat-readonly))
