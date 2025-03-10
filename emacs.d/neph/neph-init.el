@@ -21,12 +21,12 @@
 
 (setq redisplay-dont-pause t)
 (setq inhibit-eval-during-redisplay nil)
-(setq fast-but-imprecise-scrolling t)
-(setq jit-lock-chunk-size 100)
-(setq jit-lock-defer-time 0)
-(setq jit-lock-stealth-load nil)
-(setq jit-lock-stealth-nice 0.01)
-(setq jit-lock-stealth-time 0.2)
+;(setq fast-but-imprecise-scrolling t)
+;(setq jit-lock-chunk-size 100)
+;(setq jit-lock-defer-time 0)
+;(setq jit-lock-stealth-load nil)
+;(setq jit-lock-stealth-nice 0.01)
+;(setq jit-lock-stealth-time 0.2)
 
 
 ;; Disable silly "type Y-E-S" prompts
