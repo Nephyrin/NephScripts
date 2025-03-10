@@ -82,6 +82,8 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/extra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ccls")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
+(neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc")
+(neph-add-to-load-path 'load-path "~/.emacs.d/dape")
 (neph-add-to-load-path 'load-path "~/.emacs.d/posframe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-ui")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-pyright")
