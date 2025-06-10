@@ -213,8 +213,8 @@
 ;; Evil
 ;;
 
-(require 'neph-evil-autoload)
-(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
+;(require 'neph-evil-autoload)
+;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
 
 ;;
 ;; Indent bars
@@ -591,8 +591,10 @@ explicit input."
 ;; Helm
 ;;
 
-(require 'helm-autoloads)
-;;(require 'helm)
+;;(require 'helm-autoloads)
+(require 'helm)
+(require 'helm-mode)
+(require 'helm-command)
 ;;(require 'helm-config)
 ;;(require 'helm-files)
 
@@ -891,7 +893,8 @@ explicit input."
 ;;
 ;; Company mode
 ;;
-(require 'neph-company-autoload)
+;;(require 'neph-company-autoload)
+(require 'company)
 
 (defun neph-company-setup ()
   (interactive)
@@ -1258,7 +1261,7 @@ If FORCE is not specified, toggle the current state."
 ;; Irony-mode (deprecated)
 ;;   DEPRECATED - going to drop if ccls + lsp keeps working well
 ;;
-(require 'neph-irony-autoload)
+;;(require 'neph-irony-autoload)
 
 ;; Bonus key to use counsel-irony if available
 (defun irony-mode-counsel-hook ()
@@ -2064,7 +2067,7 @@ If FORCE is not specified, toggle the current state."
 
 ;;
 ;; Flyspell-lazy
-(require 'neph-flyspell-lazy-autoload)
+;(require 'neph-flyspell-lazy-autoload)
 (setq flyspell-lazy-idle-seconds 1)
 (setq flyspell-lazy-window-idle-seconds 1)
 
@@ -2090,12 +2093,8 @@ If FORCE is not specified, toggle the current state."
 (setq helm-projectile-fuzzy-match nil)
 
 ;; In server mode, let's just load it synchronously
-(if (daemonp)
-    (progn
-      (require 'projectile)
-      (require 'helm-projectile))
-  (require 'neph-projectile-autoload)
-  (require 'neph-helm-projectile-autoload))
+(require 'projectile)
+(require 'helm-projectile)
 
 
 ;; Additional autoloads for helm-projectile
@@ -2528,7 +2527,7 @@ If this is a local file, turn it into a tramp file file with said information."
 ;;
 ;; Yaml mode
 ;;
-(require 'neph-yaml-mode-autoload)
+(require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
 (with-eval-after-load "yaml-mode"
