@@ -181,10 +181,12 @@ ncleanenv() {
 
   # Okay now systemd
   # If we can talk to it. Since this is supposed to be a clean environment, don't re-use existing bus address.
-  local bus=/run/user/$uid/bus
+
+  local bus=/run/user/$uid/bus # Should we honor XDG_RUNTIME_DIR from outer? Probably not if we want this to be a
+                               # 'escape dirty env', but if your system is non-standard this wont re-find systemd.
   if [[ -n $uid && -e $bus ]]; then
     local senv
-    if senv=$(DBUS_SESSION_BUS_ADDRESS=unix:path=$bus systemctl --user show-environment 2>/dev/null); then
+    if senv=$(DBUS_SESSION_BUS_ADDRESS=unix:path=$bus /usr/bin/systemctl --user show-environment 2>/dev/null); then
       local senvvar
       while IFS= read -r -d $'\n' senvvar; do
         local var=${senvvar%%=*}
