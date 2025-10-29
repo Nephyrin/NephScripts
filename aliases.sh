@@ -284,6 +284,26 @@ pd() { git diff --no-index --color=always "$@" | diff-so-fancy | less --tabs=4 -
 rv() { cmd rsync -avy --progress "$@"; }
 rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
 
+# Journalctl wrapper for custom output format that includes both kinds of timestamp
+pjournal() {
+  # To get all the fields available do `journalctl -b -e -o json`
+  # The timestamp fields have to come before any space-containing fields so awk can target them without fanciness
+  local jq_format='
+    "\(.__REALTIME_TIMESTAMP) \(._HOSTNAME) \(.SYSLOG_IDENTIFIER)[\(._PID)]: \(.__MONOTONIC_TIMESTAMP) \(.MESSAGE)"
+  ';
+
+  local awk_format='
+    {
+      $4 = sprintf("[%.6f]", $4/100000);
+      $1 = strftime("%e %b %y %H:%M:%S", $1 / 1000000);
+      print
+    }
+  ';
+
+  journalctl "$@" -o json | stdbuf -oL jq -r "$jq_format" | awk "$awk_format"
+}
+
+
 # Shorthand rdp
 # Tries to find xfreerdp2 or 3 as a fallback (which performs much worse) and launches it with sane options
 rdp()
