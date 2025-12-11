@@ -62,6 +62,7 @@ x() {
 # cgrouping and such like top-level apps enjoy.
 s()
 {
+  # --property=ExitType=cgroup - keep around until whole tree exits, not a well-behaved service process
   # --user - as this user, not system-level command
   # --same-dir - keep this working directory
   # --collect - don't leave failed units around for inspection
