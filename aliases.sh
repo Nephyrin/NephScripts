@@ -365,16 +365,25 @@ killwine()
 
 ct()
 {
-    dir=$(mktemp -d -t nephtmp.XXXXXXX)
-    export NEPH_TEMP_DIR="$dir"
-    cd "$dir"
+  local i=0
+  local dir
+  local attempt
+  while [[ -z $dir ]] && (( ++i <= 10 )); do
+    local name=$(n_commonword 1 4 4)
+    [[ -n $name ]] || { ewarn "can't generate common words on this system, no dictionary?"; name=XXX; }
+    attempt="${TMPDIR:-/tmp}/neph-$name"
+    ( umask 077 && mkdir -v -- "$attempt"; ) && dir=$attempt
+  done
+  [[ -d $dir ]] || { eerr "Couldn't find an unused name after ten attempts?"; return 1; }
+  export NEPH_TEMP_DIR="$dir"
+  cd "$dir" || { eerr ; return 1; }
 }
 
 clt()
 {
   # (This matches how mktemp picks)
   local tmpdir=${TMPDIR:-/tmp}
-  for x in "$tmpdir"/nephtmp.*; do
+  for x in "$tmpdir"/neph-*; do
     if [[ ! -d $x || -L $x ]]; then
       ewarn "$x: Not a simple directory, ignoring"
       continue

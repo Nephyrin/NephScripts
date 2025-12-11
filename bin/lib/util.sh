@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #
 # These utilities try to remain compatible with both bash+zsh currently with minimal divergance.
 #
@@ -78,6 +77,55 @@ formatBytes() {
     printf "%${pad}s" " "
   fi
   echo
+}
+
+# n_is_shell_integer <input> [input...]
+#
+# Checks that the input is comprised of digits, in its canonical base-ten representation for the current shell, and in
+# the valid range of integer inputs for the current shell.
+#
+# Notable: '0123' is rejected as non-canonical. Bash parses 0123 as 81b10 while zsh parses it as 123b10, which alone
+#          justifies this rule.
+#
+# Notable 2: zsh reports "number truncated after 18 digits" for -9223372036854775808 on 64bit platforms, even though
+#            they can be _computed_ in math expressions (2**63), which appears to be a zsh bug.  This function properly
+#            returns false there, as you cannot work with that number as an input.
+#
+#            19 digit inputs that are in the range of [INT_MIN+1, INT_MAX] are valid despite that error message!
+n_validnum() {
+  local input
+  for input in "$@"; do
+  # Non-alphanumeric input like `1e+100` or `1.2` can round-trip through zsh but are treated as floats
+  #
+  # "0123" or "" blocked by this regex but would fail the roundtrip test regardless.
+    [[ $input =~ ^[1-9][0-9]*$ && $(( input + 0 )) = "$input" ]]
+  done
+}
+
+# n_commonword [count(=1) [min_length(=3) [max_length(=5)]]]
+#
+# outputs a word from /usr/share/dict/words
+#
+# word must be between the given lengths and be soley comprised of lowercase latin letters
+#
+# !! in some languages that constraint may yield few or no available words
+#
+# Returns code 1 with no output if there is not dictionary available or it does not contain sufficient words to fulfill
+# request.
+n_commonword() {
+  local words
+  local count="${1-1}"
+  local min="${2-3}"
+  local max="${3-5}"
+  (n_validnum "$count" "$min" "$max" && (( min <= max ))) || die "invalid arguments to n_commonword"
+  words="$(cat /usr/share/dict/words | grep -E "^[a-z]{$min,$max}$" | shuf -n"$count")"
+  if n_is_zsh; then
+    words=("${(f)${words:-}}")
+  else
+    read -a -r -d'' words <<< "$words"
+  fi
+  [[ ${#words[@]} -eq $count ]] || return 1
+  printf "%s\n" "${words[@]}"
 }
 
 eprompt() {
