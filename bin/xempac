@@ -3,11 +3,17 @@
 set -e
 . ~/bin/lib/util.sh
 
-# Wrapper for pacnew management scripts for emacs ediff-merge-files + tramp/sudo
+cmd=xe
 
+if [[ -z $DISPLAY && -z $WAYLAND_DISPLAY ]]; then
+  ewarn "No display, using ec"
+  cmd=ec
+fi
+
+# Wrapper for pacnew management scripts for emacs ediff-merge-files + tramp/sudo
 if [[ $# -ne 1 || ! -f $1 || ! -f $1.pacnew ]]; then
   eerr "Requires one file, which must have a .pacnew"
   return 1
 fi
 file="$(readlink -f "$1")"
-cmd emacs --eval "(ediff-merge-files \"$file\" \"$file.pacnew\" nil \"/sudo:localhost:$file\")"
+cmd "$cmd" --eval "(ediff-merge-files \"$file\" \"$file.pacnew\" nil \"/sudo:localhost:$file\")"
