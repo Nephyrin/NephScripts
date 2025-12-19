@@ -1,81 +1,42 @@
 #!/bin/bash
 
-## xe: opens its argument in a new emacs-daemon-mode GUI frame, spawning the emacs daemon and/or creating a new frame as
-##     necessary.  Along with 'ec' is the entrypoint to just "do what i mean" opening/managing files with a single
-##     persistent emacs.
+## xe: Do-what-I-mean command to asynchronously open the given file in a GUI emacs frame on the current session's
+##     display, creating one if none are present.
 ##
-## See 'ec' for the terminal verison
+##     Spawns the emacs daemon if it isn't running (which is why it's not just an emacsclient alias).
+
+# Use paired `ec` command for connecting to emacs in terminal (e.g. as $EDITOR).  `xe` doesn't auto-fallback to terminal
+# in non-GUI sessions because it is meant to be an asynchronous pass-to-editor-elsewhere entrypoint.
 
 set -euo pipefail
 
 . ~/bin/lib/util.sh
 
-##
-## xe: Do-what-I-mean command to open the given file in a GUI emacs frame on the current display, creating one if none
-## are present.  Additionally spawns the emacs daemon if it is not running.
-##
-##  This is *almost* just `emacsclient -a '' -n "$file"` -- but there is no "create if not found" option and no return
-##  code to determine that, so we need to write our own elisp script for that behavior.  Emacsclient also tries to set
-##  windows to be bound to the daemon, so closing them exits it, which is also dumb.
-##
+# With -e/--eval we pass elisp-to-evaluate to emacsclient, otherwise files.
+parse_args 'xe' 'e' 'eval' "$@" || die "Usage: xe [--eval] [--] {file|elisp_to_eval}"
 
-# Usage
-[[ $# -eq 1 && -n "${1-}" ]] || die "Usage: xe <file>"
-file="$1"
-[[ ${file:0:1} = / ]] || file="$PWD/$file"
+options=()
+[[ -n "$(get_merged_option e eval)" ]] && options+=(-e)
+args=()
+eval args=\("$(get_args)"\)
 
-# Use paired 'ec' command for terminal.  We don't want to auto-fallback to terminal mode emacs because xe is expected to
-# be non-blocking, I pass things to the GUI session from random terminals often enough for this to make sense.
-[[ -n ${DISPLAY-} ]] || ewarn "xe: no \$DISPLAY set, defaulting to :0"
-DISPLAY=${DISPLAY-:0}
+# Sanity
+emacsclient --version || die "emacsclient command non-functional"
 
-# There's no proper way to pass quoted data to emacsclient (other than like, making a fifo/file and reading it in
-# elisp), but the quoting format is pretty simple so I think this is complete.  This file has so many comments because
-# emacs sucks at this oh man.
-#   https://www.gnu.org/software/emacs/manual/html_node/elisp/Syntax-for-Strings.html
-elisp_string() {
-  local dat="$*"
-  # \ -> \\
-  dat=${dat//\\/\\\\}
-  # " -> \"
-  dat=${dat//\"/\\\"}
-  printf "\"%s\"" "$dat"
-}
+if ! emacsclient --eval t &>/dev/null; then
+  einfo "cannot talk to emacs, trying to spawn emacs and trying again"
+  # Spawn emacs in the graphical session
+  if ! systemctl --user show-environment | grep -qE '^(WAYLAND_)?DISPLAY='; then
+    die "emacs isn't running, and no session with a display appears to exist to spawn it"
+  fi
+  # This will block until emacs forks into the background post-daemon-start.
+  cmd systemctl --user reset-failed neph-emacs || true
+  cmd systemd-run --user --unit=neph-emacs --property=Type=forking -- emacs --daemon || true
+  if ! systemctl --user is-active neph-emacs >/dev/null; then
+    eerr "failed to talk to emacs, spawning emacs also didn't work:"
+    cmd systemctl --user status neph-emacs
+    die ':('
+  fi
+fi
 
-defvar() { IFS='' read -r -d '' "$*" || true; }
-efile=$(elisp_string "$file")
-edisplay=$(elisp_string "$DISPLAY")
-
-# elisp script to find or create a gui frame on this display and use it to visit the passed file
-#
-# In order, will select:
-# - Selected frame in emacs, if it is on this display
-# - The first visible frame on this display
-# - A new frame on this display
-#
-# ... and then call (find-file)
-defvar elisp <<ENDELISP
-(let* ((file $efile)
-       (display $edisplay)
-       ;; Cannot use frames-on-display-list as it errors if there are none.  It also thinks terminal windows are on
-       ;; "display :0" if they were launched with $DISPLAY set, as some kind of malicious compliance, so check the frame
-       ;; type.
-       (displayframes (filtered-frame-list
-                       (lambda (frame)
-                         (and (frame-visible-p frame)
-                              (member (framep frame) '(x ns w32))
-                              (equal (frame-parameter frame 'display) display))))))
-  (when (not (member (selected-frame) displayframes))
-    ;; The currently selected frame isn't a matching gui frame, select or spawn one
-    (select-frame (if (> (length displayframes) 0)
-                      ;; Just use the first one if some exist
-                      (car displayframes)
-                    ;; Otherwise make a new one.  We need to mark it nowait so it will not try to exit emacs on close.
-                    (make-frame-on-display display '((client . nowait))))))
-  ;; Actually load the file and focus the frame
-  (find-file file)
-  (raise-frame))
-ENDELISP
-
-# -a '' causes emacsclient to spawn the daemon if it isn't running
-emacsclient -a '' --eval "$elisp" >/dev/null
+cmd emacsclient -n -r "${options[@]}" -- "${args[@]}"

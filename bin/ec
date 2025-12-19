@@ -1,11 +1,14 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
+source ~/bin/lib/util.sh
 
 # This could be an alias, but then it wouldn't play nice with $EDITOR
-if ! emacsclient --eval '()' &>/dev/null; then
-  echo >&2 ":: Emacs isn't running, spawning now"
-  emacs --daemon
-fi
+parse_args 'ec' 'e' 'eval' "$@" || die "Usage: ec [--eval] [--] {file|elisp_to_eval}"
 
-emacsclient -t "$@"
+options=()
+[[ -n "$(get_merged_option e eval)" ]] && options+=(-e)
+args=()
+eval args=\("$(get_args)"\)
+
+emacsclient -a "" -t "${options[@]}" -- "${args[@]}"
