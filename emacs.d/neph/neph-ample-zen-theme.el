@@ -19,13 +19,14 @@
                         '(mode-line-inactive ((t ( :background "#555"
                                                    :foreground "#999"
                                                    :box (:line-width 1 :color "#333" :style nil)))))
-                        '(hl-line ((t :background "#302020"
-                                      :box (:line-width -1 :color "#777" :style nil))))
+                        '(hl-line ((t :background "#1b1b1b")))
+                                     ;; :box (:line-width -1 :color "#777" :style nil))))
                         '(whitespace-tab ((t  :background "#242424" )))
                         '(region ((t :background "#303030" )))
                         '(whitespace-trailing ((t :background "#764c4c")))
                         '(fill-column-indicator ((t :background nil :foreground "#444")))
                         '(cursor ((t :background "#D96E26" )))
+                        '(copilot-overlay-face ((t :foreground "#7A5555" )))
                         '(lsp-inlay-hint-face ((t :foreground "#555" :height 0.7))))
 
 ;; linum

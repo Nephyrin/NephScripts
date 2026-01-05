@@ -117,6 +117,7 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/mmm-jinja2")
 (neph-add-to-load-path 'load-path "~/.emacs.d/salt-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-modes")
+(neph-add-to-load-path 'load-path "~/.emacs.d/cond-let") ;; dep of magit
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-transient/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-popup")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-ghub/lisp")

@@ -361,3 +361,9 @@
 [submodule "emacs.d/jsonrpc"]
 	path = emacs.d/jsonrpc
 	url = https://github.com/emacs-straight/jsonrpc.git
+[submodule "emacs.d/cond-let"]
+	path = emacs.d/cond-let
+	url = https://github.com/tarsius/cond-let.git
+[submodule "emacs.d/llama"]
+	path = emacs.d/llama
+	url = https://github.com/tarsius/llama.git

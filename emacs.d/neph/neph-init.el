@@ -220,10 +220,18 @@
 ;; Indent bars
 ;;
 (require 'indent-bars)
-(setq indent-bars-width-frac 0.1)
+(require 'indent-bars-ts)
+(setq indent-bars-width-frac 0.05)
 
-;; FIXME using emacs pgtk has broken stipple rendering until emacs 30. Remove this after that.
-(setq indent-bars-prefer-character t)
+(setq indent-bars-treesit-support t)
+(setq indent-bars-treesit-wrap '((python argument_list parameters
+                                         list list_comprehension
+                                         dictionary dictionary_comprehension
+                                         parenthesized_expression subscript)))
+(setq indent-bars-treesit-ignore-blank-lines-types '("module"))
+
+(setq indent-bars-prefer-character nil)
+(setq indent-bars-depth-update-delay 0.0)
 
 ;; SiGnIfiCaNt WhItEsPaCe
 (add-hook 'python-mode-hook 'indent-bars-mode)
@@ -302,6 +310,10 @@ explicit input."
 ;;
 
 (require 'rustic)
+
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
+(setq rustic-indent-offset 2)
+(setq rust-indent-offset 2)
 
 ;;
 ;; Lua mode
@@ -963,6 +975,7 @@ explicit input."
 
 ;; cquery
 (setq lsp-pyright-multi-root nil)
+(setq lsp-pyright-langserver-command "pyright")
 (require 'lsp-treemacs)
 (require 'treemacs)
 (require 'treemacs-mouse-interface)
@@ -1249,13 +1262,14 @@ If FORCE is not specified, toggle the current state."
 
 ;; The vscode extension allows passing this based on the intelephense.maxMemory setting (which isn't actually an
 ;; intelephense setting and glues this --max-old-space-size option into some node launching glue somewhere.)
-(with-eval-after-load "lsp-php"
-  (setq lsp-intelephense-server-command
-        (list "env" "NODE_OPTIONS=\"--max-old-space-size=36000\""
-              ;; Default path lookup the package does -- by putting 'env' first it breaks the register-time looking up
-              ;; of the path to the nested server, which isn't on PATH if it's auto-installed.
-              (or (executable-find "intelephense") (lsp-package-path 'intelephense))
-              "--stdio")))
+;; FIXME lsp-package-path doesn't work if intelephense isn't installed and i gave up on reading the garbage code
+;;(with-eval-after-load "lsp-php"
+;;  (setq lsp-intelephense-server-command
+;;        (list "env" "NODE_OPTIONS=\"--max-old-space-size=24000\""
+;;              ;; Default path lookup the package does -- by putting 'env' first it breaks the register-time looking up
+;;              ;; of the path to the nested server, which isn't on PATH if it's auto-installed.
+;;              (or (executable-find "intelephense") (lsp-package-path 'intelephense))
+;;              "--stdio")))
 
 ;;
 ;; Irony-mode (deprecated)
@@ -2383,7 +2397,11 @@ If FORCE is not specified, toggle the current state."
 (add-to-list 'auto-mode-alist '("/yaourtrc\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("/bash-fc.[^/]+\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.ma?k\\'" . makefile-mode))
+(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.service.d/.+\\.conf\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.sch\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.svelte\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . neph-bash-mode))
 (add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
 ;; Default .j2 files to conf-mode, though these are jinja files that could be anything
@@ -2409,6 +2427,8 @@ If FORCE is not specified, toggle the current state."
 (add-hook 'lisp-mode-hook 'neph-space-cfg)
 (add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
 (add-hook 'rustic-mode-hook 'neph-space-cfg)
+(add-hook 'conf-mode-hook 'neph-space-cfg)
+(add-hook 'typescript-ts-mode-hook 'neph-space-cfg)
 (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
@@ -2466,6 +2486,25 @@ If FORCE is not specified, toggle the current state."
 
 (require 'tramp)
 (setq tramp-default-method "sshx")
+
+;; suck less?
+;;(setq remote-file-name-inhibit-locks t)
+(setq tramp-use-scp-direct-remote-copying t)
+;;(setq remote-file-name-inhibit-auto-save-visited t)
+;; Use direct-async-process
+(connection-local-set-profile-variables
+ 'remote-direct-async-process
+ '((tramp-direct-async-process . t)))
+(connection-local-set-profiles
+ '(:application tramp :protocol "scp")
+ 'remote-direct-async-process)
+(connection-local-set-profiles
+ '(:application tramp :protocol "rsync")
+ 'remote-direct-async-process)
+;; Fix magit in that mode
+;; https://github.com/magit/magit/issues/5220
+(setq magit-tramp-pipe-stty-settings 'pty)
+
 ; No auto-save
 (defun tramp-set-auto-save ()
   (auto-save-mode -1))
@@ -2491,8 +2530,8 @@ If FORCE is not specified, toggle the current state."
         (kill-buffer buffer))))
   (message "Dropped sudo buffers"))
 
-(global-set-key (kbd "C-z C-S-u") 'sudoize-buffer)
-(global-set-key (kbd "C-z C-M-S-u") 'drop-sudo)
+(global-set-key (kbd "C-z C-u") 'sudoize-buffer)
+(global-set-key (kbd "C-z C-M-u") 'drop-sudo)
 
 (defun neph-prepend-tramp-hop (filename method user host)
   "Given a FILENAME, prepend a hop to the tramp chain with METHOD USER and HOST.
@@ -3407,6 +3446,7 @@ beginning of it and the point to the end of it if so"
 (require 'magit-blame)
 (global-set-key (kbd "C-z C-<return>") 'magit-status)
 (global-set-key (kbd "C-z L") 'magit-blame-mode)
+(global-set-key (kbd "C-z x") 'magit)
 (global-set-key (kbd "C-z X") 'magit-ediff-stage)
 (global-set-key (kbd "C-z C") 'magit-commit)
 
