@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# xe which -- run `which` on something and open source file with `xe`
+
+set -euo pipefail
+# shellcheck source=./lib/util.sh
+. ~/bin/lib/util.sh
+parse_args 'xew' '' '' "$@" || die "Usage: xew [--] file [file...]"
+
+eval args="($(get_args))"
+files=()
+for file in "${args[@]}"; do
+  files+=("$(which -- "$file")") || die "Couldn't find $file"
+done
+cmd xe -- "${files[@]}"
