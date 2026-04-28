@@ -300,7 +300,8 @@
 	url = https://github.com/volrath/treepy.el
 [submodule "emacs.d/helm-rg"]
 	path = emacs.d/helm-rg
-	url = https://github.com/cosmicexplorer/helm-rg
+	# Upstream abandoned
+	url = https://github.com/nephyrin/helm-rg
 [submodule "emacs.d/posframe"]
 	path = emacs.d/posframe
 	url = git@github.com:tumashu/posframe.git
