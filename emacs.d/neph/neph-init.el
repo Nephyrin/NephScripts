@@ -181,12 +181,48 @@
   (desktop-save-mode 1))
 
 ;;
+;; Misc yank/text/font handling helpers
+;;
+
+(defun neph-yank-with-properties ()
+  "Yank text without stripping properties."
+  (interactive)
+  (let ((yank-excluded-properties nil))
+    (yank)))
+
+(defun neph-copy-face-to-font-lock-face (start end)
+  "Copy all 'face' properties with 'font-lock-face' in the region START to END."
+  (interactive "r")
+  (save-excursion
+    (let ((pos start))
+      (while (< pos end)
+        (let ((next (next-single-property-change pos 'face nil end))
+              (current-face (get-text-property pos 'face)))
+          (when current-face
+            ;; Add the new property
+            (put-text-property pos next 'font-lock-face current-face)
+            ;; Remove the old property
+            )
+            ;;(remove-list-of-text-properties pos next '(face)))
+          (setq pos next))))))
+
+;;
 ;; Xterm color
 ;;
 (require 'xterm-color)
 ;(require 'eterm-256color) FIXME debug-init
 
-;(add-hook 'term-mode-hook #'eterm-256color-mode)
+;;(add-hook 'term-mode-hook #'eterm-256color-mode)
+
+(defun neph-term-color-region (start end)
+  "Turn terminal color codes into text properties in START to END (defaults to region interactively)."
+  (interactive "r")
+    (let ((region (buffer-substring start end)))
+      (delete-region start end)
+      (goto-char start)
+      (insert (xterm-color-filter region))
+      ;; Also convert this text to font-lock-face so it's stickier
+      (neph-copy-face-to-font-lock-face start (point))))
 
 ;;
 ;; Protobuf mode
