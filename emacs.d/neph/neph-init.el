@@ -2162,7 +2162,7 @@ If FORCE is not specified, toggle the current state."
 
 ;;
 ;; Flyspell-lazy
-;(require 'neph-flyspell-lazy-autoload)
+(require 'flyspell-lazy)
 (setq flyspell-lazy-idle-seconds 1)
 (setq flyspell-lazy-window-idle-seconds 1)
 
