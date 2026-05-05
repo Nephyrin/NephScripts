@@ -1198,7 +1198,10 @@ If FORCE is not specified, toggle the current state."
                             (not is-disabled)
                           force)))
     (if should-disable
-        (add-to-list 'lsp-disabled-clients 'ccls)
+        (progn
+          (setq lsp-semantic-tokens-enable t)
+          (add-to-list 'lsp-disabled-clients 'ccls))
+      (setq lsp-semantic-tokens-enable nil)
       (setq lsp-disabled-clients (remove 'ccls lsp-disabled-clients)))
     (message "ccls LSP client %s" (if should-disable "disabled" "enabled"))))
 
@@ -1213,7 +1216,10 @@ If FORCE is not specified, toggle the current state."
 ;; # https://clangd.llvm.org/config
 ;;   CompileFlags:
 ;;     Add: [-Wall]
-(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--enable-config" "--all-scopes-completion" "--background-index" "--rename-file-limit=0" "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
+(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--query-driver=/usr/bin/**/clang-*,/usr/bin/**/clang++-*,/usr/bin/**/gcc-*,/usr/bin/**/g++-*,/usr/bin/g++,/usr/bin/gcc,/usr/bin/clang,/usr/bin/clang++" "--enable-config"
+                                "-j" "50" "--log=info"
+                                "--all-scopes-completion" "--background-index" "--rename-file-limit=0"
+                                "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
 
 (defun neph-clear-text-properties ()
   "Reset all text properties in the buffer."
