@@ -1022,7 +1022,7 @@ explicit input."
 (require 'treemacs-mouse-interface)
 (require 'treemacs-hydras)
 (require 'pkg-info)
-(require 'lsp)
+(require 'lsp-mode)
 (require 'company)
 (require 'company-quickhelp)
 ;;(require 'treemacs-projectile)
@@ -1043,7 +1043,6 @@ explicit input."
 (require 'jsonrpc)
 (require 'dape)
 (require 'helm-lsp)
-(require 'lsp)
 ;;(require 'lsp-clangd)
 (require 'ccls)
 
