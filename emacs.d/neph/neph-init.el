@@ -1224,7 +1224,9 @@ If FORCE is not specified, toggle the current state."
 (defun neph-clear-text-properties ()
   "Reset all text properties in the buffer."
   (interactive)
-  (with-silent-modifications (set-text-properties (buffer-end 0) (buffer-end 1) nil)))
+  (with-silent-modifications
+    (delete-all-overlays)
+    (set-text-properties (buffer-end 0) (buffer-end 1) nil)))
 
 (defun neph-lsp-reset ()
   "Reconnects to LSP, fixing annoying CCLS highlighting bug."
