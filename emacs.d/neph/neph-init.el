@@ -2223,7 +2223,7 @@ If FORCE is not specified, toggle the current state."
   (setq projectile-generic-command "fd . -E '/.*cache' --hidden -0")
   (setq projectile-indexing-method 'alien)
   (setq projectile-project-name-function 'neph-projectile-project-name)
-  (setq projectile-enable-caching nil)
+  (setq projectile-enable-caching 'persistent)
   ;; caching big projects still very slow even with fd
   ;(setq projectile-files-cache-expire 3600)
   (projectile-global-mode t)
@@ -2299,8 +2299,9 @@ If FORCE is not specified, toggle the current state."
 (global-set-key (kbd "C-z C-G") 'projectile-grep)
 (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
 (global-set-key (kbd "C-z B") 'helm-buffers-list)
-(global-set-key (kbd "C-z p") 'helm-projectile-switch-project)
-;(global-set-key (kbd "C-z C-p") 'helm-projectile)
+(global-set-key (kbd "C-z p") 'projectile-switch-project)
+;; No, this is used as a prefix elsewhere
+;;(global-set-key (kbd "C-z C-p") 'helm-projectile)
 
 ;; Switch project action
 (defun neph-projectile-switch-and-rg ()
