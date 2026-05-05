@@ -2489,8 +2489,9 @@ If FORCE is not specified, toggle the current state."
 (add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
 ;; Default .j2 files to conf-mode, though these are jinja files that could be anything
 (add-to-list 'auto-mode-alist '("\\.j2\\'" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 ;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
 (defun neph-js-mode-hook ()
   "Set minor modes and buffer-local configuration for js language buffers."
@@ -2501,6 +2502,7 @@ If FORCE is not specified, toggle the current state."
 (add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
 (add-hook 'js-mode-hook 'neph-js-mode-hook)
 (add-hook 'typescript-ts-mode-hook 'neph-tab-cfg)
+(add-hook 'tsx-ts-mode-hook 'neph-tab-cfg)
 (add-hook 'sh-mode-hook 'neph-space-cfg)
 (add-hook 'conf-space-mode-hook 'neph-space-cfg)
 (add-hook 'sql-mode-hook 'neph-space-cfg)
@@ -2512,6 +2514,7 @@ If FORCE is not specified, toggle the current state."
 (add-hook 'rustic-mode-hook 'neph-space-cfg)
 (add-hook 'conf-mode-hook 'neph-space-cfg)
 (add-hook 'typescript-ts-mode-hook 'neph-space-cfg)
+(add-hook 'go-ts-mode-hook 'neph-space-cfg)
 (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
@@ -2523,6 +2526,8 @@ If FORCE is not specified, toggle the current state."
 (add-hook 'python-mode-hook 'neph-lsp-if-projectile)
 (add-hook 'python-ts-mode-hook 'neph-lsp-if-projectile)
 (add-hook 'typescript-ts-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'tsx-ts-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'go-ts-mode-hook 'neph-lsp-if-projectile)
 
 (add-hook 'lsp-after-open-hook 'neph-lsp-mode)
 
