@@ -461,7 +461,9 @@ explicit input."
       (htmlize-region (point) (mark))
     (write-file "~/.emacs.d/htmlize-temp.htm"))
   ;;(kill-buffer)))
-  (start-process-shell-command "neph-html-region" nil "chromium ~/.emacs.d/htmlize-temp.htm"))
+  ;; FIXME font from (face-attribute 'default :family)
+  ;; FIXME charset utf-8?
+  (start-process-shell-command "neph-html-region" nil "xdg-open ~/.emacs.d/htmlize-temp.htm"))
 
 (defun neph-html-copy ()
   "Copy the selected region to the clipboard as html.  Requires awk and xclip be available."
