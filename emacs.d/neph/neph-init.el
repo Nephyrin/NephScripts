@@ -2070,30 +2070,63 @@ If FORCE is not specified, toggle the current state."
 ;; p4.el
 (autoload 'p4 "p4" "p4" t)
 
-;; p4vc commands
-(defun neph-p4vc (command)
-  (if (buffer-file-name)
-      (if (executable-find "p4vc")
-          (let ((cmd (concat
-                      "cd $(dirname " (shell-quote-argument (buffer-file-name)) ") && "
-                      ;;"env XDG_CURRENT_DESKTOP=gnome p4vc "
-                      "env P4CONFIG=P4CONFIG p4vc "
-                      (shell-quote-argument command)
-                      " "
-                      (shell-quote-argument (buffer-file-name))
-                      "| tee /dev/null" ;; This works around some p4v bug where it fails when it has no stdout
-                      )))
-            ;; This is the way the help actually suggests you prevent it from opening this buffer.
-            (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
-                                              display-buffer-alist)))
-              (message (concat "Running: " cmd))
-              (async-shell-command cmd)))
-        (message "!! p4vc not installed/available"))
-    (message "!! This buffer has no file name")))
+;; p4vc commands. Throw in some systemd unit to sidestep async-process garbage in emacs
+(defun neph-p4v-cmd (file command &rest args)
+  (if (executable-find "p4vc")
+      (let* ((cmd (append (list "systemd-run" "--user" "--property=ExitType=cgroup"
+                                (concat "--working-directory=" (file-name-directory file))
+                                "--setenv=P4CONFIG=P4CONFIG"
+                                "--" "p4vc" command)
+                          args
+                          (list file))))
+        (message (concat "Running: " (mapconcat #'identity cmd " ")))
+        (apply #'call-process (car cmd) nil nil nil (cdr cmd)))
+    (message "!! p4vc not installed/available")))
 
-(global-set-key (kbd "C-z P t") (lambda () (interactive) (neph-p4vc "tlv")))
-(global-set-key (kbd "C-z P c") (lambda () (interactive) (neph-p4vc "revgraph")))
-(global-set-key (kbd "C-z P h") (lambda () (interactive) (neph-p4vc "history")))
+(defun neph-p4-cmd (file &rest args)
+  (let ((default-directory (file-name-directory file))
+        (process-environment (copy-sequence process-environment)))
+    (setenv "P4CONFIG" "P4CONFIG")
+    (apply #'call-process "p4" nil nil nil (append args (list file)))))
+
+(defun neph-p4-cmd-current (&rest args)
+  (if (buffer-file-name)
+      (apply #'neph-p4-cmd (buffer-file-name) args)
+    (message "!! Current buffer has no associated file")
+    -1))
+
+(defun neph-p4v-cmd-current (&rest args)
+  (if (buffer-file-name)
+      (apply #'neph-p4v-cmd (buffer-file-name) args)
+    (message "!! Current buffer has no associated file")
+    -1))
+
+(defun neph-p4-edit-current ()
+  "p4 edit the current buffer"
+  (interactive)
+  (if (= 0 (neph-p4-cmd-current "edit"))
+      (progn (setq buffer-read-only nil)
+             (message "p4 opened into default changeset"))
+    (message "p4 edit failed")
+    -1))
+
+(defun neph-p4-revert-current ()
+  "p4 revert the current buffer"
+  (interactive)
+  (if (= 0 (neph-p4-cmd-current "revert"))
+      (progn (setq buffer-read-only t)
+             (message "p4 reverted"))
+    (message "!! p4 revert failed")))
+
+(global-set-key (kbd "C-z C-e") 'neph-p4-edit-current)
+(global-set-key (kbd "C-z P r") 'neph-p4-revert-current)
+
+(defun neph-p4vc-tlv      () (interactive) (neph-p4v-cmd-current "tlv"))
+(defun neph-p4vc-revgraph () (interactive) (neph-p4v-cmd-current "revgraph"))
+(defun neph-p4vc-history  () (interactive) (neph-p4v-cmd-current "history"))
+(global-set-key (kbd "C-z P t") 'neph-p4vc-tlv)
+(global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
+(global-set-key (kbd "C-z P h") 'neph-p4vc-history)
 
 ;;
 ;; Ediff
