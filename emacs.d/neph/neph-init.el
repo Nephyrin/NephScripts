@@ -641,10 +641,13 @@ explicit input."
 ;; Helm
 ;;
 
-;;(require 'helm-autoloads)
+(require 'helm-autoloads)
 (require 'helm)
 (require 'helm-mode)
 (require 'helm-command)
+(require 'helm-bookmark)
+;; Not sure what I'm configuring wrong but autoloads doesn't always
+(require 'helm-for-files)
 ;;(require 'helm-config)
 ;;(require 'helm-files)
 
@@ -659,7 +662,7 @@ explicit input."
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 (global-set-key (kbd "C-z b") 'helm-mini)
-(global-set-key (kbd "C-z C-b") 'helm-bookmarks)
+(global-set-key (kbd "C-z C-b") 'helm-filtered-bookmarks)
 (global-set-key (kbd "C-z C-o") 'helm-occur)
 (global-set-key (kbd "C-z C-S-o") 'occur)
 (global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
