@@ -641,7 +641,7 @@ explicit input."
 ;; Helm
 ;;
 
-(require 'helm-autoloads)
+;;(require 'helm-autoloads)
 (require 'helm)
 (require 'helm-mode)
 (require 'helm-command)
@@ -649,7 +649,7 @@ explicit input."
 ;; Not sure what I'm configuring wrong but autoloads doesn't always
 (require 'helm-for-files)
 ;;(require 'helm-config)
-;;(require 'helm-files)
+(require 'helm-for-files)
 
 (helm-mode 1)
 
