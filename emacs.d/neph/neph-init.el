@@ -214,15 +214,28 @@
 
 ;;(add-hook 'term-mode-hook #'eterm-256color-mode)
 
+;; Just wraps ansi-color-apply which works better than xterm-color it seems, handles truecolor
 (defun neph-term-color-region (start end)
   "Turn terminal color codes into text properties in START to END (defaults to region interactively)."
   (interactive "r")
-    (let ((region (buffer-substring start end)))
-      (delete-region start end)
-      (goto-char start)
-      (insert (xterm-color-filter region))
-      ;; Also convert this text to font-lock-face so it's stickier
-      (neph-copy-face-to-font-lock-face start (point))))
+  (ansi-color-apply-on-region start end))
+
+;; Interactive wrap on ansi-color but whole buffer
+(defun neph-term-color-buffer ()
+  "Turn terminal color codes into text properties in START to END (defaults to region interactively)."
+  (interactive)
+  (neph-term-color-region 0 (point-max)))
+
+;;
+;; ansi color mode
+;;
+(require 'ansi-color-overlay-mode)
+
+;;
+;; gdb ansi color
+;;
+(require 'gdb-ansi-color)
+(add-hook 'gud-mode-hook #'gdb-ansi-color-mode)
 
 ;;
 ;; Protobuf mode
