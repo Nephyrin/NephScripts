@@ -440,8 +440,18 @@ service() {
   fi
 }
 
-lx()  { ls++ --potsf     "$@"; }
-lxx() { ls++ --potsf -tr "$@"; }
+# Default options for eza as an ls replacement
+lx()  { eza -F --color-scale=age --icons --smart-group --git --time-style=relative --hyperlink "$@"; }
+# long
+lxx() { lx -l --sort=modified "$@"; }
+# tree (one level)
+lxt() { lxx -TL2 "$@"; }
+# full tree
+lxtt() { lxx -T "$@"; }
+# sizes and tree/full-tree variants
+lxs() { lxx --sort=size --color-scale=size --total-size "$@"; }
+lxst() { lxs -TL2 "$@"; }
+lxstt() { lxs "$@"; }
 
 v() {
   local json
