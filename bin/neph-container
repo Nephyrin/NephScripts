@@ -1,0 +1,121 @@
+#!/bin/bash
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+DEFAULT_CONTAINER=nepharch:latest
+usage() (
+  local output="${1-emsg}"
+  out() { "$output" "$@"; }
+
+  out "Usage: neph-container [options...] -- [podman args]"
+  out ""
+  out "Helper to spawn a podman container for interactive/sandboxish use, like a constrained distrobox."
+  out ""                    # v-- purposefully expanded
+  out "By default, spawns a \`$DEFAULT_CONTAINER\` container with --rm, pass --keep/-k and --name for persistent."
+  out ""
+  out "Options:"
+  out "  --name, -n NAME          Pass --name to podman"
+  out "  --keep, -k               Don't pass --rm to podman. Requires --name."
+  out "  --workdir, -w WORKDIR    Working directory to share, defaults to \$PWD"
+  out "  --detach, -d             Spawn async rather than with -ti"
+  out "  --claude, -c             RW Mount ~/.claude and ~/.claude.json for nested claude usage"
+  out "  --passwordless-sudo, -S  Enable passwordless-sudo"
+  out "  --localports, -p PORTS   A comma-separated list of ports to publish via localhost, shorthand for "
+  out "                           expanding these to \`-p 127.0.0.1:port:port\` in podman options"
+  out "  --localportrange,"
+  out "    -P STARTPORT:ENDPORT   A colon-separated range of ports to publish as local ports, shorthand for "
+  out "                           passing all ports in range to --localports"
+  out "  --pkg PACKAGES           A list of additional packages, space-separated, to install in the new container."
+  out "  --cmd, -C                Command to spawn container with.  Defaults to \`bash -i\` if interactive or"
+  out "                           \`sleep infinity\` for detached.  Passed wholesale as a string to bash -c."
+  out "  --help, -h               Show this help and exit"
+)
+
+parse_args 'neph-container' 'n:kw:dcSp:P:C:h' 'name:,keep,workdir:,detach,claude,passwordless-sudo,localports:,localportrange:,pkg:,cmd:,help' "$@" || { usage eerr; exit 1; }
+
+user_podman_args=()
+eval user_podman_args="($(get_args))"
+
+name="$(get_merged_option name n)"
+workdir="$(get_merged_option workdir w)"
+detach="$(get_merged_option detach d)"
+keep="$(get_merged_option keep k)"
+claude=$(get_merged_option claude c)
+localports=$(get_merged_option localports p)
+localportrange=$(get_merged_option localportrange P)
+packages=$(get_option pkg)
+command=$(get_merged_option cmd C)
+help=$(get_merged_option h help)
+passwordless_sudo=$(get_merged_option passwordless-sudo S)
+
+# Trigger help?
+[[ -n $help ]] && { usage; exit 0; }
+
+# Defaults & constraints
+[[ -z $keep || -n $name ]] || die "--keep requires passing a --name"
+[[ -n $workdir ]] || workdir=$PWD
+
+podargs=()
+
+# parse localports
+add_port() {
+  local port=$1
+  [[ $port =~ ^[0-9]+$ && $port -gt 0 && $port -le 65535 ]] || die "Invalid port: '$port'"
+  forward=127.0.0.1:"$port":"$port"
+  einfo "Adding forward $forward"
+  podargs+=(-p "$forward")
+}
+if [[ -n $localports ]]; then
+  IFS= readarray -t -d ',' ports < <(printf %s "$localports")
+  for port in "${ports[@]}"; do
+    add_port "$port"
+  done
+fi
+if [[ -n $localportrange ]]; then
+  [[ $localportrange =~ ^([0-9]+):([0-9]+)$ ]] || die "Invalid --localportrange format"
+  port=${BASH_REMATCH[1]}
+  end=${BASH_REMATCH[2]}
+  while (( port <= end )); do
+    add_port "$port"
+    (( port++ ))
+  done
+fi
+
+cmd cd -- "$workdir"
+thecmd=()
+podargs+=(--userns=keep-id
+          --workdir "$PWD"
+          -v "$PWD:$PWD")
+# --detach or interactive?
+if [[ -n $detach ]]; then
+  podargs+=(-d)
+  thecmd=(sleep infinity)
+else
+  podargs+=(-ti)
+  thecmd=(bash -i)
+fi
+
+if [[ -n $command ]]; then
+  thecmd=(bash -c "$command")
+fi
+
+# --pkg
+[[ -z $packages ]] || podargs+=(--env "NEPHARCH_INIT_PACKAGES=$packages")
+# --keep
+[[ -n $keep ]] || podargs+=(--rm)
+# --name
+[[ -z $name ]] || podargs+=(--name "$name")
+# --claude
+if [[ -n $claude ]]; then
+  podargs+=(-v "$HOME/.claude.json:$HOME/.claude.json"
+            -v "$HOME/.claude:$HOME/.claude")
+fi
+# --passwordless-sudo
+[[ -z $passwordless_sudo ]] || podargs+=(--env "NEPHARCH_PASSWORDLESS_SUDO=1")
+
+cmd podman run  \
+    --userns=keep-id \
+    "${podargs[@]}"  \
+    "${user_podman_args[@]}" \
+    nepharch "${thecmd[@]}"
