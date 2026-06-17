@@ -280,7 +280,6 @@ pic() { s qimgv "$@"; }
 rand32() { shuf -i 0-$(( 2**32 - 1 )) -n 1; }
 
 gdiff() { cmd git diff --no-index "$@"; }
-pd() { git diff --no-index --color=always "$@" | diff-so-fancy | less --tabs=4 -RFX; }
 
 rv() { cmd rsync -avy --progress "$@"; }
 rvp() { cmd rsync -avy --partial --inplace --progress "$@"; }
