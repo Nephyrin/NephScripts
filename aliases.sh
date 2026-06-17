@@ -101,9 +101,11 @@ brs() { s dolphin -- "$@"; }
 #    Fixes panes in tmux randomly not scrolling correctly anymore (since all shell interaction is on the alternate
 #    screen and not contributing to scrollback)
 ereset() {
-  cmd reset
   cmd tput rmcup
+  cmd reset
 }
+# easier to type in a broke terminal
+alias rrr=ereset
 
 # zdir <archive> [dirname]
 #
