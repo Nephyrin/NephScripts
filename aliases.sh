@@ -441,7 +441,14 @@ service() {
 }
 
 # Default options for eza as an ls replacement
-lx()  { eza -F --color-scale=age --icons --smart-group --git --time-style=relative --hyperlink "$@"; }
+lx()  {
+  # Hyperlinks only if output is a terminal, eza as of $current_day doesn't turn them off automatically, should probably
+  # be --hyperlinks=WHEN like color/icons are.
+  local termopts=()
+  [[ -t 1 ]] && termopts+=(--hyperlink);
+  local rows=$(( $(tput lines 2>/dev/null || echo 0) / 2 ))
+  EZA_GRID_ROWS=$rows eza -F --color-scale=age --icons --smart-group --git --time-style=relative "${termopts[@]}" "$@"
+}
 # long
 lxx() { lx -l --sort=modified "$@"; }
 # tree (one level)
