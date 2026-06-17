@@ -363,16 +363,24 @@ killwine()
   fi
 }
 
+NEPH_TMPDIR_PREFIX="${TMPDIR:-/tmp}/neph-"
 ct()
 {
   local i=0
   local dir
   local attempt
+  local name
   while [[ -z $dir ]] && (( ++i <= 10 )); do
-    local name=$(n_commonword 1 4 4)
-    [[ -n $name ]] || { ewarn "can't generate common words on this system, no dictionary?"; name=XXX; }
-    attempt="${TMPDIR:-/tmp}/neph-$name"
-    ( umask 077 && mkdir -v -- "$attempt"; ) && dir=$attempt
+    name=$(n_commonword 1 4 4)
+    if [[ -n $name ]]; then
+      attempt="${NEPH_TMPDIR_PREFIX}$name"
+      ( umask 077 && mkdir -v -- "$attempt"; ) && dir=$attempt
+    else
+      # Use mktemp for its gibberish generation instead.  I guess n_commonword could fallback to gibberish for us or
+      # something.
+      ewarn "can't generate common words on this system, no dictionary?  Using mktemp."
+      dir=$(mktemp -d "${NEPH_TMPDIR_PREFIX}"XXX)
+    fi
   done
   [[ -d $dir ]] || { eerr "Couldn't find an unused name after ten attempts?"; return 1; }
   export NEPH_TEMP_DIR="$dir"
@@ -382,8 +390,7 @@ ct()
 clt()
 {
   # (This matches how mktemp picks)
-  local tmpdir=${TMPDIR:-/tmp}
-  for x in "$tmpdir"/neph-*; do
+  for x in "${NEPH_TMPDIR_PREFIX}"*; do
     if [[ ! -d $x || -L $x ]]; then
       ewarn "$x: Not a simple directory, ignoring"
       continue
@@ -410,7 +417,7 @@ clt()
       estat "Removing $x"
       cmd rm -rf --one-file-system -- "$x"
       # If this is our cached directory nuke it
-      [[ $x != ${NEPH_TEMP_DIR-} ]] || unset NEPH_TEMP_DIR
+      [[ $x != "${NEPH_TEMP_DIR-}" ]] || unset NEPH_TEMP_DIR
     else
       estat "Skipping $x, in use:"
       ps -p "${pids[@]}" | einfo_pipe
@@ -420,8 +427,11 @@ clt()
 
 rt()
 {
-  if [[ -n $NEPH_TEMP_DIR && -d $NEPH_TEMP_DIR ]]; then
-    cd -- "$NEPH_TEMP_DIR"
+  if [[ -n ${NEPH_TEMP_DIR-} && -d $NEPH_TEMP_DIR ]]; then
+    if ! cd -- "$NEPH_TEMP_DIR"; then
+      eerr "\$NEPH_TEMP_DIR \"$NEPH_TEMP_DIR\" not accessible"
+      return 1
+    fi
   else
     unset NEPH_TEMP_DIR
     estat "No temp dir in context"
