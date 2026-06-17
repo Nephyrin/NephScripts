@@ -452,7 +452,7 @@ service() {
 }
 
 # Default options for eza as an ls replacement
-lx()  {
+lx() {
   # Hyperlinks only if output is a terminal, eza as of $current_day doesn't turn them off automatically, should probably
   # be --hyperlinks=WHEN like color/icons are.
   local termopts=()
