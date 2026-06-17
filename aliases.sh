@@ -473,7 +473,15 @@ lxstt() { lxs "$@"; }
 
 v() {
   local json
-  if ! json=$(cmd yt-dlp --no-simulate -J "$@"); then
+  # for yt-dlp, --dump-single-json gives us parsable output, but implies --simulate and --quiet. But, we want it to
+  # actually execute and also show status/progress output so.. re-enable both of those. A bit weird that "do the normal
+  # thing but dump the result as json" requires backsolving these arguments like this.
+  #
+  # Also, the --quiet --verbose combination is defined to redirect normal progress output to stderr (which lets you
+  # parse the dumped info from stdout, you see), so there's several interactions in this.
+  #
+  # </three minutes of reading the man page to find what should just be --json>
+  if ! json=$(cmd yt-dlp --verbose --no-simulate --dump-single-json -- "$@"); then
     eerr "yt-dlp failed, see above"
     return 1
   fi
