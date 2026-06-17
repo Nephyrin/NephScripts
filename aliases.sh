@@ -505,6 +505,32 @@ tt() {
   date --date="$date" +%s
 }
 
+# Just a bunch of random packages that are nice to throw into distrobox environments
+n_container_install() {
+  cmd sudo pacman -Sy --needed archlinux-keyring
+  cmd sudo pacman -Suu --needed base-devel base nano \
+      zsh fzf ripgrep fd bat eza \
+      pacman-contrib devtools \
+      ccache git git-branchless \
+      git-delta diff-so-fancy
+  # Only holo has
+  if pacman -Si paru &>/dev/null; then
+    cmd sudo pacman -S --needed paru
+  fi
+
+  # Enable proxy variables to pass through sudo if it looks like we're in a horrible environment using proxies
+  # podman forwards proxy-shaped variables into containers automatically
+  local base
+  local proxy_vars=()
+  for base in http https no; do
+    proxy_vars+=("$base"_proxy "$(n_toupper "$base")"_PROXY)
+  done
+  if n_anyset "${proxy_vars[@]}"; then
+    estat "One or more proxy vars set, enabling proxy passthrough in sudoers"
+    cmd out "Defaults env_keep += \"${proxy_vars[*]}\"" | cmd sudo tee /etc/sudoers.d/keep-proxy
+  fi
+}
+
 # quickly select a bunch of local git branches to nuke
 git-fzf-delete-branches() {
   local branch
