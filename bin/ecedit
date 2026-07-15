@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+# Provide a "bash C-x C-e"-style popup editor using the `ec` shortcut for interacting with emacs.  Pops up a temporary
+# buffer, then returns its string when closing the editor (or C-x #'ing it)
+#
+# If running under tmux, will pop up a companion frame to fetch the input.  Unset TMUX to disable (TMUX= ecedit...)
+#
+# Additionally pushes the result to emacs kill ring, so repeat uses have an easy way to recall previous entries
+
+unset tmp
+cleanup() { [[ -z ${tmp-} ]] || rm -f -- "$tmp"; unset tmp; }
+trap cleanup EXIT
+tmp=$(mktemp --tmp edit.XXXX)
+[[ -f $tmp ]] || die "Failed to make temp file"
+
+if [[ -n $TMUX ]]; then
+  # Pane mode
+  tmux_chan="edit-$$-$RANDOM"
+  tmux_script="
+    set -e
+    cleanup() {
+      local r=\$?
+      tmux wait-for -S ${tmux_chan@Q}
+      return \$r
+    }
+    trap cleanup EXIT
+    ec ${tmp@Q}
+  "
+  tmux split-window "$tmux_script"
+  tmux wait-for "$tmux_chan"
+else
+  # Just take over term
+  # If using like `echo $(ecedit)`, emacsclient is separated from the tty when we call it nested.  For the script to be
+  # useful we want the inner emacsclient to 'escape' to the outer tty so it can show the TUI in an alt screen.
+  t=$(tty)
+  [[ -n $t ]] || die "not in a nested terminal context"
+  # shellcheck disable=SC2094 # N/A
+  ec "$tmp" &>"$t" <"$t"
+fi
+
+result="$(< "$tmp")"
+if [[ -n $result && $result != $'\n' ]]; then
+  # Place our last edit back into the kill ring.  Maybe ideally this command could take a "cache name" and just
+  # restore your last but being able to just yank it back in on repeat edits good enough for now?
+  ec --eval "(kill-new (pop server-eval-args-left))" "$result" >/dev/null
+  printf "%s" "$result"
+else
+  exit 1
+fi

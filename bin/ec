@@ -6,9 +6,9 @@ source ~/bin/lib/util.sh
 # This could be an alias, but then it wouldn't play nice with $EDITOR
 parse_args 'ec' 'e' 'eval' "$@" || die "Usage: ec [--eval] [--] {file|elisp_to_eval}"
 
-options=()
-[[ -n "$(get_merged_option e eval)" ]] && options+=(-e)
+options=(-t)
+[[ -n "$(get_merged_option e eval)" ]] && options=(-e)
 args=()
 eval args=\("$(get_args)"\)
 
-emacsclient -a "" -t "${options[@]}" -- "${args[@]}"
+emacsclient -a "" "${options[@]}" -- "${args[@]}"
