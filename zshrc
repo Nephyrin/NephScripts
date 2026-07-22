@@ -49,20 +49,17 @@ _neph_zsh_post_init_funcs=()
 _neph_zsh_post_init() { _neph_zsh_post_init_funcs+=($@); }
 
 # Shared interactive shell startup.  Do before initializing instant-prompt. (so, this part not covered by instant-ness)
-_neph_maybe_source() { [[ ! -f "$1" ]] || source "$1"; }
-_neph_maybe_source $NEPH/aliases.sh
-_neph_maybe_source $NEPH/interactive-shell-init.sh
-_neph_maybe_source $NPRIV/zshrc
-_neph_maybe_source ~/.zshrc.local
-_neph_maybe_source /usr/share/doc/git-extras/git-extras-completion.zsh
-unset _neph_maybe_source
+_neph_source_ifexists() { [[ ! -f "$1" ]] || source "$1"; }
+_neph_source_ifexists $NEPH/aliases.sh
+_neph_source_ifexists $NEPH/interactive-shell-init.sh
+_neph_source_ifexists $NPRIV/zshrc
+_neph_source_ifexists ~/.zshrc.local
+_neph_source_ifexists /usr/share/doc/git-extras/git-extras-completion.zsh
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block, everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+_neph_source_ifexists "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 
 ###
 ### oh-my-zsh
@@ -144,7 +141,7 @@ source $ZSH/oh-my-zsh.sh
 # bindkey '^T' autosuggest-toggle
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+_neph_source_ifexists ~/.p10k.zsh
 
 # Stop writing history for this session
 prompt_nohist() {
@@ -185,7 +182,7 @@ nohist()
 ### fzf binds if installed
 ###
 
-[[ ! -f /usr/share/fzf/key-bindings.zsh ]] || source /usr/share/fzf/key-bindings.zsh
+_neph_source_ifexists /usr/share/fzf/key-bindings.zsh
 
 ###
 ### Custom ZSH binds and aliases
