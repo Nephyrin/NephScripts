@@ -167,8 +167,26 @@ _neph_source_ifexists /usr/share/fzf/key-bindings.zsh
 ### Custom ZSH binds and aliases
 ###
 
-bindkey "^O" accept-and-hold
-bindkey "^N" accept-and-infer-next-history
+# Reset screen, keep prompt
+_neph_term_reset() {
+  command tput rmcup
+  command reset
+  zle && zle reset-prompt
+}
+zle -N _neph_term_reset
+
+# Reset screen and nuke prompt too
+_neph_term_reset_and_clear() {
+  zle && BUFFER=""
+  _neph_term_reset
+}
+zle -N _neph_term_reset_and_clear
+
+bindkey "^O" accept-and-hold               # control-shift-O
+bindkey "^N" accept-and-infer-next-history # control-shift-N
+
+bindkey "\eg" _neph_term_reset             # alt-g
+bindkey "\eG" _neph_term_reset_and_clear   # shift-alt-G
 
 ###
 ### Tmux
