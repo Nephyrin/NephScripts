@@ -28,38 +28,85 @@ else
   unset _neph_bashrc_dir
 fi
 
-_list_contains() {
-  local s
-  local IFS=":"
-  eval s=\(\$"$1"\)
-  for x in "${s[@]}"; do
-    [ "$2" != "$x" ] || return 0
+_pathlist_contains() {
+  local -n list="$1"
+  local splitlist
+
+  readarray -d : -t splitlist < <(printf '%s' "$list")
+
+  for x in "${splitlist[@]}"; do
+    [[ $2 != "$x" ]] || return 0
   done
+
   return 1
 }
 
-_list_push() {
-  ! _list_contains "$1" "$2" || return 0
-  [ -z "$(eval echo \$$1)" ] || eval $1=":\$$1"
-  eval $1="\$2\$$1"
-}
+_pathlist_push() {
+  local listref="$1"
+  local -n list="$listref"
+  local vals=("${@:2}")
 
-_if_dir_list_push() {
-  [ -d "$2" ] || return 0
-  _list_push "$1" "$2"
-}
-
-_list_push PATH "$HOME/bin"
-_list_push PATH "$HOME/.local/bin"
-_list_push PATH "$HOME/neph/priv/bin"
-
-# aliases.sh and such expects all shell types to provide this
-_neph_addtopath() {
-  local item
-  for item in "$@"; do
-    _list_push PATH "$item"
+  local val
+  for val in "${vals[@]}"; do
+    _pathlist_contains "$listref" "$val" || list="$val${list+:}$list"
   done
 }
+
+_pathlist_remove() {
+  local -n list="$1"
+  local vals=("${@:2}")
+
+  # 2array
+  local splitlist
+  readarray -d : -t splitlist < <(printf '%s' "$list")
+
+  # filter
+  local x
+  local val
+  local ret=()
+  local found
+  for x in "${splitlist[@]}"; do
+    found=
+    for val in "${vals[@]}"; do
+      if [[ $x = "$val" ]]; then
+        found=1
+        break
+      fi
+    done
+    [[ -z $found ]] && ret+=("$x")
+  done
+
+  # rejoin
+  local IFS=:
+  list="${ret[*]}"
+}
+
+_pathlist_push_if_dir() {
+  local listref="$1"
+  local items=("${@:2}")
+  local item
+  for item in "${items[@]}"; do
+    [[ -d $item ]] && _pathlist_push "$listref" "$item"
+  done
+}
+
+# aliases.sh and such expects all shell types to provide these
+_neph_addtopath() {
+  _pathlist_push_if_dir PATH "$@"
+}
+
+_neph_pathcontains() {
+  _pathlist_contains PATH "$1"
+}
+
+_neph_removefrompath() {
+  _pathlist_remove PATH "$@"
+}
+
+_neph_addtopath "$HOME/bin"
+_neph_addtopath "$HOME/.local/bin"
+_neph_addtopath "$HOME/neph/priv/bin"
+
 
 NEPH_CGROUP_ROOT=/sys/fs/cgroup
 NEPH_DEFAULT_CGROUP="$NEPH_CGROUP_ROOT"/cpu
@@ -71,12 +118,12 @@ export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
 export PERL_MB_OPT="--install_base $HOME/perl5";
 export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
 export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-thread-multi:$HOME/perl5/lib/perl5";
-_list_push PATH "$HOME/perl5/bin"
+_neph_addtopath "$HOME/perl5/bin"
 
 # Powerline
 export PYTHONPATH
-_list_push PATH "$HOME/neph/powerline/bin"
-_list_push PYTHONPATH "$HOME/neph/powerline/lib/python-latest/site-packages/"
+_neph_addtopath "$HOME/neph/powerline/bin"
+_pathlist_push PYTHONPATH "$HOME/neph/powerline/lib/python-latest/site-packages/"
 
 # tmux blows away TERM, so set NEPH_256COLOR_TERM if we see one, then the nested
 # tmux shell can use it to see if its appropriate to update TERM
