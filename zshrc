@@ -143,6 +143,7 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 _neph_source_ifexists ~/.p10k.zsh
 
+# any arbitrary note set with `promptnote`
 prompt_promptnote() {
   [[ -z ${_NEPH_PN-} ]] || p10k segment -f 208 -i '⭐' -t $_NEPH_PN
 }
