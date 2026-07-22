@@ -143,11 +143,6 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 _neph_source_ifexists ~/.p10k.zsh
 
-# Stop writing history for this session
-prompt_nohist() {
-  [[ -z ${_nohist-} ]] || p10k segment -f 208 -i '⭐' -t 'nohist'
-}
-
 prompt_promptnote() {
   [[ -z ${_NEPH_PN-} ]] || p10k segment -f 208 -i '⭐' -t $_NEPH_PN
 }
@@ -156,27 +151,10 @@ prompt_promptnote() {
 # zsh-autosuggestions is designed to be unobtrusive)
 # (conflicts with fzf)
 # bindkey '^T' autosuggest-toggle
-zshaddhistory() { local args=(${=1}); [[ -z ${_nohist-} && "${args[1]}" != nohist ]] || return 1; }
 
 _p10k_reload() { ! whence p10k &>/dev/null || p10k reload; }
 
-nohist()
-{
-  typeset -g _nohist=1
-  _p10k_reload
-}
-
 promptnote() { typeset -g _NEPH_PN="$1" && _p10k_reload; }
-
-zshaddhistory() { local args=(${=1}); [[ "${args[1]}" != nohist ]] || return 1; }
-
-nohist()
-{
-  local file=${1:+/tmp/zsh.$1}
-  typeset -g _nohist=1
-  HISTFILE=${file:-$(mktemp --tmpdir zsh.XXX)}
-  _p10k_reload
-}
 
 ###
 ### fzf binds if installed
