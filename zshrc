@@ -30,9 +30,17 @@ NPRIV=~/neph/priv
 _neph_addtopath() {
   local new
   for new in "$@"; do
-    [[ ! -d $new || ${path[(ie)$new]} -le ${#path[@]} ]] || path+=($new)
+    # Prepend unless not a directory or already in list. ((ie) gets the index of a value)
+    [[ ! -d $new || ${path[(ie)$new]} -le ${#path[@]} ]] || path=($new ${path[@]})
   done
 }
+
+# Compare this to the bash version lol
+_neph_removefrompath() {
+  local vals=("$@")
+  path=("${path[@]:|vals}")
+}
+
 _neph_addtopath $NEPH/bin
 _neph_addtopath $NPRIV/bin
 
@@ -217,6 +225,22 @@ bindkey ^q atuin-up-search
 for func in ${_neph_zsh_post_init_funcs[@]}; do
   $func
 done
+
+###
+### Re-execing zsh causes some sloppy plugins (google-cloud-cli) to re-add themselves to path repeatedly
+###   Simplify path
+###
+_neph_path_dedup() {
+  local newpath=()
+  local item
+  # In reverse -- keep oldest entry so multiple adds don't keep jumping order
+  for item in ${(@Oa)path}; do
+    # Item is either already in the list or prepend it
+    [[ ${newpath[(ie)$item]} -lt ${#newpath[@]} ]] || newpath=($item ${newpath[@]})
+  done
+  path=(${newpath[@]})
+}
+_neph_path_dedup
 
 # Profiling: Uncomment line at top too
 # zprof > ~/.cache/neph-zprof
