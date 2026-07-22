@@ -195,10 +195,7 @@ bindkey "\eG" _neph_term_reset_and_clear   # shift-alt-G
 # Re-import tmux environment on commands when running under tmux.  Simplified from o-m-z's tmux plugin
 function _neph_zsh_tmux_env_refresh()
 {
-  local -a tmux_cmd
-  tmux_cmd=(command tmux)
-
-  eval $($tmux_cmd show-environment -s)
+  eval $(command tmux show-environment -s)
 }
 if [[ -n $TMUX ]] && tmux ls &>/dev/null; then
   autoload -U add-zsh-hook
