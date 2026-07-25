@@ -365,9 +365,74 @@ killwine()
   fi
 }
 
+# `cd` but refuse if the target isn't a directory we own
+#   Cannot be TOCTOU'd by someone swapping the dir out, otherwise this would just be
+#   `[[ -O $foo ]] && cd -- "$foo"`
+owned_cd()
+{
+  [[ $# -eq 1 && -n ${1-} ]] || { eerr "owned_cd misused"; return 2; }
+  local dir="$1"
+
+  # TOCTOU lol
+  local newfd
+  local fail
+
+  # Open dir by handle, then check that we got a handle to an owned directory.  Finally use `cd -P` to safely `cd` into
+  # it without raciness.
+  #
+  # "${dir%/}"/. ensures we choke on attempts to open a FIFO or some such, which could have side effects.
+  #
+  # The `%/` is necessary because otherwise `/` would cd to `//.` and TWO leading slashes CAN be implementation-defined
+  # according to POSIX (lol!).
+  #
+  # One side effect of this is that if you change into a symlink, the `cd -P` resolves it, rather than having $PWD be
+  # the logical path value.  A way around this would be to:
+  #  - open the fd
+  #  - cd to the logical "$dir"/. value
+  #  - compare `.` to `/dev/fd/3` to ensure we didn't race
+  #  - ... cd back to the previous place which is now nearly impossible since it may have moved and even if we kept an
+  #    FD to it we cannot return to its *logical* path.  good luck
+  { exec {newfd}<"${dir%/}"/. && [[ -d /dev/fd/"$newfd" && -O /dev/fd/"$newfd" ]] && cd -P /dev/fd/"$newfd"; } || fail=1
+  # Don't leak fd even if we failed
+  [[ -z $newfd ]] || exec {newfd}<&-
+
+  if [[ -n $fail ]]; then
+    eerr "Couldn't change to '$dir' or not owned by current user"
+    return 1
+  fi
+  return 0
+}
+
 NEPH_TMPDIR_PREFIX="${TMPDIR:-/tmp}/neph-"
 ct()
 {
+  # Passed a name?  Make or cd into it (`ct foo` -> maybe create /tmp/neph-foo otherwide cd in)
+  if [[ $# -gt 0 ]]; then
+    local dir="$*"
+    if [[ $dir = *" "* || $dir = */* ]]; then
+      eerr "Invalid dir '$dir'"
+      return 1
+    fi
+    dir="${NEPH_TMPDIR_PREFIX}${dir}"
+    if [[ -d $dir ]]; then
+      # TOCTOU lol
+      local newfd
+      local fail
+      { exec {newfd}<"$dir" && [[ -O /dev/fd/"$newfd" ]] && cd -P /dev/fd/"$newfd"; } || fail=1
+      exec {newfd}<&-
+      if [[ -n $fail ]]; then
+        eerr "Couldn't change to '$dir' or not owned by current user"
+        return 1
+      fi
+      return 0
+    elif mktemp -d "$dir"; then
+      cd -- "$dir" || { eerr; return 1; }
+    else
+      { eerr; return 1; }
+    fi
+    return 0
+  fi
+
   local i=0
   local dir
   local attempt
