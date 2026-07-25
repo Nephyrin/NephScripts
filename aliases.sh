@@ -536,6 +536,32 @@ lxs() { lxx --sort=size --color-scale=size --total-size "$@"; }
 lxst() { lxs -TL2 "$@"; }
 lxstt() { lxs "$@"; }
 
+_neph_ccache_dir=/usr/lib/ccache/bin/
+ccache_stat() {
+  local enabled=
+  if n_is_zsh && [[ ${path[(ie)$_neph_ccache_dir]} -le ${#path[@]} ]]; then
+    enabled=1
+  elif n_is_bash && _pathlist_contains PATH "$_neph_ccache_dir"; then
+    enabled=1
+  fi
+
+  if [[ -n $enabled ]]; then
+    estat "ccache on"
+  else
+    ewarn "ccache off"
+  fi
+}
+
+ccache_on() {
+  _neph_addtopath "$_neph_ccache_dir"
+  [[ ${1-} = silent ]] || ccache_stat
+}
+
+ccache_off() {
+  _neph_removefrompath "$_neph_ccache_dir"
+  [[ ${1-} = silent ]] || ccache_stat
+}
+
 v() {
   local json
   # for yt-dlp, --dump-single-json gives us parsable output, but implies --simulate and --quiet. But, we want it to
