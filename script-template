@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#
+# Script template - a copyable base script for making quick ~/bin/ stuff
+#   Put synopsis here -- Find all lines with XX and replace
+#
+
+set -euo pipefail
+# shellcheck source=./lib/util.sh
+. ~/bin/lib/util.sh
+
+## Args and usage
+# usage [as_error=1]
+usage() {
+  if [[ -n ${1-} ]]; then
+    eerr_splitlines "$usage_text"
+    exit 1
+  else
+    einfo_splitlines "$usage_text"
+    exit 0
+  fi
+}
+
+usage_text= # (for shellcheck)
+n_readvar usage_text <<'EOF' #               keep help text below 81st column ->|
+Usage: script_template [options] [--] arg arg2 XX
+  Help text here
+
+--option / -o  Help text for option XX
+--help / -h    Show this help
+EOF
+
+# Parse args XX --v
+parse_args 'templateXX' 'option,help,XX' 'ohXX' "$@" || die "Usage: templateXX [options] [--help] [--] argXX [arg...]"
+[[ -n $(get_merged_option help h) ]] && usage
+
+eval args="($(get_args))"
+
+option=$(get_merged_option option o) # XX
