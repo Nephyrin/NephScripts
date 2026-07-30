@@ -200,7 +200,19 @@ n_commonword() {
   local min="${2-3}"
   local max="${3-5}"
   (n_validnum "$count" "$min" "$max" && (( min <= max ))) || die "invalid arguments to n_commonword"
-  words="$(cat /usr/share/dict/words | grep -E "^[a-z]{$min,$max}$" | shuf -n"$count")"
+  local wordsfile
+  # Try just 'words' symlink first, otherwise some englishish stuff
+  for candidate in /usr/share/dict/{words,usa,american-english,british-english,british}; do
+    einfo "Checking $candidate"
+    [[ -f $candidate ]] || continue
+    wordsfile=$candidate
+    break
+  done
+  if [[ ! -n $wordsfile ]]; then
+    eerr "Couldn't find any /usr/share/dict/words style wordlists on this system"
+    return 1
+  fi
+  words="$(cat -- "$wordsfile" | grep -E "^[a-z]{$min,$max}$" | shuf -n"$count")"
   if n_is_zsh; then
     words=("${(f)${words:-}}")
   else
