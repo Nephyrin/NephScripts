@@ -216,7 +216,7 @@ eprompt() {
   ewarnprompt "$msg "
   local reply
   read -r reply
-  echo >&2 "" # Clear prompt line
+  info "" # Clear prompt line
   printf "%s" "$reply"
 }
 
@@ -230,7 +230,7 @@ eprompt_yn() {
   else
     read -n 1 -r reply
   fi
-  echo >&2 "" # Clear prompt line
+  info "" # Clear prompt line
   [[ $reply = y || $reply = Y ]] || return 1
 }
 
@@ -267,13 +267,12 @@ _sh_c_colors=0
 if [[ -z ${NO_COLOR-} && -n ${TERM-} && $(n_tolower "${TERM-}") != dumb ]]; then
   _sh_c_colors="$(tput colors 2>/dev/null || echo 0)"
 fi
-
 _sh_c()
 {
   [[ $_sh_c_colors -gt 0 ]] || return
   local args=("$@")
   [[ ${#args[@]} -gt 0 ]] || args=(0)
-  ( IFS=\; && echo -n $'\e['"${args[*]}m"; );
+  ( IFS=\; && out_raw $'\e['"${args[*]}m"; );
 }
 
 sh_c() { [[ ! -t 2 ]] || _sh_c "$@"; }
@@ -288,17 +287,17 @@ info() { printf >&2 "%s\n" "$*"; }
 out_raw() { printf "%s" "$*"; }
 out() { printf "%s\n" "$*"; }
 
-estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
-estat2()  { echo >&2 "   $(sh_c 34 1)->$(sh_c) $*"; }
-emsg()    { echo >&2 "$(sh_c 34 1)::$(sh_c) $*"; }
-emsg2()   { echo >&2 "   $(sh_c 34 1)->$(sh_c) $*"; }
-ewarn()   { echo >&2 "$(sh_c 33 1);;$(sh_c) $*"; }
-ewarn2()  { echo >&2 "   $(sh_c 33 1)=>$(sh_c) $*"; }
-einfo()   { echo >&2 "$(sh_c 30 1)::$(sh_c) $*"; }
-einfo2()  { echo >&2 "   $(sh_c 30 1)->$(sh_c) $*"; }
-eerr()    { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
-eerr2()   { echo >&2 "   $(sh_c 31 1)~>$(sh_c) $*"; }
-ewarnprompt() { echo >&2 -n "$(sh_c 33 1)?$(sh_c) $*"; }
+estat()   { info "$(sh_c 32 1)::$(sh_c) $*"; }
+estat2()  { info "   $(sh_c 34 1)->$(sh_c) $*"; }
+emsg()    { info "$(sh_c 34 1)::$(sh_c) $*"; }
+emsg2()   { info "   $(sh_c 34 1)->$(sh_c) $*"; }
+ewarn()   { info "$(sh_c 33 1);;$(sh_c) $*"; }
+ewarn2()  { info "   $(sh_c 33 1)=>$(sh_c) $*"; }
+einfo()   { info "$(sh_c 30 1)::$(sh_c) $*"; }
+einfo2()  { info "   $(sh_c 30 1)->$(sh_c) $*"; }
+eerr()    { info "$(sh_c 31 1)!!$(sh_c) $*"; }
+eerr2()   { info "   $(sh_c 31 1)~>$(sh_c) $*"; }
+ewarnprompt() { info -n "$(sh_c 33 1)?$(sh_c) $*"; }
 _elines() { local x; for x in "${@:2}"; do "$1" "$x"; done; }
 _eblock() { _elines "$1" "" "${@:2}" ""; }
 _epipe() { [[ $# -eq 1 ]] || return 1; local line; while IFS= read -r -d $'\n' line; do "$1" "$line"; done; }
@@ -352,16 +351,16 @@ edivider() {
   # w/run=10, expands to: `printf -- "%.${#char}s" "$char"{1..10}`
   [[ $run -lt 1 ]] || line="$(eval 'printf -- "%.0${#char}s" "$char"'"{1..$run}")"
   local tail="${char[*]:0:$change}"
-  echo >&2 "$(sh_c 90)${line}${tail}$(sh_c)"
+  info "$(sh_c 90)${line}${tail}$(sh_c)"
 }
 
 # Shows "+ command" as stderr, info style
 showcmd() { showcmd_unquoted "$(sh_quote "$@")"; }
 # Shows "+ command" but unquoted, e.g. for displaying things that are going to be eval'd or where
 # you are manually formatting the displayed command.
-showcmd_unquoted() { echo >&2 "$(sh_c 30 1)+$(sh_c) $*"; }
+showcmd_unquoted() { printf "%s\n" >&2 "$(sh_c 30 1)+$(sh_c) $*"; }
 # Shows "`#` command" as stdout, copy-pasteable by user (`#` is a bash no-op)
-offercmd() { echo "$(sh_c 30 1)\`#\`$(sh_c) $(sh_quote "$@")"; }
+offercmd() { printf "%s\n" "$(sh_c 30 1)\`#\`$(sh_c) $(sh_quote "$@")"; }
 # showcmd and also actually run it
 cmd() { showcmd "$@"; "$@"; }
 # showcmd and actually run it, with stderr to /dev/null. This is helpful since
@@ -556,7 +555,7 @@ get_merged_option()
   while [ $i -lt ${#_parse_args_options[@]} ]; do
     for opt_name in "$@"; do
       if [ "${_parse_args_options[$i]}" = "$opt_name" ]; then
-        echo "${_parse_args_values[$i]}"
+        out "${_parse_args_values[$i]}"
         return
       fi
     done
@@ -571,12 +570,12 @@ get_option()
   local i=0
   while [[ $i -lt ${#_parse_args_options[@]} ]]; do
     if [[ ${_parse_args_options[$i]} = $opt_name ]]; then
-      echo "${_parse_args_values[$i]}"
+      out "${_parse_args_values[$i]}"
       return
     fi
     (( ++i ))
   done
-  echo "$default"
+  out "$default"
 }
 
 # Differentiate between empty option and not passed
@@ -605,12 +604,12 @@ get_arg()
 {
   # Args are 1-indexed, though we don't keep $0 around
   local i=$(($1 - 1))
-  echo "${_parse_args_args[$i]}"
+  out "${_parse_args_args[$i]}"
 }
 
 num_args()
 {
-  echo "${#_parse_args_args[@]}"
+  out "${#_parse_args_args[@]}"
 }
 
 get_args()
@@ -648,7 +647,7 @@ get_args()
 #   var[$newlen]=("${*:2@Q}")        || _interr
 #   var[len]=$newlen                 || _interr
 # }
-# 
+#
 # _n_docmds() {
 #   local doit=$1
 #   local cmds=("${@:2}")
@@ -667,8 +666,7 @@ get_args()
 #     fi
 #   done
 # }
-# 
+#
 
 # Unset internal functions
 unset _interr
-
