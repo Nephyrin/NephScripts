@@ -6,6 +6,21 @@
 n_is_bash() { [[ -n ${BASH-} && -n ${BASH_VERSION-} ]]; }
 n_is_zsh() { [[ -n ${ZSH_NAME-} && -n ${ZSH_VERSION-} ]]; }
 
+# n_readvar varname
+#   Read stdin into given variable name.  use n_herevar if you are using <<EOF to strip the trailing newline.
+n_readvar() { IFS= read -r -d $'\0' -- "$*" ||:; }
+# n_herevar varname
+#   Read stdin into the given variable name, and strip trailing newlines.  Useful for using here-documents (<<EOF) to
+#   load text into variables without weird syntax.
+#
+# Ex:
+#   n_readvar foo <<EOF
+#   Foo contents!
+#   EOF
+# Equivalent to:
+#   foo="Foo contents!"
+n_herevar() { local x; n_readvar x && cmd typeset -g "$1=${x%$'\n'}"; }
+
 # Find currently set hostname if possible, trying tools for a few different environments.
 #
 # Some minimal linux systems, especially containers, but also e.g. a minimal Arch install, don't have a `hostname`
@@ -37,68 +52,135 @@ n_hostname() {
 }
 
 rightPad() {
-  padding=$1
-  shift
-  str="$*"
-  pad=$(( $padding - ${#str} ))
+  local padding=$1
+  local str="${*:2}"
+  local pad=$(( padding - ${#str} ))
   printf "%s%${pad}s" "$str" ""
 }
 
 formatBytes() {
-  bytes="$1"
-  padding=$2
-  [ ! -z "$padding" ] || padding=0
+  local bytes="$1"
+  local padding=$2
+  [[ ! -z "$padding" ]] || padding=0
 
-  num=$(( $1 + 0 ))
-  div=1
-  units=""
-  if [ $num -gt $(( 1024 ** 3 )) ]; then
+  local num=$(( bytes + 0 ))
+  local div=1
+  local units=""
+  if [[ $num -ge $(( 1024 ** 4 )) ]]; then
+    div=$(( 1024 ** 4 ))
+    units="TiB"
+  elif [[ $num -ge $(( 1024 ** 3 )) ]]; then
     div=$(( 1024 ** 3 ))
     units="GiB"
-  elif [ $num -gt $(( 1024 * 1024 )) ]; then
+  elif [[ $num -ge $(( 1024 * 1024 )) ]]; then
     div=$(( 1024 * 1024 ))
     units="MiB"
-  elif [ $num -gt $(( 1024 )) ]; then
+  elif [[ $num -ge $(( 1024 )) ]]; then
     div=1024
     units="KiB"
   fi
 
-  if [ -z "$units" ]; then
+  local ret
+  if [[ -z "$units" ]]; then
     ret="$num"B
   else
     ret=$(( ( num * 100 ) / div ))
-    ind=$(( ${#ret} - 2 ))
+    local ind=$(( ${#ret} - 2 ))
     ret="${ret:0:$ind}.${ret:$ind}${units}"
   fi
 
-  echo -n "$ret"
-  pad=$(( $padding - ${#ret} ))
-  if [ $pad -gt 0 ]; then
+  out_raw "$ret"
+  local pad=$(( padding - ${#ret} ))
+  if [[ $pad -gt 0 ]]; then
     printf "%${pad}s" " "
   fi
-  echo
+  out ""
 }
 
-# n_is_shell_integer <input> [input...]
+# n_assoc2json <array_ref>
+#   Takes the name of an associative array and prints a json object
+#
+# Ex:
+#   declare -A foo
+#   foo[a]="A"
+#   foo[b]="B"
+#   n_assoc2json foo
+# Prints:
+#   {"a":"A","b":"B"}
+n_assoc2json() {
+  local arr_ref="$1"
+  # shellcheck disable=SC2016 # (jq variables, intended that they're in single quotes)
+  local script='
+    # input is keys followed by values joined with NUL separators
+    # and has extra trailing \0 for simplicity
+    split("\u0000")[:-1]
+    | length/2 as $len
+    | .[:$len] as $keys
+    | .[$len:] as $values
+    | reduce range($len) as $idx ({}; .[$keys[$idx]] = $values[$idx])
+  '
+  if n_is_zsh; then
+    # k = keys, P = deref
+    # shellcheck disable=all # zsh syntax
+    jq -McRs "$script" < <(printf "%s\0" ${(kP)arr_ref[@]} ${(P)arr_ref[@]})
+  else
+    local -n arr="$arr_ref"
+    jq -McRs "$script" < <(printf "%s\0" "${!arr[@]}" "${arr[@]}")
+  fi
+}
+
+# FIXME does not work in zsh, no namerefs
+n_json2assoc() {
+  local -n assoc=$1
+  local json=$2
+
+  local k v
+  while IFS= read -r -d $'\0' k; do
+    IFS= read -r -d $'\0' v ||:
+    assoc["$k"]=$v
+  done < <(jq --raw-output0 "to_entries.[] | .key, .value" <<< "$json")
+}
+
+# n_json_array [item [item...]]
+#   Emits arguments as a JSON array
+n_json_array() {
+  jq -McRs 'split("\u0000")[:-1]' < <(printf "%s\0" "$@")
+}
+
+# n_array2json <array_ref>
+#   Given the name of an array, output it as a JSON array
+#
+# See also n_json_array
+n_array2json() {
+  local array_ref=$1
+  if n_is_zsh; then
+    # shellcheck disable=all # zsh syntax
+    n_json_array ${(P)array_ref[@]}
+  else
+    local -n arr=$array_ref
+    n_json_array "${arr[@]}"
+  fi
+}
+
+# n_validnum <input> [input...]
 #
 # Checks that the input is comprised of digits, in its canonical base-ten representation for the current shell, and in
 # the valid range of integer inputs for the current shell.
 #
-# Notable: '0123' is rejected as non-canonical. Bash parses 0123 as 81b10 while zsh parses it as 123b10, which alone
-#          justifies this rule.
+# Notable: '0123' is rejected as non-canonical. Bash parses 0123 as 81b10 while zsh parses it as 123b10, bad
 #
 # Notable 2: zsh reports "number truncated after 18 digits" for -9223372036854775808 on 64bit platforms, even though
-#            they can be _computed_ in math expressions (2**63), which appears to be a zsh bug.  This function properly
-#            returns false there, as you cannot work with that number as an input.
+#            they can be _computed_ in math expressions (2**63), which appears to be a zsh bug.  This function returns
+#            false there, as you cannot work with that number as an input.
 #
-#            19 digit inputs that are in the range of [INT_MIN+1, INT_MAX] are valid despite that error message!
+#            19 digit inputs that are in the range of [INT_MIN+1, INT_MAX] _are_ valid and do not trigger said error
 n_validnum() {
   local input
   for input in "$@"; do
   # Non-alphanumeric input like `1e+100` or `1.2` can round-trip through zsh but are treated as floats
   #
   # "0123" or "" blocked by this regex but would fail the roundtrip test regardless.
-    [[ $input =~ ^[1-9][0-9]*$ && $(( input + 0 )) = "$input" ]]
+    [[ $input =~ ^[1-9][0-9]*$ && $(( input + 0 )) = "$input" ]] || return 1
   done
 }
 
