@@ -260,8 +260,15 @@ n_tolower() { if n_is_zsh; then echo "${@:l}"; else echo "${@,,}"; fi; }
 n_toupper() { if n_is_zsh; then echo "${@:u}"; else echo "${@^^}"; fi; }
 
 _sh_c_colors=0
-[[ -n $TERM && -t 1 && $(n_tolower "$TERM") != dumb ]] && _sh_c_colors="$(tput colors 2>/dev/null || echo 0)"
-sh_c()
+# Some versions of `tput` get upset if you query it with an empty $TERM or "dumb", rather than just giving you the
+# no-capabilities answer.
+#
+# See https://no-color.org for NO_COLOR. That owner of that domain really dislikes colors on their lawn.
+if [[ -z ${NO_COLOR-} && -n ${TERM-} && $(n_tolower "${TERM-}") != dumb ]]; then
+  _sh_c_colors="$(tput colors 2>/dev/null || echo 0)"
+fi
+
+_sh_c()
 {
   [[ $_sh_c_colors -gt 0 ]] || return
   local args=("$@")
@@ -269,9 +276,17 @@ sh_c()
   ( IFS=\; && echo -n $'\e['"${args[*]}m"; );
 }
 
+sh_c() { [[ ! -t 2 ]] || _sh_c "$@"; }
+sh_c_stdout() { :; }
+[[ -t 1 ]] && sh_c_stdout() { _sh_c "$@"; }
+
+# like echo >&2 without the pitfalls
 info_raw() { printf >&2 "%s" "$*"; }
 info() { printf >&2 "%s\n" "$*"; }
-info_linebreak() { printf >&2 "\n"; }
+
+# like echo without the pitfalls
+out_raw() { printf "%s" "$*"; }
+out() { printf "%s\n" "$*"; }
 
 estat()   { echo >&2 "$(sh_c 32 1)::$(sh_c) $*"; }
 estat2()  { echo >&2 "   $(sh_c 34 1)->$(sh_c) $*"; }
@@ -284,12 +299,38 @@ einfo2()  { echo >&2 "   $(sh_c 30 1)->$(sh_c) $*"; }
 eerr()    { echo >&2 "$(sh_c 31 1)!!$(sh_c) $*"; }
 eerr2()   { echo >&2 "   $(sh_c 31 1)~>$(sh_c) $*"; }
 ewarnprompt() { echo >&2 -n "$(sh_c 33 1)?$(sh_c) $*"; }
-_eblock() { local x; for x in "" "${@:2}" ""; do "$1" "$x"; done; }
+_elines() { local x; for x in "${@:2}"; do "$1" "$x"; done; }
+_eblock() { _elines "$1" "" "${@:2}" ""; }
+_epipe() { [[ $# -eq 1 ]] || return 1; local line; while IFS= read -r -d $'\n' line; do "$1" "$line"; done; }
+_esplitlines() { _epipe "$1" <<< "${*:2}"; }
+# Block variant -- emit each argument as its own line, with an empty line on either side for padding/call-out.
+#                  That is, `foo_block a b` -> `foo; foo a; foo b; foo`
 estat_block() { _eblock estat "$@"; }
 emsg_block()  { _eblock emsg  "$@"; }
 ewarn_block() { _eblock ewarn "$@"; }
 einfo_block() { _eblock einfo "$@"; }
 eerr_block()  { _eblock eerr  "$@"; }
+# Lines variants -- emit each argument as its own line. That is, `foo_lines a b` -> `foo a; foo b`
+estat_lines() { _elines estat "$@"; }
+emsg_lines()  { _elines emsg  "$@"; }
+ewarn_lines() { _elines ewarn "$@"; }
+einfo_lines() { _elines einfo "$@"; }
+eerr_lines()  { _elines eerr  "$@"; }
+# Splitlines variants -- Raw newlines in input are split into separate calls, giving each line its own decorator.
+#                        Multiple arguments are joined with a space prior to splitting as with base call.
+estat_splitlines() { _esplitlines estat "$@"; }
+emsg_splitlines()  { _esplitlines emsg  "$@"; }
+ewarn_splitlines() { _esplitlines ewarn "$@"; }
+einfo_splitlines() { _esplitlines einfo "$@"; }
+eerr_splitlines()  { _esplitlines eerr  "$@"; }
+# Pipe variants -- Read newline-delimited text from stdin and emit each line as its own message, with its own decorator
+estat_pipe() { _epipe estat; }
+emsg_pipe()  { _epipe emsg; }
+ewarn_pipe() { _epipe ewarn; }
+einfo_pipe() { _epipe einfo; }
+eerr_pipe()  { _epipe eerr; }
+# Title variants -- emits an empty line on either side for padding/call-out.
+#                   That is, `foo_title a b` -> `foo; foo a b; foo`
 estat_title() { _eblock estat "$*"; }
 emsg_title()  { _eblock emsg  "$*"; }
 ewarn_title() { _eblock ewarn "$*"; }
