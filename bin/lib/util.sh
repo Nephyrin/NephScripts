@@ -432,13 +432,26 @@ require_commands()
 
 sh_quote()
 {
-  # In zsh we could do "echo ${@:q}", but the bash equivalent (${@@Q}) aggressively quotes everything so is less good
-  # for readable output.
-  local args=()
-  for arg in "$@"; do
-    args+=("$(printf '%q' "$arg")")
-  done
-  echo "${args[@]}"
+  local q=()
+  if n_is_zsh; then
+    # zsh just has a readable quoting mode. See also (q) (q-)
+
+    # shellcheck disable=2296 disable=2206 # this is zsh, shellcheck
+    q+=(${(q+)@})
+  else
+    # Bash's @Q 'quotes' 'everything' 'simple' 'thing'
+    # but printf %q uses\ backslashes\ everywhere and also isn't great.
+    # To get readable quoting, first check if printf %q outputs the bare word and otherwise use @Q
+    local q=()
+    local i
+    local o
+    for i in "$@"; do
+      o="$(printf "%q" "$i")"
+      [[ $o = "$i" ]] || o="${i@Q}"
+      q+=("$o")
+    done
+  fi
+  printf "%s\n" "${q[*]}"
 }
 
 # Prints eval-able expression to set given variable, e.g.:
