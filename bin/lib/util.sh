@@ -375,6 +375,15 @@ qqcmd() { showcmd "$@"; "$@" &>/dev/null; }
 ecmd() { showcmd_unquoted "$@"; eval "$@"; }
 
 die() { local msg="$*"; [[ -n $msg ]] || msg="script terminated"; eerr_title "$msg"; exit 1; }
+_assert_failed() { die "Assertion failed${*+:: $*}"; }
+assert_test() { test "$@" || _assert_fail; }
+assert_cmd() { cmd "$@" || _assert_fail; }
+assert_value()
+{
+  local val; for val in "$@"; do
+    [[ -n $val ]] || _assert_fail
+  done
+}
 
 # Internal error to util.sh
 _interr() { die "Internal script error${*:+: $*}"; }
