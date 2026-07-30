@@ -344,12 +344,14 @@ edivider() {
   [[ $n =~ ^[0-9]+$ ]] || n=3
   [[ -n $char ]] || char=-
 
-  local run="$(($n / ${#char}))"
+  local run="$((n / ${#char}))"
   local change="$(( n - ( run * ${#char} ) ))"
 
   local line
-  [[ $run -lt 1 ]] || line="$(eval printf -- ${char@Q}%.0s {1..$run})"
-  local tail="${char[@]:0:$change}"
+  # {1..$run} isn't a thing in bash, so eval.
+  # w/run=10, expands to: `printf -- "%.${#char}s" "$char"{1..10}`
+  [[ $run -lt 1 ]] || line="$(eval 'printf -- "%.0${#char}s" "$char"'"{1..$run}")"
+  local tail="${char[*]:0:$change}"
   echo >&2 "$(sh_c 90)${line}${tail}$(sh_c)"
 }
 
