@@ -342,7 +342,12 @@ if [[ -z ${NO_COLOR-} && -n ${TERM-} && $(n_tolower "${TERM-}") != dumb ]]; then
 fi
 _sh_c()
 {
-  [[ $_sh_c_colors -gt 0 ]] || return
+  [[ $_sh_c_colors -gt 0 ]] || return 0
+  sh_c_unchecked "$@"
+}
+# Raw version that always does the processing regardless
+sh_c_unchecked()
+{
   local args=("$@")
   [[ ${#args[@]} -gt 0 ]] || args=(0)
   ( IFS=\; && out_raw $'\e['"${args[*]}m"; );
