@@ -507,6 +507,56 @@ require_commands()
   return 0
 }
 
+###
+### Argument parsing helpers and app usage/etc
+###
+
+# tl;dr example:
+
+# #                                            keep help text below 81st column ->|
+# n_init_args_and_usage 'my_script' 'option,help' 'oh' "$@" <<'EOF'
+# Usage: my_script [options] [--] arg arg2
+#   Help text here
+#
+# --option / -o  Help text for option
+# --help / -h    Show this help
+# EOF
+#
+# [[ -n $(get_merged_option help h) ]] && n_usage_and_exit
+
+## Usage text and helper
+# Global, set usage helpers set this but you may directly edit
+n_usage_text="!! This script has no usage text, good luck :c"
+n_set_usage() { n_usage_text="$*"; }
+n_set_usage_stdin() { n_readvar n_usage_text; }
+
+# Show usage. First argument is the display helper to use, e.g. `einfo` or `eerr`.  Each line passed to said helper as
+# an argument.
+n_usage() {
+  local helper="${1-einfo}"
+  _esplitlines "$helper" "$n_usage_text"
+}
+
+# n_usage_and_exit [code=0] [helper={einfo|eerr}]
+#   Helper to show usage and exit.  Optional arguments for error code and display helper.
+#   Exit code defaults to 0
+#   Helper defaults to eerr for non-0 code or einfo for 0 code.
+n_usage_and_exit() {
+  local code="${1-0}"
+  local helper="${2-einfo}"
+  [[ -z "${2+x}" && $code -ne 0 ]] && helper=eerr
+
+  n_usage "$helper"
+  exit "$code"
+}
+
+# Helper combining `n_set_usage_stdin` and `parse_args || n_usage_and_exit 1`
+#   Useful for parsing arguments and exiting with usage text when they are invalid
+n_init_args_and_usage() {
+  n_set_usage_stdin
+  parse_args "$@" || n_usage_and_exit 1
+}
+
 parse_args()
 {
   if [[ $# -lt 3 ]]; then
@@ -658,6 +708,8 @@ num_args()
   out "${#_parse_args_args[@]}"
 }
 
+# get_args - Emit all positional arguments shell quoted
+#   Usage: eval my_args=("$(get_args)")
 get_args()
 {
   sh_quote "${_parse_args_args[@]}"

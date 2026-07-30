@@ -2,7 +2,7 @@
 
 #
 # Script template - a copyable base script for making quick ~/bin/ stuff
-#   Put synopsis here -- Find all lines with XX and replace
+#   Put synopsis here -- find all occurrances of `XX` for bits to tweak
 #
 
 set -euo pipefail
@@ -10,30 +10,20 @@ set -euo pipefail
 . ~/bin/lib/util.sh
 
 ## Args and usage
-# usage [as_error=1]
-usage() {
-  if [[ -n ${1-} ]]; then
-    eerr_splitlines "$usage_text"
-    exit 1
-  else
-    einfo_splitlines "$usage_text"
-    exit 0
-  fi
-}
 
-usage_text= # (for shellcheck)
-n_readvar usage_text <<'EOF' #               keep help text below 81st column ->|
-Usage: script_template [options] [--] arg arg2 XX
-  Help text here
+#                                            keep help text below 81st column ->|
+n_init_args_and_usage 'my_scriptXX' 'option,help,XX' 'ohXX' "$@" <<'EOF'
+Usage: my_scriptXX [options] [--] arg arg2 XX
+  Help text here XX
 
 --option / -o  Help text for option XX
 --help / -h    Show this help
 EOF
 
-# Parse args XX --v
-parse_args 'templateXX' 'option,help,XX' 'ohXX' "$@" || die "Usage: templateXX [options] [--help] [--] argXX [arg...]"
-[[ -n $(get_merged_option help h) ]] && usage
+# --help
+[[ -n $(get_merged_option help h) ]] && n_usage_and_exit
 
+# Fetch args
 eval args="($(get_args))"
 
 option=$(get_merged_option option o) # XX
