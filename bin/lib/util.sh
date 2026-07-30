@@ -456,10 +456,10 @@ sh_quote()
 
 # Prints eval-able expression to set given variable, e.g.:
 # sh_var DISPLAY -> "DISPLAY=':0'"
-# FIXME Behavior is undefined for invalid variable name input
 sh_var()
 {
-  echo "$(sh_quote "$1")"="$(sh_quote "${!1}")"
+  declare -n ref="$1" || return 1
+  printf "%s\n" "$(sh_quote "$1")"="$(sh_quote "$ref")"
 }
 
 parse_args()
