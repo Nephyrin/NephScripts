@@ -268,8 +268,37 @@ try_keychain() {
   return 0
 }
 
-n_tolower() { if n_is_zsh; then echo "${@:l}"; else echo "${@,,}"; fi; }
-n_toupper() { if n_is_zsh; then echo "${@:u}"; else echo "${@^^}"; fi; }
+##
+## Some shorthand for common things that need to be typed differently in zsh/bash, for portable aliases and such
+##
+n_tolower() { if n_is_zsh; then out "${@:l}"; else out "${@,,}"; fi; }
+n_toupper() { if n_is_zsh; then out "${@:u}"; else out "${@^^}"; fi; }
+
+# Returns false if any argument is an unset variable
+n_isset() {
+  local var;
+  for var in "$@"; do
+    if n_is_zsh; then
+      [[ -n ${(P)var+x} ]] || return 1
+    else
+      [[ -n ${!var+x} ]] || return 1
+    fi
+  done
+  return 0
+}
+
+# Returns true if any of the passed variable names is set
+n_anyset() {
+  local var;
+  for var in "$@"; do
+    if n_is_zsh; then
+      [[ -z ${(P)var+x} ]] || return 0
+    else
+      [[ -z ${!var+x} ]] || return 0
+    fi
+  done
+  return 1
+}
 
 _sh_c_colors=0
 # Some versions of `tput` get upset if you query it with an empty $TERM or "dumb", rather than just giving you the
