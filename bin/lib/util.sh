@@ -6,6 +6,14 @@
 n_is_bash() { [[ -n ${BASH-} && -n ${BASH_VERSION-} ]]; }
 n_is_zsh() { [[ -n ${ZSH_NAME-} && -n ${ZSH_VERSION-} ]]; }
 
+# like echo >&2 without the pitfalls
+info_raw() { printf >&2 "%s" "$*"; }
+info() { printf >&2 "%s\n" "$*"; }
+
+# like echo without the pitfalls
+out_raw() { printf "%s" "$*"; }
+out() { printf "%s\n" "$*"; }
+
 # n_readvar varname
 #   Read stdin into given variable name.  use n_herevar if you are using <<EOF to strip the trailing newline.
 n_readvar() { IFS= read -r -d $'\0' -- "$*" ||:; }
@@ -356,14 +364,6 @@ sh_c_unchecked()
 sh_c() { [[ ! -t 2 ]] || _sh_c "$@"; }
 sh_c_stdout() { :; }
 [[ -t 1 ]] && sh_c_stdout() { _sh_c "$@"; }
-
-# like echo >&2 without the pitfalls
-info_raw() { printf >&2 "%s" "$*"; }
-info() { printf >&2 "%s\n" "$*"; }
-
-# like echo without the pitfalls
-out_raw() { printf "%s" "$*"; }
-out() { printf "%s\n" "$*"; }
 
 estat()   { info "$(sh_c 32 1)::$(sh_c) $*"; }
 estat2()  { info "   $(sh_c 34 1)->$(sh_c) $*"; }
