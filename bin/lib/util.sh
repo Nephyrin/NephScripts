@@ -300,6 +300,38 @@ n_anyset() {
   return 1
 }
 
+sh_quote()
+{
+  local q=()
+  if n_is_zsh; then
+    # zsh just has a readable quoting mode. See also (q) (q-)
+
+    # shellcheck disable=2296 disable=2206 # this is zsh, shellcheck
+    q+=(${(q+)@})
+  else
+    # Bash's @Q 'quotes' 'everything' 'simple' 'thing'
+    # but printf %q uses\ backslashes\ everywhere and also isn't great.
+    # To get readable quoting, first check if printf %q outputs the bare word and otherwise use @Q
+    local q=()
+    local i
+    local o
+    for i in "$@"; do
+      o="$(printf "%q" "$i")"
+      [[ $o = "$i" ]] || o="${i@Q}"
+      q+=("$o")
+    done
+  fi
+  printf "%s\n" "${q[*]}"
+}
+
+# Prints eval-able expression to set given variable, e.g.:
+# sh_var DISPLAY -> "DISPLAY=':0'"
+sh_var()
+{
+  declare -n ref="$1" || return 1
+  printf "%s\n" "$(sh_quote "$1")"="$(sh_quote "$ref")"
+}
+
 _sh_c_colors=0
 # Some versions of `tput` get upset if you query it with an empty $TERM or "dumb", rather than just giving you the
 # no-capabilities answer.
@@ -468,38 +500,6 @@ require_commands()
     fi
   done
   return 0
-}
-
-sh_quote()
-{
-  local q=()
-  if n_is_zsh; then
-    # zsh just has a readable quoting mode. See also (q) (q-)
-
-    # shellcheck disable=2296 disable=2206 # this is zsh, shellcheck
-    q+=(${(q+)@})
-  else
-    # Bash's @Q 'quotes' 'everything' 'simple' 'thing'
-    # but printf %q uses\ backslashes\ everywhere and also isn't great.
-    # To get readable quoting, first check if printf %q outputs the bare word and otherwise use @Q
-    local q=()
-    local i
-    local o
-    for i in "$@"; do
-      o="$(printf "%q" "$i")"
-      [[ $o = "$i" ]] || o="${i@Q}"
-      q+=("$o")
-    done
-  fi
-  printf "%s\n" "${q[*]}"
-}
-
-# Prints eval-able expression to set given variable, e.g.:
-# sh_var DISPLAY -> "DISPLAY=':0'"
-sh_var()
-{
-  declare -n ref="$1" || return 1
-  printf "%s\n" "$(sh_quote "$1")"="$(sh_quote "$ref")"
 }
 
 parse_args()
