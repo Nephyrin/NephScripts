@@ -13,7 +13,8 @@ trap cleanup EXIT
 
 USER=nephyrin
 PASS=dumbpass
-AUR_PACKAGES=(paru claude-code)
+PACKAGES=(zsh nano fd bat less ripgrep yarn npm rustup tmux)
+AUR_PACKAGES=(paru)
 
 ## Blank container
 ctr=$(cmd buildah from scratch)
@@ -47,7 +48,6 @@ buildah_run_func() {
   buildah run -- "$ctr" bash -c "$script" -- "${args[@]}"
 }
 
-
 # - Cleanup pacman.conf
 # - Set mirror
 # - Setup keyring
@@ -61,6 +61,7 @@ buildah_run_func() {
 setup_root() {
   local USER="$1"
   local PASS="$2"
+  local PACKAGES=("${@:3}")
   sed -ri '/^NoExtract / d' /etc/pacman.conf
   sed -ri 's|^#?(ParallelDownloads) .*|\1 = 20|' /etc/pacman.conf
   echo "Server = http://mirror.pointysoftware.net/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
@@ -70,7 +71,7 @@ setup_root() {
   pacman --disable-sandbox --noconfirm -Suu
   # shellcheck disable=SC2046
   pacman --disable-sandbox -S --noconfirm $(pacman -Qnq)
-  pacman --disable-sandbox -S --noconfirm --needed git sudo base base-devel
+  pacman --disable-sandbox -S --noconfirm --needed git sudo base base-devel "${PACKAGES[@]}"
   rm -vf /etc/pacman.d/mirrorlist.pacnew /etc/{passwd,gpasswd,group,shadow,gshadow}.pacnew
   find / -xdev -name '*.pacnew' -exec bash -c 'mv -v -- "$1" "${1%.pacnew}"' -- {} \;
   sed -ri 's|^#Color|Color|' /etc/pacman.conf
@@ -85,12 +86,48 @@ setup_root() {
   echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel
   # Setup machineid for build step, final step clears it
   systemd-machine-id-setup
+
+  # claude-code
+  #
+  # Install globally in /usr/local/ -- the default user gets a self-updatable version below, but this will give you ~something if overriding the homedir
+  #
+  ver=$(curl -L https://downloads.claude.ai/claude-code-releases/latest)
+  [[ -n $ver ]]
+  curl -L https://downloads.claude.ai/claude-code-releases/"$ver"/linux-x64/claude > /usr/local/bin/claude-bin
+  cat > "/usr/local/bin/claude" << 'EOF'
+#!/bin/sh
+export DISABLE_UPDATES=1
+export DISABLE_INSTALLATION_CHECKS=1
+exec /usr/local/bin/claude-bin "$@"
+EOF
+  chmod +x /usr/local/bin/claude{-bin,}
 }
 
-cmd buildah_run_func "$ctr" setup_root "$USER" "$PASS"
+cmd buildah_run_func "$ctr" setup_root "$USER" "$PASS" "${PACKAGES[@]}"
+
+# setup default user
+setup_user() {
+  ## Add .local/bin/ to path
+  cd -- "$HOME"
+  mkdir -pv .local/bin
+  # shellcheck disable=SC2016
+  echo 'export PATH=$HOME/.local/bin${PATH+:$PATH}' >> .bashrc
+  # shellcheck disable=SC2016
+  echo 'path+=($HOME/.local/bin)' >> .zshrc
+
+  ## Copy down global claude install so we have a self-updatable version.  If you bind-mount $HOME this wont work but
+  ## you'll at least have the static version in /usr/local/bin, and can choose to self-update if you want
+  claude-bin install
+
+  ## Rust
+  rustup default stable
+}
+cmd buildah config --user "$USER" "$ctr"
+cmd buildah_run_func "$ctr" setup_user
 
 # Switch to build user, build and install desired AUR stuff
-setup_user() {
+setup_build_user() {
+  rustup default stable
   for aurpkg in "$@"; do
     cd
     git clone https://aur.archlinux.org/"$aurpkg".git
@@ -100,7 +137,7 @@ setup_user() {
 }
 
 cmd buildah config --user build "$ctr"
-cmd buildah_run_func "$ctr" setup_user "${AUR_PACKAGES[@]}"
+cmd buildah_run_func "$ctr" setup_build_user "${AUR_PACKAGES[@]}"
 
 # Switch back to root
 # - nuke build user

@@ -8,7 +8,7 @@ usage() (
   local output="${1-emsg}"
   out() { "$output" "$@"; }
 
-  out "Usage: neph-container [options...] -- [podman args]"
+  out "Usage: neph-container [options...] -- [podman args] -- [command]"
   out ""
   out "Helper to spawn a podman container for interactive/sandboxish use, like a constrained distrobox."
   out ""                    # v-- purposefully expanded
@@ -19,7 +19,10 @@ usage() (
   out "  --keep, -k               Don't pass --rm to podman. Requires --name."
   out "  --workdir, -w WORKDIR    Working directory to share, defaults to \$PWD"
   out "  --detach, -d             Spawn async rather than with -ti"
-  out "  --claude, -c             RW Mount ~/.claude and ~/.claude.json for nested claude usage"
+  out "  --wait-init, -W          In detach mode, block until spawned container passes init (or exits)"
+  out "  --claude, -C             RW Mount ~/.claude and ~/.claude.json for nested claude usage, default to claude"
+  out "                           entrypoint."
+  out "  --codex, -X              RW Mount ~/.codex for nested codex usage"
   out "  --passwordless-sudo, -S  Enable passwordless-sudo"
   out "  --localports, -p PORTS   A comma-separated list of ports to publish via localhost, shorthand for "
   out "                           expanding these to \`-p 127.0.0.1:port:port\` in podman options"
@@ -27,27 +30,41 @@ usage() (
   out "    -P STARTPORT:ENDPORT   A colon-separated range of ports to publish as local ports, shorthand for "
   out "                           passing all ports in range to --localports"
   out "  --pkg PACKAGES           A list of additional packages, space-separated, to install in the new container."
-  out "  --cmd, -C                Command to spawn container with.  Defaults to \`bash -i\` if interactive or"
   out "                           \`sleep infinity\` for detached.  Passed wholesale as a string to bash -c."
   out "  --help, -h               Show this help and exit"
 )
 
-parse_args 'neph-container' 'n:kw:dcSp:P:C:h' 'name:,keep,workdir:,detach,claude,passwordless-sudo,localports:,localportrange:,pkg:,cmd:,help' "$@" || { usage eerr; exit 1; }
-
-user_podman_args=()
-eval user_podman_args="($(get_args))"
+parse_args 'neph-container' 'n:kw:dWCXSp:P:h' 'name:,keep,workdir:,detach,wait-init,claude,codex,passwordless-sudo,localports:,localportrange:,pkg:,help' "$@" || { usage eerr; exit 1; }
 
 name="$(get_merged_option name n)"
 workdir="$(get_merged_option workdir w)"
 detach="$(get_merged_option detach d)"
 keep="$(get_merged_option keep k)"
-claude=$(get_merged_option claude c)
+claude=$(get_merged_option claude C)
+codex=$(get_merged_option codex X)
 localports=$(get_merged_option localports p)
 localportrange=$(get_merged_option localportrange P)
 packages=$(get_option pkg)
-command=$(get_merged_option cmd C)
 help=$(get_merged_option h help)
 passwordless_sudo=$(get_merged_option passwordless-sudo S)
+wait_init=$(get_merged_option wait-init W)
+
+raw_args=() # for shellcheck's sake
+eval raw_args="($(get_args))"
+user_podman_args=()
+user_command=()
+
+# Split raw args?
+hit_split=
+for arg in "${raw_args[@]}"; do
+  if [[ -z $hit_split && $arg = -- ]]; then
+    hit_split=1
+  elif [[ -z $hit_split ]]; then
+    user_podman_args+=("$arg")
+  else
+    user_command+=("$arg")
+  fi
+done
 
 # Trigger help?
 [[ -n $help ]] && { usage; exit 0; }
@@ -83,21 +100,17 @@ if [[ -n $localportrange ]]; then
 fi
 
 cmd cd -- "$workdir"
-thecmd=()
+command=()
 podargs+=(--userns=keep-id
           --workdir "$PWD"
           -v "$PWD:$PWD")
 # --detach or interactive?
 if [[ -n $detach ]]; then
   podargs+=(-d)
-  thecmd=(sleep infinity)
+  command=(sleep infinity)
 else
   podargs+=(-ti)
-  thecmd=(bash -i)
-fi
-
-if [[ -n $command ]]; then
-  thecmd=(bash -c "$command")
+  command=(bash -i)
 fi
 
 # --pkg
@@ -111,11 +124,40 @@ if [[ -n $claude ]]; then
   podargs+=(-v "$HOME/.claude.json:$HOME/.claude.json"
             -v "$HOME/.claude:$HOME/.claude")
 fi
+# --codex
+if [[ -n $codex ]]; then
+  podargs+=(-v "$HOME/.codex:$HOME/.codex")
+fi
 # --passwordless-sudo
 [[ -z $passwordless_sudo ]] || podargs+=(--env "NEPHARCH_PASSWORDLESS_SUDO=1")
 
-cmd podman run  \
-    --userns=keep-id \
-    "${podargs[@]}"  \
-    "${user_podman_args[@]}" \
-    nepharch "${thecmd[@]}"
+if [[ ${#user_command[@]} -gt 0 ]]; then
+  command=("${user_command[@]}")
+fi
+
+the_cmd=(cmd podman run  \
+             --userns=keep-id \
+             "${podargs[@]}"  \
+             "${user_podman_args[@]}" \
+             nepharch "${command[@]}")
+
+# In detach/waitinit mode, block until it is initialized (or dies somehow)
+if [[ -n $detach && -n $wait_init ]]; then
+  # Capture container id
+  cid=$("${the_cmd[@]}")
+  printf "%s\n" "$cid" # stdout is just cid in detach mode
+  einfo "Waiting for detached container to initialize ($cid)"
+  if ! podman exec -- "$cid" sh -c 'while ! stat /.nepharch-init &>/dev/null; do sleep 0.5; done'; then
+    if [[ -n $(podman ps --filter "id=^$cid\$" -q) ]]; then
+      # If it is still running, something is wrong
+      die "Failed to query container while waiting for init (could not podman exec stat ...)"
+    else
+      einfo "Note: Container stopped before we could poll for init"
+    fi
+  else
+    einfo "Container finished initializing"
+  fi
+else
+  # Otherwise just run it
+  "${the_cmd[@]}"
+fi
