@@ -62,22 +62,28 @@ setup_root() {
   local USER="$1"
   local PASS="$2"
   local PACKAGES=("${@:3}")
+
+
+  # Pacman config
   sed -ri '/^NoExtract / d' /etc/pacman.conf
   sed -ri 's|^#?(ParallelDownloads) .*|\1 = 20|' /etc/pacman.conf
+  # Doesn't work in podman container atm
+  sed -ri 's|^#(DisableSandbox)|\1|' /etc/pacman.conf
   echo "Server = http://mirror.pointysoftware.net/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
   pacman-key --init
   pacman-key --populate
-  pacman --disable-sandbox -S --noconfirm archlinux-keyring
-  pacman --disable-sandbox --noconfirm -Suu
+
+  # Reinstall everything.
+  pacman -S --noconfirm archlinux-keyring
+  pacman --noconfirm -Suu
   # shellcheck disable=SC2046
-  pacman --disable-sandbox -S --noconfirm $(pacman -Qnq)
-  pacman --disable-sandbox -S --noconfirm --needed git sudo base base-devel "${PACKAGES[@]}"
+  pacman -S --noconfirm $(pacman -Qnq)
+  pacman -S --noconfirm --needed git sudo base base-devel "${PACKAGES[@]}"
   rm -vf /etc/pacman.d/mirrorlist.pacnew /etc/{passwd,gpasswd,group,shadow,gshadow}.pacnew
   find / -xdev -name '*.pacnew' -exec bash -c 'mv -v -- "$1" "${1%.pacnew}"' -- {} \;
   sed -ri 's|^#Color|Color|' /etc/pacman.conf
   sed -ri 's|^#?(ParallelDownloads) .*|\1 = 20|' /etc/pacman.conf
   sed -ri 's|^#(NoProgressBar)|#\1|' /etc/pacman.conf
-  sed -ri 's|^#(DisableSandbox)|\1|' /etc/pacman.conf
   useradd "$USER" -m -G wheel
   printf %s "$USER:$PASS" | chpasswd
   # Add throwaway build user second so real user gets uid 1000
@@ -101,6 +107,10 @@ export DISABLE_INSTALLATION_CHECKS=1
 exec /usr/local/bin/claude-bin "$@"
 EOF
   chmod +x /usr/local/bin/claude{-bin,}
+
+  # Proxy passthrough
+  echo 'Defaults env_keep += "http_proxy https_proxy no_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY"' \
+       > /etc/sudoers.d/keep-proxy
 }
 
 cmd buildah_run_func "$ctr" setup_root "$USER" "$PASS" "${PACKAGES[@]}"
