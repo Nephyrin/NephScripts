@@ -567,7 +567,9 @@ ccache_off() {
   [[ ${1-} = silent ]] || ccache_stat
 }
 
-v() {
+v() { _v -- "$@"; }
+vred() { _v --impersonate chrome --cookies-from-browser=firefox -- "$@"; }
+_v() {
   local json
   # for yt-dlp, --dump-single-json gives us parsable output, but implies --simulate and --quiet. But, we want it to
   # actually execute and also show status/progress output so.. re-enable both of those. A bit weird that "do the normal
@@ -577,7 +579,7 @@ v() {
   # parse the dumped info from stdout, you see), so there's several interactions in this.
   #
   # </three minutes of reading the man page to find what should just be --json>
-  if ! json=$(cmd yt-dlp --verbose --no-simulate --dump-single-json -- "$@"); then
+  if ! json=$(cmd yt-dlp --verbose --no-simulate --dump-single-json "$@"); then
     eerr "yt-dlp failed, see above"
     return 1
   fi
