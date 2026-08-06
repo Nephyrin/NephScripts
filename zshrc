@@ -194,6 +194,24 @@ _neph_term_reset_and_reload() {
 }
 zle -N _neph_term_reset_and_reload
 
+# I do this a lot
+_neph_git_cd_root() {
+  zle push-line-or-edit
+  BUFFER=gg # From aliases.sh
+  zle accept-line
+}
+zle -N _neph_git_cd_root
+
+_neph_last_dir() {
+  zle push-line-or-edit
+  BUFFER='cd -'
+  zle accept-line
+}
+zle -N _neph_last_dir
+
+bindkey "^[R" _neph_last_dir    # alt-shift-R
+bindkey "\ee" _neph_git_cd_root # alt-e
+
 bindkey "^O" accept-and-hold               # control-shift-O
 bindkey "^N" accept-and-infer-next-history # control-shift-N
 
