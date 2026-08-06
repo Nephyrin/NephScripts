@@ -211,20 +211,16 @@ zle -N _neph_last_dir
 
 # interactively cd from `dirs -p` and `cdpath`
 neph-fzf-cd-history-widget() {
-  local cmd='dirs -p && printf "%s\n" "${cdpath[@]}"'
   setopt localoptions pipefail no_aliases 2>/dev/null
-  local dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ~40% --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
+  local dir="$(printf "%s\0" "${dirstack[@]}" "${cdpath[@]}" | FZF_DEFAULT_OPTS="--read0 --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
   if [[ -z "$dir" ]]; then
-    zle redisplay
+    zle reset-prompt
     return 0
   fi
+  zle reset-prompt
   zle push-line-or-edit
   BUFFER="builtin cd -- ${dir:q}"
   zle accept-line
-  local ret=$?
-  unset dir # ensure this doesn't end up appearing in prompt expansion
-  zle reset-prompt
-  return $ret
 }
 zle -N neph-fzf-cd-history-widget
 bindkey '\er' neph-fzf-cd-history-widget # alt-r
