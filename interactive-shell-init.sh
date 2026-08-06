@@ -52,27 +52,5 @@ if [[ $- == *i* ]]; then # Only if interactive
   # Enable a floating pane in tmux mode
   # export FZF_TMUX_OPTS='-p90%,40% -x 0% -y 100%'
 
-  # foo
-  neph-fzf-cd-history-widget() {
-    local cmd='dirs -p && printf "%s\n" "${cdpath[@]}"'
-    setopt localoptions pipefail no_aliases 2> /dev/null
-    local dir="$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ~40% --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
-    if [[ -z "$dir" ]]; then
-      zle redisplay
-      return 0
-    fi
-    zle push-line # Clear buffer. Auto-restored on next prompt.
-    BUFFER="builtin cd -- \"${dir}\""
-    zle accept-line
-    local ret=$?
-    unset dir # ensure this doesn't end up appearing in prompt expansion
-    zle reset-prompt
-    return $ret
-  }
-  zle     -N             neph-fzf-cd-history-widget
-  bindkey -M emacs '\er' neph-fzf-cd-history-widget
-  bindkey -M vicmd '\er' neph-fzf-cd-history-widget
-  bindkey -M viins '\er' neph-fzf-cd-history-widget
-
   unset _inc_type
 fi
