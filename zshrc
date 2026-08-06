@@ -21,6 +21,7 @@ fi
 
 # This seems to just make the prompt slower at startup? May be a bad interaction with gitstatusd.
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
+typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=1
 
 # Path to nephscripts and private
 NEPH=~/neph
