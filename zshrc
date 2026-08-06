@@ -132,6 +132,10 @@ plugins=(git compleat zsh-syntax-highlighting zsh-autosuggestions direnv)
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
+# omz includes a bunch of 'helpful' aliases they think you should use but like.. i'll define ones i want to use, stop
+# taking up all the shorthand characters.
+zstyle ':omz:*' aliases no
+
 source $ZSH/oh-my-zsh.sh
 
 ###
