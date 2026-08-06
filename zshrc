@@ -263,6 +263,15 @@ _neph_path_dedup() {
 }
 _neph_path_dedup
 
+###
+### enable ttyctl lock so random stty changes by apps that fail to clean up are discarded
+###
+ttyctl -f
+# If other config stuff wants to screw with the tty, it needs to explicitly unlock it for changes to stick
+#   ttyctl -u
+#   stty <stuff>
+#   ttyctl -f
+
 # Profiling: Uncomment line at top too
 # zprof > ~/.cache/neph-zprof
 # zmodload -u zsh/zprof
