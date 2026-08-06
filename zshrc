@@ -42,6 +42,8 @@ _neph_removefrompath() {
   path=("${path[@]:|vals}")
 }
 
+_neph_addtopath ~/.bin
+_neph_addtopath ~/.local/bin
 _neph_addtopath $NEPH/bin
 _neph_addtopath $NPRIV/bin
 
