@@ -175,18 +175,23 @@ _neph_term_reset() {
 }
 zle -N _neph_term_reset
 
-# Reset screen and nuke prompt too
-_neph_term_reset_and_clear() {
-  zle && BUFFER=""
+# deeper reset, resets tty and reloads zsh to restore tty settings, loses prompt/local variables/etc
+_neph_term_reset_and_reload() {
   _neph_term_reset
+  if zle; then
+    BUFFER="clear; exec zsh"
+    zle accept-line
+  else
+    exec zsh
+  fi
 }
-zle -N _neph_term_reset_and_clear
+zle -N _neph_term_reset_and_reload
 
 bindkey "^O" accept-and-hold               # control-shift-O
 bindkey "^N" accept-and-infer-next-history # control-shift-N
 
 bindkey "\eg" _neph_term_reset             # alt-g
-bindkey "\eG" _neph_term_reset_and_clear   # shift-alt-G
+bindkey "\eG" _neph_term_reset_and_reload   # shift-alt-G
 
 ###
 ### Tmux
