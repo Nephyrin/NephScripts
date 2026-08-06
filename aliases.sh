@@ -93,6 +93,7 @@ t() {
   tmux renamew "$*" &>/dev/null || true
 }
 
+# 'browse' - launch file manager against a thing
 brs() { s dolphin -- "$@"; }
 
 # enhanced reset
@@ -521,9 +522,13 @@ lx() {
   # Hyperlinks only if output is a terminal, eza as of $current_day doesn't turn them off automatically, should probably
   # be --hyperlinks=WHEN like color/icons are.
   local termopts=()
-  [[ -t 1 ]] && termopts+=(--hyperlink);
-  local rows=$(( $(tput lines 2>/dev/null || echo 0) / 2 ))
-  EZA_GRID_ROWS=$rows eza -F --color-scale=age --icons --smart-group --git --time-style=relative "${termopts[@]}" "$@"
+  local rows=0
+  if [[ -t 1 ]]; then
+     termopts+=(--hyperlink);
+     { rows=$(tput <&3 lines 2>/dev/null || echo 0); } 3<&1
+  fi
+  EZA_GRID_ROWS=${EZA_GRID_ROWS:-$(( rows/2 ))} \
+    eza -F --color-scale=age --icons --smart-group --git --time-style=relative "${termopts[@]}" "$@"
 }
 # long
 lxx() { lx -l --sort=modified "$@"; }
