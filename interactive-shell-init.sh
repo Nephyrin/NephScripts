@@ -45,8 +45,8 @@ if [[ $- == *i* ]]; then # Only if interactive
   export FZF_DEFAULT_OPTS="--margin 0,2% --border --height=~40%"
   # Give fzf ctrl-t a bat preview if bat is available
   ! type bat &>/dev/null || export FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {} --style=header-filesize'"
-  ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
-  ! type rg &>/dev/null || export FZF_CTRL_T_COMMAND="rg --files --no-ignore-vcs --hidden 2>/dev/null"
+  ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden --sortr=modified"
+  ! type rg &>/dev/null || export FZF_CTRL_T_COMMAND="rg --files --no-ignore-vcs --hidden --sortr=modified 2>/dev/null"
   ! type fd &>/dev/null || export FZF_ALT_C_COMMAND="fd -u -t d"
 
   # Enable a floating pane in tmux mode
