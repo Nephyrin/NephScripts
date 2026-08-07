@@ -639,6 +639,11 @@ n_container_install() {
   fi
 }
 
+## Git aliases
+gg() {
+  cd -- "$(git rev-parse --path-format=relative --show-toplevel)"/"$*"
+}
+
 # quickly select a bunch of local git branches to nuke
 git-fzf-delete-branches() {
   local branch
