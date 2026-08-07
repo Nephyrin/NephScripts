@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -euo pipefail
+
+name=${1#pod-}
+
+die() { printf >&2 "\n\n%s\n" "!! $*"; exit 1; }
+
+{
+  podman inspect "$name" &>/dev/null || die "No such container: $name"
+
+  provision() {
+    set -euo pipefail
+
+    exec {lock}>/run/neph-container-ssh.lock
+    flock "$lock"
+
+    cat > /etc/authorized_keys.new
+    echo "AuthorizedKeysFile /etc/authorized_keys" > /etc/ssh/sshd_config.d/77-yolo.conf.new
+
+    [[ -x /usr/sbin/sshd ]] || pacman -S openssh --needed --noconfirm
+    ssh-keygen -A
+
+    mv /etc/authorized_keys{.new,}
+    mv /etc/ssh/sshd_config.d/77-yolo.conf{.new,}
+  }
+
+  echo "[-] Provisioning sshd in container '$name'"
+
+  cat ~/.ssh/id_rsa.pub |
+    podman exec -u 0 -i "$name" bash -c "$(typeset -f provision) && provision" \
+      || die "Provisioning failed, see above"
+} >&2 <&-
+
+podman exec -u 0 -i "$name" /usr/sbin/sshd -i -e
