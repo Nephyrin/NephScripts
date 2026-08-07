@@ -91,7 +91,8 @@ file_type:
   source: {foreground: "#61AFEF"}
 
 punctuation: {foreground: "#5C6370"}
-date: {foreground: "#E5C07B"}
+#date: {foreground: "#E5C07B"}
+date: {foreground: "#5C6370"}
 inode: {foreground: "#5C6370"}
 blocks: {foreground: "#5C6370"}
 header: {foreground: "#ABB2BF"}
