@@ -45,9 +45,46 @@ if [[ $- == *i* ]]; then # Only if interactive
   export FZF_DEFAULT_OPTS="--margin 0,2% --border --height=~40%"
   # Give fzf ctrl-t a bat preview if bat is available
   ! type bat &>/dev/null || export FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {} --style=header-filesize'"
-  ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden --sortr=modified"
-  ! type rg &>/dev/null || export FZF_CTRL_T_COMMAND="rg --files --no-ignore-vcs --hidden --sortr=modified 2>/dev/null"
-  ! type fd &>/dev/null || export FZF_ALT_C_COMMAND="fd -u -t d"
+  ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="fd --hidden"
+  ! type fd &>/dev/null || export FZF_CTRL_T_COMMAND="fd --hidden"
+  ! type fd &>/dev/null || export FZF_ALT_C_COMMAND="fd --hidden -E .git -t d"
+
+  # Generic function to generate a preview
+  _neph_fzf_preview() {
+    set -o pipefail
+    local file=$1
+    if [[ -d $file ]]; then
+      # If directory contains a PKGBUILD, pull out a few bits
+      grep 2>/dev/null -P '^(pkgbase|pkgname|pkgrel)=' -- "$file"/PKGBUILD | bat -pP -lsh --color=always && echo
+      # Show a few lines of history for dir
+      git ll --color=always -n 5 -- "$file" 2>/dev/null
+      echo
+      if command -v eza &>/dev/null; then
+        eza -F --color-scale=age --icons --smart-group --git --time-style=relative -l --sort=modified --color=always \
+            -- "$file"
+      else
+        ls -ltr --color=always -- "$file"
+      fi
+    elif command -v bat &>/dev/null; then
+      bat -pP -- "$file"
+    else
+      local enc
+      enc=$(file -b --mime-encoding 2>/dev/null) ||:
+      if [[ -n $enc && $enc != binary ]]; then
+        cat -- "$file"
+      else
+        echo "Cannot preview file without \`file\` or \`bat\` to avoid spewing binary"
+      fi
+    fi
+  }
+
+  ## TODO abusing the tab-trick to make this stuff searchable would be neat
+  # fzf does dumb quote parsing out of this, not a full eval -- just escaping \ and " seems to work
+  _neph_fzf_preview_sh="$(typeset -f _neph_fzf_preview); _neph_fzf_preview {}"
+  _neph_fzf_preview_sh=${_neph_fzf_preview_sh//\\/\\\\}
+  _neph_fzf_preview_sh=${_neph_fzf_preview_sh//\"/\\\"}
+  export FZF_ALT_C_OPTS="--preview \"${_neph_fzf_preview_sh}\""
+  unset _neph_fzf_preview_sh
 
   # Enable a floating pane in tmux mode
   # export FZF_TMUX_OPTS='-p90%,40% -x 0% -y 100%'

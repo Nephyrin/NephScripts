@@ -202,6 +202,84 @@ _neph_git_cd_root() {
 }
 zle -N _neph_git_cd_root
 
+## _neph_fzf_cd_impl [search_by_file (bool)] [base_directory]
+##
+##   custom version of fzf-cd-widget -- implements both optional from-other-root and find-file-but-cd-to-its-dir modes
+##   since all three are fairly duplicated
+##
+##   This is inlined and cleaned up from upstream fzf-cd-widget and modded a bit, no clean way to re-use it
+##   unfortunately.  Still uses __fzf_defaults/FZF_ALT_C_COMMAND/etc from base fzf zsh bindings
+_neph_fzf_cd() {
+  local search_by_file=${1-}
+  local use_base_directory=${2+1} # set flag
+  local base_directory=${2-}
+  # Strip all trailing slashes
+  base_directory=${base_directory%${base_directory##*[!/]}}
+  setopt localoptions pipefail no_aliases 2> /dev/null
+
+  local fzf_cmd=${FZF_ALT_C_COMMAND-}
+  (( search_by_file )) && fzf_cmd=${FZF_CTRL_T_COMMAND-}
+  # prepend . so just pressing enter always goes to root
+  (( use_base_directory )) && fzf_cmd=${fzf_cmd:+"echo .;"}$fzf_cmd
+
+  local dir
+  dir=$(
+    set -euo pipefail
+    if (( use_base_directory )); then
+      builtin cd -q -- $base_directory || return 1
+    fi
+
+    FZF_DEFAULT_COMMAND=$fzf_cmd \
+    FZF_DEFAULT_OPTS=$(__fzf_defaults "--reverse --walker=dir,follow,hidden --scheme=path" "${FZF_ALT_C_OPTS-} +m") \
+    FZF_DEFAULT_OPTS_FILE='' \
+      $(__fzfcmd) < /dev/tty || exit 1
+  )
+
+  [[ $? -eq 0 && -n $dir ]] || { zle redisplay; return 1; }
+
+  # Unless we returned an absolute path, prepend base
+  if (( use_base_directory )) && [[ $dir != /* ]]; then
+    if [[ $dir = . ]]; then
+      # If we returned . be a little prettier by not appending /.
+      dir=$base_directory
+    else
+      dir=$base_directory/$dir
+    fi
+  fi
+
+  if (( search_by_file )) && [[ ! -d $dir ]]; then
+    dir=$(dirname -- $dir) || { zle redisplay; return 1; }
+  fi
+
+  ## Neph: Removed the part where we make the path absolute, I'd rather shell history show the relative moves
+
+  zle push-line-or-edit # Clear buffer. Auto-restored on next prompt.
+  BUFFER="cd -- ${(q)dir}"
+  zle accept-line
+  zle reset-prompt
+  # local ret=$?
+  # unset dir # ensure this doesn't end up appearing in prompt expansion
+  # zle reset-prompt
+  # return $ret
+}
+zle -N _neph_fzf_cd
+
+_neph_fzf_cd_by_file() { _neph_fzf_cd 1; }
+zle -N _neph_fzf_cd_by_file
+
+_neph_fzf_cd_git_root() {
+  local by_file=${1-}
+  local groot=$(git rev-parse --path-format=relative --show-toplevel)
+  [[ -n $groot ]] || { zle reset-prompt; return 1; }
+  _neph_fzf_cd "$by_file" $groot
+}
+zle -N _neph_fzf_cd_git_root
+
+_neph_fzf_cd_git_root_by_file() {
+  _neph_fzf_cd_git_root 1
+}
+zle -N _neph_fzf_cd_git_root_by_file
+
 _neph_last_dir() {
   zle push-line-or-edit
   BUFFER='cd -'
@@ -223,6 +301,7 @@ neph-fzf-cd-history-widget() {
   zle accept-line
 }
 zle -N neph-fzf-cd-history-widget
+
 bindkey '\er' neph-fzf-cd-history-widget # alt-r
 
 bindkey "^[R" _neph_last_dir    # alt-shift-R
@@ -232,7 +311,17 @@ bindkey "^O" accept-and-hold               # control-shift-O
 bindkey "^N" accept-and-infer-next-history # control-shift-N
 
 bindkey "\eg" _neph_term_reset             # alt-g
-bindkey "\eG" _neph_term_reset_and_reload   # shift-alt-G
+bindkey "\eG" _neph_term_reset_and_reload  # shift-alt-G
+
+# Replaces normal fzf-cd since i tweaked logic slightly
+bindkey "^[C" _neph_fzf_cd                 # alt-C
+# Relative to git root with shift
+bindkey "^[C" _neph_fzf_cd_git_root        # shift-alt-C
+
+# Alternate cd-by-searched-file
+bindkey "^[o" _neph_fzf_cd_by_file           # alt-o
+# Relative to git root with shift
+bindkey "^[O" _neph_fzf_cd_git_root_by_file  # shift-alt-o
 
 ###
 ### Tmux
