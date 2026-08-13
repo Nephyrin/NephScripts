@@ -34,9 +34,7 @@ if [[ -t 1 ]]; then
 elif [[ -t 2 ]]; then
   fd=2
 else
-  t=$(tty 2>/dev/null) || t=
-  [[ -n $t ]] || die "Couldn't find tty for OSC 52 copy"
-  exec {fd}>"$t" || die "Couldn't open tty '$t' for OSC 52 copy"
+  { exec {fd}>/dev/tty; } 2>/dev/null || die "Couldn't open tty for OSC 52 copy"
 fi
 
 [[ -n $fd ]] || die
@@ -49,4 +47,4 @@ fi
 
 [[ -z $raw ]] && payload=${payload%$'\n'}
 
-printf '\x1b]52;c;%s\x07' "$(base64 -w0 < <(printf '%s' "$payload"))"
+printf >&"$fd" '\x1b]52;c;%s\x07' "$(base64 -w0 < <(printf '%s' "$payload"))"
