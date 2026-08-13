@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+out() { printf "%s\n" "$*"; }
+die() { [[ -n ${quiet-} ]] && exit 0; out >&2 "!! ${*-Failed}"; exit 1; }
+
+# -r  Raw -- don't trim trailing newline, affects for `echo hi | copy` style usage
+# -q  Quiet -- succeed and do nothing if there's no terminal to emit copy sequence to
+
+quiet=
+raw=
+positional=()
+endofopts=
+while [[ $# -gt 0 ]]; do
+  if [[ ${1-} = -- ]]; then
+    endofopts=1
+  elif [[ $1 != -* || -n $endofopts ]]; then
+    positional+=("$1")
+  elif [[ $1 = -q ]]; then
+    quiet=1
+  elif [[ $1 = -r ]]; then
+    raw=1
+  else
+    die "Usage: copy [-t] [-q] [text_if_not_stdin]"
+  fi
+  shift
+done
+
+fd=
+
+if [[ -t 1 ]]; then
+  fd=1
+elif [[ -t 2 ]]; then
+  fd=2
+else
+  t=$(tty 2>/dev/null) || t=
+  [[ -n $t ]] || die "Couldn't find tty for OSC 52 copy"
+  exec {fd}>"$t" || die "Couldn't open tty '$t' for OSC 52 copy"
+fi
+
+[[ -n $fd ]] || die
+
+if [[ ${#positional[@]} -gt 0 ]]; then
+  payload=$(printf "%s" "${positional[*]}")
+else
+  payload=$(cat)
+fi
+
+[[ -z $raw ]] && payload=${payload%$'\n'}
+
+printf '\x1b]52;c;%s\x07' "$(base64 -w0 < <(printf '%s' "$payload"))"
