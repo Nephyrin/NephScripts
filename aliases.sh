@@ -529,22 +529,27 @@ lx() {
   local termopts=()
   local rows=0
   if [[ -t 1 ]]; then
-     termopts+=(--hyperlink);
-     { rows=$(tput <&3 lines 2>/dev/null || echo 0); } 3<&1
+    termopts+=(--hyperlink);
+    # ensure tput only probes stdout to determine caps, which is fudgy since we are capturing stdout.
+    { rows=$(tput <&3 lines 2>/dev/null || echo 0); } 3<&1
   fi
-  EZA_GRID_ROWS=${EZA_GRID_ROWS:-$(( rows/2 ))} \
+  EZA_GRID_ROWS=${EZA_GRID_ROWS-$(( rows/2 ))} \
     eza -F --color-scale=age --icons --smart-group --git --time-style=relative "${termopts[@]}" "$@"
 }
 # long
-lxx() { lx -l --sort=modified "$@"; }
+lz() { lx -l --sort=modified "$@"; }
+lg() { lz --grid "$@"; }
 # tree (one level)
-lxt() { lxx -TL2 "$@"; }
+lt() { lz -TL2 "$@"; }
+ltg() { lt --grid "$@"; }
 # full tree
-lxtt() { lxx -T "$@"; }
+ltt() { lz -T "$@"; }
 # sizes and tree/full-tree variants
-lxs() { lxx --sort=size --color-scale=size --total-size "$@"; }
-lxst() { lxs -TL2 "$@"; }
-lxstt() { lxs "$@"; }
+lzs() { lz --sort=size --color-scale=size --total-size "$@"; }
+lzsg() { lzs --grid "$@"; }
+lzst() { lzs -TL2 "$@"; }
+lzstg() { lzst --grid "$@"; }
+lzstt() { lzs -T "$@"; }
 
 _neph_ccache_dir=/usr/lib/ccache/bin/
 ccache_stat() {
