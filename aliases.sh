@@ -240,6 +240,11 @@ nenv() {
   fi
 }
 
+# Show absolute path of inputs, or $PWD if no arguments
+pa() { [[ $# -eq 0 ]] && set -- "."; realpath -m -- "$@"; }
+# pa() but also copy result
+pc() { pa "$@" | tee >(copy); }
+
 # use wl-copy to throw a file on the clipboard as a file:// uri, which will be handled by most things that handle random
 # pastes of images/videos/etc..
 #
