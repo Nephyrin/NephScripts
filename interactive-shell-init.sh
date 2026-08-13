@@ -44,7 +44,6 @@ if [[ $- == *i* ]]; then # Only if interactive
   FZF_CTRL_T_OPTS=;
   export FZF_DEFAULT_OPTS="--margin 0,2% --border --height=~40%"
   # Give fzf ctrl-t a bat preview if bat is available
-  ! type bat &>/dev/null || export FZF_CTRL_T_OPTS="--preview '[[ ! -f {} ]] || bat --color=always {} --style=header-filesize'"
   ! type rg &>/dev/null || export FZF_DEFAULT_COMMAND="fd --hidden"
   ! type fd &>/dev/null || export FZF_CTRL_T_COMMAND="fd --hidden"
   ! type fd &>/dev/null || export FZF_ALT_C_COMMAND="fd --hidden -E .git -t d"
@@ -53,24 +52,48 @@ if [[ $- == *i* ]]; then # Only if interactive
   _neph_fzf_preview() {
     set -o pipefail
     local file=$1
+    local ezac=(eza -F --color-scale=age --icons --smart-group --git \
+                    --time-style=relative -l --sort=modified --color=always)
+    local lines
+
+    ## Show one-line stat of file
+    if command -v eza &>/dev/null; then
+      "${ezac[@]}" -d -- "$file"
+    else
+      ls -ltr -d --color=always -- "$file"
+    fi
+    echo
+
+    ## PKGBUILD preview
     if [[ -d $file ]]; then
-      # If directory contains a PKGBUILD, pull out a few bits
-      grep 2>/dev/null -P '^(pkgbase|pkgname|pkgrel)=' -- "$file"/PKGBUILD | bat -pP -lsh --color=always && echo
-      # Show a few lines of history for dir
-      git ll --color=always -n 5 -- "$file" 2>/dev/null
-      echo
+      # If directory is an arch package, pull out a few bits
+      lines=$(grep 2>/dev/null -P '^(pkgbase|pkgname|pkgrel)=' -- "$file"/PKGBUILD | bat -pP -lsh --color=always)
+      [[ -n $lines ]] && printf "%s\n\n" "$lines"
+    fi
+
+    # Show a few lines of history for dir
+    lines=$(git ll --color=always -n 5 -- "$file" 2>/dev/null)
+    [[ -n $lines ]] && printf "%s\n\n" "$lines"
+
+    if [[ -d $file ]]; then
+      ## Scrollable directory contents
       if command -v eza &>/dev/null; then
-        eza -F --color-scale=age --icons --smart-group --git --time-style=relative -l --sort=modified --color=always \
-            -- "$file"
+        "${ezac[@]}" -- "$file"
       else
         ls -ltr --color=always -- "$file"
       fi
-    elif command -v bat &>/dev/null; then
-      bat -pP -- "$file"
     else
+      ## Scrollable file contents
       local enc
       enc=$(file -b --mime-encoding 2>/dev/null) ||:
-      if [[ -n $enc && $enc != binary ]]; then
+      if [[ $enc = binary ]]; then
+        echo "<binary file>"
+      elif command -v bat &>/dev/null; then
+        # Bat wont spew binary in -f mode, so can proceed even if `file` isn't available as a second binary checker
+        # (it just prints some confusing warning, hence preferring to check file first)
+        bat -fpP -- "$file"
+      elif [[ -n $enc ]]; then
+        # Only raw cat it if we're sure it isn't binary spew (primarily because it could be massive and lag fzf)
         cat -- "$file"
       else
         echo "Cannot preview file without \`file\` or \`bat\` to avoid spewing binary"
@@ -83,7 +106,7 @@ if [[ $- == *i* ]]; then # Only if interactive
   _neph_fzf_preview_sh="$(typeset -f _neph_fzf_preview); _neph_fzf_preview {}"
   _neph_fzf_preview_sh=${_neph_fzf_preview_sh//\\/\\\\}
   _neph_fzf_preview_sh=${_neph_fzf_preview_sh//\"/\\\"}
-  export FZF_ALT_C_OPTS="--preview \"${_neph_fzf_preview_sh}\""
+  export FZF_DEFAULT_OPTS="--preview \"${_neph_fzf_preview_sh}\""
   unset _neph_fzf_preview_sh
 
   # Enable a floating pane in tmux mode
