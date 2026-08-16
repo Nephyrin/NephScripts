@@ -175,9 +175,6 @@
 [submodule "emacs.d/helm-lsp"]
 	path = emacs.d/helm-lsp
 	url = https://github.com/emacs-lsp/helm-lsp
-[submodule "emacs.d/yasnippet"]
-	path = emacs.d/yasnippet
-	url = https://github.com/joaotavora/yasnippet
 [submodule "emacs.d/pkg-info"]
 	path = emacs.d/pkg-info
 	url = https://github.com/emacsorphanage/pkg-info

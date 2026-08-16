@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/yasnippet")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flycheck")
 (neph-add-to-load-path 'load-path "~/.emacs.d/epl")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pkg-info")
@@ -641,6 +640,14 @@
 ;; (elpaca (request :host github :repo "tkf/emacs-request"
 ;;         :ref "db88fd21d25399ff9940c208173665b12493992b"))
 
+;;
+;; Yasnippet
+;;
+(elpaca (yasnippet :host github :repo "joaotavora/yasnippet"
+        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417" :wait t)
+  (require 'yasnippet)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -812,12 +819,6 @@
 ;;  (ycmd-mode 1))
 ;;
 ;;(add-hook 'python-mode-hook 'neph-ycm-setup)
-
-;;
-;; Yasnippet
-;;
-
-(require 'yasnippet)
 
 ;;
 ;; Flycheck
