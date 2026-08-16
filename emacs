@@ -1763,6 +1763,33 @@
 ;;
 (require 'salt-mode)
 
+;;
+;; Theme
+;;
+
+;(load-theme 'sunburst t)
+
+;; See also neph-ample-zen-theme.el
+
+;;
+;; Load theme selected by env
+;;
+(setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
+                           (if envtheme envtheme
+                             "ample-zen")))
+
+(load-neph-theme default-neph-theme)
+
+(global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
+
+;; Default font
+(set-face-attribute 'default nil :family "DejaVu Sans Mono")
+(set-face-attribute 'default nil :height 100)
+(when (eq system-type 'darwin)
+  (set-face-attribute 'default nil :family "Monaco")
+  (set-face-attribute 'default nil :height 120))
+(put 'downcase-region 'disabled nil)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

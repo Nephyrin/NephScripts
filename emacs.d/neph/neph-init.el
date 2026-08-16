@@ -37,64 +37,6 @@
 ;;     (linum-mode 1)))
 
 ;;
-;; Theme
-;;
-
-;(load-theme 'sunburst t)
-
-;; See also neph-ample-zen-theme.el
-
-;;
-;; Load theme selected by env
-;;
-(setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
-                           (if envtheme envtheme
-                             "ample-zen")))
-
-(defun load-neph-theme (neph-theme)
-  "Load the given theme, possibly with neph wrapper"
-  (interactive (list (read-string "Theme: ")))
-  ;; Disable all existing
-  (dolist (elem custom-enabled-themes)
-    (disable-theme elem))
-  ;; Custom handlers
-  (if (string= neph-theme "ample-zen")
-      (progn
-        (load-theme 'ample-zen t)
-        (load-theme 'neph-ample-zen t))
-    ;; Safe handlers
-    (if (string= neph-theme "tango")
-        (load-theme 'tango t)
-      ;; Else just forward to load-theme
-      (load-theme (intern neph-theme))))
-  (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
-    (color-identifiers:refresh))
-  (when (and (boundp 'display-line-numbers-mode) display-line-numbers-mode)
-    (display-line-numbers-mode nil)
-    (display-line-numbers-mode t))
-  (redisplay))
-(load-neph-theme default-neph-theme)
-
-(defun neph-whiteboard-mode ()
-  "Enter or exit whiteboard mode"
-  (interactive)
-  (if (member 'ample-zen custom-enabled-themes)
-      (progn (load-neph-theme "whiteboard")
-             (global-whitespace-mode -1))
-    (load-neph-theme "ample-zen")
-    (global-whitespace-mode t)))
-(global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
-
-;; Default font
-(set-face-attribute 'default nil :family "DejaVu Sans Mono")
-(set-face-attribute 'default nil :height 100)
-(when (eq system-type 'darwin)
-  (set-face-attribute 'default nil :family "Monaco")
-  (set-face-attribute 'default nil :height 120))
-(put 'downcase-region 'disabled nil)
-
-
-;;
 ;; purple-haze (needs to be made into a neph-purple-haze-theme.el)
 ;;
 

@@ -2064,4 +2064,40 @@ beginning of it and the point to the end of it if so"
                      (read-char "Zap backwards to char: ")))
   (zap-to-char (* -1 arg) char))
 
+;;
+;; Theme
+;;
+
+(defun load-neph-theme (neph-theme)
+  "Load the given theme, possibly with neph wrapper"
+  (interactive (list (read-string "Theme: ")))
+  ;; Disable all existing
+  (dolist (elem custom-enabled-themes)
+    (disable-theme elem))
+  ;; Custom handlers
+  (if (string= neph-theme "ample-zen")
+      (progn
+        (load-theme 'ample-zen t)
+        (load-theme 'neph-ample-zen t))
+    ;; Safe handlers
+    (if (string= neph-theme "tango")
+        (load-theme 'tango t)
+      ;; Else just forward to load-theme
+      (load-theme (intern neph-theme))))
+  (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
+    (color-identifiers:refresh))
+  (when (and (boundp 'display-line-numbers-mode) display-line-numbers-mode)
+    (display-line-numbers-mode nil)
+    (display-line-numbers-mode t))
+  (redisplay))
+
+(defun neph-whiteboard-mode ()
+  "Enter or exit whiteboard mode"
+  (interactive)
+  (if (member 'ample-zen custom-enabled-themes)
+      (progn (load-neph-theme "whiteboard")
+             (global-whitespace-mode -1))
+    (load-neph-theme "ample-zen")
+    (global-whitespace-mode t)))
+
 (provide 'neph-lib)
