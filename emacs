@@ -151,6 +151,9 @@
 ;; does not, and keeps to wiring (requires, setqs, hooks, binds).
 (require 'neph-lib)
 
+; Clear suspend-frame binding to use C-z as a prefix
+(global-unset-key (kbd "C-z"))
+
 ;;
 ;; ---- Config merged down from neph-init.el (WIP: killing neph-init) ----
 ;;
@@ -193,9 +196,6 @@
 ; This just makes things slower. Maybe useful on spinning disks?
 (setq cache-long-line-scans nil)
 (setq cache-long-scans nil)
-
-; Clear suspend-frame binding to use C-z as a prefix
-(global-unset-key (kbd "C-z"))
 
 (put 'upcase-region 'disabled nil)
 
