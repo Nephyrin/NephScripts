@@ -660,6 +660,27 @@
   (require 'pkg-info)
   )
 
+;;
+;; YouCompleteMe (deprecated for LSP, remove?)
+;;
+
+;; Deps
+
+;;(require 'neph-ycmd-autoload)
+;;
+;;(with-eval-after-load "company-ycmd" (company-ycmd-setup))
+;;(with-eval-after-load "ycmd"
+;;  (setq ycmd-server-command '("python" "/usr/share/ycmd/ycmd")))
+;;
+;;(defun neph-ycm-setup ()
+;;  (interactive)
+;;  (require 'company-ycmd)
+;;  (ycmd-mode 1))
+;;
+;;(add-hook 'python-mode-hook 'neph-ycm-setup)
+;; (elpaca (ycmd :host github :repo "abingham/emacs-ycmd"
+;;         :ref "ef87d020d3314efbac2e8925c115d0ac5c128c2a"))
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -812,25 +833,6 @@
 (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
 (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
 (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
-
-;;
-;; YouCompleteMe (deprecated for LSP, remove?)
-;;
-
-;; Deps
-
-;;(require 'neph-ycmd-autoload)
-;;
-;;(with-eval-after-load "company-ycmd" (company-ycmd-setup))
-;;(with-eval-after-load "ycmd"
-;;  (setq ycmd-server-command '("python" "/usr/share/ycmd/ycmd")))
-;;
-;;(defun neph-ycm-setup ()
-;;  (interactive)
-;;  (require 'company-ycmd)
-;;  (ycmd-mode 1))
-;;
-;;(add-hook 'python-mode-hook 'neph-ycm-setup)
 
 ;;
 ;; Flycheck
