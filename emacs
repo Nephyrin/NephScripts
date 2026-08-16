@@ -635,6 +635,12 @@
 ;; (elpaca (deferred :host github :repo "kiwanami/emacs-deferred"
 ;;         :ref "2239671d94b38d92e9b28d4e12fd79814cfb9c16"))
 
+;;
+;; request
+;;
+;; (elpaca (request :host github :repo "tkf/emacs-request"
+;;         :ref "db88fd21d25399ff9940c208173665b12493992b"))
+
 ;; ---- end elpacified run ----
 
 ;;
