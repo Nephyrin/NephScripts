@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/htmlize")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/js2-mode")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/polymode")
@@ -350,6 +349,15 @@
   (setq lua-indent-level 2)
   )
 
+;;
+;; Htmlize
+(elpaca (htmlize :host github :repo "hniksic/emacs-htmlize"
+        :ref "8db0aa6aab77475a732b7363f0d57bd3933c18fd" :wait t)
+  (autoload 'htmlize-buffer "htmlize" "htmlize" t)
+
+  ;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -388,12 +396,6 @@
 
 
 
-
-;;
-;; Htmlize
-(autoload 'htmlize-buffer "htmlize" "htmlize" t)
-
-;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
 
 ;;
 ;; htmlfontify
