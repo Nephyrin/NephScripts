@@ -139,9 +139,6 @@
 [submodule "emacs.d/lsp-treemacs"]
 	path = emacs.d/lsp-treemacs
 	url = https://github.com/emacs-lsp/lsp-treemacs
-[submodule "emacs.d/treemacs"]
-	path = emacs.d/treemacs
-	url = https://github.com/Alexander-Miller/treemacs
 [submodule "emacs.d/lsp-ui"]
 	path = emacs.d/lsp-ui
 	url = https://github.com/emacs-lsp/lsp-ui

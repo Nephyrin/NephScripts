@@ -26,8 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/elisp")
-(neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/extra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ccls")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc")
@@ -757,6 +755,19 @@
 (elpaca (lsp-docker :host github :repo "emacs-lsp/lsp-docker" :protocol ssh
         :ref "81ddb3fc68e1930352b6ca006d0ea609760be7d1" :wait t))
 
+;;
+;; treemacs
+;;
+(elpaca (treemacs :host github :repo "Alexander-Miller/treemacs"
+        :main "src/elisp/treemacs.el"
+        :files ("src/elisp/*.el" "src/extra/*.el" "icons" "src/scripts/treemacs*.py")
+        :ref "aa0944a29eee48302fd76b6c3a59c5aece114fa6" :wait t)
+  (require 'treemacs)
+  (require 'treemacs-mouse-interface)
+  (require 'treemacs-hydras)
+  ;;(require 'treemacs-projectile)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -920,11 +931,6 @@
 
 (require 'lsp-treemacs)
 (lsp-treemacs-sync-mode 1)
-
-(require 'treemacs)
-(require 'treemacs-mouse-interface)
-(require 'treemacs-hydras)
-;;(require 'treemacs-projectile)
 
 (require 'lsp-ui)
 (require 'lsp-ui-flycheck)
