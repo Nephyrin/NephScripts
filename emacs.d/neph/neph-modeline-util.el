@@ -93,4 +93,22 @@ static char * %s[] = {
            (eq (neph/minibuffer-selected-window)
                (selected-window)))))
 
+;;
+;; Mode line
+;;
+
+(defun neph-fill-to (reserve)
+  `(:eval (propertize " " 'display '(space :align-to (- right-margin
+                                                        ,reserve)))))
+(defun neph-modeline-hud (height width)
+  (propertize " " 'display (neph-hud "#0C0C0C" "#222222" height width)
+              'face 'neph-modeline-hud))
+
+;; TODO set this only when buffer path changes, rather than per frame
+(defun neph-cache-projectile-info ()
+  "Cache projectile-project-root and project-name once for spammy non-critical things like modeline"
+  (when (and (featurep 'projectile) (projectile-project-name))
+    (setq-local neph-cached-projectile-project-root (projectile-project-root))
+    (setq-local neph-cached-projectile-project-name (projectile-project-name))))
+
 (provide 'neph-modeline-util)

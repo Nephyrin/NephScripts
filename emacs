@@ -1135,6 +1135,13 @@
       (setq remember-notes-buffer-name "#Notes")))
 
 
+;;
+;; Mode line
+;;
+
+(require 'neph-modeline-util)
+(add-hook 'find-file-hook 'neph-cache-projectile-info)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
