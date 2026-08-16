@@ -6,31 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; Scrolling
-;;
-
-; For scrolling when moving the cursor offscreen
-(setq scroll-margin 1
-      scroll-conservatively 0
-      scroll-up-aggressively 0.01
-      scroll-down-aggressively 0.01)
-(setq-default scroll-up-aggressively 0.01
-              scroll-down-aggressively 0.01)
-
-(setq mouse-wheel-scroll-amount '(10 ((shift) . 10)))
-(setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-follow-mouse 't)
-(setq scroll-step 1)
-(setq scroll-conservatively 10000)
-
-;;
-;; re-builder
-;;
-
-(autoload 're-builder "re-builder" "re-builder" t)
-(setq reb-re-syntax 'string)
-
-;;
 ;; Misc modes
 ;;
 
