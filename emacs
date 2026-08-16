@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/markdown-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/evil")
 (neph-add-to-load-path 'load-path "~/.emacs.d/indent-bars")
 (neph-add-to-load-path 'load-path "~/.emacs.d/highlight-symbol")
@@ -252,6 +251,18 @@
         :files (:defaults "eterm-256color.ti")
         :ref "0f0dab497239ebedbc9c4a48b3ec8cce4a47e980" :wait t))
 
+;;
+;; Markdown mode
+;;
+(elpaca (markdown-mode :host github :repo "jrblevin/markdown-mode" :protocol ssh
+        :ref "c765b73b370f0fcaaa3cee28b2be69652e2d2c39" :wait t)
+  (autoload 'markdown-mode "markdown-mode"
+     "Major mode for editing Markdown files" t)
+  (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -284,16 +295,6 @@
   ;; Basically functions
   (message "NEPH -- No protobuf-mode available, using c-mode for .proto")
   (add-to-list 'auto-mode-alist '("\.proto$" . c-mode)))
-
-;;
-;; Markdown mode
-;;
-
-(autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 
 ;;
