@@ -989,6 +989,19 @@
   (smart-tabs-insinuate 'c 'javascript 'c++)
   )
 
+;;
+;; emacs-gdb -- weirdNox's replacement for gdb-mi. kinda bad.
+;;
+
+;; (fmakunbound 'gdb)
+;; (fmakunbound 'gdb-enable-debug)
+;;(load-library "gdb-mi")
+
+;;(require 'neph-weirdnox-gdb-autoload)
+;; FIXME automatically replace gdb-mi
+;; (elpaca (gdb-mi :host github :repo "weirdNox/emacs-gdb"
+;;         :ref "985423594e91a4fb774d4dc5322d4b9750393419"))
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1126,17 +1139,6 @@
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
 
-
-;;
-;; emacs-gdb -- weirdNox's replacement for gdb-mi. kinda bad.
-;;
-
-;; (fmakunbound 'gdb)
-;; (fmakunbound 'gdb-enable-debug)
-;;(load-library "gdb-mi")
-
-;;(require 'neph-weirdnox-gdb-autoload)
-;; FIXME automatically replace gdb-mi
 
 
 ;;

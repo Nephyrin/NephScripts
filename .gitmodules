@@ -109,9 +109,6 @@
 [submodule "emacs.d/magit-ghub"]
 	path = emacs.d/magit-ghub
 	url = https://github.com/magit/ghub
-[submodule "emacs.d/emacs-gdb"]
-	path = emacs.d/emacs-gdb
-	url = https://github.com/weirdNox/emacs-gdb
 [submodule "emacs.d/yaml-mode"]
 	path = emacs.d/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode
