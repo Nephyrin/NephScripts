@@ -204,6 +204,8 @@
 (elpaca (dash :host github :repo "magnars/dash.el"
         :ref "6db80c711ce947f6c6fa11e5c2257fff2c79d139" :wait t))
 
+;; ---- end elpacified run ----
+
 ;;
 ;; Flyspell-lazy
 (require 'flyspell-lazy)
