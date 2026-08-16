@@ -133,6 +133,7 @@
 ;; (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/auto-compile")
+(neph-add-to-load-path 'load-path "~/.emacs.d/elpaca") ;; pinned submodule, see bootstrap below
 
 (dolist (dir neph-compile-stuff)
   (when (and dir (file-directory-p dir))
@@ -150,6 +151,39 @@
 ;; Functions/macros live in neph-lib where they get byte-compiled; this file
 ;; does not, and keeps to wiring (requires, setqs, hooks, binds).
 (require 'neph-lib)
+
+;;
+;; Elpaca (package manager; pinned submodule above -- no network installer)
+;;
+
+;; Clones/builds live outside the repo checkout
+(setq elpaca-directory (expand-file-name "elpaca-store/" user-emacs-directory))
+;; Fail closed: recipes come ONLY from the (elpaca ...) declarations in this
+;; file -- no MELPA/ELPA menus, no network beyond the pinned :ref clones.
+;; Must be set before the first declaration is evaluated.
+(setq elpaca-menu-functions '(elpaca-menu-declarations))
+(require 'elpaca)
+;; This setup has never version-checked packages; pinned refs are reviewed as
+;; a working set, so drop elpaca's hard-failing dependency version check.
+(setq elpaca-default-build-steps (delq 'elpaca-check-version elpaca-default-build-steps))
+;; Features that Package-Requires may name but which must never be installed:
+;; provided by a sibling file in an already-declared repo's build, vendored in
+;; this repo, or genuinely absent today (dependents already cope).
+(setq elpaca-ignored-dependencies
+      (append elpaca-ignored-dependencies
+              '(helm-core   ; ships in the helm repo's build
+                counsel     ; ships in the swiper repo's build (declared as ivy)
+                swiper      ; ships in the swiper repo's build (declared as ivy)
+                lv          ; ships in the hydra repo's build
+                magit-section ; ships in the magit repo's build
+                pos-tip     ; vendored dir on load-path
+                wfnames     ; helm dep, absent today; helm degrades
+                cfrs        ; treemacs dep, absent today
+                goto-chg    ; evil-pkg.el dep, absent today; evil never loaded
+                request-deferred))) ; ships in the request repo; ycmd stack is disabled
+;; NOTE: transient, jsonrpc and compat are built into modern Emacs but pinned
+;; here; declaring them removes them from the ignore list so the pins win.
+(add-hook 'after-init-hook #'elpaca-process-queues)
 
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
