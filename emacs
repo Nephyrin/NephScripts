@@ -272,6 +272,48 @@
 
 (setq electric-pair-inhibit-predicate 'neph-electric-pair-inhibit-predicate)
 
+;;
+;; Mark & Mark Ring
+;;
+
+(global-set-key (kbd "C-x p") 'pop-to-mark-command)
+(setq set-mark-command-repeat-pop t)
+
+;;
+;; Snippets
+;;
+
+; Recompile all .elc.  The 0 tells us to compile files that have no .elc
+; already. Yes it should be 0, not t. Append t as third arg to force.
+
+; (byte-recompile-directory "~/.emacs.d/" 0)
+;   or command line:
+; emacs -batch -f batch-byte-compile *.el
+
+;; (progn
+;;   (setq kill-ring nil)
+;;   (setq buffer-undo-tree nil)
+;;   (garbage-collect))
+
+;;
+;; Desktop saving
+;;
+
+;; Autosave desktop as emacs-server-desktop for the server, otherwise leave
+;; disabled unless asked for
+(require 'desktop)
+(setq desktop-path '("~/.emacs.d/"))
+(setq desktop-dirname "~/.emacs.d/")
+(setq desktop-base-file-name "emacs-desktop")
+(setq desktop-base-lock-name "emacs-desktop.lock")
+(setq desktop-restore-eager 0)
+(setq desktop-save t)
+(add-to-list 'desktop-globals-to-save 'register-alist)
+(when (or server-mode (daemonp))
+  (setq desktop-base-file-name "emacs-server-desktop")
+  (setq desktop-base-lock-name "emacs-server-desktop.lock")
+  (desktop-save-mode 1))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
