@@ -145,9 +145,6 @@
 [submodule "emacs.d/treemacs"]
 	path = emacs.d/treemacs
 	url = https://github.com/Alexander-Miller/treemacs
-[submodule "emacs.d/ace-window"]
-	path = emacs.d/ace-window
-	url = https://github.com/abo-abo/ace-window
 [submodule "emacs.d/lsp-ui"]
 	path = emacs.d/lsp-ui
 	url = https://github.com/emacs-lsp/lsp-ui

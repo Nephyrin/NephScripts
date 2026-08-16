@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/ace-window")
 (neph-add-to-load-path 'load-path "~/.emacs.d/yaml.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-mode/clients")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-mode")
@@ -702,6 +701,12 @@
 ;;
 (elpaca (avy :host github :repo "abo-abo/avy"
         :ref "cf95ba9582121a1c2249e3c5efdc51acd566d190" :wait t))
+
+;;
+;; ace-window
+;;
+(elpaca (ace-window :host github :repo "abo-abo/ace-window"
+        :ref "77115afc1b0b9f633084cf7479c767988106c196" :wait t))
 
 ;; ---- end elpacified run ----
 
