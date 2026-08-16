@@ -22,4 +22,20 @@
     (flyspell-mode t)
     (flyspell-lazy-check-visible)))
 
+;;
+;; Misc
+;;
+
+(defun neph-foo ()
+  ""
+  (interactive))
+
+;; Always answer yes to: File %s is %s on disk.  Make buffer %s, too?
+;; (There's no variable to control this)
+(defun neph-y-or-n-p (orig-func prompt &rest args)
+  (if (string-match "^File .* is .* on disk.  Make buffer .*, too\\? $"
+                    prompt)
+      t
+    (apply orig-func prompt args)))
+
 (provide 'neph-lib)
