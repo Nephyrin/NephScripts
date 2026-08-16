@@ -266,6 +266,12 @@
 ; instead of replacement chars
 (setq whitespace-style (quote (face trailing tabs)))
 
+;;
+;; Electric mode tweaks
+;;
+
+(setq electric-pair-inhibit-predicate 'neph-electric-pair-inhibit-predicate)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

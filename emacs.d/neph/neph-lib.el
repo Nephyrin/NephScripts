@@ -38,4 +38,24 @@
       t
     (apply orig-func prompt args)))
 
+;;
+;; Electric mode tweaks
+;;
+
+;; Custom inhibits on top of the normal behavior, since some choices are pretty bad by default.
+(defun neph-electric-pair-inhibit-predicate (c)
+  (let ((whitespace-forward (or (looking-at "[ \n\t\"]") (looking-at "$")))
+        (whitespace-backward (or (eq (point) 2) (looking-back "[ \n\t]." 2)))
+        (is-quote (char-equal c ?\")))
+    ;; Inhibit quotes unless there is whitespace on either side of the point.
+    ;;
+    ;; Inhibit non-quotes unless there is whitespace ahead fo the point (because `foo(` should work, but `foo"' is
+    ;; less sensical for auto-pairing)
+    (if (or (not whitespace-forward)
+            (and (not whitespace-backward) is-quote))
+        ;; Inhibit
+        t
+      ;; Otherwise chain to normal inhibit behavior
+      (electric-pair-conservative-inhibit c))))
+
 (provide 'neph-lib)
