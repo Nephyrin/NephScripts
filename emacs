@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/fic-mode.git")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter-fringe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter")
 (neph-add-to-load-path 'load-path "~/.emacs.d/fringe-helper")
@@ -1041,6 +1040,15 @@
   (global-set-key (kbd "C-z C-z") 'god-local-mode)
   )
 
+;;
+;; Misc modes
+(elpaca (fic-mode :host github :repo "lewang/fic-mode"
+        :ref "206fdfc96eed9ee42fdff21e25e4d26495d4854a" :wait t)
+  (autoload 'fic-mode "fic-mode" "fic-mode" t)
+  (with-eval-after-load "fic-mode"
+    (add-to-list 'fic-highlighted-words "XXX"))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1182,12 +1190,6 @@
 
 
 
-
-;;
-;; Misc modes
-(autoload 'fic-mode "fic-mode" "fic-mode" t)
-(with-eval-after-load "fic-mode"
-  (add-to-list 'fic-highlighted-words "XXX"))
 
 (require 'fringe-helper)
 (require 'git-gutter)
