@@ -1281,6 +1281,11 @@
 (with-eval-after-load "fic-mode"
   (add-to-list 'fic-highlighted-words "XXX"))
 
+(require 'fringe-helper)
+(require 'git-gutter)
+(require 'git-gutter-fringe)
+(autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

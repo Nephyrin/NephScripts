@@ -5,11 +5,6 @@
 ;;(fa-config-default)
 ;;(setq moo-select-method 'helm)
 
-(require 'fringe-helper)
-(require 'git-gutter)
-(require 'git-gutter-fringe)
-(autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
-
 ;;
 ;; P4
 ;;
