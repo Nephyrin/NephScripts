@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/rust-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rustic")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lua-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/htmlize")
@@ -321,6 +320,12 @@
 
   (setq highlight-symbol-idle-delay 0.3)
   )
+
+;;
+;; rust-mode
+;;
+(elpaca (rust-mode :host github :repo "rust-lang/rust-mode"
+        :ref "9915b3a585a7a75e9126df9e0e9d1df8057ae3cf" :wait t))
 
 ;; ---- end elpacified run ----
 

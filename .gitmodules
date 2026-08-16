@@ -278,9 +278,6 @@
 [submodule "emacs.d/rustic"]
 	path = emacs.d/rustic
 	url = git@github.com:brotzeit/rustic.git
-[submodule "emacs.d/rust-mode"]
-	path = emacs.d/rust-mode
-	url = https://github.com/rust-lang/rust-mode
 [submodule "emacs.d/lsp-pyright"]
 	path = emacs.d/lsp-pyright
 	url = https://github.com/emacs-lsp/lsp-pyright
