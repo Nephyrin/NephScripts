@@ -510,6 +510,15 @@
 ;;(require 'vertico)
 ;;(require 'counsel-projectile)
 
+;;
+;; Project
+;;
+
+;; WIP, replace projectile? Might not have the things we want
+;;(require 'project)
+
+;;(global-set-key (kbd "C-z M-f") 'project-find-file)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

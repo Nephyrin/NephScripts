@@ -1,15 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Project
-;;
-
-;; WIP, replace projectile? Might not have the things we want
-;;(require 'project)
-
-;;(global-set-key (kbd "C-z M-f") 'project-find-file)
-
-;;
 ;; Helm
 ;;
 
