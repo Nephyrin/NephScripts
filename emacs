@@ -1628,6 +1628,11 @@
 ;; Prefer to org-mode's default bind
 (eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
 
+(global-set-key (kbd "M-P") 'smart-move-current-region-up)
+(global-set-key (kbd "M-N") 'smart-move-current-region-down)
+
+(global-set-key (kbd "C-S-o") 'open-next-line)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
