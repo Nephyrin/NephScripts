@@ -136,9 +136,6 @@
 [submodule "emacs.d/yaml-mode"]
 	path = emacs.d/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode
-[submodule "emacs.d/helm-lsp"]
-	path = emacs.d/helm-lsp
-	url = https://github.com/emacs-lsp/helm-lsp
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
