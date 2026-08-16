@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lsp-pyright")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-treemacs")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-lsp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/irony-mode")
@@ -869,6 +868,17 @@
   (setq lsp-ui-peek-always-show t)
   )
 
+;; cquery
+(elpaca (lsp-pyright :host github :repo "emacs-lsp/lsp-pyright"
+        :ref "3756ff971797ae04fc43ca29c66ba4d854eff038" :wait t)
+  (setq lsp-pyright-multi-root nil)
+  (setq lsp-pyright-langserver-command "pyright")
+
+  ;; Pyright settings are snapshot on library load??
+  (setq lsp-pyright-multi-root nil)
+  (require 'lsp-pyright)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1005,14 +1015,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-;; cquery
-(setq lsp-pyright-multi-root nil)
-(setq lsp-pyright-langserver-command "pyright")
-
-;; Pyright settings are snapshot on library load??
-(setq lsp-pyright-multi-root nil)
-(require 'lsp-pyright)
 
 (require 'lsp-treemacs)
 (lsp-treemacs-sync-mode 1)

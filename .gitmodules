@@ -163,9 +163,6 @@
 [submodule "emacs.d/treepy"]
 	path = emacs.d/treepy
 	url = https://github.com/volrath/treepy.el
-[submodule "emacs.d/lsp-pyright"]
-	path = emacs.d/lsp-pyright
-	url = https://github.com/emacs-lsp/lsp-pyright
 [submodule "emacs.d/rg.el"]
 	path = emacs.d/rg.el
 	url = git@github.com:dajva/rg.el.git
