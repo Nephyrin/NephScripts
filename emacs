@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-spinner")
 (neph-add-to-load-path 'load-path "~/.emacs.d/s.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/f.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/editorconfig")
@@ -218,6 +217,12 @@
 ;;
 (elpaca (compat :host github :repo "phikal/compat.el" :protocol ssh
         :ref "730f2c5ad62137ae6a6ea002a24ce9418954e441" :wait t))
+
+;;
+;; spinner
+;;
+(elpaca (spinner :host github :repo "Malabarba/spinner.el"
+        :ref "d4647ae87fb0cd24bc9081a3d287c860ff061c21" :wait t))
 
 ;; ---- end elpacified run ----
 
