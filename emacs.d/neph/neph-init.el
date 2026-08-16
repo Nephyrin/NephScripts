@@ -1,69 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Command helpers
-;;
-
-(defun neph-buffer-command (cmd &optional name callback buffer-init-func)
-  "Runs a command into a new buffer, noting when it finishes, with a callback"
-  (interactive "MCommand: \n")
-  (let* ((envcmd (concat "env -u NEPH_COLOR_TERM " cmd))
-         (name (if name name "neph-buffer-command"))
-         (buf (generate-new-buffer (concat name ": " cmd))))
-    (switch-to-buffer buf nil t)
-    (when buffer-init-func (with-current-buffer buf
-                             (apply buffer-init-func nil)))
-    (insert (concat "<command: " cmd ">"))
-    (newline)
-    (let ((proc (start-process-shell-command
-                 (concat name "-proc")
-                 buf envcmd)))
-      (set-process-sentinel
-       proc
-       `(lambda (process signal)
-          (when (eq (process-status process) 'exit)
-            (message (concat ,name " finished"))
-            (with-current-buffer (process-buffer process)
-              (rename-buffer (concat (buffer-name) " <command finished>"))
-              (newline)
-              (insert "<command finished>")
-              (when ,callback
-                (apply ,callback (list process)))
-              (goto-char (point-min)))))))))
-
-(defun neph-p4inter (args)
-  "Runs the p4inter command with args"
-  (interactive "Mp4inter: \n")
-  (neph-buffer-command
-   (concat "/home/johns/neph/valve/bin/p4inter " args) "neph-p4inter"
-   (lambda (process)
-     (delete-trailing-whitespace)
-     (highlight-regexp "^Change" 'git-commit-note))))
-
-(defun neph-test (args)
-  "Runs the p4inter command with args"
-  (interactive "MTest: \n")
-  (neph-buffer-command
-   args "neph-test"
-   (lambda (process)
-     (font-lock-mode t)
-     (compilation-minor-mode t))))
-
-;; FIXME We force-wrap env around it in neph-buffer-command
-(defun neph-evmk (args)
-  "Runs the p4inter command with args"
-  (interactive "Mevmk: \n")
-  (neph-buffer-command
-   (concat "evmk " args)
-   "neph-evmk"
-   ;; callback
-   nil
-   ;; buffer-init-func
-   (lambda ()
-     (font-lock-mode t)
-     (compilation-minor-mode t))))
-
-;;
 ;; Htmlize
 ;;
 
