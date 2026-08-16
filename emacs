@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lua-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/htmlize")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/js2-mode")
@@ -338,6 +337,19 @@
   (setq rust-indent-offset 2)
   )
 
+;;
+;; Lua mode
+;;
+(elpaca (lua-mode :host github :repo "immerrr/lua-mode"
+        :ref "ad639c62e38a110d8d822c4f914af3e20b40ccc4" :wait t)
+  (autoload 'lua-mode "lua-mode"
+     "Major mode for editing Lua files" t)
+  (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+
+  ;; Defaults to 3. What in the goddamn.
+  (setq lua-indent-level 2)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -375,17 +387,6 @@
 
 
 
-
-;;
-;; Lua mode
-;;
-
-(autoload 'lua-mode "lua-mode"
-   "Major mode for editing Lua files" t)
-(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
-
-;; Defaults to 3. What in the goddamn.
-(setq lua-indent-level 2)
 
 
 ;;
