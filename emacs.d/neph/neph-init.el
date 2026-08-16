@@ -1,10 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'dap-mode)
-;;(require 'dap-cpptools)
-(require 'dap-ui)
-(require 'dap-mouse)
-(require 'dap-hydra)
 (require 'jsonrpc)
 (require 'dape)
 (require 'helm-lsp)

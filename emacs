@@ -896,6 +896,12 @@
 (setq lsp-ui-doc-show-with-cursor t)
 (setq lsp-ui-peek-always-show t)
 
+(require 'dap-mode)
+;;(require 'dap-cpptools)
+(require 'dap-ui)
+(require 'dap-mouse)
+(require 'dap-hydra)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
