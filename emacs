@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-lsp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/irony-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-irony")
@@ -888,6 +887,19 @@
   (lsp-treemacs-sync-mode 1)
   )
 
+;;
+;; dap-mode
+;;
+(elpaca (dap-mode :host github :repo "emacs-lsp/dap-mode"
+        :files (:defaults "icons")
+        :ref "b407773ebca56e3bd8e6a4643854e91cbde0c35e" :wait t)
+  (require 'dap-mode)
+  ;;(require 'dap-cpptools)
+  (require 'dap-ui)
+  (require 'dap-mouse)
+  (require 'dap-hydra)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1024,12 +1036,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-(require 'dap-mode)
-;;(require 'dap-cpptools)
-(require 'dap-ui)
-(require 'dap-mouse)
-(require 'dap-hydra)
 
 (require 'helm-lsp)
 
