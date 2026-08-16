@@ -20,7 +20,6 @@
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
-(neph-add-to-load-path 'load-path "~/.emacs.d/multiple-cursors")
 (neph-add-to-load-path 'load-path "~/.emacs.d/phi-search")
 (neph-add-to-load-path 'load-path "~/.emacs.d/swiper")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-mode")
@@ -578,6 +577,20 @@
 (elpaca (wgrep :host github :repo "mhayashi1120/Emacs-wgrep" :protocol ssh
         :ref "f9687c28bbc2e84f87a479b6ce04407bb97cfb23" :wait t))
 
+;;
+;; multiple-cursors
+;;
+(elpaca (multiple-cursors :host github :repo "magnars/multiple-cursors.el"
+        :ref "c870c18462461df19382ecd2f9374c8b902cd804" :wait t)
+  (require 'multiple-cursors)
+
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-.") 'mc/unmark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-,") 'mc/unmark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -704,18 +717,6 @@
 ;; RG
 ;;
 (require 'rg)
-
-;;
-;; multiple-cursors
-;;
-
-(require 'multiple-cursors)
-
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-.") 'mc/unmark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-,") 'mc/unmark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 
 ;;

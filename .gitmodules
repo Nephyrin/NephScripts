@@ -109,9 +109,6 @@
 [submodule "emacs.d/phi-search"]
 	path = emacs.d/phi-search
 	url = https://github.com/zk-phi/phi-search
-[submodule "emacs.d/multiple-cursors"]
-	path = emacs.d/multiple-cursors
-	url = https://github.com/magnars/multiple-cursors.el
 [submodule "emacs.d/rainbow-mode"]
 	path = emacs.d/rainbow-mode
 	url = https://github.com/emacsmirror/rainbow-mode
