@@ -818,6 +818,43 @@
 
 (autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
 
+;;
+;; C++ Helper mode(s) : Company/lsp and associated helper libraries
+;;
+
+(require 'lsp-mode)
+(require 'company)
+(require 'company-quickhelp)
+
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+(setq company-quickhelp-color-background "black")
+
+;; LSP performance recommended
+(setq read-process-output-max 1048576)
+(setq gc-cons-threshold 100000000)
+
+(setq lsp-lens-enable nil)
+
+;; FIXME?
+;;(with-eval-after-load 'lsp-mode
+;;  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+
+;; ~/.config/clangd/config.yaml:
+;; # https://clangd.llvm.org/config
+;;   CompileFlags:
+;;     Add: [-Wall]
+(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--query-driver=/usr/bin/**/clang-*,/usr/bin/**/clang++-*,/usr/bin/**/gcc-*,/usr/bin/**/g++-*,/usr/bin/g++,/usr/bin/gcc,/usr/bin/clang,/usr/bin/clang++" "--enable-config"
+                                "-j" "50" "--log=info"
+                                "--all-scopes-completion" "--background-index" "--rename-file-limit=0"
+                                "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

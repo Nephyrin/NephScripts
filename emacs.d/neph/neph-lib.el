@@ -503,4 +503,89 @@ explicit input."
   (company-mode t)
   (local-set-key (kbd "<C-tab>") 'company-complete))
 
+;;
+;; C++ Helper mode(s) : Company/lsp and associated helper libraries
+;;
+
+(defun neph-hook-client-init (client func)
+  "Add a post-call hook FUNC to the given lsp CLIENT."
+  (message "HOOK")
+  (let ((original-init-fn (lsp--client-initialized-fn client)))
+    (setf (lsp--client-initialized-fn client)
+          `(lambda (workspace)
+             (when ,original-init-fn
+               (funcall ,original-init-fn workspace))
+             (funcall ,func workspace)))))
+
+;; Strip semantic tokens from lsp-clangd, set ccls to be an addon with only semantic tokens
+;; Lets us use both with ccls just providing superior semantic highlighting
+;;(let ((clangd-client (gethash 'clangd lsp-clients))
+;;      (ccls-client (gethash 'ccls lsp-clients)))
+;;  ;; clangd: remove semantic tokens
+;;  (when clangd-client
+;;    (neph-hook-client-init
+;;     clangd-client
+;;     (lambda (workspace)
+;;       (-> workspace
+;;           (lsp--workspace-server-capabilities)
+;;           (lsp:set-server-capabilities-semantic-tokens-provider? nil))
+;;       (message "lsp-clangd capabilities stripped of semanticTokensProvider")))
+;;    (message "lsp-clangd client configuration updated"))
+;;  ;; ccls: set to addon mode, hook init to replace all caps with just semantic tokens
+;;  (when ccls-client
+;;    (setf (lsp--client-priority ccls-client) -3)
+;;    (setf (lsp--client-add-on? ccls-client) t)
+;;    (neph-hook-client-init
+;;     ccls-client
+;;     (lambda (workspace)
+;;       (let* ((caps (lsp--workspace-server-capabilities workspace))
+;;              (semantic-tokens (plist-get caps :semanticTokensProvider)))
+;;         (setq caps nil)
+;;         (when semantic-tokens
+;;           (setq caps (plist-put caps :semanticTokensProvider semantic-tokens)))
+;;         (setf (lsp--workspace-server-capabilities workspace) caps)
+;;         (message "CCLS capabilities limited to semanticTokensProvider"))))
+;;    (message "lsp-clangd client configuration updated")))
+
+;; Lsp booster (chunk of lisp from their setup steps)
+;;
+(defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      (message "NOT using lsp-booster")
+      orig-result)))
+
+(defun neph-clear-text-properties ()
+  "Reset all text properties in the buffer."
+  (interactive)
+  (with-silent-modifications
+    (delete-all-overlays)
+    (set-text-properties (buffer-end 0) (buffer-end 1) nil)))
+
+(defun neph-lsp-reset ()
+  "Reconnects to LSP, fixing annoying CCLS highlighting bug."
+  (interactive)
+  (lsp-disconnect)
+  (neph-clear-text-properties)
+  (lsp))
+
 (provide 'neph-lib)
