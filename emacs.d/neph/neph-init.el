@@ -1,28 +1,4 @@
 ;; -*- mode: Emacs-Lisp; -*-
-;;
-;; Highlight Symbol
-;;
-(require 'highlight-symbol)
-
-;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
-;; See https://github.com/nschum/highlight-symbol.el/issues/26
-;(defun highlight-symbol-add-symbol-with-face (symbol face)
-;  (save-excursion
-;    (goto-char (point-min))
-;    (while (re-search-forward symbol nil t)
-;      (let ((ov (make-overlay (match-beginning 0)
-;                              (match-end 0))))
-;        (overlay-put ov 'highlight-symbol t)
-;        (overlay-put ov 'face face)))))
-;
-;(defun highlight-symbol-remove-symbol (_symbol)
-;  (dolist (ov (overlays-in (point-min) (point-max)))
-;    (when (overlay-get ov 'highlight-symbol)
-;      (delete-overlay ov))))
-
-;; TODO Should this merge with highlight-symbol? mostly I want highlight-phrase and highlight-regexp but with
-;; highlight-symbol's added functionality, it's odd that highlight-symbol didn't build on the former.
-
 ;; TODO: Pick sequential colors.  This lets us look up a list of colors in use:
 ;; (mapcar (lambda (pattern) (hi-lock-keyword->face pattern)) hi-lock-interactive-patterns)
 
@@ -65,7 +41,7 @@ explicit input."
 
 (global-set-key (kbd "C-z H") 'neph-highlight-dwim)
 (global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
-(setq highlight-symbol-idle-delay 0.3)
+
 
 ;;
 ;; Rust mode

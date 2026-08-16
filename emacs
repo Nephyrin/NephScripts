@@ -392,6 +392,33 @@
 (add-hook 'python-ts-mode-hook 'indent-bars-mode)
 
 
+;;
+;; Highlight Symbol
+;;
+(require 'highlight-symbol)
+
+;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
+;; See https://github.com/nschum/highlight-symbol.el/issues/26
+;(defun highlight-symbol-add-symbol-with-face (symbol face)
+;  (save-excursion
+;    (goto-char (point-min))
+;    (while (re-search-forward symbol nil t)
+;      (let ((ov (make-overlay (match-beginning 0)
+;                              (match-end 0))))
+;        (overlay-put ov 'highlight-symbol t)
+;        (overlay-put ov 'face face)))))
+;
+;(defun highlight-symbol-remove-symbol (_symbol)
+;  (dolist (ov (overlays-in (point-min) (point-max)))
+;    (when (overlay-get ov 'highlight-symbol)
+;      (delete-overlay ov))))
+
+;; TODO Should this merge with highlight-symbol? mostly I want highlight-phrase and highlight-regexp but with
+;; highlight-symbol's added functionality, it's odd that highlight-symbol didn't build on the former.
+
+(setq highlight-symbol-idle-delay 0.3)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
