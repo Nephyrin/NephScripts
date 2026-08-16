@@ -878,6 +878,9 @@
 (setq lsp-pyright-multi-root nil)
 (require 'lsp-pyright)
 
+(require 'lsp-treemacs)
+(lsp-treemacs-sync-mode 1)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

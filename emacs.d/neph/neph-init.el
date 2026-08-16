@@ -1,6 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'lsp-treemacs)
 (require 'treemacs)
 (require 'treemacs-mouse-interface)
 (require 'treemacs-hydras)
@@ -51,7 +50,6 @@
 ;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
 (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
 
-(lsp-treemacs-sync-mode 1)
 (setq lsp-ui-doc-show-with-cursor t)
 (setq lsp-ui-peek-always-show t)
 
