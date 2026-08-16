@@ -10,18 +10,6 @@
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
 ;;
-;; Line-highlight
-
-;;
-
-;; highlight the current line; set a custom face, so we can
-;; recognize from the normal marking (selection)
-(defface hl-line '((t (:background "Gray")))
-  "Face to use for `hl-line-face'." :group 'hl-line)
-(setq hl-line-face 'hl-line)
-;(global-hl-line-mode t)
-
-;;
 ;; ace-jump-mode
 ;;
 

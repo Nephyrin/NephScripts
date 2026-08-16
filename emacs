@@ -1711,6 +1711,18 @@
 ;;
 ;;(global-set-key (kbd "C-z C") 'jump-to-container)
 
+;;
+;; Line-highlight
+
+;;
+
+;; highlight the current line; set a custom face, so we can
+;; recognize from the normal marking (selection)
+(defface hl-line '((t (:background "Gray")))
+  "Face to use for `hl-line-face'." :group 'hl-line)
+(setq hl-line-face 'hl-line)
+;(global-hl-line-mode t)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
