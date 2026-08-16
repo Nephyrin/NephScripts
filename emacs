@@ -1790,6 +1790,41 @@
   (set-face-attribute 'default nil :height 120))
 (put 'downcase-region 'disabled nil)
 
+;;
+;; purple-haze (needs to be made into a neph-purple-haze-theme.el)
+;;
+
+;; (set-face-attribute 'cursor nil :background "#D96E26")
+;; (load-theme 'purple-haze t)
+
+;; (set-face-attribute 'mode-line nil :height 82)
+;; (set-face-background 'hl-line "#19151D")
+;; (set-face-attribute 'vertical-border nil :foreground "#222")
+;; (set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
+;; ; These are way too strong by default
+;; (set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
+;; (set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
+;; (set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
+;; (set-face-attribute 'rainbow-delimiters-depth-4-face nil   :foreground "#baf")
+;; (set-face-attribute 'rainbow-delimiters-depth-5-face nil   :foreground "#a9e")
+;; (set-face-attribute 'rainbow-delimiters-depth-6-face nil   :foreground "#98e")
+;; (set-face-attribute 'rainbow-delimiters-depth-7-face nil   :foreground "#87d")
+;; (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
+;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
+;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+;;
+;; ; #120F14
+;; (set-face-attribute 'whitespace-tab nil :background "#100D20")
+
+;; (set-face-attribute 'mode-line nil
+;;                     :background "#111"
+;;                     :foreground "#666"
+;;                     :box '(:line-width 1 :color "#221" :style nil))
+;; (set-face-attribute 'mode-line-inactive nil
+;;                     :background "#333"
+;;                     :foreground "#666"
+;;                     :box '(:line-width 1 :color "#333" :style nil))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
