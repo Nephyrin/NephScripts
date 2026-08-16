@@ -101,4 +101,45 @@
   (neph-term-color-region 0 (point-max)))
 
 
+;; TODO: Pick sequential colors.  This lets us look up a list of colors in use:
+;; (mapcar (lambda (pattern) (hi-lock-keyword->face pattern)) hi-lock-interactive-patterns)
+
+(defvar neph-highlight-dwim-history nil)
+(defun neph-highlight-dwim (text &optional as-regexp)
+  "Highlight the given TEXT.
+Called interactively, picks the regexp mode and text contextually.
+
+If AS-REGEXP is set, highlight via `highlight-regexp', otherwise
+via `highlight-phrase'
+
+Interactively, TEXT picks the current region if active and
+non-empty, else the word at point, else prompts the user.
+
+Interactively, AS-REGEXP is true if the user was prompted for
+explicit input."
+  (interactive
+   ;; text - region if active, otherwise word at point, otherwise input
+   ;;        with prefix, always use input
+   (let ((word-at-point (word-at-point))
+         (region (and mark-active (buffer-substring (region-beginning) (region-end)))))
+     (cond
+      ((and (not current-prefix-arg) region (length region))
+       (list region nil))
+      ((and (not current-prefix-arg) word-at-point (length word-at-point))
+       (list word-at-point nil))
+      (t
+       (list (read-string "Highlight: " nil 'neph-highlight-dwim-history) t)))))
+  (if (and text (length text))
+      (progn
+        (if as-regexp (highlight-regexp text) (highlight-phrase text))
+        (message (concat "Highlighting: " text)))
+    (message "No selection or word at point to highlight")))
+
+(defun neph-unhighlight-dwim ()
+  (interactive)
+  (if current-prefix-arg
+      (unhighlight-regexp t)
+    (call-interactively 'unhighlight-regexp)))
+
+
 (provide 'neph-lib)

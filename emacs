@@ -419,6 +419,13 @@
 (setq highlight-symbol-idle-delay 0.3)
 
 
+;;
+;; Highlight/unhighlight dwim binds (neph-highlight-dwim / neph-unhighlight-dwim in neph-lib)
+;;
+(global-set-key (kbd "C-z H") 'neph-highlight-dwim)
+(global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
