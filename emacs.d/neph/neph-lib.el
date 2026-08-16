@@ -1380,4 +1380,32 @@ If this is a local file, turn it into a tramp file file with said information."
       :localname localname
       :hop hop))))
 
+;;
+;; Term mode
+;;
+
+(defun neph-disable-global-hl-line ()
+  (setq-local global-hl-line-mode nil))
+
+;;
+;; isearch tweaks
+;;
+
+; Always exit isearch at the beginning of the match
+(defun isearch-exit-at-start-hook ()
+  (when (and isearch-forward isearch-other-end (not isearch-mode-end-hook-quit))
+    (goto-char isearch-other-end)))
+
+(defadvice isearch-exit (after isearch-exit-at-start-hook)
+  "Go to beginning of match."
+  (when (and isearch-forward isearch-other-end)
+    (goto-char isearch-other-end)))
+
+;; Exit isearch killing the current match
+(defun kill-isearch-match ()
+    "Kill the current isearch match string and continue searching."
+    (interactive)
+    (kill-region isearch-other-end (point))
+    (isearch-exit))
+
 (provide 'neph-lib)

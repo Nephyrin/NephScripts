@@ -10,12 +10,6 @@
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
 ;;
-;; Artist mode
-;;
-(global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
-
-
-;;
 ;; Yaml mode
 ;;
 (require 'yaml-mode)
@@ -23,42 +17,6 @@
 (add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
 (with-eval-after-load "yaml-mode"
   (add-hook 'yaml-mode-hook 'neph-space-cfg))
-
-;;
-;; Term mode
-;;
-
-;; Global hl-line-mode block
-(add-hook 'eshell-mode-hook (lambda ()
-                              (setq-local global-hl-line-mode
-                                          nil)))
-(add-hook 'term-mode-hook (lambda ()
-                            (setq-local global-hl-line-mode
-                                        nil)))
-
-;;
-;; isearch tweaks
-;;
-
-; Always exit isearch at the beginning of the match
-(defun isearch-exit-at-start-hook ()
-  (when (and isearch-forward isearch-other-end (not isearch-mode-end-hook-quit))
-    (goto-char isearch-other-end)))
-
-(add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
-(defadvice isearch-exit (after isearch-exit-at-start-hook)
-  "Go to beginning of match."
-  (when (and isearch-forward isearch-other-end)
-    (goto-char isearch-other-end)))
-
-;; Exit isearch killing the current match
-(defun kill-isearch-match ()
-    "Kill the current isearch match string and continue searching."
-    (interactive)
-    (kill-region isearch-other-end (point))
-    (isearch-exit))
-
-(define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
 
 ;;
 ;; Custom binds

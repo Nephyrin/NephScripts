@@ -1531,6 +1531,23 @@
 (global-set-key (kbd "C-z X") 'magit-ediff-stage)
 (global-set-key (kbd "C-z C") 'magit-commit)
 
+;;
+;; Artist mode
+;;
+(global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
+
+
+;;
+;; Term mode
+;; Global hl-line-mode block
+(add-hook 'eshell-mode-hook 'neph-disable-global-hl-line)
+(add-hook 'term-mode-hook 'neph-disable-global-hl-line)
+
+;;
+;; isearch tweaks
+(add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
+(define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
