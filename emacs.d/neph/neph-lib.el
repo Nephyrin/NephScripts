@@ -1481,4 +1481,146 @@ If this is a local file, turn it into a tramp file file with said information."
     (setq debug-on-quit t)
     (message "Enabled debug-on-error and debug-on-quit")))
 
+;; Bonus align keys
+
+;; align-regexp but defaults to complex mode interactively
+(defun align-regexp-complex (&rest rest)
+  "Invoke align-regexp in complex mode"
+  (interactive)
+  (let ((current-prefix-arg 1))
+    (if (called-interactively-p 'any)
+        (call-interactively 'align-regexp rest)
+      (apply 'align-regexp rest))))
+
+(defun neph-run-python (python-code)
+  "Run PYTHON-CODE as python and return the stdout."
+  (interactive "sPython: ")
+  (with-temp-buffer
+    (set-mark (point))
+    (insert python-code)
+    (shell-command-on-region (point) (mark) "python -" (current-buffer) t)
+    (buffer-substring (point) (mark))))
+
+(defun neph-align-protobuf-message ()
+  "Helper to align a protobuf message"
+  (interactive)
+  (indent-region (region-beginning) (region-end))
+  ;; Prefix regexp that matches a field line of a protobuf message, quoted or not
+  (let ((protoline "^\\s-*\\(//\\)?\\s-*\\(optional\\|repeated\\)")
+        ;; Version that requires it be quoted
+        (protoline-quoted "^\\s-*\\(//\\)\\s-*\\(optional\\|repeated\\)")
+        ;; How many groups does the match-a-protoline prefix have
+        (protoline-groups 2)
+        ;; Which replace string refers to the field type
+        (protoline-type-group 2))
+    ;; Fix any commented out lines to have the comment as the first few characters with indentation
+    ;; after -- Protobuf messages may have many commented out fields, and this leaves them aligned
+    ;; with the live fields nicely.
+    (let ((start (region-beginning))
+          (end (region-end)))
+      (save-excursion
+        (goto-char start)
+        (while (re-search-forward protoline-quoted end t)
+          (replace-match (concat "//	" (format "\\%d" protoline-type-group)))))
+
+    ;; Align the field name after optional/repeated
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline "\\s-+[^[:space:]]+\\(\\s-+\\)")
+                  (+ protoline-groups 1) 1 nil)
+    ;; Align the first =
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline ".*?\\(\\s-*\\)=")
+                  (+ protoline-groups 1) 1 nil)
+    ;; Align the start of the trailing comment
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//")
+                  (+ protoline-groups 2) 1 nil)
+    ;; Align the interior of the comment in case we have old code where the contents were aligned
+    ;; after the //
+    (align-regexp (region-beginning) (region-end)
+                  (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//\\(\\s-*\\)")
+                  (+ protoline-groups 3) 1 nil))))
+
+(defun neph-align-smss-table ()
+  "Helper to align a copied table from SMSS."
+  (interactive)
+  (let ((tab-width 1)
+        (start (region-beginning)))
+    (align-regexp (region-beginning) (region-end)
+                  (concat "\\(" (kbd "TAB") "+\\)") 1 1 t)
+    (save-excursion
+      (set-mark (region-end))
+      (goto-char start)
+      (while (re-search-forward (kbd "TAB") (region-end) t)
+        (replace-match " ")))))
+
+(defun neph-markdownify-smss-table-yank ()
+  "Helper to transform a copied table from SMSS to markdown (from-killring version)."
+  (interactive)
+  (let ((start (point))
+        (deactivate-mark))
+    (yank)
+    (neph-markdownify-smss-table start (point))
+    (push-mark start)))
+
+(defun neph-markdownify-smss-table (start end)
+  "Helper to transform a copied table from SMSS to markdown.  Region is used unless START/END are passed."
+  (interactive "r")
+  (if (or (region-active-p) (not (called-interactively-p))) ;; Don't operate on inactive region
+      (save-excursion
+        ;; Ensure mark is at the end
+        (set-mark end)
+        (goto-char start)
+        ;; Skip whitespace at start
+        (while (and (not (= (point) (point-max))) (looking-at "[[:space:]]*$"))
+          (beginning-of-line 2))
+        (setq start (point))
+        ;; TAB -> " | "
+        (while (re-search-forward (kbd "TAB") (mark) t) (replace-match " | "))
+        (goto-char start)
+        ;; Wrap lines in | .. |
+        (while (re-search-forward "^\\(.\\)" (mark) t) (replace-match "| \\1"))
+        (goto-char start)
+        (while (and (not (= (point) (point-max))) ;; Make sure we're not on a non-terminated line at end of file
+                    (re-search-forward "\\(.\\)$" (mark) t))
+          (replace-match "\\1 |")
+          (when (not (= (point) (point-max))) (forward-char 1)))
+
+        ;; Align table
+        (align-regexp start (mark) "\\(\\ +\\)|" 1 1 t)
+
+        ;; Select first line
+        (setq end (region-end))
+        (goto-char start)
+        (set-mark (point))
+        (re-search-forward "$" end t)
+
+        ;; Duplicate first line for header divider
+        (when (and (< (point) end) (not (= (point) (mark))))
+          (let ((line (buffer-substring (region-beginning) (region-end)))
+                (end (region-end))
+                (tstart 0))
+            (newline)
+            (insert line)
+            (set-mark (point))
+            (beginning-of-line)
+
+            ;; Keep finding | Foo | columns and replace with an equal number of dashes
+            (setq tstart (+ 2 (point)))
+            (while (and (< (+ 2 (point)) (mark))
+                        (re-search-forward " \\([^|]+\\) |" (mark) t))
+              (let ((text (match-substitute-replacement "\\1")))
+                (backward-char 2)
+                (delete-region tstart (point))
+                (insert (replace-regexp-in-string "." "-" text))
+                (forward-char 2)
+                (setq tstart (+ 1 (point))))))))
+    ;; else - inactive region
+    (message "No region selected")))
+
+(defun neph-run-makepkg-g-on-region (start end)
+    "Run `makepkg -g 2>/dev/null` on region specified as START and END (defaults to marked region)."
+  (interactive (list (region-beginning) (region-end)))
+  (shell-command-on-region start end "makepkg -g 2>/dev/null" 1 1))
+
 (provide 'neph-lib)
