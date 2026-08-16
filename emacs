@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/ido-vertical-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rainbow-delimiters")
 (neph-add-to-load-path 'load-path "~/.emacs.d/minimap")
 (neph-add-to-load-path 'load-path "~/.emacs.d/god-mode")
@@ -1002,6 +1001,20 @@
 ;; (elpaca (gdb-mi :host github :repo "weirdNox/emacs-gdb"
 ;;         :ref "985423594e91a4fb774d4dc5322d4b9750393419"))
 
+;;
+;; ido
+;;
+(elpaca (ido-vertical-mode :host github :repo "gempesaw/ido-vertical-mode.el"
+        :ref "b42e4227ed5d37b5d840a9d9d1cdaabf50e189b1" :wait t)
+  (require 'ido)
+  (require 'ido-vertical-mode)
+  ;(autoload 'ido "ido" "Ido thing." t)
+  ;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
+  (ido-vertical-mode 1)
+
+  (global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1140,18 +1153,6 @@
 
 
 
-
-;;
-;; ido
-;;
-
-(require 'ido)
-(require 'ido-vertical-mode)
-;(autoload 'ido "ido" "Ido thing." t)
-;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
-(ido-vertical-mode 1)
-
-(global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
 
 
 ;;

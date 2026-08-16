@@ -52,9 +52,6 @@
 [submodule "emacs.d/web-mode"]
 	path = emacs.d/web-mode
 	url = https://github.com/fxbois/web-mode
-[submodule "emacs.d/ido-vertical-mode"]
-	path = emacs.d/ido-vertical-mode
-	url = https://github.com/gempesaw/ido-vertical-mode.el
 [submodule "emacs.d/sunburst-theme"]
 	path = emacs.d/sunburst-theme
 	url = https://github.com/neomantic-zz/Emacs-Sunburst-Color-Theme
