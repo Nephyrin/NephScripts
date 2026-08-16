@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/popup-el")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 (neph-add-to-load-path 'load-path "~/.emacs.d/smarttabs")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
@@ -964,6 +963,12 @@
 (elpaca (flycheck-irony :host github :repo "Sarcasm/flycheck-irony"
         :ref "34940ae5ab8f4c721d9c1118ebfc3496d7e67a84" :wait t))
 
+;; popup.el for rtags tooltips (needed anymore?)
+(elpaca (popup :host github :repo "auto-complete/popup-el"
+        :ref "2af1c6c8a33ffa44e99d0e4df8769ca3d4098dd9" :wait t)
+  (autoload 'popup "popup" "Popup tooltip thing." t)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1100,9 +1105,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-;; popup.el for rtags tooltips (needed anymore?)
-(autoload 'popup "popup" "Popup tooltip thing." t)
 
 ;;
 ;; Smart Tabs
