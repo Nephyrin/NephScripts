@@ -1723,6 +1723,14 @@
 (setq hl-line-face 'hl-line)
 ;(global-hl-line-mode t)
 
+;;
+;; PlantUML
+;;
+
+;; Default install path from package
+(setq org-plantuml-jar-path
+      (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
