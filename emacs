@@ -1972,7 +1972,3 @@
  ;; If there is more than one, they won't work right.
  '(ccls-code-lens-face ((t (:inherit shadow :height 0.7))))
  '(ccls-code-lens-mouse-face ((t (:underline t)))))
-
-;; Split out so that it can be auto-compiled/native-compiled
-(message "loading init")
-(require 'neph-init)
