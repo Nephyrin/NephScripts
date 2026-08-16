@@ -519,6 +519,52 @@
 
 ;;(global-set-key (kbd "C-z M-f") 'project-find-file)
 
+;;
+;; Helm
+;;
+
+;;(require 'helm-autoloads)
+(require 'helm)
+(require 'helm-mode)
+(require 'helm-command)
+(require 'helm-bookmark)
+;; Not sure what I'm configuring wrong but autoloads doesn't always
+(require 'helm-for-files)
+;;(require 'helm-config)
+(require 'helm-for-files)
+
+(helm-mode 1)
+
+;; Since 215005e25718 helm's default score func is just crazy broken
+;; and puts really-fuzzy matches above extremely-direct matches
+(setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
+;;Default: (setq helm-fuzzy-default-score-fn 'helm-fuzzy-flex-style-score)
+
+(global-set-key (kbd "C-z F") 'neph-helm-find-in-directory)
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+;; Note: was shadowed by helm-projectile-switch-to-buffer prior to elpacification, commented
+;;(global-set-key (kbd "C-z b") 'helm-mini)
+(global-set-key (kbd "C-z C-b") 'helm-filtered-bookmarks)
+(global-set-key (kbd "C-z C-o") 'helm-occur)
+(global-set-key (kbd "C-z C-S-o") 'occur)
+(global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-z <C-tab>") 'helm-imenu)
+
+;; Blows up helm on emacs 25 right now
+;; (setq helm-follow-mode-persistent nil)
+
+(define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
+(define-key isearch-mode-map (kbd "C-S-o") 'isearch-occur)
+
+(when (executable-find "ack-grep")
+  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
+        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
+
+;; helm-grep ripgrep ;; -color=always --colors 'match:fg:black' --colors 'match:bg:yellow'
+(setq helm-grep-ag-command "rg --smart-case --no-heading --line-number %s %s %s")
+(setq helm-grep-ag-pipe-cmd-switches '())
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

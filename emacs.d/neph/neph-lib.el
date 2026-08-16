@@ -355,4 +355,14 @@ explicit input."
             (ein:notebook-execute-autoexec-cells ein:%notebook%))))))
     (message "Not in notebook buffer")))
 
+;;
+;; Helm
+;;
+
+;; Was an inline lambda on the C-z F global-set-key
+(defun neph-helm-find-in-directory ()
+  "Run helm-find under a prompted-for directory."
+  (interactive)
+  (helm-find-1 (read-directory-name "Run find in directory: " nil "" t)))
+
 (provide 'neph-lib)
