@@ -8,9 +8,6 @@
 ;; For web mode in tabs, we want to disable whitespace tabs because they conflict with the
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
-;; Fix magit in that mode
-;; https://github.com/magit/magit/issues/5220
-(setq magit-tramp-pipe-stty-settings 'pty)
 
 ;;
 ;; Artist mode
@@ -891,19 +888,6 @@ beginning of it and the point to the end of it if so"
                      (read-char "Zap backwards to char: ")))
   (zap-to-char (* -1 arg) char))
 (global-set-key (kbd "M-Z") 'backwards-zap-to-char)
-
-;;
-;; Magit
-;;
-
-(require 'with-editor)
-(require 'magit)
-(require 'magit-blame)
-(global-set-key (kbd "C-z C-<return>") 'magit-status)
-(global-set-key (kbd "C-z L") 'magit-blame-mode)
-(global-set-key (kbd "C-z x") 'magit)
-(global-set-key (kbd "C-z X") 'magit-ediff-stage)
-(global-set-key (kbd "C-z C") 'magit-commit)
 
 ;;
 ;; Theme

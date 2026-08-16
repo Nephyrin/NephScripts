@@ -1514,6 +1514,23 @@
 (global-set-key (kbd "C-z C-u") 'sudoize-buffer)
 (global-set-key (kbd "C-z C-M-u") 'drop-sudo)
 
+;;
+;; Magit
+;;
+
+;; Fix magit in that mode
+;; https://github.com/magit/magit/issues/5220
+(setq magit-tramp-pipe-stty-settings 'pty)
+
+(require 'with-editor)
+(require 'magit)
+(require 'magit-blame)
+(global-set-key (kbd "C-z C-<return>") 'magit-status)
+(global-set-key (kbd "C-z L") 'magit-blame-mode)
+(global-set-key (kbd "C-z x") 'magit)
+(global-set-key (kbd "C-z X") 'magit-ediff-stage)
+(global-set-key (kbd "C-z C") 'magit-commit)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
