@@ -1783,4 +1783,22 @@ If this is a local file, turn it into a tramp file file with said information."
   (next-line 1)
   (indent-according-to-mode))
 
+;; Was an inline lambda on the minibuffer-local-map [f3] define-key
+(defun neph-insert-selected-window-buffer-name ()
+  "Insert the name of the buffer the minibuffer was entered from."
+  (interactive)
+  (insert (buffer-name (window-buffer (minibuffer-selected-window)))))
+
+(defun p4-edit-current ()
+  "Checks out the current buffer and mark editable"
+  (interactive)
+  (message "Attempting p4 edit %s" (buffer-file-name))
+  (let ((default-directory (file-name-directory (buffer-file-name)))
+        (process-environment (copy-sequence process-environment)))
+    (setenv "P4CONFIG" "P4CONFIG")
+    (if (= 0 (call-process "p4" nil nil nil "edit" (buffer-file-name)))
+        (progn (read-only-mode 0)
+               (message "p4 opened into default changeset"))
+      (message "p4 edit failed"))))
+
 (provide 'neph-lib)

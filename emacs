@@ -1633,6 +1633,16 @@
 
 (global-set-key (kbd "C-S-o") 'open-next-line)
 
+; F3 inserts current filename into minibuffer
+(define-key minibuffer-local-map [f3] 'neph-insert-selected-window-buffer-name)
+
+(global-set-key (kbd "C-z C-e") 'p4-edit-current)
+
+;; Take slash away from electric indent ('electric-slash)
+(eval-after-load 'cc-mode
+  '(define-key c-mode-base-map "/" 'self-insert-command))
+;; (global-set-key (kbd "/") 'self-insert-command)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

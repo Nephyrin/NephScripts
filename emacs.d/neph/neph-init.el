@@ -9,29 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-; F3 inserts current filename into minibuffer
-(define-key minibuffer-local-map [f3]
-  (lambda () (interactive)
-     (insert (buffer-name (window-buffer (minibuffer-selected-window))))))
-
-(defun p4-edit-current ()
-  "Checks out the current buffer and mark editable"
-  (interactive)
-  (message "Attempting p4 edit %s" (buffer-file-name))
-  (let ((default-directory (file-name-directory (buffer-file-name)))
-        (process-environment (copy-sequence process-environment)))
-    (setenv "P4CONFIG" "P4CONFIG")
-    (if (= 0 (call-process "p4" nil nil nil "edit" (buffer-file-name)))
-        (progn (read-only-mode 0)
-               (message "p4 opened into default changeset"))
-      (message "p4 edit failed"))))
-(global-set-key (kbd "C-z C-e") 'p4-edit-current)
-
-;; Take slash away from electric indent ('electric-slash)
-(eval-after-load 'cc-mode
-  '(define-key c-mode-base-map "/" 'self-insert-command))
-;; (global-set-key (kbd "/") 'self-insert-command)
-
 ;; Custom binds for existing commands
 (global-set-key (kbd "C-z C-k") 'copy-to-register)
 (global-set-key (kbd "C-z k") 'insert-register)
