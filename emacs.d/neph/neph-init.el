@@ -1,9 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;(require 'eterm-256color) FIXME debug-init
-
-;;(add-hook 'term-mode-hook #'eterm-256color-mode)
-
 ;; Just wraps ansi-color-apply which works better than xterm-color it seems, handles truecolor
 (defun neph-term-color-region (start end)
   "Turn terminal color codes into text properties in START to END (defaults to region interactively)."
