@@ -864,70 +864,6 @@
 
 
 ;;
-;; GDB - upstream gdb-mi, not to be confused with the weirdnox version below
-;;
-
-(setq gdb-debuginfod-enable-setting t) ;; This is completely fucking broken otherwise in emacs 29
-
-; (setq gdb-non-stop-setting nil)
-; (gdb-many-windows t)
-
-; Replace this to not be dumb
-;; (defadvice gud-display-line (around do-it-better activate) ... )
-;;(defadvice gud-display-line (around do-it-better activate)
-;;  (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
-;;	 (buffer
-;;	  (with-current-buffer gud-comint-buffer
-;;	    (gud-find-file true-file)))
-;;	 (window (and buffer
-;;		      (or (get-buffer-window buffer)
-;;                          (and gdb-source-window (set-window-buffer gdb-source-window buffer))
-;;			  (display-buffer buffer))))
-;;	 (pos))
-;;    (when buffer
-;;      (with-current-buffer buffer
-;;	(unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
-;;	  (if (yes-or-no-p
-;;	       (format "File %s changed on disk.  Reread from disk? "
-;;		       (buffer-name)))
-;;	      (revert-buffer t t)
-;;	    (setq gud-keep-buffer t)))
-;;	(save-restriction
-;;	  (widen)
-;;	  (goto-char (point-min))
-;;	  (forward-line (1- line))
-;;	  (setq pos (point))
-;;	  (or gud-overlay-arrow-position
-;;	      (setq gud-overlay-arrow-position (make-marker)))
-;;	  (set-marker gud-overlay-arrow-position (point) (current-buffer))
-;;	  ;; If they turned on hl-line, move the hl-line highlight to
-;;	  ;; the arrow's line.
-;;	  (when (featurep 'hl-line)
-;;	    (cond
-;;	     (global-hl-line-mode
-;;	      (global-hl-line-highlight))
-;;	     ((and hl-line-mode hl-line-sticky-flag)
-;;	      (hl-line-highlight)))))
-;;	(cond ((or (< pos (point-min)) (> pos (point-max)))
-;;	       (widen)
-;;	       (goto-char pos))))
-;;      (when window
-;;	(set-window-point window gud-overlay-arrow-position)
-;;	(if (eq gud-minor-mode 'gdbmi)
-;;	    (setq gdb-source-window window))))))
-
-;; Stop GDB from force-displaying I/O buffer (what the actual hell)
-;;(defadvice gdb-inferior-filter
-;;    (around gdb-inferior-filter-without-stealing)
-;;  (with-current-buffer (gdb-get-buffer-create 'gdb-inferior-io)
-;;    (comint-output-filter proc string)))
-;;(ad-activate 'gdb-inferior-filter)
-;;
-;;(global-set-key (kbd "C-z C-M-i") 'gdb-io-interrupt)
-;;(global-set-key (kbd "C-z C-M-c") 'gud-cont)
-
-
-;;
 ;; emacs-gdb -- weirdNox's replacement for gdb-mi. kinda bad.
 ;;
 
@@ -969,17 +905,6 @@
               (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
               (setq minimap-window-location (quote right))
               (setq minimap-width-fraction 0.01))
-
-
-;;
-;; remember-notes
-;;
-
-;; New in 24.4
-(if (fboundp 'remember-notes)
-    (progn
-      (setq initial-buffer-choice 'remember-notes)
-      (setq remember-notes-buffer-name "#Notes")))
 
 
 ;;
@@ -1810,6 +1735,81 @@
 
 ;; Global libraries macros in here (and also )
 (require 'ht)
+
+
+;;
+;; GDB - upstream gdb-mi, not to be confused with the weirdnox version below
+;;
+
+(setq gdb-debuginfod-enable-setting t) ;; This is completely fucking broken otherwise in emacs 29
+
+; (setq gdb-non-stop-setting nil)
+; (gdb-many-windows t)
+
+; Replace this to not be dumb
+;; (defadvice gud-display-line (around do-it-better activate) ... )
+;;(defadvice gud-display-line (around do-it-better activate)
+;;  (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+;;	 (buffer
+;;	  (with-current-buffer gud-comint-buffer
+;;	    (gud-find-file true-file)))
+;;	 (window (and buffer
+;;		      (or (get-buffer-window buffer)
+;;                          (and gdb-source-window (set-window-buffer gdb-source-window buffer))
+;;			  (display-buffer buffer))))
+;;	 (pos))
+;;    (when buffer
+;;      (with-current-buffer buffer
+;;	(unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+;;	  (if (yes-or-no-p
+;;	       (format "File %s changed on disk.  Reread from disk? "
+;;		       (buffer-name)))
+;;	      (revert-buffer t t)
+;;	    (setq gud-keep-buffer t)))
+;;	(save-restriction
+;;	  (widen)
+;;	  (goto-char (point-min))
+;;	  (forward-line (1- line))
+;;	  (setq pos (point))
+;;	  (or gud-overlay-arrow-position
+;;	      (setq gud-overlay-arrow-position (make-marker)))
+;;	  (set-marker gud-overlay-arrow-position (point) (current-buffer))
+;;	  ;; If they turned on hl-line, move the hl-line highlight to
+;;	  ;; the arrow's line.
+;;	  (when (featurep 'hl-line)
+;;	    (cond
+;;	     (global-hl-line-mode
+;;	      (global-hl-line-highlight))
+;;	     ((and hl-line-mode hl-line-sticky-flag)
+;;	      (hl-line-highlight)))))
+;;	(cond ((or (< pos (point-min)) (> pos (point-max)))
+;;	       (widen)
+;;	       (goto-char pos))))
+;;      (when window
+;;	(set-window-point window gud-overlay-arrow-position)
+;;	(if (eq gud-minor-mode 'gdbmi)
+;;	    (setq gdb-source-window window))))))
+
+;; Stop GDB from force-displaying I/O buffer (what the actual hell)
+;;(defadvice gdb-inferior-filter
+;;    (around gdb-inferior-filter-without-stealing)
+;;  (with-current-buffer (gdb-get-buffer-create 'gdb-inferior-io)
+;;    (comint-output-filter proc string)))
+;;(ad-activate 'gdb-inferior-filter)
+;;
+;;(global-set-key (kbd "C-z C-M-i") 'gdb-io-interrupt)
+;;(global-set-key (kbd "C-z C-M-c") 'gud-cont)
+
+
+;;
+;; remember-notes
+;;
+
+;; New in 24.4
+(if (fboundp 'remember-notes)
+    (progn
+      (setq initial-buffer-choice 'remember-notes)
+      (setq remember-notes-buffer-name "#Notes")))
 
 
 ;;
