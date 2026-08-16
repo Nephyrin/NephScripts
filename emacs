@@ -18,7 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
-(neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-ipython-notebook/lisp")
 ;(neph-add-to-load-path 'load-path "~/.emacs.d/ecb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/color-identifiers-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/consult")
@@ -383,6 +382,14 @@
 ;;
 (elpaca (websocket :host github :repo "ahyatt/emacs-websocket"
         :ref "d8ef1b764a7047b1163e8b9664bac5bd819058ed" :wait t))
+
+;;
+;; ein
+;;
+(elpaca (ein :host github :repo "millejoh/emacs-ipython-notebook"
+        :main "lisp/ein.el"
+        :files (:defaults "lisp/*.py")
+        :ref "7c7691c26d735aab3ebb642f898a9e878d2df212" :wait t))
 
 ;; ---- end elpacified run ----
 
