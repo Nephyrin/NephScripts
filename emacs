@@ -771,6 +771,22 @@
 ;;(global-set-key (kbd "C-z SPC") 'helm-semantic)
 ;;(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
 
+;;
+;; Copilot
+;;
+(require 'copilot)
+
+(global-set-key (kbd "C-M-<tab>") 'copilot-panel-complete)
+;; This is apparently C-S-<tab>
+(global-set-key (kbd "C-<iso-lefttab>") 'copilot-complete)
+(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+(define-key copilot-completion-map (kbd "C-e") 'copilot-accept-completion)
+(define-key copilot-completion-map (kbd "C-k") 'copilot-clear-overlay)
+(define-key copilot-completion-map (kbd "C-M-n") 'copilot-accept-completion-by-line)
+(define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
+(define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
+(define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
