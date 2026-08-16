@@ -1112,6 +1112,18 @@
 (autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
 
 
+;;
+;; Minimap
+;;
+
+(autoload 'minimap-mode "minimap" "minimap" t)
+
+(with-eval-after-load "minimap"
+              (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
+              (setq minimap-window-location (quote right))
+              (setq minimap-width-fraction 0.01))
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -6,17 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; Minimap
-;;
-
-(autoload 'minimap-mode "minimap" "minimap" t)
-
-(with-eval-after-load "minimap"
-              (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
-              (setq minimap-window-location (quote right))
-              (setq minimap-width-fraction 0.01))
-
-;;
 ;; remember-notes
 ;;
 
