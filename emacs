@@ -437,6 +437,18 @@
 (setq rust-indent-offset 2)
 
 
+;;
+;; Lua mode
+;;
+
+(autoload 'lua-mode "lua-mode"
+   "Major mode for editing Lua files" t)
+(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+
+;; Defaults to 3. What in the goddamn.
+(setq lua-indent-level 2)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -1,17 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Lua mode
-;;
-
-(autoload 'lua-mode "lua-mode"
-   "Major mode for editing Lua files" t)
-(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
-
-;; Defaults to 3. What in the goddamn.
-(setq lua-indent-level 2)
-
-;;
 ;; Command helpers
 ;;
 
