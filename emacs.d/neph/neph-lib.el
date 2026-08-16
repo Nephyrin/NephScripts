@@ -683,4 +683,16 @@ If FORCE is not specified, toggle the current state."
             (message "No valid definition range or hover text found.")))
       (message "No definition range recognized. (save file, and make sure you're on the type name)"))))
 
+;;
+;; Irony-mode (deprecated)
+;;
+
+;; Bonus key to use counsel-irony if available
+(defun irony-mode-counsel-hook ()
+  (when (require 'counsel nil t)
+    (define-key irony-mode-map
+      ;;[remap completion-at-point] 'counsel-irony)
+      ;;[remap complete-symbol] 'counsel-irony)
+      (kbd "<C-M-tab>") 'counsel-irony)))
+
 (provide 'neph-lib)

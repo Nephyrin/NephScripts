@@ -1,22 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;;
-;; Irony-mode (deprecated)
-;;   DEPRECATED - going to drop if ccls + lsp keeps working well
-;;
-;;(require 'neph-irony-autoload)
-
-;; Bonus key to use counsel-irony if available
-(defun irony-mode-counsel-hook ()
-  (when (require 'counsel nil t)
-    (define-key irony-mode-map
-      ;;[remap completion-at-point] 'counsel-irony)
-      ;;[remap complete-symbol] 'counsel-irony)
-      (kbd "<C-M-tab>") 'counsel-irony)))
-(add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
-
-;; FIXME irony-mode breaks on headers due to that missing (car found)
-
 ;; Load flycheck-irony if both flycheck and irony get enabled
 (defun neph-flycheck-irony-setup ()
   "Load flycheck-irony if both irony and flycheck are loaded."

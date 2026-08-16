@@ -991,6 +991,16 @@
 ;; Default off
 (add-to-list 'lsp-disabled-clients 'ccls)
 
+;;
+;; Irony-mode (deprecated)
+;;   DEPRECATED - going to drop if ccls + lsp keeps working well
+;;
+;;(require 'neph-irony-autoload)
+
+(add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
+
+;; FIXME irony-mode breaks on headers due to that missing (car found)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
