@@ -1127,4 +1127,60 @@ If FORCE is not specified, toggle the current state."
         (concat default-name "-alt")
         default-name)))
 
+;;
+;; helm-projectile
+;;
+
+;; helm projectile-ag/rg with default args
+(defun helm-projectile-ag-cpp()
+  (interactive)
+  (require 'helm-projectile)
+  (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
+    (helm-projectile-ag)))
+(defun helm-projectile-rg-cpp()
+  (interactive)
+  (require 'helm-projectile)
+  (let ((helm-rg-default-extra-args (append helm-rg-default-extra-args (split-string-and-unquote "-t cpp -t c"))))
+    (call-interactively 'helm-projectile-rg)))
+(defun helm-projectile-rg-php()
+  (interactive)
+  (require 'helm-projectile)
+  (let ((helm-rg-default-extra-args (append helm-rg-default-extra-args (split-string-and-unquote "-t php"))))
+    (call-interactively 'helm-projectile-rg)))
+(defun helm-projectile-ag-cpp-this-word()
+  (interactive)
+  (require 'helm-projectile)
+  (save-excursion
+    (neph-mark-current-word)
+    (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
+      (helm-projectile-ag))))
+(defun helm-projectile-ag-this-word()
+  (require 'helm-projectile)
+  (interactive)
+  (save-excursion
+    (neph-mark-current-word)
+    (helm-projectile-ag)))
+(defadvice helm-projectile-find-file (around helm-projectile-find-file-no-case activate)
+  (let ((helm-case-fold-search nil))
+    ad-do-it))
+(defadvice projectile-find-file (around projectile-find-file-no-case activate)
+  (let ((helm-case-fold-search nil))
+    ad-do-it))
+(defadvice projectile-find-file-in-known-projects (around projectile-find-file-in-known-projects-no-case activate)
+  (let ((helm-case-fold-search nil))
+    ad-do-it))
+(defadvice helm-projectile-find-file-in-known-projects (around helm-projectile-find-file-in-known-projects-no-case activate)
+  (let ((helm-case-fold-search nil))
+    ad-do-it))
+
+;; Switch project action
+(defun neph-projectile-switch-and-rg ()
+  (interactive)
+  (let ((projectile-switch-project-action 'helm-projectile-rg))
+    (call-interactively 'helm-projectile-switch-project)))
+(defun neph-projectile-switch-and-rg-cpp ()
+  (interactive)
+  (let ((projectile-switch-project-action 'helm-projectile-rg-cpp))
+    (call-interactively 'helm-projectile-switch-project)))
+
 (provide 'neph-lib)
