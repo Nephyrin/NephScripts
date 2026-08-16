@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lsp-docker")
 (neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/elisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/extra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ccls")
@@ -751,6 +750,12 @@
                                   "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
     ;; --
   )
+
+;;
+;; lsp-docker
+;;
+(elpaca (lsp-docker :host github :repo "emacs-lsp/lsp-docker" :protocol ssh
+        :ref "81ddb3fc68e1930352b6ca006d0ea609760be7d1" :wait t))
 
 ;; ---- end elpacified run ----
 
