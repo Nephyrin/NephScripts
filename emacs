@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
-(neph-add-to-load-path 'load-path "~/.emacs.d/dape")
 (neph-add-to-load-path 'load-path "~/.emacs.d/posframe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-ui")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-pyright")
@@ -839,6 +838,19 @@
   (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
   )
 
+;;
+;; dape
+;;
+(elpaca (dape :host github :repo "svaante/dape"
+        :ref "9df3ea8db0206e58c245ed3a3cbabc37b01e7b55" :wait t)
+  (require 'dape)
+
+  ;; Dape config
+  (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+  (setq dape-inlay-hints t)
+  (setq dape-cwd-function 'projectile-project-root)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1000,13 +1012,6 @@
 (require 'dap-ui)
 (require 'dap-mouse)
 (require 'dap-hydra)
-
-(require 'dape)
-
-;; Dape config
-(add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
-(setq dape-inlay-hints t)
-(setq dape-cwd-function 'projectile-project-root)
 
 (require 'helm-lsp)
 

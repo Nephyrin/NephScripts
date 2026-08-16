@@ -184,9 +184,6 @@
 [submodule "emacs.d/counsel-projectile"]
 	path = emacs.d/counsel-projectile
 	url = https://github.com/ericdanan/counsel-projectile.git
-[submodule "emacs.d/dape"]
-	path = emacs.d/dape
-	url = https://github.com/svaante/dape.git
 [submodule "emacs.d/cond-let"]
 	path = emacs.d/cond-let
 	url = https://github.com/tarsius/cond-let.git
