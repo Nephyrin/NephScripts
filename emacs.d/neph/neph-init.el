@@ -5,14 +5,6 @@
 ;;(fa-config-default)
 ;;(setq moo-select-method 'helm)
 
-;;
-;; Misc modes
-;;
-
-(autoload 'fic-mode "fic-mode" "fic-mode" t)
-(with-eval-after-load "fic-mode"
-  (add-to-list 'fic-highlighted-words "XXX"))
-
 (require 'fringe-helper)
 (require 'git-gutter)
 (require 'git-gutter-fringe)

@@ -1275,6 +1275,12 @@
 (autoload 're-builder "re-builder" "re-builder" t)
 (setq reb-re-syntax 'string)
 
+;;
+;; Misc modes
+(autoload 'fic-mode "fic-mode" "fic-mode" t)
+(with-eval-after-load "fic-mode"
+  (add-to-list 'fic-highlighted-words "XXX"))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
