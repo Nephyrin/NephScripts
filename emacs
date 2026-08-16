@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/company-irony")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flycheck-irony")
 (neph-add-to-load-path 'load-path "~/.emacs.d/popup-el")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
@@ -953,6 +952,12 @@
 
   ;; FIXME irony-mode breaks on headers due to that missing (car found)
   )
+
+;;
+;; company-irony
+;;
+(elpaca (company-irony :host github :repo "Sarcasm/company-irony"
+        :ref "b44711dfce445610c1ffaec4951c6ff3882b216a" :wait t))
 
 ;; ---- end elpacified run ----
 
