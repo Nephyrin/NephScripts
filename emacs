@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/minimap")
 (neph-add-to-load-path 'load-path "~/.emacs.d/god-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/fic-mode.git")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter-fringe")
@@ -1022,6 +1021,19 @@
   (autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
   )
 
+;;
+;; Minimap
+;;
+(elpaca (minimap :host github :repo "dengste/minimap"
+        :ref "fc33fbfd802b167de85158e38a505b76708c4e3a" :wait t)
+  (autoload 'minimap-mode "minimap" "minimap" t)
+
+  (with-eval-after-load "minimap"
+                (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
+                (setq minimap-window-location (quote right))
+                (setq minimap-width-fraction 0.01))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1162,17 +1174,6 @@
 
 
 
-
-;;
-;; Minimap
-;;
-
-(autoload 'minimap-mode "minimap" "minimap" t)
-
-(with-eval-after-load "minimap"
-              (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
-              (setq minimap-window-location (quote right))
-              (setq minimap-width-fraction 0.01))
 
 
 ;;
