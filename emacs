@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/evil")
 (neph-add-to-load-path 'load-path "~/.emacs.d/indent-bars")
 (neph-add-to-load-path 'load-path "~/.emacs.d/highlight-symbol")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rust-mode")
@@ -263,6 +262,15 @@
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   )
 
+;;
+;; Evil
+;;
+
+;(require 'neph-evil-autoload)
+;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
+(elpaca (evil :host github :repo "emacsmirror/evil"
+        :ref "2ce03d412c4e93b0b89eb43d796c991806415b8a" :wait t))
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -296,13 +304,6 @@
   (message "NEPH -- No protobuf-mode available, using c-mode for .proto")
   (add-to-list 'auto-mode-alist '("\.proto$" . c-mode)))
 
-
-;;
-;; Evil
-;;
-
-;(require 'neph-evil-autoload)
-;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
 
 
 ;;
