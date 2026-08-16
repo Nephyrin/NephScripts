@@ -1,6 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'jsonrpc)
 (require 'dape)
 (require 'helm-lsp)
 ;;(require 'lsp-clangd)

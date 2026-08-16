@@ -902,6 +902,8 @@
 (require 'dap-mouse)
 (require 'dap-hydra)
 
+(require 'jsonrpc)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
