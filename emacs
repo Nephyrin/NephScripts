@@ -1731,6 +1731,10 @@
 (setq org-plantuml-jar-path
       (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
 
+;;
+;; zap-to-char
+(global-set-key (kbd "M-Z") 'backwards-zap-to-char)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

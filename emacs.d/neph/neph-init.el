@@ -65,26 +65,6 @@
 (require 'salt-mode)
 
 ;;
-;; zap-to-char
-;;
-
-; Make zap-to-char zap-up-to-char
-(defadvice zap-to-char (after my-zap-to-char-advice (arg char &optional interactive) activate)
-  "Kill up to the ARG'th occurence of CHAR, and leave CHAR. If
-  you are deleting forward, the CHAR is replaced and the point is
-  put before CHAR"
-  (insert char)
-  (if (< 0 arg) (forward-char -1)))
-
-; Just inverts the argument to zap-to-char
-(defun backwards-zap-to-char (arg char)
-  "zap-to-char with an inverted argument"
-  (interactive (list (prefix-numeric-value current-prefix-arg)
-                     (read-char "Zap backwards to char: ")))
-  (zap-to-char (* -1 arg) char))
-(global-set-key (kbd "M-Z") 'backwards-zap-to-char)
-
-;;
 ;; Theme
 ;;
 
