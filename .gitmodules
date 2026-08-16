@@ -58,9 +58,6 @@
 [submodule "emacs.d/ido-vertical-mode"]
 	path = emacs.d/ido-vertical-mode
 	url = https://github.com/gempesaw/ido-vertical-mode.el
-[submodule "emacs.d/color-identifiers-mode"]
-	path = emacs.d/color-identifiers-mode
-	url = https://github.com/ankurdave/color-identifiers-mode
 [submodule "emacs.d/sunburst-theme"]
 	path = emacs.d/sunburst-theme
 	url = https://github.com/neomantic-zz/Emacs-Sunburst-Color-Theme

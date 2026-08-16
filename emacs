@@ -18,7 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
-(neph-add-to-load-path 'load-path "~/.emacs.d/color-identifiers-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/consult")
 (neph-add-to-load-path 'load-path "~/.emacs.d/vertico")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
@@ -408,6 +407,14 @@
 ;; (elpaca (ecb :host github :repo "emacsmirror/ecb"
 ;;         :ref "1330a44cf3c171781083b0b926ab7622f64e6e81"))
 
+;;
+;; Color identifiers mode
+;;
+(elpaca (color-identifiers-mode :host github :repo "ankurdave/color-identifiers-mode"
+        :ref "e35ee05588d84517193db07d94ce7f29ace10ef6" :wait t)
+  (require 'color-identifiers-mode)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -462,12 +469,6 @@
 ;(setq multi-term-program "/bin/bash")
 ;
 ;(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
-
-;;
-;; Color identifiers mode
-;;
-
-(require 'color-identifiers-mode)
 
 ;;
 ;; Consult/Vertico
