@@ -1286,6 +1286,20 @@
 (require 'git-gutter-fringe)
 (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
 
+;;
+;; P4
+;;
+
+;; p4.el
+(autoload 'p4 "p4" "p4" t)
+
+;; Note: was shadowed by p4-edit-current prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-e") 'neph-p4-edit-current)
+(global-set-key (kbd "C-z P r") 'neph-p4-revert-current)
+(global-set-key (kbd "C-z P t") 'neph-p4vc-tlv)
+(global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
+(global-set-key (kbd "C-z P h") 'neph-p4vc-history)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

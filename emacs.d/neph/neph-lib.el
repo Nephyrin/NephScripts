@@ -1021,4 +1021,60 @@ If FORCE is not specified, toggle the current state."
       (when (not was-ido-mode) (ido-mode -1)))))
 
 
+;;
+;; P4
+;;
+
+;; p4vc commands. Throw in some systemd unit to sidestep async-process garbage in emacs
+(defun neph-p4v-cmd (file command &rest args)
+  (if (executable-find "p4vc")
+      (let* ((cmd (append (list "systemd-run" "--user" "--property=ExitType=cgroup"
+                                (concat "--working-directory=" (file-name-directory file))
+                                "--setenv=P4CONFIG=P4CONFIG"
+                                "--" "p4vc" command)
+                          args
+                          (list file))))
+        (message (concat "Running: " (mapconcat #'identity cmd " ")))
+        (apply #'call-process (car cmd) nil nil nil (cdr cmd)))
+    (message "!! p4vc not installed/available")))
+
+(defun neph-p4-cmd (file &rest args)
+  (let ((default-directory (file-name-directory file))
+        (process-environment (copy-sequence process-environment)))
+    (setenv "P4CONFIG" "P4CONFIG")
+    (apply #'call-process "p4" nil nil nil (append args (list file)))))
+
+(defun neph-p4-cmd-current (&rest args)
+  (if (buffer-file-name)
+      (apply #'neph-p4-cmd (buffer-file-name) args)
+    (message "!! Current buffer has no associated file")
+    -1))
+
+(defun neph-p4v-cmd-current (&rest args)
+  (if (buffer-file-name)
+      (apply #'neph-p4v-cmd (buffer-file-name) args)
+    (message "!! Current buffer has no associated file")
+    -1))
+
+(defun neph-p4-edit-current ()
+  "p4 edit the current buffer"
+  (interactive)
+  (if (= 0 (neph-p4-cmd-current "edit"))
+      (progn (setq buffer-read-only nil)
+             (message "p4 opened into default changeset"))
+    (message "p4 edit failed")
+    -1))
+
+(defun neph-p4-revert-current ()
+  "p4 revert the current buffer"
+  (interactive)
+  (if (= 0 (neph-p4-cmd-current "revert"))
+      (progn (setq buffer-read-only t)
+             (message "p4 reverted"))
+    (message "!! p4 revert failed")))
+
+(defun neph-p4vc-tlv      () (interactive) (neph-p4v-cmd-current "tlv"))
+(defun neph-p4vc-revgraph () (interactive) (neph-p4v-cmd-current "revgraph"))
+(defun neph-p4vc-history  () (interactive) (neph-p4v-cmd-current "history"))
+
 (provide 'neph-lib)
