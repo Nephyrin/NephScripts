@@ -1465,6 +1465,12 @@
 
 (add-hook 'lsp-after-open-hook 'neph-lsp-mode)
 
+;;
+;; Web-mode indent config
+;;
+
+(add-hook 'web-mode-hook 'neph-web-tab-cfg)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

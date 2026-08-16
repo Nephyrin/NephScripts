@@ -8,21 +8,6 @@
 ;; For web mode in tabs, we want to disable whitespace tabs because they conflict with the
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
-(defun neph-web-tab-cfg ()
-  (interactive)
-  (let ((filtered-whitespace-style (remove 'tabs whitespace-style)))
-    (setq-local whitespace-style filtered-whitespace-style))
-  (whitespace-mode nil)
-  (whitespace-mode t)
-  (neph-tab-cfg))
-(defun neph-web-space-cfg ()
-  (interactive)
-  (kill-local-variable 'whitespace-style)
-  (whitespace-mode nil)
-  (whitespace-mode t)
-  (neph-space-cfg))
-
-(add-hook 'web-mode-hook 'neph-web-tab-cfg)
 ;;
 ;; IswitchBuffers
 ;;

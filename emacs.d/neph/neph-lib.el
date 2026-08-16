@@ -1313,4 +1313,18 @@ If FORCE is not specified, toggle the current state."
       (neph-tab-cfg)
     (neph-space-cfg)))
 
+(defun neph-web-tab-cfg ()
+  (interactive)
+  (let ((filtered-whitespace-style (remove 'tabs whitespace-style)))
+    (setq-local whitespace-style filtered-whitespace-style))
+  (whitespace-mode nil)
+  (whitespace-mode t)
+  (neph-tab-cfg))
+(defun neph-web-space-cfg ()
+  (interactive)
+  (kill-local-variable 'whitespace-style)
+  (whitespace-mode nil)
+  (whitespace-mode t)
+  (neph-space-cfg))
+
 (provide 'neph-lib)
