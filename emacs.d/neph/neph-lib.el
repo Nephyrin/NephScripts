@@ -1285,4 +1285,32 @@ If FORCE is not specified, toggle the current state."
   (setq web-mode-markup-indent-offset 4)
   (setq web-mode-css-indent-offset 4))
 
+(defun neph-lsp-if-projectile ()
+  "Invoke lsp if this buffer is a projectile project."
+  (interactive)
+  (let ((projectile-dir (when (and (featurep 'projectile) (projectile-project-p)) (projectile-project-root))))
+    (when (and projectile-dir (length projectile-dir))
+      (lsp-deferred))))
+
+(defun neph-lsp-mode ()
+  "Set minor modes and config for buffers using LSP."
+  (interactive)
+  ;; LSP provides variable coloring, so turn this off there
+  ;; (thus keeping it on for non-LSP languages)
+  ;; FIXME actually only ccls does and it's off
+  (color-identifiers-mode 0)
+  )
+
+(defun neph-bash-mode ()
+  "Invokes 'sh-mode' but defaulting to bash."
+  (sh-mode)
+  (sh-set-shell "bash"))
+
+(defun neph-js-mode-hook ()
+  "Set minor modes and buffer-local configuration for js language buffers."
+  (if (and (stringp buffer-file-name)
+           (string-match "\\.\\(v[pg]c\\|res\\)\\'" buffer-file-name))
+      (neph-tab-cfg)
+    (neph-space-cfg)))
+
 (provide 'neph-lib)
