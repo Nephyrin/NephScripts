@@ -736,6 +736,14 @@
   (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
 
 
+;;
+;; Swiper
+(autoload 'swiper "swiper" "Swiper popup thing" t)
+(global-set-key (kbd "C-z s") 'swiper)
+
+(define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -1,29 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Swiper
-;;
-
-(defun neph-swiper-current-word ()
-  "Start swiper with the current word"
-  (interactive)
-  (let ((current-word (save-excursion
-                         (neph-mark-current-word)
-                         (buffer-substring (mark) (point)))))
-    (swiper current-word)))
-
-(autoload 'swiper "swiper" "Swiper popup thing" t)
-(global-set-key (kbd "C-z s") 'swiper)
-
-(defun isearch-to-swiper ()
-    "Drop into swiper with current isearch"
-    (interactive)
-    (isearch-exit)
-    (swiper isearch-string))
-
-(define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
-
-;;
 ;; Company mode
 ;;
 ;;(require 'neph-company-autoload)

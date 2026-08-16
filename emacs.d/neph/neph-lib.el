@@ -465,4 +465,23 @@ explicit input."
     (phi-search-complete))
 
 
+;;
+;; Swiper
+;;
+
+(defun neph-swiper-current-word ()
+  "Start swiper with the current word"
+  (interactive)
+  (let ((current-word (save-excursion
+                         (neph-mark-current-word)
+                         (buffer-substring (mark) (point)))))
+    (swiper current-word)))
+
+(defun isearch-to-swiper ()
+    "Drop into swiper with current isearch"
+    (interactive)
+    (isearch-exit)
+    (swiper isearch-string))
+
+
 (provide 'neph-lib)
