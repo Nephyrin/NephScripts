@@ -19,7 +19,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
-(neph-add-to-load-path 'load-path "~/.emacs.d/helm-rg")
 (neph-add-to-load-path 'load-path "~/.emacs.d/wgrep") ;; For rg.el
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/multiple-cursors")
@@ -548,6 +547,32 @@
   ;; Most keybinds in projectile below
   )
 
+;;
+;; Helm RG
+;;
+(elpaca (helm-rg :host github :repo "nephyrin/helm-rg"
+        :ref "f2cb5d3649c1f77f97ce4f8a2cb51578b863c9be" :wait t)
+  (require 'helm-rg)
+
+  (setq helm-rg-default-extra-args '("--max-columns=120" "--max-columns-preview"))
+
+  (add-hook 'neph-rg-bounce-navigation-mode-hook 'neph-rg-bounce-navigation-mode-handler)
+  (define-key helm-rg--bounce-mode-map (kbd "C-c C-e") #'neph-rg-bounce-navigation-mode)
+
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "g") #'helm-rg--bounce-refresh)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "r") #'helm-rg--bounce-refresh-current-file)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "d") #'helm-rg--bounce-dump)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "D") #'helm-rg--bounce-dump-current-file)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "RET") #'neph-rg-bounce-visit-current-file)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "C-o") #'helm-rg--visit-current-file-for-bounce)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "e") #'helm-rg--expand-match-context)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "E") #'helm-rg--spread-match-context)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "q") #'kill-this-buffer)
+
+  ;; Defaults on
+  (add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -669,29 +694,6 @@
 
 ;; Use ncdu to look at not-ignored files in a directory in this list:
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
-
-;;
-;; Helm RG
-;;
-(require 'helm-rg)
-
-(setq helm-rg-default-extra-args '("--max-columns=120" "--max-columns-preview"))
-
-(add-hook 'neph-rg-bounce-navigation-mode-hook 'neph-rg-bounce-navigation-mode-handler)
-(define-key helm-rg--bounce-mode-map (kbd "C-c C-e") #'neph-rg-bounce-navigation-mode)
-
-(define-key neph-rg-bounce-navigation-mode-map (kbd "g") #'helm-rg--bounce-refresh)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "r") #'helm-rg--bounce-refresh-current-file)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "d") #'helm-rg--bounce-dump)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "D") #'helm-rg--bounce-dump-current-file)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "RET") #'neph-rg-bounce-visit-current-file)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "C-o") #'helm-rg--visit-current-file-for-bounce)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "e") #'helm-rg--expand-match-context)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "E") #'helm-rg--spread-match-context)
-(define-key neph-rg-bounce-navigation-mode-map (kbd "q") #'kill-this-buffer)
-
-;; Defaults on
-(add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
 
 ;;
 ;; RG
