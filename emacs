@@ -757,6 +757,20 @@
 (add-hook 'lisp-mode-hook       'neph-company-setup)
 (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
 
+;; Semantic
+; (require 'semantic)
+; (require 'semantic/bovine/gcc)
+; (global-semantic-decoration-mode t)
+; (global-semantic-stickyfunc-mode t)
+; (global-semantic-idle-scheduler-mode -1)
+
+;; EDE
+;;(global-ede-mode t)
+
+;; Keys for C++ completion and such
+;;(global-set-key (kbd "C-z SPC") 'helm-semantic)
+;;(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

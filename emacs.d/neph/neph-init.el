@@ -559,24 +559,10 @@ If FORCE is not specified, toggle the current state."
   ;; Provide the irony backend but make it always return nuh
   (defun irony-cdb-rtags-neph (command &rest args) nil))
 
-;; Semantic
-; (require 'semantic)
-; (require 'semantic/bovine/gcc)
-; (global-semantic-decoration-mode t)
-; (global-semantic-stickyfunc-mode t)
-; (global-semantic-idle-scheduler-mode -1)
-
-;; EDE
-;;(global-ede-mode t)
-
 ;; function-args modes (Disabled pending semantic)
 ;;;;(require 'function-args)
 ;;(fa-config-default)
 ;;(setq moo-select-method 'helm)
-
-;; Keys for C++ completion and such
-;;(global-set-key (kbd "C-z SPC") 'helm-semantic)
-;;(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
 
 (when (featurep 'rtags)
   ;; FIXME need to also wrap rtags-references-tree, then rtags-goto-location needs to deactivate it so single-item matches don't asplode.
