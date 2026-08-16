@@ -464,6 +464,21 @@
 (with-eval-after-load "htmlfontify"
   (setq hfy-font-zoom 1.09))
 
+;;
+;; Multi-term
+;(load-file "~/.emacs.d/multi-term.el")
+;(setq multi-term-program "/bin/bash")
+;
+;(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
+
+;; Term key overrides
+(with-eval-after-load 'term
+  (define-key term-raw-map (kbd "C-y") 'term-paste)
+  ;; Allow C-z to escape
+  (define-key term-raw-map (kbd "C-z") nil)
+  ;; But make C-z C-z send a real C-z
+  (define-key term-raw-map (kbd "C-z C-z") 'term-send-raw-C-z))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -310,4 +310,14 @@ explicit input."
                                     display-buffer-alist)))
     (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
 
+;;
+;; Multi-term
+;;
+
+;; Term key overrides
+(defun term-send-raw-C-z ()
+  "Send a raw Control-z value to term."
+  (interactive)
+  (term-send-raw-string (kbd "C-z")))
+
 (provide 'neph-lib)
