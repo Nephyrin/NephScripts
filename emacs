@@ -1080,6 +1080,18 @@
 ;;(global-set-key (kbd "C-z C-M-c") 'gud-cont)
 
 
+;;
+;; emacs-gdb -- weirdNox's replacement for gdb-mi. kinda bad.
+;;
+
+;; (fmakunbound 'gdb)
+;; (fmakunbound 'gdb-enable-debug)
+;;(load-library "gdb-mi")
+
+;;(require 'neph-weirdnox-gdb-autoload)
+;; FIXME automatically replace gdb-mi
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
