@@ -16,7 +16,6 @@
   (add-to-list path dir))
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
-(neph-add-to-load-path 'load-path "~/.emacs.d/dash") ; dependency of ht
 (neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ht")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/.emacs.d/bui.el")
@@ -191,6 +190,12 @@
 ;;
 ;; ---- Config merged down from neph-init.el (WIP: killing neph-init) ----
 ;;
+
+;;
+;; dash
+;;
+(elpaca (dash :host github :repo "magnars/dash.el"
+        :ref "6db80c711ce947f6c6fa11e5c2257fff2c79d139" :wait t))
 
 ;;
 ;; Flyspell-lazy

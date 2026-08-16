@@ -61,9 +61,6 @@
 [submodule "emacs.d/color-identifiers-mode"]
 	path = emacs.d/color-identifiers-mode
 	url = https://github.com/ankurdave/color-identifiers-mode
-[submodule "emacs.d/dash"]
-	path = emacs.d/dash
-	url = https://github.com/magnars/dash.el
 [submodule "emacs.d/sunburst-theme"]
 	path = emacs.d/sunburst-theme
 	url = https://github.com/neomantic-zz/Emacs-Sunburst-Color-Theme
