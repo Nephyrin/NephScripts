@@ -27,7 +27,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
-(neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dape")
 (neph-add-to-load-path 'load-path "~/.emacs.d/posframe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-ui")
@@ -813,6 +812,14 @@
   (add-to-list 'lsp-disabled-clients 'ccls)
   )
 
+;;
+;; jsonrpc
+;;
+(elpaca (jsonrpc :host github :repo "emacs-straight/jsonrpc"
+        :ref "74268ee45494f40b3534164001b994e315490c27" :wait t)
+  (require 'jsonrpc)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -990,8 +997,6 @@
 (require 'dap-ui)
 (require 'dap-mouse)
 (require 'dap-hydra)
-
-(require 'jsonrpc)
 
 (require 'dape)
 
