@@ -1,11 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'lsp-ui)
-(require 'lsp-ui-flycheck)
-(require 'lsp-headerline)
-(require 'lsp-modeline)
-(require 'lsp-diagnostics)
-
 (require 'dap-mode)
 ;;(require 'dap-cpptools)
 (require 'dap-ui)
@@ -44,9 +38,6 @@
 
 ;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
 (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-
-(setq lsp-ui-doc-show-with-cursor t)
-(setq lsp-ui-peek-always-show t)
 
 (with-eval-after-load 'ccls
   (setq ccls-executable "/usr/bin/ccls")

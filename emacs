@@ -888,6 +888,14 @@
 
 (require 'pkg-info)
 
+(require 'lsp-ui)
+(require 'lsp-ui-flycheck)
+(require 'lsp-headerline)
+(require 'lsp-modeline)
+(require 'lsp-diagnostics)
+(setq lsp-ui-doc-show-with-cursor t)
+(setq lsp-ui-peek-always-show t)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
