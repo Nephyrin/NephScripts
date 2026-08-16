@@ -199,6 +199,22 @@
 
 (put 'upcase-region 'disabled nil)
 
+; Fix x clipboard
+(setq x-select-enable-primary nil)
+(setq x-select-enable-clipboard t)
+(setq mouse-drag-copy-region nil)
+(when (boundp 'x-cut-buffer-or-selection-value)
+  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
+
+;(global-set-key (kbd "C-{") 'clipboard-yank)
+;(global-set-key (kbd "C-}") 'clipboard-kill-ring-save)
+;(global-set-key (kbd "C-M-}") 'clipboard-kill-region)
+;(global-set-key "\C-w" 'clipboard-kill-region)
+;(global-set-key "\M-w" 'clipboard-kill-ring-save)
+;(global-set-key "\C-y" 'clipboard-yank)
+(setq yank-pop-change-selection t)
+(setq save-interprogram-paste-before-kill t)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
