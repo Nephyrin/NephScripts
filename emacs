@@ -19,7 +19,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
-(neph-add-to-load-path 'load-path "~/.emacs.d/wgrep") ;; For rg.el
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/multiple-cursors")
 (neph-add-to-load-path 'load-path "~/.emacs.d/phi-search")
@@ -572,6 +571,12 @@
   ;; Defaults on
   (add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
   )
+
+;;
+;; wgrep
+;;
+(elpaca (wgrep :host github :repo "mhayashi1120/Emacs-wgrep" :protocol ssh
+        :ref "f9687c28bbc2e84f87a479b6ce04407bb97cfb23" :wait t))
 
 ;; ---- end elpacified run ----
 

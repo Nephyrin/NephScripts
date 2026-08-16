@@ -232,9 +232,6 @@
 [submodule "emacs.d/rg.el"]
 	path = emacs.d/rg.el
 	url = git@github.com:dajva/rg.el.git
-[submodule "emacs.d/wgrep"]
-	path = emacs.d/wgrep
-	url = git@github.com:mhayashi1120/Emacs-wgrep.git
 [submodule "emacs.d/lsp-docker"]
 	path = emacs.d/lsp-docker
 	url = git@github.com:emacs-lsp/lsp-docker.git
