@@ -913,27 +913,6 @@
 (global-set-key (kbd "C-z C-z") 'god-local-mode)
 
 ;;
-;; Scrolling
-; For scrolling when moving the cursor offscreen
-(setq scroll-margin 1
-      scroll-conservatively 0
-      scroll-up-aggressively 0.01
-      scroll-down-aggressively 0.01)
-(setq-default scroll-up-aggressively 0.01
-              scroll-down-aggressively 0.01)
-
-(setq mouse-wheel-scroll-amount '(10 ((shift) . 10)))
-(setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-follow-mouse 't)
-(setq scroll-step 1)
-(setq scroll-conservatively 10000)
-
-;;
-;; re-builder
-(autoload 're-builder "re-builder" "re-builder" t)
-(setq reb-re-syntax 'string)
-
-;;
 ;; Misc modes
 (autoload 'fic-mode "fic-mode" "fic-mode" t)
 (with-eval-after-load "fic-mode"
@@ -1811,6 +1790,27 @@
                                         (not (string-match-p (regexp-quote which-func) neph-sticky-header))))
                            (propertize (concat which-func " ") 'face 'neph-modeline-which-func))
                          (when valid-neph-sticky-header neph-sticky-header)))))
+
+;;
+;; Scrolling
+; For scrolling when moving the cursor offscreen
+(setq scroll-margin 1
+      scroll-conservatively 0
+      scroll-up-aggressively 0.01
+      scroll-down-aggressively 0.01)
+(setq-default scroll-up-aggressively 0.01
+              scroll-down-aggressively 0.01)
+
+(setq mouse-wheel-scroll-amount '(10 ((shift) . 10)))
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse 't)
+(setq scroll-step 1)
+(setq scroll-conservatively 10000)
+
+;;
+;; re-builder
+(autoload 're-builder "re-builder" "re-builder" t)
+(setq reb-re-syntax 'string)
 
 ;;
 ;; ; #120F14
