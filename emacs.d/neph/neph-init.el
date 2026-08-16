@@ -1,9 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;;
-;; Xterm color
-;;
-(require 'xterm-color)
 ;(require 'eterm-256color) FIXME debug-init
 
 ;;(add-hook 'term-mode-hook #'eterm-256color-mode)
