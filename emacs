@@ -19,7 +19,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
-(neph-add-to-load-path 'load-path "~/.emacs.d/helm")
 (neph-add-to-load-path 'load-path "~/.emacs.d/fzf")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-swoop")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-ag")
@@ -435,6 +434,55 @@
 (elpaca (async :host github :repo "jwiegley/emacs-async"
         :ref "0d52411d3accc3e11a2c64838703a8ce9755c77c" :wait t))
 
+;;
+;; Helm
+;;
+
+;;(require 'helm-autoloads)
+(elpaca (helm :host github :repo "emacs-helm/helm"
+        :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd" :wait t)
+  (require 'helm)
+  (require 'helm-mode)
+  (require 'helm-command)
+  (require 'helm-bookmark)
+  ;; Not sure what I'm configuring wrong but autoloads doesn't always
+  (require 'helm-for-files)
+  ;;(require 'helm-config)
+  (require 'helm-for-files)
+
+  (helm-mode 1)
+
+  ;; Since 215005e25718 helm's default score func is just crazy broken
+  ;; and puts really-fuzzy matches above extremely-direct matches
+  (setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
+  ;;Default: (setq helm-fuzzy-default-score-fn 'helm-fuzzy-flex-style-score)
+
+  (global-set-key (kbd "C-z F") 'neph-helm-find-in-directory)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+
+  ;; Note: was shadowed by helm-projectile-switch-to-buffer prior to elpacification, commented
+  ;;(global-set-key (kbd "C-z b") 'helm-mini)
+  (global-set-key (kbd "C-z C-b") 'helm-filtered-bookmarks)
+  (global-set-key (kbd "C-z C-o") 'helm-occur)
+  (global-set-key (kbd "C-z C-S-o") 'occur)
+  (global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-z <C-tab>") 'helm-imenu)
+
+  ;; Blows up helm on emacs 25 right now
+  ;; (setq helm-follow-mode-persistent nil)
+
+  (define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
+  (define-key isearch-mode-map (kbd "C-S-o") 'isearch-occur)
+
+  (when (executable-find "ack-grep")
+    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
+          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
+
+  ;; helm-grep ripgrep ;; -color=always --colors 'match:fg:black' --colors 'match:bg:yellow'
+  (setq helm-grep-ag-command "rg --smart-case --no-heading --line-number %s %s %s")
+  (setq helm-grep-ag-pipe-cmd-switches '())
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -498,52 +546,6 @@
 ;;(require 'project)
 
 ;;(global-set-key (kbd "C-z M-f") 'project-find-file)
-
-;;
-;; Helm
-;;
-
-;;(require 'helm-autoloads)
-(require 'helm)
-(require 'helm-mode)
-(require 'helm-command)
-(require 'helm-bookmark)
-;; Not sure what I'm configuring wrong but autoloads doesn't always
-(require 'helm-for-files)
-;;(require 'helm-config)
-(require 'helm-for-files)
-
-(helm-mode 1)
-
-;; Since 215005e25718 helm's default score func is just crazy broken
-;; and puts really-fuzzy matches above extremely-direct matches
-(setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
-;;Default: (setq helm-fuzzy-default-score-fn 'helm-fuzzy-flex-style-score)
-
-(global-set-key (kbd "C-z F") 'neph-helm-find-in-directory)
-(global-set-key (kbd "M-x") 'helm-M-x)
-
-;; Note: was shadowed by helm-projectile-switch-to-buffer prior to elpacification, commented
-;;(global-set-key (kbd "C-z b") 'helm-mini)
-(global-set-key (kbd "C-z C-b") 'helm-filtered-bookmarks)
-(global-set-key (kbd "C-z C-o") 'helm-occur)
-(global-set-key (kbd "C-z C-S-o") 'occur)
-(global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "C-z <C-tab>") 'helm-imenu)
-
-;; Blows up helm on emacs 25 right now
-;; (setq helm-follow-mode-persistent nil)
-
-(define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
-(define-key isearch-mode-map (kbd "C-S-o") 'isearch-occur)
-
-(when (executable-find "ack-grep")
-  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
-        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
-
-;; helm-grep ripgrep ;; -color=always --colors 'match:fg:black' --colors 'match:bg:yellow'
-(setq helm-grep-ag-command "rg --smart-case --no-heading --line-number %s %s %s")
-(setq helm-grep-ag-pipe-cmd-switches '())
 
 (require 'grep)
 (setq grep-find-ignored-files (append grep-find-ignored-files

@@ -7,9 +7,6 @@
 [submodule "bin/gti-git"]
 	path = bin/gti-git
 	url = https://github.com/rwos/gti.git
-[submodule "emacs.d/helm"]
-	path = emacs.d/helm
-	url = https://github.com/emacs-helm/helm.git
 [submodule "emacs.d/fic-mode.git"]
 	path = emacs.d/fic-mode.git
 	url = https://github.com/lewang/fic-mode.git
