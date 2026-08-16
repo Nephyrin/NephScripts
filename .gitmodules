@@ -148,9 +148,6 @@
 [submodule "emacs.d/ace-window"]
 	path = emacs.d/ace-window
 	url = https://github.com/abo-abo/ace-window
-[submodule "emacs.d/avy"]
-	path = emacs.d/avy
-	url = https://github.com/abo-abo/avy
 [submodule "emacs.d/lsp-ui"]
 	path = emacs.d/lsp-ui
 	url = https://github.com/emacs-lsp/lsp-ui
