@@ -329,6 +329,28 @@
 ;;(add-hook 'term-mode-hook #'eterm-256color-mode)
 
 
+;;
+;; ansi color mode
+;;
+(require 'ansi-color-overlay-mode)
+
+;;
+;; gdb ansi color
+;;
+(require 'gdb-ansi-color)
+(add-hook 'gud-mode-hook #'gdb-ansi-color-mode)
+
+;;
+;; Protobuf mode
+;;
+
+;; Shipped with protobuf, so load if present
+(if (require 'protobuf-mode nil t)
+    (add-to-list 'auto-mode-alist '("\.proto$" . protobuf-mode))
+  ;; Basically functions
+  (message "NEPH -- No protobuf-mode available, using c-mode for .proto")
+  (add-to-list 'auto-mode-alist '("\.proto$" . c-mode)))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
