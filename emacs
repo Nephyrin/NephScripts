@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/flycheck-irony")
 (neph-add-to-load-path 'load-path "~/.emacs.d/popup-el")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 (neph-add-to-load-path 'load-path "~/.emacs.d/smarttabs")
@@ -959,6 +958,12 @@
 (elpaca (company-irony :host github :repo "Sarcasm/company-irony"
         :ref "b44711dfce445610c1ffaec4951c6ff3882b216a" :wait t))
 
+;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
+;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
+;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
+(elpaca (flycheck-irony :host github :repo "Sarcasm/flycheck-irony"
+        :ref "34940ae5ab8f4c721d9c1118ebfc3496d7e67a84" :wait t))
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1095,10 +1100,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
-;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
-;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
 
 ;; popup.el for rtags tooltips (needed anymore?)
 (autoload 'popup "popup" "Popup tooltip thing." t)
