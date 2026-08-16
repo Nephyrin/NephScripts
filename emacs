@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/hydra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-window")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pfuture")
 (neph-add-to-load-path 'load-path "~/.emacs.d/avy")
@@ -687,6 +686,12 @@
         :ref "1d7c1b20782ccbaa6f97e37f5e1d0cee3d5eda8a" :wait t)
   (autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
   )
+
+;;
+;; hydra
+;;
+(elpaca (hydra :host github :repo "abo-abo/hydra"
+        :ref "317e1de33086637579a7aeb60f77ed0405bf359b" :wait t))
 
 ;; ---- end elpacified run ----
 
