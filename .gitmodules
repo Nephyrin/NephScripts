@@ -172,9 +172,6 @@
 [submodule "emacs.d/emacs-request"]
 	path = emacs.d/emacs-request
 	url = https://github.com/tkf/emacs-request
-[submodule "emacs.d/emacs-websocket"]
-	path = emacs.d/emacs-websocket
-	url = https://github.com/ahyatt/emacs-websocket
 [submodule "emacs.d/emacs-ipython-notebook"]
 	path = emacs.d/emacs-ipython-notebook
 	url = https://github.com/millejoh/emacs-ipython-notebook

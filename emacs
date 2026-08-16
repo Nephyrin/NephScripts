@@ -18,7 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
-(neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-websocket")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-ipython-notebook/lisp")
 ;(neph-add-to-load-path 'load-path "~/.emacs.d/ecb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/color-identifiers-mode")
@@ -378,6 +377,12 @@
 (elpaca (skewer-mode :host github :repo "skeeto/skewer-mode"
         :files (:defaults "skewer.js" "example.html")
         :ref "a381049acc4fa2087615b4b3b26c0865841386bd" :wait t))
+
+;;
+;; websocket
+;;
+(elpaca (websocket :host github :repo "ahyatt/emacs-websocket"
+        :ref "d8ef1b764a7047b1163e8b9664bac5bd819058ed" :wait t))
 
 ;; ---- end elpacified run ----
 
