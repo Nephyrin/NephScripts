@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/rainbow-delimiters")
 (neph-add-to-load-path 'load-path "~/.emacs.d/minimap")
 (neph-add-to-load-path 'load-path "~/.emacs.d/god-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/fic-mode.git")
@@ -1015,6 +1014,14 @@
   (global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
   )
 
+;;
+;; Rainbow Delimiters
+;;
+(elpaca (rainbow-delimiters :host github :repo "Fanael/rainbow-delimiters"
+        :ref "93cd2dc873e7fedca7abc599cd97d46db4376ac7" :wait t)
+  (autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1154,12 +1161,6 @@
 
 
 
-
-;;
-;; Rainbow Delimiters
-;;
-
-(autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
 
 
 ;;
