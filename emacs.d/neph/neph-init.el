@@ -1,12 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Flycheck
-;;
-
-(autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
-
-;;
 ;; C++ Helper mode(s) : Company/lsp and associated helper libraries
 ;;
 
