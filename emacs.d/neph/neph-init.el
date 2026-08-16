@@ -1,17 +1,4 @@
 ;; -*- mode: Emacs-Lisp; -*-
-
-;; Just wraps ansi-color-apply which works better than xterm-color it seems, handles truecolor
-(defun neph-term-color-region (start end)
-  "Turn terminal color codes into text properties in START to END (defaults to region interactively)."
-  (interactive "r")
-  (ansi-color-apply-on-region start end))
-
-;; Interactive wrap on ansi-color but whole buffer
-(defun neph-term-color-buffer ()
-  "Turn terminal color codes into text properties in START to END (defaults to region interactively)."
-  (interactive)
-  (neph-term-color-region 0 (point-max)))
-
 ;;
 ;; ansi color mode
 ;;
