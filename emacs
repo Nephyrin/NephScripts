@@ -1558,6 +1558,52 @@
   (add-hook 'yaml-mode-hook 'neph-space-cfg))
 
 
+;;
+;; Custom binds
+;;
+
+;; Bound to shift + the window nav keys below
+(global-set-key (kbd "C-z C-S-S") 'neph-transpose-windows-backward)
+;; Note: was shadowed by diff-buffer-with-file prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-S-D") 'transpose-windows)
+
+;; Revert without prompting
+(global-set-key (kbd "C-z R") 'neph-revert-buffer-noconfirm)
+
+; Quick eval-defun
+(global-set-key (kbd "C-z e") 'eval-region)
+(global-set-key (kbd "C-z E") 'eval-defun)
+
+(global-set-key (kbd "C-z C-S-G") 'gdb)
+(global-set-key (kbd "C-z M") 'gdb-many-windows)
+
+;; Delete trailing whitespace
+;; Note: was shadowed by ediff-current-file prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-M-S-D") 'delete-trailing-whitespace)
+
+; helm shortcuts
+(global-set-key (kbd "C-z C-f") 'helm-find-files)
+(global-set-key (kbd "C-z h") 'helm-resume)
+
+;; Back one window
+(global-set-key (kbd "C-x O") 'neph-other-window-backward)
+
+; Scroll window
+(global-set-key (kbd "s-n") 'neph-scroll-up-one)
+(global-set-key (kbd "s-p") 'neph-scroll-down-one)
+(global-set-key (kbd "s-l") 'neph-move-to-window-center-line)
+
+; Fast window nav
+(global-set-key (kbd "C-z C-s") 'neph-other-window-backward)
+(global-set-key (kbd "C-z C-d") 'neph-other-window-forward)
+
+;; Diff current changes
+(global-set-key (kbd "C-z C-S-D") 'diff-buffer-with-file)
+(global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
+
+;; Keybind for enabling debug stuff quickly when I'm mad at something hanging.  Which is always.
+(global-set-key (kbd "C-z C-M-S-Q") 'neph-toggle-debug)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -1408,4 +1408,77 @@ If this is a local file, turn it into a tramp file file with said information."
     (kill-region isearch-other-end (point))
     (isearch-exit))
 
+;;
+;; Custom binds
+;;
+
+;; Transpose windows
+(defun transpose-windows (arg)
+  "Transpose the buffers shown in two windows."
+  (interactive "p")
+  (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+    (while (/= arg 0)
+      (let ((this-win (window-buffer))
+            (next-win (window-buffer (funcall selector))))
+        (set-window-buffer (selected-window) next-win)
+        (set-window-buffer (funcall selector) this-win)
+        (select-window (funcall selector)))
+      (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
+
+;; Was an inline lambda on the C-z C-S-S global-set-key
+(defun neph-transpose-windows-backward ()
+  "Transpose the buffers shown in this window and the previous one."
+  (interactive)
+  (transpose-windows -1))
+
+;; Was an inline lambda on the C-z R global-set-key
+(defun neph-revert-buffer-noconfirm ()
+  "Revert the current buffer, ignoring auto-save and without prompting."
+  (interactive)
+  (revert-buffer t t))
+
+;; Was an inline lambda on the C-x O and C-z C-s global-set-keys
+(defun neph-other-window-backward ()
+  "Select the previous window."
+  (interactive)
+  (other-window -1))
+
+;; Was an inline lambda on the C-z C-d global-set-key
+(defun neph-other-window-forward ()
+  "Select the next window."
+  (interactive)
+  (other-window 1))
+
+;; Was an inline lambda on the s-n global-set-key
+(defun neph-scroll-up-one ()
+  "Scroll this window up one line."
+  (interactive)
+  (scroll-up 1))
+
+;; Was an inline lambda on the s-p global-set-key
+(defun neph-scroll-down-one ()
+  "Scroll this window down one line."
+  (interactive)
+  (scroll-down 1))
+
+;; Was an inline lambda on the s-l global-set-key
+(defun neph-move-to-window-center-line ()
+  "Move point to the center line of this window."
+  (interactive)
+  (move-to-window-line nil))
+
+;; Debug mode
+(defun neph-toggle-debug ()
+  "Helper to toggle 'debug-on-error' and 'debug-on-quit' modes."
+  (interactive)
+  ;; If in mismatched state, default to disabling the enabled one
+  (if (or debug-on-error debug-on-quit)
+      (progn
+        (setq debug-on-error nil)
+        (setq debug-on-quit nil)
+        (message "Disabled debug-on-error and debug-on-quit"))
+    (setq debug-on-error t)
+    (setq debug-on-quit t)
+    (message "Enabled debug-on-error and debug-on-quit")))
+
 (provide 'neph-lib)
