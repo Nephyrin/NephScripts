@@ -181,9 +181,6 @@
 [submodule "emacs.d/emacs-ycmd"]
 	path = emacs.d/emacs-ycmd
 	url = https://github.com/abingham/emacs-ycmd
-[submodule "emacs.d/s.el"]
-	path = emacs.d/s.el
-	url = https://github.com/magnars/s.el
 [submodule "emacs.d/emacs-deferred"]
 	path = emacs.d/emacs-deferred
 	url = https://github.com/kiwanami/emacs-deferred

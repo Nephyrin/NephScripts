@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/s.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/f.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/editorconfig")
 (neph-add-to-load-path 'load-path "~/.emacs.d/xterm-color")
@@ -223,6 +222,12 @@
 ;;
 (elpaca (spinner :host github :repo "Malabarba/spinner.el"
         :ref "d4647ae87fb0cd24bc9081a3d287c860ff061c21" :wait t))
+
+;;
+;; s
+;;
+(elpaca (s :host github :repo "magnars/s.el"
+        :ref "dda84d38fffdaf0c9b12837b504b402af910d01d" :wait t))
 
 ;; ---- end elpacified run ----
 
