@@ -9,60 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-(defun touch-current-file ()
-     "updates mtime on the file for the current buffer"
-     (interactive)
-     (if (buffer-file-name)
-         (progn
-           (shell-command (concat "touch " (shell-quote-argument (buffer-file-name))))
-           (clear-visited-file-modtime)
-           (message (concat "Ran touch on " (buffer-file-name))))
-       (message "No filename for current file")))
-
-(global-set-key (kbd "C-z T") 'touch-current-file)
-
-(defun neph-ia-bigfont ()
-  "Shorthand for changing font size for hdpi"
-  (interactive)
-  (set-default-font "DejaVu Sans Mono-16"))
-
-(defun neph-ia-server ()
-  "Prompt for a server name, set server-name to that, start the server"
-  (interactive)
-    (setq server-name (read-string "(Re)start server with name: "))
-    (server-start)
-    (message (concat "Server started as '" server-name "'")))
-
-;; Copy file name to kill ring
-(defun neph-buffer-name-to-kill-ring ()
-  (interactive)
-  (kill-new (buffer-file-name))
-  (message "Copied buffer name to kill ring"))
-(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
-
-(defun neph-xdg-open-this-file ()
-  "Pass the current file to xdg-open whynot."
-  (interactive)
-  (if (buffer-file-name)
-      (shell-command (concat "xdg-open " (shell-quote-argument (buffer-file-name))))
-    (message "!! This buffer has no associated file")))
-
-(global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
-
-(defun neph-show-file-coding ()
-  (interactive)
-  (message (symbol-name buffer-file-coding-system)))
-
-(defun neph-increment ()
-  (interactive)
-  (message (number-to-string (string-to-number (buffer-substring (mark) (point)))))
-  (let (num (string-to-number (buffer-substring (mark) (point))))
-    (save-excursion
-      (kill-region (mark) (point))
-      (insert (number-to-string (+ num 1))))))
-
-(global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
-
 ;; kmacro-bind-to-key but wraps it in with-undo-amalgamate so it binds it as one atomic do/undo action
 (defun neph-kmacro-bind-to-key-amalgamate ()
   (interactive)

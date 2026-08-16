@@ -1689,6 +1689,14 @@
 (global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
 (global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
 
+(global-set-key (kbd "C-z T") 'touch-current-file)
+
+(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
+
+(global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
+
+(global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

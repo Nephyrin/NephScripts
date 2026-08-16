@@ -1986,4 +1986,51 @@ beginning of it and the point to the end of it if so"
   (other-window 1 nil)
   (switch-to-next-buffer))
 
+(defun touch-current-file ()
+     "updates mtime on the file for the current buffer"
+     (interactive)
+     (if (buffer-file-name)
+         (progn
+           (shell-command (concat "touch " (shell-quote-argument (buffer-file-name))))
+           (clear-visited-file-modtime)
+           (message (concat "Ran touch on " (buffer-file-name))))
+       (message "No filename for current file")))
+
+(defun neph-ia-bigfont ()
+  "Shorthand for changing font size for hdpi"
+  (interactive)
+  (set-default-font "DejaVu Sans Mono-16"))
+
+(defun neph-ia-server ()
+  "Prompt for a server name, set server-name to that, start the server"
+  (interactive)
+    (setq server-name (read-string "(Re)start server with name: "))
+    (server-start)
+    (message (concat "Server started as '" server-name "'")))
+
+;; Copy file name to kill ring
+(defun neph-buffer-name-to-kill-ring ()
+  (interactive)
+  (kill-new (buffer-file-name))
+  (message "Copied buffer name to kill ring"))
+
+(defun neph-xdg-open-this-file ()
+  "Pass the current file to xdg-open whynot."
+  (interactive)
+  (if (buffer-file-name)
+      (shell-command (concat "xdg-open " (shell-quote-argument (buffer-file-name))))
+    (message "!! This buffer has no associated file")))
+
+(defun neph-show-file-coding ()
+  (interactive)
+  (message (symbol-name buffer-file-coding-system)))
+
+(defun neph-increment ()
+  (interactive)
+  (message (number-to-string (string-to-number (buffer-substring (mark) (point)))))
+  (let (num (string-to-number (buffer-substring (mark) (point))))
+    (save-excursion
+      (kill-region (mark) (point))
+      (insert (number-to-string (+ num 1))))))
+
 (provide 'neph-lib)
