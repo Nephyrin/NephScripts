@@ -1,25 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; YouCompleteMe (deprecated for LSP, remove?)
-;;
-
-;; Deps
-
-;;(require 'neph-ycmd-autoload)
-;;
-;;(with-eval-after-load "company-ycmd" (company-ycmd-setup))
-;;(with-eval-after-load "ycmd"
-;;  (setq ycmd-server-command '("python" "/usr/share/ycmd/ycmd")))
-;;
-;;(defun neph-ycm-setup ()
-;;  (interactive)
-;;  (require 'company-ycmd)
-;;  (ycmd-mode 1))
-;;
-;;(add-hook 'python-mode-hook 'neph-ycm-setup)
-
-;;
 ;; Yasnippet
 ;;
 
