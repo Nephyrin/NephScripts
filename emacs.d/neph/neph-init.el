@@ -1,6 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'pkg-info)
 (require 'lsp-ui)
 (require 'lsp-ui-flycheck)
 (require 'lsp-headerline)

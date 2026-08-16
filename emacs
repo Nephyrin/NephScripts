@@ -886,6 +886,8 @@
 (require 'treemacs-hydras)
 ;;(require 'treemacs-projectile)
 
+(require 'pkg-info)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
