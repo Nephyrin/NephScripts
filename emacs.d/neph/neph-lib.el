@@ -1938,4 +1938,20 @@ beginning of it and the point to the end of it if so"
   (interactive)
   (kill-new (current-word)))
 
+(defun neph-pop-to-secondary ()
+  "Pop to secondary selection"
+  (interactive)
+  (let ((buf (overlay-buffer mouse-secondary-overlay)))
+    (when buf
+      (pop-to-buffer buf)
+      (goto-char (overlay-start mouse-secondary-overlay)))))
+
+(defun sql-send-secondary ()
+  "Send the secondary selection to SQL buffer."
+  (interactive)
+  (let ((buf (overlay-buffer mouse-secondary-overlay)))
+    (when (eq buf (current-buffer))
+      (sql-send-region (overlay-start mouse-secondary-overlay)
+                       (overlay-end mouse-secondary-overlay)))))
+
 (provide 'neph-lib)

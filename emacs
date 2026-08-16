@@ -1676,6 +1676,9 @@
 (global-set-key (kbd "M-D") 'neph-kill-to-word)
 (global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
 
+(with-eval-after-load "sql"
+  (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

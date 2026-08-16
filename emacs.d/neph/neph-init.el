@@ -9,25 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-(defun neph-pop-to-secondary ()
-  "Pop to secondary selection"
-  (interactive)
-  (let ((buf (overlay-buffer mouse-secondary-overlay)))
-    (when buf
-      (pop-to-buffer buf)
-      (goto-char (overlay-start mouse-secondary-overlay)))))
-
-(defun sql-send-secondary ()
-  "Send the secondary selection to SQL buffer."
-  (interactive)
-  (let ((buf (overlay-buffer mouse-secondary-overlay)))
-    (when (eq buf (current-buffer))
-      (sql-send-region (overlay-start mouse-secondary-overlay)
-                       (overlay-end mouse-secondary-overlay)))))
-
-(with-eval-after-load "sql"
-  (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
-
 ;; Quick register movement.
 ;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
 (global-set-key (kbd "C-z SPC") (lambda (&optional arg) (interactive "P")
