@@ -351,6 +351,17 @@
   (message "NEPH -- No protobuf-mode available, using c-mode for .proto")
   (add-to-list 'auto-mode-alist '("\.proto$" . c-mode)))
 
+;;
+;; Markdown mode
+;;
+
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
