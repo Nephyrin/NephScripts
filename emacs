@@ -1735,6 +1735,29 @@
 ;; zap-to-char
 (global-set-key (kbd "M-Z") 'backwards-zap-to-char)
 
+;;
+;; ace-jump-mode
+;;
+
+(autoload
+  'ace-jump-mode
+  "ace-jump-mode"
+  "Emacs quick move minor mode"
+  t)
+
+(autoload
+  'ace-jump-mode-pop-mark
+  "ace-jump-mode"
+  "Ace jump back:-)"
+  t)
+(eval-after-load "ace-jump-mode"
+  '(ace-jump-mode-enable-mark-sync))
+
+;; TODO Drop ace-jump?
+(require 'avy)
+(define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
+(define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
