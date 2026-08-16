@@ -1491,6 +1491,29 @@
 ;(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
 
 
+;;
+;; Tramp
+(require 'tramp)
+(setq tramp-default-method "sshx")
+
+;; suck less?
+;;(setq remote-file-name-inhibit-locks t)
+(setq tramp-use-scp-direct-remote-copying t)
+;;(setq remote-file-name-inhibit-auto-save-visited t)
+;; Use direct-async-process
+(connection-local-set-profile-variables
+ 'remote-direct-async-process
+ '((tramp-direct-async-process . t)))
+(connection-local-set-profiles
+ '(:application tramp :protocol "scp")
+ 'remote-direct-async-process)
+(connection-local-set-profiles
+ '(:application tramp :protocol "rsync")
+ 'remote-direct-async-process)
+
+(global-set-key (kbd "C-z C-u") 'sudoize-buffer)
+(global-set-key (kbd "C-z C-M-u") 'drop-sudo)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
