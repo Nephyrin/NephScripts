@@ -641,6 +641,14 @@
 
 (setq fzf/window-height 50)
 
+;;
+;; Helm Swoop
+;;
+(require 'helm-swoop)
+
+(global-set-key (kbd "C-z M-s") 'helm-swoop)
+(global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

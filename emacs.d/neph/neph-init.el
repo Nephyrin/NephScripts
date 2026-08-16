@@ -1,14 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Helm Swoop
-;;
-(require 'helm-swoop)
-
-(global-set-key (kbd "C-z M-s") 'helm-swoop)
-(global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
-
-;;
 ;; Helm AG and Helm RG and RG they're all different
 ;;
 
