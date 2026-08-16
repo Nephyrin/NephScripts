@@ -416,4 +416,32 @@ explicit input."
       (with-current-buffer agbuf
         (helm-ag--update-save-results)))))
 
+;;
+;; Helm RG
+;;
+
+;; Define a minor mode to lock rg bounce buffers into read-only and provide some quick access keys
+;;
+;; Pressing the default bind (C-c C-e) will turn off this mode and unlock helm-rg--bounce's editing mode, which is
+;; useful, but not by default when I just want a persistent buffer to visit search results.
+(defun neph-rg-bounce-navigation-mode-handler ()
+  "Default hook for neph-rg-bounce-navigation-mode."
+  (if neph-rg-bounce-navigation-mode
+      (progn
+        (message "Neph: Visit Mode")
+        (read-only-mode 1))
+    (message "Neph: Edit Mode")
+    (read-only-mode -1)))
+(define-minor-mode neph-rg-bounce-navigation-mode
+  "Mode that puts helm-rg bounce buffers into read-only navigation rather than editing."
+  :keymap '())
+
+;; This function always calls 'alternate-method', so let bind that to normal method for the "normal visit" keybind.
+(defun neph-rg-bounce-visit-current-file ()
+  "Visit the helm-rg bounce result at point using the normal display method."
+  (interactive)
+  (let ((helm-rg-display-buffer-alternate-method
+         helm-rg-display-buffer-normal-method))
+    (helm-rg--visit-current-file-for-bounce)))
+
 (provide 'neph-lib)
