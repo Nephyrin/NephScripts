@@ -166,159 +166,6 @@
 (global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
 
 ;;
-;; Misc
-;;
-
-;; Set to block native compilation. Also need to nuke the ~/.emacs.d/eln-cache folder.
-;;(add-to-list 'native-comp-bootstrap-deny-list ".*")
-;;(add-to-list 'native-comp-deferred-compilation-deny-list ".*")
-
-;; donut
-(setq ring-bell-function 'ignore)
-
-(require 'cl) ;; Used so xe and friends can run some crap
-
-(setq redisplay-dont-pause t)
-(setq inhibit-eval-during-redisplay nil)
-;(setq fast-but-imprecise-scrolling t)
-;(setq jit-lock-chunk-size 100)
-;(setq jit-lock-defer-time 0)
-;(setq jit-lock-stealth-load nil)
-;(setq jit-lock-stealth-nice 0.01)
-;(setq jit-lock-stealth-time 0.2)
-
-
-;; Disable silly "type Y-E-S" prompts
-(fset 'yes-or-no-p 'y-or-n-p)
-
-(advice-add 'y-or-n-p :around #'neph-y-or-n-p)
-
-; This just makes things slower. Maybe useful on spinning disks?
-(setq cache-long-line-scans nil)
-(setq cache-long-scans nil)
-
-(put 'upcase-region 'disabled nil)
-
-; Fix x clipboard
-(setq x-select-enable-primary nil)
-(setq x-select-enable-clipboard t)
-(setq mouse-drag-copy-region nil)
-(when (boundp 'x-cut-buffer-or-selection-value)
-  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
-
-;(global-set-key (kbd "C-{") 'clipboard-yank)
-;(global-set-key (kbd "C-}") 'clipboard-kill-ring-save)
-;(global-set-key (kbd "C-M-}") 'clipboard-kill-region)
-;(global-set-key "\C-w" 'clipboard-kill-region)
-;(global-set-key "\M-w" 'clipboard-kill-ring-save)
-;(global-set-key "\C-y" 'clipboard-yank)
-(setq yank-pop-change-selection t)
-(setq save-interprogram-paste-before-kill t)
-
-(setq inhibit-startup-message t)
-
-(setq-default indent-tabs-mode nil)
-(setq js-indent-level 2)
-(setq tab-width 2)
-
-(global-auto-revert-mode t)
-
-(setq backup-directory-alist
-      `((".*" . , "~/.emacscache/autosave")))
-(setq auto-save-file-name-transforms
-      `((".*" , "~/.emacscache/autosave" t)))
-(setq backup-directory-alist `(("." . "~/.emacscache/backup")))
-(setq delete-old-versions t
-  kept-new-versions 6
-  kept-old-versions 2
-  version-control t)
-
-(setq vc-follow-symlinks t)
-
-(require 'uniquify)
-(setq uniquify-buffer-name-style (quote post-forward))
-
-; (global-ede-mode t)
-
-; Hide toolbar, hide menu in console mode
-(menu-bar-mode -1)
-; OS X builds can lack these, check
-(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
-
-(setq split-width-threshold 240)
-(setq split-height-threshold 50)
-;; TODO customize display-buffer alist so we don't split frames too aggressively for browsing top-level buffers, but do
-;; for things like xref popups.  Might require also tweaking split-window-sensibly or overriding the split-window
-;; parameters when entering display buffer with a top-level vs widget window.
-;; (setq display-buffer-alist '("\\*Async Shell Command\\*" (display-buffer-no-window))
-
-(require 'speedbar)
-(speedbar-change-initial-expansion-list "buffers")
-
-(global-set-key  [f8] 'speedbar-get-focus)
-(global-set-key (kbd "C-c C-f") 'find-dired)
-
-; Trailing spaces and whitespace
-(require 'whitespace)
-(global-whitespace-mode)
-; Options list of whitespace to mess with, 'face' option uses faces per type
-; instead of replacement chars
-(setq whitespace-style (quote (face trailing tabs)))
-
-;;
-;; Electric mode tweaks
-;;
-
-(setq electric-pair-inhibit-predicate 'neph-electric-pair-inhibit-predicate)
-
-;;
-;; Mark & Mark Ring
-;;
-
-(global-set-key (kbd "C-x p") 'pop-to-mark-command)
-(setq set-mark-command-repeat-pop t)
-
-;;
-;; Snippets
-;;
-
-; Recompile all .elc.  The 0 tells us to compile files that have no .elc
-; already. Yes it should be 0, not t. Append t as third arg to force.
-
-; (byte-recompile-directory "~/.emacs.d/" 0)
-;   or command line:
-; emacs -batch -f batch-byte-compile *.el
-
-;; (progn
-;;   (setq kill-ring nil)
-;;   (setq buffer-undo-tree nil)
-;;   (garbage-collect))
-
-;;
-;; Desktop saving
-;;
-
-;; Autosave desktop as emacs-server-desktop for the server, otherwise leave
-;; disabled unless asked for
-(require 'desktop)
-(setq desktop-path '("~/.emacs.d/"))
-(setq desktop-dirname "~/.emacs.d/")
-(setq desktop-base-file-name "emacs-desktop")
-(setq desktop-base-lock-name "emacs-desktop.lock")
-(setq desktop-restore-eager 0)
-(setq desktop-save t)
-(add-to-list 'desktop-globals-to-save 'register-alist)
-(when (or server-mode (daemonp))
-  (setq desktop-base-file-name "emacs-server-desktop")
-  (setq desktop-base-lock-name "emacs-server-desktop.lock")
-  (desktop-save-mode 1))
-
-;; Global libraries macros in here (and also )
-(require 'ht)
-
-
-;;
 ;; Xterm color
 ;;
 (require 'xterm-color)
@@ -1812,6 +1659,159 @@
 ;; (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
 ;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
 ;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+;;
+;; Misc
+;;
+
+;; Set to block native compilation. Also need to nuke the ~/.emacs.d/eln-cache folder.
+;;(add-to-list 'native-comp-bootstrap-deny-list ".*")
+;;(add-to-list 'native-comp-deferred-compilation-deny-list ".*")
+
+;; donut
+(setq ring-bell-function 'ignore)
+
+(require 'cl) ;; Used so xe and friends can run some crap
+
+(setq redisplay-dont-pause t)
+(setq inhibit-eval-during-redisplay nil)
+;(setq fast-but-imprecise-scrolling t)
+;(setq jit-lock-chunk-size 100)
+;(setq jit-lock-defer-time 0)
+;(setq jit-lock-stealth-load nil)
+;(setq jit-lock-stealth-nice 0.01)
+;(setq jit-lock-stealth-time 0.2)
+
+
+;; Disable silly "type Y-E-S" prompts
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(advice-add 'y-or-n-p :around #'neph-y-or-n-p)
+
+; This just makes things slower. Maybe useful on spinning disks?
+(setq cache-long-line-scans nil)
+(setq cache-long-scans nil)
+
+(put 'upcase-region 'disabled nil)
+
+; Fix x clipboard
+(setq x-select-enable-primary nil)
+(setq x-select-enable-clipboard t)
+(setq mouse-drag-copy-region nil)
+(when (boundp 'x-cut-buffer-or-selection-value)
+  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value))
+
+;(global-set-key (kbd "C-{") 'clipboard-yank)
+;(global-set-key (kbd "C-}") 'clipboard-kill-ring-save)
+;(global-set-key (kbd "C-M-}") 'clipboard-kill-region)
+;(global-set-key "\C-w" 'clipboard-kill-region)
+;(global-set-key "\M-w" 'clipboard-kill-ring-save)
+;(global-set-key "\C-y" 'clipboard-yank)
+(setq yank-pop-change-selection t)
+(setq save-interprogram-paste-before-kill t)
+
+(setq inhibit-startup-message t)
+
+(setq-default indent-tabs-mode nil)
+(setq js-indent-level 2)
+(setq tab-width 2)
+
+(global-auto-revert-mode t)
+
+(setq backup-directory-alist
+      `((".*" . , "~/.emacscache/autosave")))
+(setq auto-save-file-name-transforms
+      `((".*" , "~/.emacscache/autosave" t)))
+(setq backup-directory-alist `(("." . "~/.emacscache/backup")))
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
+
+(setq vc-follow-symlinks t)
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style (quote post-forward))
+
+; (global-ede-mode t)
+
+; Hide toolbar, hide menu in console mode
+(menu-bar-mode -1)
+; OS X builds can lack these, check
+(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
+
+(setq split-width-threshold 240)
+(setq split-height-threshold 50)
+;; TODO customize display-buffer alist so we don't split frames too aggressively for browsing top-level buffers, but do
+;; for things like xref popups.  Might require also tweaking split-window-sensibly or overriding the split-window
+;; parameters when entering display buffer with a top-level vs widget window.
+;; (setq display-buffer-alist '("\\*Async Shell Command\\*" (display-buffer-no-window))
+
+(require 'speedbar)
+(speedbar-change-initial-expansion-list "buffers")
+
+(global-set-key  [f8] 'speedbar-get-focus)
+(global-set-key (kbd "C-c C-f") 'find-dired)
+
+; Trailing spaces and whitespace
+(require 'whitespace)
+(global-whitespace-mode)
+; Options list of whitespace to mess with, 'face' option uses faces per type
+; instead of replacement chars
+(setq whitespace-style (quote (face trailing tabs)))
+
+;;
+;; Electric mode tweaks
+;;
+
+(setq electric-pair-inhibit-predicate 'neph-electric-pair-inhibit-predicate)
+
+;;
+;; Mark & Mark Ring
+;;
+
+(global-set-key (kbd "C-x p") 'pop-to-mark-command)
+(setq set-mark-command-repeat-pop t)
+
+;;
+;; Snippets
+;;
+
+; Recompile all .elc.  The 0 tells us to compile files that have no .elc
+; already. Yes it should be 0, not t. Append t as third arg to force.
+
+; (byte-recompile-directory "~/.emacs.d/" 0)
+;   or command line:
+; emacs -batch -f batch-byte-compile *.el
+
+;; (progn
+;;   (setq kill-ring nil)
+;;   (setq buffer-undo-tree nil)
+;;   (garbage-collect))
+
+;;
+;; Desktop saving
+;;
+
+;; Autosave desktop as emacs-server-desktop for the server, otherwise leave
+;; disabled unless asked for
+(require 'desktop)
+(setq desktop-path '("~/.emacs.d/"))
+(setq desktop-dirname "~/.emacs.d/")
+(setq desktop-base-file-name "emacs-desktop")
+(setq desktop-base-lock-name "emacs-desktop.lock")
+(setq desktop-restore-eager 0)
+(setq desktop-save t)
+(add-to-list 'desktop-globals-to-save 'register-alist)
+(when (or server-mode (daemonp))
+  (setq desktop-base-file-name "emacs-server-desktop")
+  (setq desktop-base-lock-name "emacs-server-desktop.lock")
+  (desktop-save-mode 1))
+
+;; Global libraries macros in here (and also )
+(require 'ht)
+
+
 ;;
 ;; ; #120F14
 ;; (set-face-attribute 'whitespace-tab nil :background "#100D20")
