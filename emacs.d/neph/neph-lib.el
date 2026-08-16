@@ -695,4 +695,13 @@ If FORCE is not specified, toggle the current state."
       ;;[remap complete-symbol] 'counsel-irony)
       (kbd "<C-M-tab>") 'counsel-irony)))
 
+;; Load flycheck-irony if both flycheck and irony get enabled
+(defun neph-flycheck-irony-setup ()
+  "Load flycheck-irony if both irony and flycheck are loaded."
+  (when (and (featurep 'flycheck)
+             (featurep 'irony)
+             (not (featurep 'flycheck-irony)))
+    (require 'flycheck-irony)
+    (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+
 (provide 'neph-lib)

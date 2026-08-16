@@ -1001,6 +1001,10 @@
 
 ;; FIXME irony-mode breaks on headers due to that missing (car found)
 
+;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
+;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
+;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

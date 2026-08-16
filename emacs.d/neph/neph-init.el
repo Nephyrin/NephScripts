@@ -1,18 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;; Load flycheck-irony if both flycheck and irony get enabled
-(defun neph-flycheck-irony-setup ()
-  "Load flycheck-irony if both irony and flycheck are loaded."
-  (when (and (featurep 'flycheck)
-             (featurep 'irony)
-             (not (featurep 'flycheck-irony)))
-    (require 'flycheck-irony)
-    (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
-
-;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
-;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
-;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
-
 ;;
 ;; Rtags
 ;;   DEPRECATED - going to drop if ccls + lsp keeps working well
