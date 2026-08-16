@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lsp-treemacs")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-lsp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/irony-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-irony")
@@ -879,6 +878,16 @@
   (require 'lsp-pyright)
   )
 
+;;
+;; lsp-treemacs
+;;
+(elpaca (lsp-treemacs :host github :repo "emacs-lsp/lsp-treemacs"
+        :files (:defaults "icons")
+        :ref "3e5550f278db74f15ebe34add0138b138207ec08" :wait t)
+  (require 'lsp-treemacs)
+  (lsp-treemacs-sync-mode 1)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1015,9 +1024,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-(require 'lsp-treemacs)
-(lsp-treemacs-sync-mode 1)
 
 (require 'dap-mode)
 ;;(require 'dap-cpptools)
