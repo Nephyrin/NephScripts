@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/indent-bars")
 (neph-add-to-load-path 'load-path "~/.emacs.d/highlight-symbol")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rust-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rustic")
@@ -271,6 +270,30 @@
 (elpaca (evil :host github :repo "emacsmirror/evil"
         :ref "2ce03d412c4e93b0b89eb43d796c991806415b8a" :wait t))
 
+;;
+;; Indent bars
+;;
+(elpaca (indent-bars :host github :repo "jdtsmith/indent-bars" :protocol ssh
+        :ref "aa07a3d812c64445d44796b85fca07044864f64b" :wait t)
+  (require 'indent-bars)
+  (require 'indent-bars-ts)
+  (setq indent-bars-width-frac 0.05)
+
+  (setq indent-bars-treesit-support t)
+  (setq indent-bars-treesit-wrap '((python argument_list parameters
+                                           list list_comprehension
+                                           dictionary dictionary_comprehension
+                                           parenthesized_expression subscript)))
+  (setq indent-bars-treesit-ignore-blank-lines-types '("module"))
+
+  (setq indent-bars-prefer-character nil)
+  (setq indent-bars-depth-update-delay 0.0)
+
+  ;; SiGnIfiCaNt WhItEsPaCe
+  (add-hook 'python-mode-hook 'indent-bars-mode)
+  (add-hook 'python-ts-mode-hook 'indent-bars-mode)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -305,27 +328,6 @@
   (add-to-list 'auto-mode-alist '("\.proto$" . c-mode)))
 
 
-
-;;
-;; Indent bars
-;;
-(require 'indent-bars)
-(require 'indent-bars-ts)
-(setq indent-bars-width-frac 0.05)
-
-(setq indent-bars-treesit-support t)
-(setq indent-bars-treesit-wrap '((python argument_list parameters
-                                         list list_comprehension
-                                         dictionary dictionary_comprehension
-                                         parenthesized_expression subscript)))
-(setq indent-bars-treesit-ignore-blank-lines-types '("module"))
-
-(setq indent-bars-prefer-character nil)
-(setq indent-bars-depth-update-delay 0.0)
-
-;; SiGnIfiCaNt WhItEsPaCe
-(add-hook 'python-mode-hook 'indent-bars-mode)
-(add-hook 'python-ts-mode-hook 'indent-bars-mode)
 
 
 ;;
