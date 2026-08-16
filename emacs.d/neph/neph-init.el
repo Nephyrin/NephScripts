@@ -1,24 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; FZF
-;;
-
-;; FIXME Ignore stuff like .ccls-cache by customizing process-environment with defadvice:
-;;   (let ((process-environment
-;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
-;;               process-environment))
-
-(setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
-(setenv "FZF_DEFAULT_OPTS" nil)
-(require 'fzf)
-(global-set-key (kbd "C-z C-S-f") 'fzf)
-(global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
-(setq fzf/args "--no-hscroll --print-query -x --no-unicode")
-
-(setq fzf/window-height 50)
-
-;;
 ;; Helm Swoop
 ;;
 (require 'helm-swoop)

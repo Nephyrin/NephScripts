@@ -623,6 +623,24 @@
 ;; Use ncdu to look at not-ignored files in a directory in this list:
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
 
+;;
+;; FZF
+;;
+
+;; FIXME Ignore stuff like .ccls-cache by customizing process-environment with defadvice:
+;;   (let ((process-environment
+;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
+;;               process-environment))
+
+(setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
+(setenv "FZF_DEFAULT_OPTS" nil)
+(require 'fzf)
+(global-set-key (kbd "C-z C-S-f") 'fzf)
+(global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
+(setq fzf/args "--no-hscroll --print-query -x --no-unicode")
+
+(setq fzf/window-height 50)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
