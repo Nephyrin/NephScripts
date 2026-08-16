@@ -1008,6 +1008,14 @@
 ;; popup.el for rtags tooltips (needed anymore?)
 (autoload 'popup "popup" "Popup tooltip thing." t)
 
+;;
+;; Smart Tabs
+;;
+
+(require 'smart-tabs-mode)
+(smart-tabs-insinuate 'c 'javascript 'c++)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

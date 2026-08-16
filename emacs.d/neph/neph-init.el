@@ -6,13 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; Smart Tabs
-;;
-
-(require 'smart-tabs-mode)
-(smart-tabs-insinuate 'c 'javascript 'c++)
-
-;;
 ;; GDB - upstream gdb-mi, not to be confused with the weirdnox version below
 ;;
 
