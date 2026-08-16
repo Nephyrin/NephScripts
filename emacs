@@ -27,7 +27,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flycheck")
-(neph-add-to-load-path 'load-path "~/.emacs.d/epl")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pkg-info")
 (neph-add-to-load-path 'load-path "~/.emacs.d/hydra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-window")
@@ -647,6 +646,12 @@
         :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417" :wait t)
   (require 'yasnippet)
   )
+
+;;
+;; epl
+;;
+(elpaca (epl :host github :repo "cask/epl"
+        :ref "78ab7a85c08222cd15582a298a364774e3282ce6" :wait t))
 
 ;; ---- end elpacified run ----
 

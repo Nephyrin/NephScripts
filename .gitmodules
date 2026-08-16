@@ -178,9 +178,6 @@
 [submodule "emacs.d/pkg-info"]
 	path = emacs.d/pkg-info
 	url = https://github.com/emacsorphanage/pkg-info
-[submodule "emacs.d/epl"]
-	path = emacs.d/epl
-	url = https://github.com/cask/epl
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
