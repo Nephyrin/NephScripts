@@ -1006,4 +1006,19 @@ If FORCE is not specified, toggle the current state."
 
   (global-set-key (kbd "C-z <C-M-tab>") 'rtags-global-imenu))
 
+;;
+;; ido
+;;
+
+;; global ido-mode is incompatible with helm mode, but we just want it for find file.  Which, annoyingly, gets
+;; intercepted by helm...
+(defun neph-ido-find-file ()
+  "Call 'ido-find-file' with ido enabled, then return to previous state."
+  (interactive)
+  (let ((was-ido-mode ido-mode))
+    (ido-mode t)
+    (unwind-protect (call-interactively 'ido-find-file)
+      (when (not was-ido-mode) (ido-mode -1)))))
+
+
 (provide 'neph-lib)

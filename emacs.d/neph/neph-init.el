@@ -6,27 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; ido
-;;
-
-(require 'ido)
-(require 'ido-vertical-mode)
-;(autoload 'ido "ido" "Ido thing." t)
-;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
-(ido-vertical-mode 1)
-
-;; global ido-mode is incompatible with helm mode, but we just want it for find file.  Which, annoyingly, gets
-;; intercepted by helm...
-(defun neph-ido-find-file ()
-  "Call 'ido-find-file' with ido enabled, then return to previous state."
-  (interactive)
-  (let ((was-ido-mode ido-mode))
-    (ido-mode t)
-    (unwind-protect (call-interactively 'ido-find-file)
-      (when (not was-ido-mode) (ido-mode -1)))))
-(global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
-
-;;
 ;; Rainbow Delimiters
 ;;
 

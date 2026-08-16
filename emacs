@@ -1092,6 +1092,19 @@
 ;; FIXME automatically replace gdb-mi
 
 
+;;
+;; ido
+;;
+
+(require 'ido)
+(require 'ido-vertical-mode)
+;(autoload 'ido "ido" "Ido thing." t)
+;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
+(ido-vertical-mode 1)
+
+(global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
