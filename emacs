@@ -318,14 +318,6 @@
 ;
 ;(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
 
-;; Term key overrides
-(with-eval-after-load 'term
-  (define-key term-raw-map (kbd "C-y") 'term-paste)
-  ;; Allow C-z to escape
-  (define-key term-raw-map (kbd "C-z") nil)
-  ;; But make C-z C-z send a real C-z
-  (define-key term-raw-map (kbd "C-z C-z") 'term-send-raw-C-z))
-
 ;;
 ;; ECB
 ;;
@@ -1042,49 +1034,6 @@
 (add-to-list 'auto-mode-alist '(".html?$" . web-mode))
 
 ;;
-;; IswitchBuffers
-;;
-
-;; Disabled in favor of ido-mode
-;(iswitchb-mode 1)
-;(setq iswitchb-buffer-ignore '("^ " "^\*"))
-
-;(defun iswitchb-local-keys ()
-;  (mapc (lambda (K)
-;	  (let* ((key (car K)) (fun (cdr K)))
-;	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
-;	'(("<right>" . iswitchb-next-match)
-;	  ("<left>"  . iswitchb-prev-match)
-;	  ("<up>"    . ignore             )
-;	  ("<down>"  . ignore             ))))
-;
-;(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
-
-
-;;
-;; Tramp
-(require 'tramp)
-(setq tramp-default-method "sshx")
-
-;; suck less?
-;;(setq remote-file-name-inhibit-locks t)
-(setq tramp-use-scp-direct-remote-copying t)
-;;(setq remote-file-name-inhibit-auto-save-visited t)
-;; Use direct-async-process
-(connection-local-set-profile-variables
- 'remote-direct-async-process
- '((tramp-direct-async-process . t)))
-(connection-local-set-profiles
- '(:application tramp :protocol "scp")
- 'remote-direct-async-process)
-(connection-local-set-profiles
- '(:application tramp :protocol "rsync")
- 'remote-direct-async-process)
-
-(global-set-key (kbd "C-z C-u") 'sudoize-buffer)
-(global-set-key (kbd "C-z C-M-u") 'drop-sudo)
-
-;;
 ;; Magit
 ;;
 
@@ -1106,17 +1055,6 @@
 ;;
 (global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
 
-
-;;
-;; Term mode
-;; Global hl-line-mode block
-(add-hook 'eshell-mode-hook 'neph-disable-global-hl-line)
-(add-hook 'term-mode-hook 'neph-disable-global-hl-line)
-
-;;
-;; isearch tweaks
-(add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
-(define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
 
 ;;
 ;; Yaml mode
@@ -1813,6 +1751,59 @@
 (add-hook 'web-mode-hook 'neph-web-tab-cfg)
 
 ;;
+;; IswitchBuffers
+;;
+
+;; Disabled in favor of ido-mode
+;(iswitchb-mode 1)
+;(setq iswitchb-buffer-ignore '("^ " "^\*"))
+
+;(defun iswitchb-local-keys ()
+;  (mapc (lambda (K)
+;	  (let* ((key (car K)) (fun (cdr K)))
+;	    (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+;	'(("<right>" . iswitchb-next-match)
+;	  ("<left>"  . iswitchb-prev-match)
+;	  ("<up>"    . ignore             )
+;	  ("<down>"  . ignore             ))))
+;
+;(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
+
+
+;;
+;; Tramp
+(require 'tramp)
+(setq tramp-default-method "sshx")
+
+;; suck less?
+;;(setq remote-file-name-inhibit-locks t)
+(setq tramp-use-scp-direct-remote-copying t)
+;;(setq remote-file-name-inhibit-auto-save-visited t)
+;; Use direct-async-process
+(connection-local-set-profile-variables
+ 'remote-direct-async-process
+ '((tramp-direct-async-process . t)))
+(connection-local-set-profiles
+ '(:application tramp :protocol "scp")
+ 'remote-direct-async-process)
+(connection-local-set-profiles
+ '(:application tramp :protocol "rsync")
+ 'remote-direct-async-process)
+
+(global-set-key (kbd "C-z C-u") 'sudoize-buffer)
+(global-set-key (kbd "C-z C-M-u") 'drop-sudo)
+
+;; Term key overrides
+(with-eval-after-load 'term
+  (define-key term-raw-map (kbd "C-y") 'term-paste)
+  ;; Allow C-z to escape
+  (define-key term-raw-map (kbd "C-z") nil)
+  ;; But make C-z C-z send a real C-z
+  (define-key term-raw-map (kbd "C-z C-z") 'term-send-raw-C-z))
+
+;;
+;; Term mode
+;;
 ;; ; #120F14
 ;; (set-face-attribute 'whitespace-tab nil :background "#100D20")
 
@@ -1972,3 +1963,12 @@
  ;; If there is more than one, they won't work right.
  '(ccls-code-lens-face ((t (:inherit shadow :height 0.7))))
  '(ccls-code-lens-mouse-face ((t (:underline t)))))
+
+;; Global hl-line-mode block
+(add-hook 'eshell-mode-hook 'neph-disable-global-hl-line)
+(add-hook 'term-mode-hook 'neph-disable-global-hl-line)
+
+;;
+;; isearch tweaks
+(add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
+(define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
