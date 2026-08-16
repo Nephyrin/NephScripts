@@ -426,6 +426,17 @@
 (global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
 
 
+;;
+;; Rust mode
+;;
+
+(require 'rustic)
+
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
+(setq rustic-indent-offset 2)
+(setq rust-indent-offset 2)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

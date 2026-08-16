@@ -1,16 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Rust mode
-;;
-
-(require 'rustic)
-
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
-(setq rustic-indent-offset 2)
-(setq rust-indent-offset 2)
-
-;;
 ;; Lua mode
 ;;
 
