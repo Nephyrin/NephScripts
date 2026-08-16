@@ -20,7 +20,6 @@
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
-(neph-add-to-load-path 'load-path "~/.emacs.d/swiper")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-quickhelp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
@@ -602,6 +601,12 @@
   (with-eval-after-load "phisearch"
     (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
   )
+
+;;
+;; ivy
+;;
+(elpaca (ivy :host github :repo "abo-abo/swiper"
+        :ref "c97ea72285f2428ed61b519269274d27f2b695f9" :wait t))
 
 ;; ---- end elpacified run ----
 

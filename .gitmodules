@@ -79,9 +79,6 @@
 [submodule "emacs.d/function-args"]
 	path = emacs.d/function-args
 	url = https://github.com/abo-abo/function-args
-[submodule "emacs.d/swiper"]
-	path = emacs.d/swiper
-	url = https://github.com/abo-abo/swiper
 [submodule "emacs.d/popup-el"]
 	path = emacs.d/popup-el
 	url = https://github.com/auto-complete/popup-el
