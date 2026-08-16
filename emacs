@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/bui.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/compat.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/emacs-spinner")
 (neph-add-to-load-path 'load-path "~/.emacs.d/s.el")
@@ -208,6 +207,12 @@
         :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6" :wait t)
   (require 'ht)
   )
+
+;;
+;; bui
+;;
+(elpaca (bui :host github :repo "alezost/bui.el" :protocol ssh
+        :ref "f3a137628e112a91910fd33c0cff0948fa58d470" :wait t))
 
 ;; ---- end elpacified run ----
 
