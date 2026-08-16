@@ -588,4 +588,28 @@ explicit input."
   (neph-clear-text-properties)
   (lsp))
 
+;;
+;; ccls navigation (were inline lambdas on the C-z <C-arrow> binds)
+;;
+
+(defun neph-ccls-navigate-up ()
+  "Navigate to the ccls \"U\" (up) node."
+  (interactive)
+  (ccls-navigate "U"))
+
+(defun neph-ccls-navigate-down ()
+  "Navigate to the ccls \"D\" (down) node."
+  (interactive)
+  (ccls-navigate "D"))
+
+(defun neph-ccls-navigate-left ()
+  "Navigate to the ccls \"L\" (left) node."
+  (interactive)
+  (ccls-navigate "L"))
+
+(defun neph-ccls-navigate-right ()
+  "Navigate to the ccls \"R\" (right) node."
+  (interactive)
+  (ccls-navigate "R"))
+
 (provide 'neph-lib)

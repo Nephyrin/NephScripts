@@ -1,6 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'helm-lsp)
 ;;(require 'lsp-clangd)
 (require 'ccls)
 
@@ -23,9 +22,6 @@
 ;;    client))
 
 ;;(advice-add 'lsp-register-client :around #'my-lsp-register-client-advice)
-
-;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
-(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
 
 (with-eval-after-load 'ccls
   (setq ccls-executable "/usr/bin/ccls")
@@ -110,38 +106,6 @@ If FORCE is not specified, toggle the current state."
                 (insert hover-text))
             (message "No valid definition range or hover text found.")))
       (message "No definition range recognized. (save file, and make sure you're on the type name)"))))
-
-(global-set-key (kbd "C-z M-l")   'neph-ccls-reformat-definition)
-;; LSP UI keys, some are not used but reserved from equivalents in rtags configuration
-(global-set-key (kbd "C-z C-,")   'lsp-ui-peek-find-references)
-(global-set-key (kbd "C-z C-.")   'xref-find-definitions)
-(global-set-key (kbd "M-.")       'lsp-ui-peek-find-definitions)
-(global-set-key (kbd "C-z C-<")   'ccls-call-hierarchy)
-(global-set-key (kbd "C-z ,")     'lsp-find-references)
-(global-set-key (kbd "C-z <tab>") 'lsp-ui-imenu)
-(global-set-key (kbd "C-z D")     'flycheck-list-errors)
-(global-set-key (kbd "C-z C-l")   'neph-lsp-reset)
-(global-set-key (kbd "C-z C-S-l") 'neph-toggle-ccls-reload)
-(global-set-key (kbd "C-z RET")   'helm-lsp-code-actions)
-(global-set-key (kbd "C-z .")     'helm-lsp-workspace-symbol)        ;; Menu to find symbol in project
-;; (global-set-key (kbd "C-z >")     'helm-lsp-global-workspace-symbol) ;; Menu to find symbol in open projects
-;; (global-set-key (kbd "C-z C-.")           'rtags-find-symbol-at-point)
-;; (global-set-key (kbd "C-z M-r")           'rtags-reparse-file)
-;; (global-set-key (kbd "C-z C->")           'rtags-find-virtuals-at-point)
-;; (global-set-key (kbd "C-z C-/")           'delete-xrefs-window-or-something) ;; Was the rtags bind to dismiss the references
-;; (global-set-key (kbd "C-z C-n")           'xref-next-line)
-;; (global-set-key (kbd "C-z C-p")           'xref-prev-line)
-;; (global-set-key (kbd "C-z i")             'rtags-fixit)
-;; (global-set-key (kbd "C-z I")             'rtags-fix-fixit-at-point)
-;; (global-set-key (kbd "C-z DEL")           'rtags-location-stack-back)
-;; (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
-;; (global-set-key (kbd "C-z C-S-R")         'rtags-rename-symbol)
-
-;; Navigate? needs better binds.
-(global-set-key (kbd "C-z <C-left>")  (lambda () (interactive) (ccls-navigate "U")))
-(global-set-key (kbd "C-z <C-right>") (lambda () (interactive) (ccls-navigate "D")))
-(global-set-key (kbd "C-z <C-up>")    (lambda () (interactive) (ccls-navigate "L")))
-(global-set-key (kbd "C-z <C-down>")  (lambda () (interactive) (ccls-navigate "R")))
 
 ;;
 ;; Irony-mode (deprecated)
