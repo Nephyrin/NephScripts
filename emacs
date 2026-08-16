@@ -147,6 +147,14 @@
 (auto-compile-on-load-mode)
 (auto-compile-on-save-mode)
 
+;; Functions/macros live in neph-lib where they get byte-compiled; this file
+;; does not, and keeps to wiring (requires, setqs, hooks, binds).
+(require 'neph-lib)
+
+;;
+;; ---- Config merged down from neph-init.el (WIP: killing neph-init) ----
+;;
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
