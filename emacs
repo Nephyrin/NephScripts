@@ -1220,26 +1220,6 @@
 ;;(global-set-key (kbd "C-z C") 'jump-to-container)
 
 ;;
-;; Line-highlight
-
-;;
-
-;; highlight the current line; set a custom face, so we can
-;; recognize from the normal marking (selection)
-(defface hl-line '((t (:background "Gray")))
-  "Face to use for `hl-line-face'." :group 'hl-line)
-(setq hl-line-face 'hl-line)
-;(global-hl-line-mode t)
-
-;;
-;; PlantUML
-;;
-
-;; Default install path from package
-(setq org-plantuml-jar-path
-      (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
-
-;;
 ;; zap-to-char
 (global-set-key (kbd "M-Z") 'backwards-zap-to-char)
 
@@ -1972,3 +1952,23 @@
 ;; isearch tweaks
 (add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
 (define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
+
+;;
+;; Line-highlight
+
+;;
+
+;; highlight the current line; set a custom face, so we can
+;; recognize from the normal marking (selection)
+(defface hl-line '((t (:background "Gray")))
+  "Face to use for `hl-line-face'." :group 'hl-line)
+(setq hl-line-face 'hl-line)
+;(global-hl-line-mode t)
+
+;;
+;; PlantUML
+;;
+
+;; Default install path from package
+(setq org-plantuml-jar-path
+      (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
