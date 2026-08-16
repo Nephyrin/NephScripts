@@ -9,67 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-;; Custom binds for existing commands
-(global-set-key (kbd "C-z C-k") 'copy-to-register)
-(global-set-key (kbd "C-z k") 'insert-register)
-(global-set-key (kbd "C-z C-j") 'point-to-register)
-(global-set-key (kbd "C-z j") 'jump-to-register)
-(global-set-key (kbd "C-z C-w") 'window-configuration-to-register)
-
-(global-set-key (kbd "C-c C-j") 'term-line-mode)
-(global-set-key (kbd "C-c C-k") 'term-char-mode)
-(global-set-key (kbd "C-M-a") 'back-to-indentation)
-(global-set-key (kbd "C-S-k") 'kill-whole-line)
-; Make ret auto-indent, but S-RET bypass
-;(define-key global-map (kbd "RET") 'newline)
-(global-set-key (kbd "<C-return>") 'electric-indent-just-newline)
-;; Merge with previous line
-(global-set-key (kbd "C-M-S-k") 'delete-indentation)
-
-(defun copy-line (&optional arg)
-  "Copy lines (as many as prefix argument) in the kill ring"
-  (interactive "p")
-  (kill-ring-save (line-beginning-position)
-                  (line-beginning-position (+ 1 arg)))
-  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
-
-(global-set-key (kbd "C-S-M-j") 'copy-line)
-
-(defun duplicate-line (arg)
-  "Duplicate current line, leaving point in lower line."
-  (interactive "*p")
-
-  ;; save the point for undo
-  (setq buffer-undo-list (cons (point) buffer-undo-list))
-
-  ;; local variables for start and end of line
-  (let ((bol (save-excursion (beginning-of-line) (point)))
-        eol)
-    (save-excursion
-
-      ;; don't use forward-line for this, because you would have
-      ;; to check whether you are at the end of the buffer
-      (end-of-line)
-      (setq eol (point))
-
-      ;; store the line and disable the recording of undo information
-      (let ((line (buffer-substring bol eol))
-            (buffer-undo-list t)
-            (count arg))
-        ;; insert the line arg times
-        (while (> count 0)
-          (newline)         ;; because there is no newline in 'line'
-          (insert line)
-          (setq count (1- count))))
-
-      ;; create the undo information
-      (setq buffer-undo-list (cons (cons eol (point)) buffer-undo-list))))
-
-  ;; put the point in the lowest line and return
-  (next-line arg))
-
-(global-set-key (kbd "C-S-j") 'duplicate-line)
-
 (defun jump-to-char (arg char)
   "Jump forward to ARGth occurrence of CHAR.
 Case is ignored if `case-fold-search' is non-nil in the current buffer.

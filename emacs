@@ -1643,6 +1643,26 @@
   '(define-key c-mode-base-map "/" 'self-insert-command))
 ;; (global-set-key (kbd "/") 'self-insert-command)
 
+;; Custom binds for existing commands
+(global-set-key (kbd "C-z C-k") 'copy-to-register)
+(global-set-key (kbd "C-z k") 'insert-register)
+(global-set-key (kbd "C-z C-j") 'point-to-register)
+(global-set-key (kbd "C-z j") 'jump-to-register)
+(global-set-key (kbd "C-z C-w") 'window-configuration-to-register)
+
+(global-set-key (kbd "C-c C-j") 'term-line-mode)
+(global-set-key (kbd "C-c C-k") 'term-char-mode)
+(global-set-key (kbd "C-M-a") 'back-to-indentation)
+(global-set-key (kbd "C-S-k") 'kill-whole-line)
+; Make ret auto-indent, but S-RET bypass
+;(define-key global-map (kbd "RET") 'newline)
+(global-set-key (kbd "<C-return>") 'electric-indent-just-newline)
+;; Merge with previous line
+(global-set-key (kbd "C-M-S-k") 'delete-indentation)
+
+(global-set-key (kbd "C-S-M-j") 'copy-line)
+(global-set-key (kbd "C-S-j") 'duplicate-line)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
