@@ -184,9 +184,6 @@
 [submodule "emacs.d/skewer-mode"]
 	path = emacs.d/skewer-mode
 	url = https://github.com/skeeto/skewer-mode
-[submodule "emacs.d/emacs-web-server"]
-	path = emacs.d/emacs-web-server
-	url = https://github.com/skeeto/emacs-web-server
 [submodule "emacs.d/emacs-gdb"]
 	path = emacs.d/emacs-gdb
 	url = https://github.com/weirdNox/emacs-gdb
