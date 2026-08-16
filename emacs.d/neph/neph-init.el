@@ -6,22 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; Web-mode
-;;
-
-(require 'web-mode)
-(setq web-mode-indent-style 1)
-(setq web-mode-script-padding 2)
-(setq web-mode-style-padding 2)
-(setq web-mode-enable-css-colorization t)
-(setq web-mode-enable-comment-keywords t)
-(setq web-mode-enable-block-face t)
-(setq web-mode-enable-part-face t)
-(setq web-mode-enable-current-element-highlight t)
-(setq web-mode-enable-auto-pairing t)
-(add-to-list 'auto-mode-alist '(".html?$" . web-mode))
-
-;;
 ;; Neph mode. Aka enable defaults in programming modes
 ;;
 
