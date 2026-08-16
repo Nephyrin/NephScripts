@@ -948,6 +948,49 @@
 (global-set-key (kbd "C-z <C-up>")    'neph-ccls-navigate-left)
 (global-set-key (kbd "C-z <C-down>")  'neph-ccls-navigate-right)
 
+;;(require 'lsp-clangd)
+(require 'ccls)
+
+;; Block ccls autoregister, register it ourself
+;; TODO Example hook from gpt might work
+;; (defun my-ccls-setup (workspace)
+;;   "Customize CCLS server capabilities."
+;;   (let ((caps (lsp--workspace-server-capabilities workspace)))
+;;     (lsp:set-server-capabilities-document-symbol-provider? caps nil)
+;;     (lsp:set-server-capabilities-completion-provider? caps nil)
+;;     (lsp:set-server-capabilities-hover-provider? caps nil)))
+
+;; FIXME I think it's slightly wrong, i want to hook make-lsp-client...
+;; (defun my-lsp-register-client-advice (orig-fun &rest args)
+;;   "Advice to modify LSP client registration for CCLS."
+;;   (let ((client (apply orig-fun args)))
+;;     (when (eq (plist-get client :server-id) 'ccls)
+;;       (plist-put client :initialized-fn #'my-ccls-setup))
+;;    client))
+
+;;(advice-add 'lsp-register-client :around #'my-lsp-register-client-advice)
+
+(with-eval-after-load 'ccls
+  (setq ccls-executable "/usr/bin/ccls")
+  (ccls-use-default-rainbow-sem-highlight)
+  (setq ccls-sem-highlight-method 'font-lock)
+;;(setq ccls-sem-highlight-method nil)
+;; We'll set these from the theme.  Uncomment for random themes.
+  (setq ccls-args
+        (list
+         (concat "--init=" (json-encode
+                            (ht
+                             ;; ("index" (ht ("multiVersion" 1))) ;; 80G+ memory usage and doesn't work well
+                             ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
+                             ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
+                                          ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
+         ;; Extra logging
+         "-log-file=/tmp/ccls.log"
+         "-v=1")))
+
+;; Default off
+(add-to-list 'lsp-disabled-clients 'ccls)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -612,4 +612,75 @@ explicit input."
   (interactive)
   (ccls-navigate "R"))
 
+;;
+;; ccls
+;;
+
+(defun neph-toggle-ccls-client (&optional force)
+  "Toggle the ccls LSP client.
+If FORCE is 'nil, enable ccls (remove from disabled list).
+If FORCE is 't, disable ccls (add to disabled list).
+If FORCE is not specified, toggle the current state."
+  (interactive)
+  (let* ((is-disabled (memq 'ccls lsp-disabled-clients))
+         (should-disable (if (null force)
+                            (not is-disabled)
+                          force)))
+    (if should-disable
+        (progn
+          (setq lsp-semantic-tokens-enable t)
+          (add-to-list 'lsp-disabled-clients 'ccls))
+      (setq lsp-semantic-tokens-enable nil)
+      (setq lsp-disabled-clients (remove 'ccls lsp-disabled-clients)))
+    (message "ccls LSP client %s" (if should-disable "disabled" "enabled"))))
+
+(defun neph-toggle-ccls-reload ()
+  "Toggle the enabled state of the ccls client, and then reload the current lsp workspace."
+  (interactive)
+  (neph-toggle-ccls-client)
+  (neph-clear-text-properties)
+  (call-interactively 'lsp-workspace-restart))
+
+;; `-some->>' below is a dash macro, and neph-lib is byte-compiled before dash
+;; is loaded; without this it compiles to a plain function call and breaks.
+(eval-when-compile (require 'dash))
+
+(defun neph-ccls-reformat-definition ()
+  "Reformat the definition under the cursor according to how LSP parsed it."
+  (interactive)
+  (let* ((hover-response (-some->> (lsp--text-document-position-params)
+                                   (lsp--make-request "textDocument/hover")
+                                   (lsp--send-request)))
+         (hover-contents (plist-get hover-response :contents))
+         (hover-text (if (vectorp hover-contents)
+                         (plist-get (aref hover-contents 0) :value)
+                       (plist-get hover-contents :value)))
+         ;; Request the location/textual-range of the definition for the thing under cursor.
+         (def-response (-some->> (lsp--text-document-position-params)
+                                 (lsp--make-request "textDocument/definition")
+                                 (lsp--send-request)
+                                 (car)))
+         (target-range (plist-get def-response :targetRange))
+         (start-pos (plist-get target-range :start))
+         (end-pos (plist-get target-range :end)))
+
+    ;; Debug output
+    (message "Debug: hover-contents: %s" hover-contents)
+    (message "Debug: hover-text: %s" hover-text)
+    (message "Debug: def-response: %S" def-response)
+    (message "Debug: target-range: %S" target-range)
+    (message "Debug: start-pos: %S, end-pos: %S" start-pos end-pos)
+
+    (if (and start-pos end-pos)
+        (let ((def-start (lsp--position-to-point start-pos))
+              (def-end (lsp--position-to-point end-pos)))
+          (message "Debug: def-start: %s, def-end: %s, current-point: %s" def-start def-end (point))
+          (if (and hover-text def-start def-end (<= def-start (point) def-end))
+              (save-excursion
+                (goto-char def-start)
+                (delete-region def-start def-end)
+                (insert hover-text))
+            (message "No valid definition range or hover text found.")))
+      (message "No definition range recognized. (save file, and make sure you're on the type name)"))))
+
 (provide 'neph-lib)
