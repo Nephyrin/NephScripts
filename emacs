@@ -629,6 +629,12 @@
 (elpaca (company-quickhelp :host github :repo "expez/company-quickhelp"
         :ref "9505fb09d064581da142d75c139d48b5cf695bd5" :wait t))
 
+;;
+;; deferred
+;;
+;; (elpaca (deferred :host github :repo "kiwanami/emacs-deferred"
+;;         :ref "2239671d94b38d92e9b28d4e12fd79814cfb9c16"))
+
 ;; ---- end elpacified run ----
 
 ;;
