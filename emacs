@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/flycheck")
 (neph-add-to-load-path 'load-path "~/.emacs.d/hydra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-window")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pfuture")
@@ -681,6 +680,14 @@
 ;; (elpaca (ycmd :host github :repo "abingham/emacs-ycmd"
 ;;         :ref "ef87d020d3314efbac2e8925c115d0ac5c128c2a"))
 
+;;
+;; Flycheck
+;;
+(elpaca (flycheck :host github :repo "flycheck/flycheck"
+        :ref "1d7c1b20782ccbaa6f97e37f5e1d0cee3d5eda8a" :wait t)
+  (autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -833,12 +840,6 @@
 (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
 (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
 (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
-
-;;
-;; Flycheck
-;;
-
-(autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
 
 ;;
 ;; C++ Helper mode(s) : Company/lsp and associated helper libraries

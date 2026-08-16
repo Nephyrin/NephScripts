@@ -118,9 +118,6 @@
 [submodule "emacs.d/flycheck-irony"]
 	path = emacs.d/flycheck-irony
 	url = https://github.com/Sarcasm/flycheck-irony
-[submodule "emacs.d/flycheck"]
-	path = emacs.d/flycheck
-	url = https://github.com/flycheck/flycheck
 [submodule "emacs.d/git-modes"]
 	path = emacs.d/git-modes
 	url = https://github.com/magit/git-modes
