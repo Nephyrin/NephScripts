@@ -1106,4 +1106,25 @@ If FORCE is not specified, toggle the current state."
         (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
     (message "!! js-beautify command not installed/available")))
 
+;;
+;; Projectile
+;;
+
+;; If -alt appears in the path preceeding the final component, append -alt to the name
+;; e.g. ~/git-alt/project shows up differently from ~/git/project
+;; (Incredibly specific to the author's workflow)
+;; A more robust version would be to feed known projects into uniquify
+(defun neph-projectile-project-name (root)
+  "Neph hook for projectile-project-name"
+  (let ((default-name
+          (if (string-match "/main/$" root)
+              (concat
+               (projectile-default-project-name
+                (replace-regexp-in-string "/main/$" "" root))
+               "-main")
+            (projectile-default-project-name root))))
+    (if (string-match "-alt.*/" root)
+        (concat default-name "-alt")
+        default-name)))
+
 (provide 'neph-lib)
