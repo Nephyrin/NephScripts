@@ -67,9 +67,6 @@
 [submodule "bin/ls++-Term-ExtendedColor.git"]
 	path = bin/ls++-Term-ExtendedColor.git
 	url = https://github.com/trapd00r/Term-ExtendedColor
-[submodule "emacs.d/company-mode"]
-	path = emacs.d/company-mode
-	url = https://github.com/company-mode/company-mode
 [submodule "emacs.d/ample-zen"]
 	path = emacs.d/ample-zen
 	url = https://github.com/mjwall/ample-zen

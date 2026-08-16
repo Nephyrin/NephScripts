@@ -20,7 +20,6 @@
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
-(neph-add-to-load-path 'load-path "~/.emacs.d/company-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-quickhelp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
 (neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc-1.0.24")
@@ -608,6 +607,23 @@
 (elpaca (ivy :host github :repo "abo-abo/swiper"
         :ref "c97ea72285f2428ed61b519269274d27f2b695f9" :wait t))
 
+;;
+;; Company mode
+;;
+;;(require 'neph-company-autoload)
+(elpaca (company :host github :repo "company-mode/company-mode"
+        :ref "3ec40b0a0ea751b6c48f24abd58c8304deb53014" :wait t)
+  (require 'company)
+
+  ;; Turn on in these modes
+  (add-hook 'c-mode-common-hook   'neph-company-setup)
+  (add-hook 'python-mode-hook     'neph-company-setup)
+  (add-hook 'python-ts-mode-hook  'neph-company-setup)
+  (add-hook 'lisp-mode-hook       'neph-company-setup)
+  (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
+    ;; --
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -744,33 +760,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-;;
-;; Company mode
-;;
-;;(require 'neph-company-autoload)
-(require 'company)
-
-;; Turn on in these modes
-(add-hook 'c-mode-common-hook   'neph-company-setup)
-(add-hook 'python-mode-hook     'neph-company-setup)
-(add-hook 'python-ts-mode-hook  'neph-company-setup)
-(add-hook 'lisp-mode-hook       'neph-company-setup)
-(add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
-
-;; Semantic
-; (require 'semantic)
-; (require 'semantic/bovine/gcc)
-; (global-semantic-decoration-mode t)
-; (global-semantic-stickyfunc-mode t)
-; (global-semantic-idle-scheduler-mode -1)
-
-;; EDE
-;;(global-ede-mode t)
-
-;; Keys for C++ completion and such
-;;(global-set-key (kbd "C-z SPC") 'helm-semantic)
-;;(global-set-key (kbd "C-z C-SPC") 'moo-jump-local)
 
 ;;
 ;; Copilot
