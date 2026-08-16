@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/god-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/fic-mode.git")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter-fringe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter")
@@ -1034,6 +1033,14 @@
                 (setq minimap-width-fraction 0.01))
   )
 
+;;
+;; God mode
+(elpaca (god-mode :host github :repo "chrisdone/god-mode"
+        :ref "3ba1fea8ed3d7bddb4197f13b1fc0c33965f7841" :wait t)
+  (autoload 'god-mode "god-mode" "god-mode" t)
+  (global-set-key (kbd "C-z C-z") 'god-local-mode)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1175,11 +1182,6 @@
 
 
 
-
-;;
-;; God mode
-(autoload 'god-mode "god-mode" "god-mode" t)
-(global-set-key (kbd "C-z C-z") 'god-local-mode)
 
 ;;
 ;; Misc modes
