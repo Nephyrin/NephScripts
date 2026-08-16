@@ -1613,6 +1613,11 @@
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)
 
+(global-set-key (kbd "M-u") 'toggle-case)
+(global-set-key (kbd "C-M-k") 'merge-next-line)
+(global-set-key (kbd "C-S-Y") 'yank-and-indent)
+(global-set-key (kbd "M-Y") 'smart-yank-before-line)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

@@ -9,61 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-; Toggle case of the next letter
-(defun toggle-case ()
-  "Toggle the casing of the character under point"
-  (interactive)
-  (let* ((curchar   (char-after))
-         (curcapped (if curchar (upcase (char-after)))))
-    (if curchar
-        (save-excursion
-          (delete-char 1)
-          (insert (if (eq curchar curcapped)
-                      (downcase curchar)
-                    curcapped))))))
-(global-set-key (kbd "M-u") 'toggle-case)
-
-;; merge-next-line
-(defun merge-next-line (arg)
-  "Merge line with next"
-  (interactive "p")
-  (next-line 1)
-  (delete-indentation))
-(global-set-key (kbd "C-M-k") 'merge-next-line)
-
-;; yank-and-indent
-(defun yank-and-indent ()
-  "Yank and then indent the newly formed region according to mode."
-  (interactive)
-  (yank)
-  (call-interactively 'indent-region))
-
-(defun smart-yank-before-line ()
-  "Yank starting on a new line previous to this, indent, and end at the beginning of said line"
-  (interactive)
-  (beginning-of-line)
-  ;; If this isn't a blank line, open a new line before
-  (if (not (looking-at "\\s-*$"))
-      (open-line 1)
-    ;; Otherwise just clear said
-    (delete-horizontal-space))
-
-  ;; Do yank, but return to here
-  (save-excursion
-    (yank)
-    (call-interactively 'indent-region)
-    ;; Was the last line of this yank whitespace? Nuke it.
-    (when (save-excursion
-            (beginning-of-line)
-            (looking-at "\\s-*$"))
-      (kill-whole-line)))
-
-  ;; Go to indent
-  (back-to-indentation))
-
-(global-set-key (kbd "C-S-Y") 'yank-and-indent)
-(global-set-key (kbd "M-Y") 'smart-yank-before-line)
-
 (defun bookmark-current-line ()
   "Bookmark the current line, using itself as the bookmark name"
   (interactive)
