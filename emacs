@@ -565,6 +565,64 @@
 (setq helm-grep-ag-command "rg --smart-case --no-heading --line-number %s %s %s")
 (setq helm-grep-ag-pipe-cmd-switches '())
 
+(require 'grep)
+(setq grep-find-ignored-files (append grep-find-ignored-files
+        '( ;; Binaries
+          "*.pdb" "*.map" "*.P" "*.dylib" "*.lib" "*.a" "*.dSYM" "*.app" "*.framework" "*.dll"
+           "*.so.0" "*.so" "*.o" "*.exe" "*.dbg" "*.sys" "*.h.gch"
+
+           ;; Python compiled thing
+           "*.pyd" "*.pyc"
+
+           ;; Archives
+           "*.zip" "*.rar" "*.7z" "*.xz" "*.bz2" "*.gz" "*.tar" "*.dmg" "*.deb" "*.rpm" "*.iso"
+           "*.msi"
+
+           ;; Source engine cruft
+           "*.vtf" "*.vvd" "*.vcd" "*.phy" "*.mdl" "*.dmx" "*.bsp" "*.vpk" "*.vtx"
+           "*.fbx" "*.vmt" "*.vmf" "*.dds" "*.smd" "*.nav" "*.vcs" "*.pcf" "*.dem"
+           "*.lmp"
+           "soundcache/*.manifest"
+           "reslists/*.txt"
+           "reslists_xbox/*.lst"
+           "*.xsiaddon"
+
+           ;; Misc
+           "*.ma" "*.mll" ; Maya
+           "*.cache"
+           "*.svn-base"
+           "*.sdf" ; Visual studio database thing
+           "*.al" ; Perl cruft
+           "*.ppm"
+           "*.vcproj" "*.vcxproj"
+
+           ;; PS3 compiled file... thing
+           "*.prx" "*.sprx"
+
+           ;; Misc Media
+           "*.raw" "*.ani" "*.bik" "*.dat" "*.ttf" "*.pdf" "*.max"
+
+           ;; Images
+           "*.tga" "*.jpg" "*.jpeg" "*.png" "*.bmp" "*.psd" "*.cbr" "*.icns" "*.ico" "*.gif"
+
+           ;; Sound
+           "*.wav" "*.ogg" "*.mp3"
+
+           ;; Video
+           "*.h264" "*.mkv" "*.avi" "*.mp4" "*.mov" "*.webm"
+
+           ;; Oneoffs
+           "ip-country-region-city-latitude-longitude-isp.csv"
+           "engine_symbols.txt"
+           "dedicated_symbols.txt"
+           "staging_latest_good.txt")))
+
+(when (functionp 'remove-duplicates)
+  (remove-duplicates grep-find-ignored-files :test 'string=))
+
+;; Use ncdu to look at not-ignored files in a directory in this list:
+;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
