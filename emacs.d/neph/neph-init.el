@@ -9,32 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-;; kmacro-bind-to-key but wraps it in with-undo-amalgamate so it binds it as one atomic do/undo action
-(defun neph-kmacro-bind-to-key-amalgamate ()
-  (interactive)
-  ;; Hook kmacro-ring-head that kmacro-bind-to-key uses to get the last macro, return a lambda instead that calls it
-  ;; with undo-amalgamate. The macro `, fuckery means we call (kmacro-ring-head) at binding time and embed it in the
-  ;; returned lambda
-  (cl-letf* (((symbol-function 'kmacro-ring-head)
-              `(lambda ()
-                 (lambda () (interactive)
-                   (with-undo-amalgamate (funcall ,(kmacro-ring-head)))))))
-    (call-interactively 'kmacro-bind-to-key)))
-
-;; Non-hooked version is C-x C-k b
-(global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
-
-;; Disabled (requires semantic)
-;;(defun jump-to-container ()
-;;  (interactive)
-;;  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
-;;         (overlay (and tag (last (semantic-current-tag))))
-;;         (char (and overlay (overlay-start (car overlay)))))
-;;    (when char
-;;      (goto-char char))))
-;;
-;;(global-set-key (kbd "C-z C") 'jump-to-container)
-
 ;;
 ;; Line-highlight
 

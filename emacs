@@ -1697,6 +1697,20 @@
 
 (global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
 
+;; Non-hooked version is C-x C-k b
+(global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
+
+;; Disabled (requires semantic)
+;;(defun jump-to-container ()
+;;  (interactive)
+;;  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
+;;         (overlay (and tag (last (semantic-current-tag))))
+;;         (char (and overlay (overlay-start (car overlay)))))
+;;    (when char
+;;      (goto-char char))))
+;;
+;;(global-set-key (kbd "C-z C") 'jump-to-container)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
