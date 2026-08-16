@@ -1,12 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Color identifiers mode
-;;
-
-(require 'color-identifiers-mode)
-
-;;
 ;; Consult/Vertico
 ;;
 

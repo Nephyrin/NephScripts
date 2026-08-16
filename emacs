@@ -495,6 +495,12 @@
 ;(global-set-key (kbd "C-z q") 'ecb-activate)
 ;(global-set-key (kbd "C-z Q") 'ecb-deactivate)
 
+;;
+;; Color identifiers mode
+;;
+
+(require 'color-identifiers-mode)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
