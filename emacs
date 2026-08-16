@@ -27,7 +27,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flycheck")
-(neph-add-to-load-path 'load-path "~/.emacs.d/pkg-info")
 (neph-add-to-load-path 'load-path "~/.emacs.d/hydra")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-window")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pfuture")
@@ -653,6 +652,14 @@
 (elpaca (epl :host github :repo "cask/epl"
         :ref "78ab7a85c08222cd15582a298a364774e3282ce6" :wait t))
 
+;;
+;; pkg-info
+;;
+(elpaca (pkg-info :host github :repo "emacsorphanage/pkg-info"
+        :ref "76ba7415480687d05a4353b27fea2ae02b8d9d61" :wait t)
+  (require 'pkg-info)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -898,8 +905,6 @@
 (require 'treemacs-mouse-interface)
 (require 'treemacs-hydras)
 ;;(require 'treemacs-projectile)
-
-(require 'pkg-info)
 
 (require 'lsp-ui)
 (require 'lsp-ui-flycheck)

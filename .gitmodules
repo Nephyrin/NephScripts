@@ -175,9 +175,6 @@
 [submodule "emacs.d/helm-lsp"]
 	path = emacs.d/helm-lsp
 	url = https://github.com/emacs-lsp/helm-lsp
-[submodule "emacs.d/pkg-info"]
-	path = emacs.d/pkg-info
-	url = https://github.com/emacsorphanage/pkg-info
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
