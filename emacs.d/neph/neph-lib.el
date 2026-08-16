@@ -1077,4 +1077,33 @@ If FORCE is not specified, toggle the current state."
 (defun neph-p4vc-revgraph () (interactive) (neph-p4v-cmd-current "revgraph"))
 (defun neph-p4vc-history  () (interactive) (neph-p4v-cmd-current "history"))
 
+;;
+;; Ediff
+;;
+
+(defun neph-ediff-mode ()
+  (git-gutter-mode -1))
+
+;;
+;; AStyle
+;;
+
+(defun astyle-beautify-region()
+  (interactive)
+  (if (executable-find "astyle")
+      (let ((cmd "astyle --style=allman --pad-paren-in --pad-oper --pad-header --unpad-paren --max-code-length=100 --break-blocks"))
+        (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
+    (message "!! astyle command not installed/available")))
+
+;;
+;; js-beautify
+;;
+
+(defun js-beautify-region()
+  (interactive)
+  (if (executable-find "js-beautify")
+      (let ((cmd "js-beautify"))
+        (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
+    (message "!! js-beautify command not installed/available")))
+
 (provide 'neph-lib)

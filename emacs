@@ -1300,6 +1300,13 @@
 (global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
 (global-set-key (kbd "C-z P h") 'neph-p4vc-history)
 
+;;
+;; Ediff
+(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function 'split-window-horizontally)
+(setq ediff-merge-split-window-function 'split-window-horizontally)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

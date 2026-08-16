@@ -6,39 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; Ediff
-;;
-
-(defun neph-ediff-mode ()
-  (git-gutter-mode -1))
-(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-merge-split-window-function 'split-window-horizontally)
-
-;;
-;; AStyle
-;;
-
-(defun astyle-beautify-region()
-  (interactive)
-  (if (executable-find "astyle")
-      (let ((cmd "astyle --style=allman --pad-paren-in --pad-oper --pad-header --unpad-paren --max-code-length=100 --break-blocks"))
-        (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
-    (message "!! astyle command not installed/available")))
-
-;;
-;; js-beautify
-;;
-
-(defun js-beautify-region()
-  (interactive)
-  (if (executable-find "js-beautify")
-      (let ((cmd "js-beautify"))
-        (shell-command-on-region (region-beginning) (region-end) cmd (current-buffer) t))
-    (message "!! js-beautify command not installed/available")))
-
-;;
 ;; Projectile
 ;;
 
