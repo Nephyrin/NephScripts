@@ -267,4 +267,47 @@ explicit input."
                                        "xclip -quiet -i -selection clipboard -target text/html"
                                        "  ~/.emacs.d/htmlize-temp.htm")))
 
+;;
+;; htmlfontify
+;;
+
+;; Like neph-html-region, uses htmlfontify to fontify things, pops up in a browser
+;; WIP STILL DOESNT WORK WITH ansi-term
+(defun WIP-neph-hfy-html-region ()
+  (interactive)
+  ;; hfy breaks on buffers that have non-font-lock propertization on text in emacs 25, just capture current text into a
+  ;; non-font-lock buffer.
+  (let* ((regionp (region-active-p))
+         (beg (and regionp (region-beginning)))
+         (end (and regionp (region-end)))
+         (buf (current-buffer))
+         ;; poor man's with-temp-killring (requires let*)
+         (kill-ring (list "temp kill ring"))
+         (kill-ring-yank-pointer kill-ring))
+         ;;(hfy-optimizations (list 'skip-refontification)))
+;;    (flet ((hfy-force-fontification () (message "Prevented hfy-force-fontification")) ;; See above comment
+;;           (hfy-fontified-p () (message "Lying about fontification") t))
+    (with-temp-buffer
+      ;;(switch-to-buffer (current-buffer) nil t)
+      ;;(font-lock-mode t) ;; We want to keep the face properties from the source buffer always
+      (let ((tempbuf (current-buffer)))
+        (flet ((hfy-buffer () (message "Intercepted hfy-buffer") tempbuf))
+;;               (copy-to-buffer (buffer start end)
+;;                               (message "Intercepted copy-to-buffer")
+;;                               (let ((thisbuf (current-buffer)))
+;;                                 (with-current-buffer (get-buffer buffer)
+;;                                   (insert-buffer-substring thisbuf start end))
+;;                                 (with-current-buffer (get-buffer "tmp.tmp")
+;;                                   (insert-buffer-substring thisbuf start end)))))
+          (switch-to-buffer buf)
+          ;;(rename-buffer "*Neph HTMLIZE Temp Buffer*" t)
+          ;;(insert-buffer-substring-as-yank buf beg end)
+          (hfy-fontify-buffer)
+          (switch-to-buffer tempbuf)
+          (write-file "~/.emacs.d/htmlize-temp.htm")))))
+  ;; This is the way the help actually suggests you prevent it from opening this buffer.
+  (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+                                    display-buffer-alist)))
+    (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
+
 (provide 'neph-lib)

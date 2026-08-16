@@ -455,6 +455,15 @@
 
 ;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
 
+;;
+;; htmlfontify
+;;
+;; Sometimes htmlize fails on some buffers, sometimes htmlfontify does :-/ :-/
+
+;; :height 96 should be 10pt, ends up at 9pt, increase this a little because idk
+(with-eval-after-load "htmlfontify"
+  (setq hfy-font-zoom 1.09))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
