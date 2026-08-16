@@ -6,12 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; Rainbow Delimiters
-;;
-
-(autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
-
-;;
 ;; Minimap
 ;;
 

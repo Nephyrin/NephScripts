@@ -1105,6 +1105,13 @@
 (global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
 
 
+;;
+;; Rainbow Delimiters
+;;
+
+(autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
