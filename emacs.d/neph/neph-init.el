@@ -178,21 +178,6 @@ If FORCE is not specified, toggle the current state."
 (global-set-key (kbd "C-z <C-down>")  (lambda () (interactive) (ccls-navigate "R")))
 
 ;;
-;; Fix intelephense
-;;
-
-;; The vscode extension allows passing this based on the intelephense.maxMemory setting (which isn't actually an
-;; intelephense setting and glues this --max-old-space-size option into some node launching glue somewhere.)
-;; FIXME lsp-package-path doesn't work if intelephense isn't installed and i gave up on reading the garbage code
-;;(with-eval-after-load "lsp-php"
-;;  (setq lsp-intelephense-server-command
-;;        (list "env" "NODE_OPTIONS=\"--max-old-space-size=24000\""
-;;              ;; Default path lookup the package does -- by putting 'env' first it breaks the register-time looking up
-;;              ;; of the path to the nested server, which isn't on PATH if it's auto-installed.
-;;              (or (executable-find "intelephense") (lsp-package-path 'intelephense))
-;;              "--stdio")))
-
-;;
 ;; Irony-mode (deprecated)
 ;;   DEPRECATED - going to drop if ccls + lsp keeps working well
 ;;
