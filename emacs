@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/rustic")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lua-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/htmlize")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
@@ -327,6 +326,18 @@
 (elpaca (rust-mode :host github :repo "rust-lang/rust-mode"
         :ref "9915b3a585a7a75e9126df9e0e9d1df8057ae3cf" :wait t))
 
+;;
+;; Rust mode
+;;
+(elpaca (rustic :host github :repo "brotzeit/rustic" :protocol ssh
+        :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b" :wait t)
+  (require 'rustic)
+
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
+  (setq rustic-indent-offset 2)
+  (setq rust-indent-offset 2)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -363,16 +374,6 @@
 
 
 
-
-;;
-;; Rust mode
-;;
-
-(require 'rustic)
-
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
-(setq rustic-indent-offset 2)
-(setq rust-indent-offset 2)
 
 
 ;;
