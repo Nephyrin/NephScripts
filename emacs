@@ -157,6 +157,13 @@
 
 ;; Clones/builds live outside the repo checkout
 (setq elpaca-directory (expand-file-name "elpaca-store/" user-emacs-directory))
+;; elpaca's async build helpers assume its own source lives at
+;; <elpaca-sources-directory>/elpaca/ (installer layout); with the pinned
+;; submodule elsewhere, give it a compat symlink.
+(let ((link (expand-file-name "sources/elpaca" elpaca-directory)))
+  (unless (file-exists-p link)
+    (make-directory (file-name-directory link) t)
+    (make-symbolic-link (expand-file-name "elpaca/" user-emacs-directory) link)))
 ;; Fail closed: recipes come ONLY from the (elpaca ...) declarations in this
 ;; file -- no MELPA/ELPA menus, no network beyond the pinned :ref clones.
 ;; Must be set before the first declaration is evaluated.
