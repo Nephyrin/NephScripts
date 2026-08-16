@@ -1,12 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 ;;
-;; Evil
-;;
-
-;(require 'neph-evil-autoload)
-;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
-
-;;
 ;; Indent bars
 ;;
 (require 'indent-bars)

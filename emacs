@@ -362,6 +362,14 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 
+;;
+;; Evil
+;;
+
+;(require 'neph-evil-autoload)
+;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
