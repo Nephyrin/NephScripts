@@ -18,7 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
-(neph-add-to-load-path 'load-path "~/neph/emacs.d/skewer-mode")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-websocket")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-ipython-notebook/lisp")
 ;(neph-add-to-load-path 'load-path "~/.emacs.d/ecb")
@@ -372,6 +371,13 @@
 ;;
 (elpaca (simple-httpd :host github :repo "skeeto/emacs-web-server"
         :ref "08535d0fad6a32fdc03d725ec74e10a754bb9c7a" :wait t))
+
+;;
+;; skewer-mode
+;;
+(elpaca (skewer-mode :host github :repo "skeeto/skewer-mode"
+        :files (:defaults "skewer.js" "example.html")
+        :ref "a381049acc4fa2087615b4b3b26c0865841386bd" :wait t))
 
 ;; ---- end elpacified run ----
 

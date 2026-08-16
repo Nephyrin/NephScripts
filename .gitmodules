@@ -181,9 +181,6 @@
 [submodule "emacs.d/auto-complete"]
 	path = emacs.d/auto-complete
 	url = https://github.com/auto-complete/auto-complete
-[submodule "emacs.d/skewer-mode"]
-	path = emacs.d/skewer-mode
-	url = https://github.com/skeeto/skewer-mode
 [submodule "emacs.d/emacs-gdb"]
 	path = emacs.d/emacs-gdb
 	url = https://github.com/weirdNox/emacs-gdb
