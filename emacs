@@ -908,120 +908,6 @@
 
 
 ;;
-;; Mode line
-;;
-
-(require 'neph-modeline-util)
-(add-hook 'find-file-hook 'neph-cache-projectile-info)
-
-(setq neph-modeline-path
-      '(:eval (let* ((rawname (buffer-file-name))
-                     (bufname (if rawname (propertize rawname 'face 'neph-modeline-path) nil))
-                     ;; Paths to replace. Of the form ((search replace) ...)
-                     (replacements (list (list (getenv "HOME") "~"))))
-                ;; Also replace projectile root with project name when available
-                (when (and (featurep 'projectile) (bound-and-true-p neph-cached-projectile-project-root))
-                  (cl-pushnew (list neph-cached-projectile-project-root
-                                    (concat neph-cached-projectile-project-name "/"))
-                              replacements))
-                (if bufname
-                    (progn
-                      ;; Trim filename from path
-                      (setq bufname (replace-regexp-in-string "/[^/]*$" "/" bufname))
-                      ;; Apply neph-modeline-shortpaths replacements
-                      (while replacements
-                        (let* ((search (car (car replacements)))
-                               (replace (car (cdr (car replacements))))
-                               (splitname (split-string bufname (concat "^" (regexp-quote search))))
-                               (remainder (car (cdr splitname))))
-                          (if remainder
-                              (setq bufname
-                                    (concat
-                                     ;; This blows away the default propertize, they're not additive.
-                                     (propertize replace 'face 'neph-modeline-path-replacement)
-                                     (propertize remainder 'face 'neph-modeline-path)))))
-                        (setq replacements (cdr replacements)))
-                      ;; Return
-                      bufname)
-                  ""))))
-
-(setq neph-modeline-bufstat
-      '(:eval (cond (buffer-read-only
-                     (propertize " RO " 'face 'neph-modeline-stat-readonly))
-                    ((buffer-modified-p)
-                     (propertize " ** " 'face 'neph-modeline-stat-modified))
-                    (t (propertize " -- " 'face 'neph-modeline-stat-clean)))))
-
-(setq-default mode-line-format
-              '(:eval
-                (list
-                 ;; Bonus hacky alignment, such that if the buffer is too narrow
-                 ;; to show the modeline below hud, the height of the modeline stays the same
-                 (propertize "\u200d" 'display '(list (raise -0.30) (height 1.5)))
-                 neph-modeline-bufstat
-                 ;; Position
-                 "%[%l:%c"
-                 ;; End brace for position
-                 "%] "
-                 ;; path
-                 neph-modeline-path
-                 ;; buffer name
-                 `(:propertize "%b" face ,(if (neph-modeline-active)
-                                              'neph-modeline-id
-                                            'neph-modeline-id-inactive))
-                 ; Mode
-                 " :: "
-                 '(:propertize mode-name face neph-modeline-mode)
-                 ;;""
-                 ; misc
-                 '(:propertize mode-line-process face neph-modeline-misc)
-                 '(global-mode-string (" " (:propertize global-mode-string face neph-modeline-misc)))
-                 '(:propertize minor-mode-alist face neph-modeline-misc)
-                 (when vc-mode (propertize (concat " /" vc-mode)
-                                         'face 'neph-modeline-misc))
-                 ;; righthand side
-
-                 ;; For disabled rtags
-                 ;; (let ((rtags-status (if (featurep 'rtags)
-                 ;;                    (propertize (rtags-modeline) 'face 'neph-modeline-which-func)
-                 ;;                  "")))
-                 (list
-                  ;; Pad to right side
-                  (neph-fill-to 9) ;; 9 if enabling hud
-
-                  ;; Disabled rtags
-                  ;; (neph-fill-to (+ 9 (string-width rtags-status))) ;; Instead of fill-to above
-                  ;; rtags-status
-
-                  ;; Percentage and modeline-hud
-                  "%p "
-                  (neph-modeline-hud 1.5 10)
-                  ))
-                ))
-
-;; Force modeline updates when rtags status changes
-;;(when (featurep 'rtags)
-;;  (add-hook 'rtags-diagnostics-hook (lambda ()
-;;                                      (force-mode-line-update)
-;;                                      (message "RTAGS DIAGNOSTICS"))))
-
-(setq rtags-current-container-hook 'neph-rtags-current-container-hook)
-
-(setq-default header-line-format
-              '(:eval (let ((which-func (and which-function-mode (fboundp 'which-function) (which-function)))
-                            (valid-neph-sticky-header (and neph-sticky-header-valid-range
-                                                           (>= (point) (car neph-sticky-header-valid-range))
-                                                           (<= (point) (cdr neph-sticky-header-valid-range)))))
-                        (list
-                         "  "
-                         (when (and which-func
-                                    (not (string= "" which-func))
-                                    (or (not valid-neph-sticky-header)
-                                        (not (string-match-p (regexp-quote which-func) neph-sticky-header))))
-                           (propertize (concat which-func " ") 'face 'neph-modeline-which-func))
-                         (when valid-neph-sticky-header neph-sticky-header)))))
-
-;;
 ;; God mode
 (autoload 'god-mode "god-mode" "god-mode" t)
 (global-set-key (kbd "C-z C-z") 'god-local-mode)
@@ -1811,6 +1697,120 @@
       (setq initial-buffer-choice 'remember-notes)
       (setq remember-notes-buffer-name "#Notes")))
 
+
+;;
+;; Mode line
+;;
+
+(require 'neph-modeline-util)
+(add-hook 'find-file-hook 'neph-cache-projectile-info)
+
+(setq neph-modeline-path
+      '(:eval (let* ((rawname (buffer-file-name))
+                     (bufname (if rawname (propertize rawname 'face 'neph-modeline-path) nil))
+                     ;; Paths to replace. Of the form ((search replace) ...)
+                     (replacements (list (list (getenv "HOME") "~"))))
+                ;; Also replace projectile root with project name when available
+                (when (and (featurep 'projectile) (bound-and-true-p neph-cached-projectile-project-root))
+                  (cl-pushnew (list neph-cached-projectile-project-root
+                                    (concat neph-cached-projectile-project-name "/"))
+                              replacements))
+                (if bufname
+                    (progn
+                      ;; Trim filename from path
+                      (setq bufname (replace-regexp-in-string "/[^/]*$" "/" bufname))
+                      ;; Apply neph-modeline-shortpaths replacements
+                      (while replacements
+                        (let* ((search (car (car replacements)))
+                               (replace (car (cdr (car replacements))))
+                               (splitname (split-string bufname (concat "^" (regexp-quote search))))
+                               (remainder (car (cdr splitname))))
+                          (if remainder
+                              (setq bufname
+                                    (concat
+                                     ;; This blows away the default propertize, they're not additive.
+                                     (propertize replace 'face 'neph-modeline-path-replacement)
+                                     (propertize remainder 'face 'neph-modeline-path)))))
+                        (setq replacements (cdr replacements)))
+                      ;; Return
+                      bufname)
+                  ""))))
+
+(setq neph-modeline-bufstat
+      '(:eval (cond (buffer-read-only
+                     (propertize " RO " 'face 'neph-modeline-stat-readonly))
+                    ((buffer-modified-p)
+                     (propertize " ** " 'face 'neph-modeline-stat-modified))
+                    (t (propertize " -- " 'face 'neph-modeline-stat-clean)))))
+
+(setq-default mode-line-format
+              '(:eval
+                (list
+                 ;; Bonus hacky alignment, such that if the buffer is too narrow
+                 ;; to show the modeline below hud, the height of the modeline stays the same
+                 (propertize "\u200d" 'display '(list (raise -0.30) (height 1.5)))
+                 neph-modeline-bufstat
+                 ;; Position
+                 "%[%l:%c"
+                 ;; End brace for position
+                 "%] "
+                 ;; path
+                 neph-modeline-path
+                 ;; buffer name
+                 `(:propertize "%b" face ,(if (neph-modeline-active)
+                                              'neph-modeline-id
+                                            'neph-modeline-id-inactive))
+                 ; Mode
+                 " :: "
+                 '(:propertize mode-name face neph-modeline-mode)
+                 ;;""
+                 ; misc
+                 '(:propertize mode-line-process face neph-modeline-misc)
+                 '(global-mode-string (" " (:propertize global-mode-string face neph-modeline-misc)))
+                 '(:propertize minor-mode-alist face neph-modeline-misc)
+                 (when vc-mode (propertize (concat " /" vc-mode)
+                                         'face 'neph-modeline-misc))
+                 ;; righthand side
+
+                 ;; For disabled rtags
+                 ;; (let ((rtags-status (if (featurep 'rtags)
+                 ;;                    (propertize (rtags-modeline) 'face 'neph-modeline-which-func)
+                 ;;                  "")))
+                 (list
+                  ;; Pad to right side
+                  (neph-fill-to 9) ;; 9 if enabling hud
+
+                  ;; Disabled rtags
+                  ;; (neph-fill-to (+ 9 (string-width rtags-status))) ;; Instead of fill-to above
+                  ;; rtags-status
+
+                  ;; Percentage and modeline-hud
+                  "%p "
+                  (neph-modeline-hud 1.5 10)
+                  ))
+                ))
+
+;; Force modeline updates when rtags status changes
+;;(when (featurep 'rtags)
+;;  (add-hook 'rtags-diagnostics-hook (lambda ()
+;;                                      (force-mode-line-update)
+;;                                      (message "RTAGS DIAGNOSTICS"))))
+
+(setq rtags-current-container-hook 'neph-rtags-current-container-hook)
+
+(setq-default header-line-format
+              '(:eval (let ((which-func (and which-function-mode (fboundp 'which-function) (which-function)))
+                            (valid-neph-sticky-header (and neph-sticky-header-valid-range
+                                                           (>= (point) (car neph-sticky-header-valid-range))
+                                                           (<= (point) (cdr neph-sticky-header-valid-range)))))
+                        (list
+                         "  "
+                         (when (and which-func
+                                    (not (string= "" which-func))
+                                    (or (not valid-neph-sticky-header)
+                                        (not (string-match-p (regexp-quote which-func) neph-sticky-header))))
+                           (propertize (concat which-func " ") 'face 'neph-modeline-which-func))
+                         (when valid-neph-sticky-header neph-sticky-header)))))
 
 ;;
 ;; ; #120F14
