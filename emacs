@@ -19,7 +19,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
-(neph-add-to-load-path 'load-path "~/.emacs.d/fzf")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-swoop")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-ag")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-rg")
@@ -483,6 +482,26 @@
   (setq helm-grep-ag-pipe-cmd-switches '())
   )
 
+;;
+;; FZF
+;;
+
+;; FIXME Ignore stuff like .ccls-cache by customizing process-environment with defadvice:
+;;   (let ((process-environment
+;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
+;;               process-environment))
+(elpaca (fzf :host github :repo "bling/fzf.el"
+        :ref "3a55b983921c620fb5a2cc811f42aa4daaad8266" :wait t)
+  (setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
+  (setenv "FZF_DEFAULT_OPTS" nil)
+  (require 'fzf)
+  (global-set-key (kbd "C-z C-S-f") 'fzf)
+  (global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
+  (setq fzf/args "--no-hscroll --print-query -x --no-unicode")
+
+  (setq fzf/window-height 50)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -604,24 +623,6 @@
 
 ;; Use ncdu to look at not-ignored files in a directory in this list:
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
-
-;;
-;; FZF
-;;
-
-;; FIXME Ignore stuff like .ccls-cache by customizing process-environment with defadvice:
-;;   (let ((process-environment
-;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
-;;               process-environment))
-
-(setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
-(setenv "FZF_DEFAULT_OPTS" nil)
-(require 'fzf)
-(global-set-key (kbd "C-z C-S-f") 'fzf)
-(global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
-(setq fzf/args "--no-hscroll --print-query -x --no-unicode")
-
-(setq fzf/window-height 50)
 
 ;;
 ;; Helm Swoop
