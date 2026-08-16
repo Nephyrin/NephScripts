@@ -3,29 +3,6 @@
 ;; Global libraries macros in here (and also )
 (require 'ht)
 
-(setq inhibit-startup-message t)
-
-(setq-default indent-tabs-mode nil)
-(setq js-indent-level 2)
-(setq tab-width 2)
-
-(global-auto-revert-mode t)
-
-(setq backup-directory-alist
-      `((".*" . , "~/.emacscache/autosave")))
-(setq auto-save-file-name-transforms
-      `((".*" , "~/.emacscache/autosave" t)))
-(setq backup-directory-alist `(("." . "~/.emacscache/backup")))
-(setq delete-old-versions t
-  kept-new-versions 6
-  kept-old-versions 2
-  version-control t)
-
-(setq vc-follow-symlinks t)
-
-(require 'uniquify)
-(setq uniquify-buffer-name-style (quote post-forward))
-
 ; (global-ede-mode t)
 
 ; Hide toolbar, hide menu in console mode
