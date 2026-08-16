@@ -1679,6 +1679,16 @@
 (with-eval-after-load "sql"
   (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
 
+;; Quick register movement.
+;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
+(global-set-key (kbd "C-z SPC") 'neph-point-to-register-quick)
+(global-set-key (kbd "C-z C-SPC") 'neph-jump-to-register-quick)
+
+(global-set-key (kbd "C-M-S-A") 'mark-current-line)
+
+(global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
+(global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

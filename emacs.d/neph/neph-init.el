@@ -9,38 +9,6 @@
 ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
-;; Quick register movement.
-;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
-(global-set-key (kbd "C-z SPC") (lambda (&optional arg) (interactive "P")
-                                  (point-to-register (or arg 7))
-                                  (message "Set register %d" (or arg 7))))
-(global-set-key (kbd "C-z C-SPC") (lambda (&optional arg) (interactive "P")
-                                    (jump-to-register (or arg 7))
-                                    (message "Jump to register %d" (or arg 7))))
-
-(defun mark-current-line (&optional arg)
-  "Mark the current line without moving the cursor"
-  (interactive)
-  (end-of-line)
-  (set-mark (line-beginning-position)))
-
-(global-set-key (kbd "C-M-S-A") 'mark-current-line)
-
-(defun vsplit-last-buffer ()
-  (interactive)
-  (split-window-vertically)
-  (other-window 1 nil)
-  (switch-to-next-buffer))
-
-(defun hsplit-last-buffer ()
-  (interactive)
-  (split-window-horizontally)
-  (other-window 1 nil)
-  (switch-to-next-buffer))
-
-(global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
-(global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
-
 (defun touch-current-file ()
      "updates mtime on the file for the current buffer"
      (interactive)

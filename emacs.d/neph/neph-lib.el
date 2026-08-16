@@ -1954,4 +1954,36 @@ beginning of it and the point to the end of it if so"
       (sql-send-region (overlay-start mouse-secondary-overlay)
                        (overlay-end mouse-secondary-overlay)))))
 
+;; Was an inline lambda on the C-z SPC global-set-key
+(defun neph-point-to-register-quick (&optional arg)
+  "Store point in register ARG, defaulting to register 7."
+  (interactive "P")
+  (point-to-register (or arg 7))
+  (message "Set register %d" (or arg 7)))
+
+;; Was an inline lambda on the C-z C-SPC global-set-key
+(defun neph-jump-to-register-quick (&optional arg)
+  "Jump to the point stored in register ARG, defaulting to register 7."
+  (interactive "P")
+  (jump-to-register (or arg 7))
+  (message "Jump to register %d" (or arg 7)))
+
+(defun mark-current-line (&optional arg)
+  "Mark the current line without moving the cursor"
+  (interactive)
+  (end-of-line)
+  (set-mark (line-beginning-position)))
+
+(defun vsplit-last-buffer ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(defun hsplit-last-buffer ()
+  (interactive)
+  (split-window-horizontally)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
 (provide 'neph-lib)
