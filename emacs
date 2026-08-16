@@ -649,6 +649,41 @@
 (global-set-key (kbd "C-z M-s") 'helm-swoop)
 (global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
 
+;;
+;; Helm AG and Helm RG and RG they're all different
+;;
+
+(require 'helm-ag)
+
+(setq helm-ag-insert-at-point t)
+;; (setq helm-ag-always-set-extra-option t)
+
+(define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
+(add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
+(add-to-list 'helm-sources-using-default-as-input 'helm-ag-source)
+;; Helm's auto-affinity thing seems to massively slow it down when the system is
+;; under heavy load, even if that load is in low priority compilation cgroups.
+;;
+;; A common query with all files in cache goes from 20s -> 2s for me with this,
+;; similar to running the query on an idle system. It sounds like this affinity
+;; thing is trying to work around poor OS-level behavior to begin with, but with
+;; it disabled the Right Thing™ seems to happen on my systems.
+(setq helm-ag-base-command (concat helm-ag-base-command " --noaffinity"))
+
+(global-set-key (kbd "C-M-z C-M-n") 'neph-helm-ag-next)
+(global-set-key (kbd "C-M-z C-M-p") 'neph-helm-ag-prev)
+(global-set-key (kbd "C-M-z C-M-g") 'neph-helm-ag-update)
+
+
+;; RG version (needs helm-projectile-ag fix)
+;(setq helm-ag-base-command "rg --vimgrep --no-heading")
+;; Older fix:
+;;(setq helm-ag-base-command "rg --color=never --with-filename --no-heading")
+;;(defun helm-ag--construct-ignore-option (pattern)
+;;  (concat "-g !" pattern))
+
+;; Most keybinds in projectile below
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

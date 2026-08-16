@@ -365,4 +365,55 @@ explicit input."
   (interactive)
   (helm-find-1 (read-directory-name "Run find in directory: " nil "" t)))
 
+;;
+;; Helm AG
+;;
+
+;; NOTE: neph-lib is byte-compiled before helm/cl are loaded, so make the macros
+;; these functions use (with-helm-alive-p, flet) visible to the compiler; they were
+;; in scope in neph-init.el, which requires both at the top of the file.
+(eval-when-compile
+  (require 'cl)
+  (require 'helm))
+
+(defun helm-ff-helm-do-ag ()
+  (interactive)
+  (with-helm-alive-p
+    (helm-exit-and-execute-action '(lambda (basedir)
+                                     (let ((parent (file-name-directory (directory-file-name basedir)))
+                                           (default-directory nil))
+                                       (helm-do-ag nil (list parent)))))))
+;; FIXME not needed?
+;; (put 'helm-ff-helm-do-ag 'helm-only nil)
+
+;; Keys to walk a visible helm-ag buffer
+(defun neph-helm-ag-next (arg)
+  (interactive "P")
+  (let* ((direction (if arg -1 1))
+         (agbuf (or (get-buffer "*helm ag results*") (get-buffer "*hgrep*")))
+         (agwin (get-buffer-window agbuf)))
+    (flet ((notdone () (if (and (looking-at "$") (looking-back "^"))
+                           (progn (message "End of results") nil)
+                         t))
+           (move () (next-logical-line direction) (beginning-of-line)))
+      (when agbuf
+        (if agwin
+            (progn (select-window agwin)
+                   (move)
+                   (when (notdone)
+                     (helm-ag-mode-jump-other-window)))
+          (switch-to-buffer agbuf)
+          (move)
+          (when (notdone)
+            (helm-ag-mode-jump)))))))
+(defun neph-helm-ag-prev (arg)
+  (interactive "P")
+  (neph-helm-ag-next (if arg nil 1)))
+(defun neph-helm-ag-update ()
+  (interactive)
+  (let ((agbuf (get-buffer "*helm ag results*")))
+    (when agbuf
+      (with-current-buffer agbuf
+        (helm-ag--update-save-results)))))
+
 (provide 'neph-lib)

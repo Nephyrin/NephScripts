@@ -1,10 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;;
-;; Helm AG and Helm RG and RG they're all different
-;;
-
-(require 'helm-ag)
 (require 'helm-rg)
 (require 'rg)
 
@@ -45,74 +40,6 @@
 
 ;; Defaults on
 (add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
-
-(setq helm-ag-insert-at-point t)
-;; (setq helm-ag-always-set-extra-option t)
-
-(defun helm-ff-helm-do-ag ()
-  (interactive)
-  (with-helm-alive-p
-    (helm-exit-and-execute-action '(lambda (basedir)
-                                     (let ((parent (file-name-directory (directory-file-name basedir)))
-                                           (default-directory nil))
-                                       (helm-do-ag nil (list parent)))))))
-;; FIXME not needed?
-;; (put 'helm-ff-helm-do-ag 'helm-only nil)
-
-(define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
-(add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
-(add-to-list 'helm-sources-using-default-as-input 'helm-ag-source)
-;; Helm's auto-affinity thing seems to massively slow it down when the system is
-;; under heavy load, even if that load is in low priority compilation cgroups.
-;;
-;; A common query with all files in cache goes from 20s -> 2s for me with this,
-;; similar to running the query on an idle system. It sounds like this affinity
-;; thing is trying to work around poor OS-level behavior to begin with, but with
-;; it disabled the Right Thing™ seems to happen on my systems.
-(setq helm-ag-base-command (concat helm-ag-base-command " --noaffinity"))
-
-;; Keys to walk a visible helm-ag buffer
-(defun neph-helm-ag-next (arg)
-  (interactive "P")
-  (let* ((direction (if arg -1 1))
-         (agbuf (or (get-buffer "*helm ag results*") (get-buffer "*hgrep*")))
-         (agwin (get-buffer-window agbuf)))
-    (flet ((notdone () (if (and (looking-at "$") (looking-back "^"))
-                           (progn (message "End of results") nil)
-                         t))
-           (move () (next-logical-line direction) (beginning-of-line)))
-      (when agbuf
-        (if agwin
-            (progn (select-window agwin)
-                   (move)
-                   (when (notdone)
-                     (helm-ag-mode-jump-other-window)))
-          (switch-to-buffer agbuf)
-          (move)
-          (when (notdone)
-            (helm-ag-mode-jump)))))))
-(defun neph-helm-ag-prev (arg)
-  (interactive "P")
-  (neph-helm-ag-next (if arg nil 1)))
-(defun neph-helm-ag-update ()
-  (interactive)
-  (let ((agbuf (get-buffer "*helm ag results*")))
-    (when agbuf
-      (with-current-buffer agbuf
-        (helm-ag--update-save-results)))))
-(global-set-key (kbd "C-M-z C-M-n") 'neph-helm-ag-next)
-(global-set-key (kbd "C-M-z C-M-p") 'neph-helm-ag-prev)
-(global-set-key (kbd "C-M-z C-M-g") 'neph-helm-ag-update)
-
-
-;; RG version (needs helm-projectile-ag fix)
-;(setq helm-ag-base-command "rg --vimgrep --no-heading")
-;; Older fix:
-;;(setq helm-ag-base-command "rg --color=never --with-filename --no-heading")
-;;(defun helm-ag--construct-ignore-option (pattern)
-;;  (concat "-g !" pattern))
-
-;; Most keybinds in projectile below
 
 ;;
 ;; multiple-cursors
