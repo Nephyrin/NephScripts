@@ -1,34 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; phi-search
-;;
-
-(autoload 'phi-search "phi-search" "Phi Search." t)
-
-(global-set-key (kbd "C-S-s") 'phi-search)
-(global-set-key (kbd "C-S-r") 'phi-search-backward)
-
-;; See also
-;;phi-search-additional-keybinds
-;;phi-replace-additional-keybinds
-;; -- NOT keymaps tho, see doc
-(defun kill-phisearch-match ()
-    "Kill the current isearch match string and continue searching."
-    (interactive)
-    (when phi-search--selection
-      ;; In phisearch, we're in the minibuffer by default, and there are N
-      ;; search-overlays of which we are centered on index
-      ;; phi-search--selection, if any.
-      (phi-search--with-target-buffer
-       (let ((ov (nth phi-search--selection phi-search--overlays)))
-         (kill-region (overlay-end ov) (overlay-start ov)))))
-    (phi-search-complete))
-
-(with-eval-after-load "phisearch"
-  (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
-
-;;
 ;; Swiper
 ;;
 

@@ -725,6 +725,17 @@
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 
+;;
+;; phi-search
+(autoload 'phi-search "phi-search" "Phi Search." t)
+
+(global-set-key (kbd "C-S-s") 'phi-search)
+(global-set-key (kbd "C-S-r") 'phi-search-backward)
+
+(with-eval-after-load "phisearch"
+  (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

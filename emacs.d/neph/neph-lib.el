@@ -444,4 +444,25 @@ explicit input."
          helm-rg-display-buffer-normal-method))
     (helm-rg--visit-current-file-for-bounce)))
 
+;;
+;; phi-search
+;;
+
+;; See also
+;;phi-search-additional-keybinds
+;;phi-replace-additional-keybinds
+;; -- NOT keymaps tho, see doc
+(defun kill-phisearch-match ()
+    "Kill the current isearch match string and continue searching."
+    (interactive)
+    (when phi-search--selection
+      ;; In phisearch, we're in the minibuffer by default, and there are N
+      ;; search-overlays of which we are centered on index
+      ;; phi-search--selection, if any.
+      (phi-search--with-target-buffer
+       (let ((ov (nth phi-search--selection phi-search--overlays)))
+         (kill-region (overlay-end ov) (overlay-start ov)))))
+    (phi-search-complete))
+
+
 (provide 'neph-lib)
