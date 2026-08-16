@@ -1,26 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Company mode
-;;
-;;(require 'neph-company-autoload)
-(require 'company)
-
-(defun neph-company-setup ()
-  (interactive)
-  (company-mode t)
-  (company-quickhelp-mode t)
-  ;;(semantic-mode t)
-  (local-set-key (kbd "<C-tab>") 'company-complete))
-
-;; Turn on in these modes
-(add-hook 'c-mode-common-hook   'neph-company-setup)
-(add-hook 'python-mode-hook     'neph-company-setup)
-(add-hook 'python-ts-mode-hook  'neph-company-setup)
-(add-hook 'lisp-mode-hook       'neph-company-setup)
-(add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
-
-;;
 ;; Copilot
 ;;
 (require 'copilot)
@@ -593,14 +573,6 @@ If FORCE is not specified, toggle the current state."
 ;;;;(require 'function-args)
 ;;(fa-config-default)
 ;;(setq moo-select-method 'helm)
-
-(defun company-mode-moz ()
-  (setq company-clang-arguments (split-string
-                                 (shell-command-to-string
-                                  (concat "~/.emacs.d/moz_objdir.sh "
-                                          (buffer-file-name)))))
-  (company-mode t)
-  (local-set-key (kbd "<C-tab>") 'company-complete))
 
 ;; Keys for C++ completion and such
 ;;(global-set-key (kbd "C-z SPC") 'helm-semantic)

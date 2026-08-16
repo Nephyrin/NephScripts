@@ -744,6 +744,19 @@
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
 
+;;
+;; Company mode
+;;
+;;(require 'neph-company-autoload)
+(require 'company)
+
+;; Turn on in these modes
+(add-hook 'c-mode-common-hook   'neph-company-setup)
+(add-hook 'python-mode-hook     'neph-company-setup)
+(add-hook 'python-ts-mode-hook  'neph-company-setup)
+(add-hook 'lisp-mode-hook       'neph-company-setup)
+(add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

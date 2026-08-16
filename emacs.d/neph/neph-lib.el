@@ -484,4 +484,23 @@ explicit input."
     (swiper isearch-string))
 
 
+;;
+;; Company mode
+;;
+
+(defun neph-company-setup ()
+  (interactive)
+  (company-mode t)
+  (company-quickhelp-mode t)
+  ;;(semantic-mode t)
+  (local-set-key (kbd "<C-tab>") 'company-complete))
+
+(defun company-mode-moz ()
+  (setq company-clang-arguments (split-string
+                                 (shell-command-to-string
+                                  (concat "~/.emacs.d/moz_objdir.sh "
+                                          (buffer-file-name)))))
+  (company-mode t)
+  (local-set-key (kbd "<C-tab>") 'company-complete))
+
 (provide 'neph-lib)
