@@ -874,4 +874,136 @@ If FORCE is not specified, toggle the current state."
   ;; Provide the irony backend but make it always return nuh
   (defun irony-cdb-rtags-neph (command &rest args) nil))
 
+(when (featurep 'rtags)
+  ;; FIXME need to also wrap rtags-references-tree, then rtags-goto-location needs to deactivate it so single-item matches don't asplode.
+  ;;(defadvice rtags-references-tree (around neph-rtags-references-tree activate)
+  ;;  (let* ((neph-in-references-tree t)
+  ;;         (neph-original-split-height-threshold split-height-threshold)
+  ;;         (split-height-threshold 70))
+  ;;    ;;(message (concat "rtags-references-tree with height " (number-to-string split-height-threshold)))
+  ;;    ad-do-it))
+  ;;(defadvice rtags-goto-location (around neph-rtags-goto-location activate)
+  ;;  (let ((split-height-threshold (if (boundp 'neph-original-split-height-threshold)
+  ;;                                    neph-original-split-height-threshold
+  ;;                                  split-height-threshold)))
+  ;;    ;;(message (concat "rtags-goto-location with height " (number-to-string split-height-threshold)))
+  ;;    (if (boundp 'neph-in-references-tree)
+  ;;        (rtags-select-and-remove-rtags-buffer))
+  ;;    ad-do-it))
+
+  (global-set-key (kbd "C-z C-.") 'rtags-find-symbol-at-point)
+  (global-set-key (kbd "C-z M-r") 'rtags-reparse-file)
+  (global-set-key (kbd "C-z C-,") 'rtags-find-references-at-point)
+  (global-set-key (kbd "C-z C-<") 'rtags-references-tree)
+  (global-set-key (kbd "C-z C->") 'rtags-find-virtuals-at-point)
+  (global-set-key (kbd "C-z .") 'rtags-find-symbol)
+  (global-set-key (kbd "C-z ,") 'rtags-find-references)
+  (global-set-key (kbd "C-z C-/") (lambda () (interactive) (delete-windows-on rtags-buffer-name t)))
+  (global-set-key (kbd "C-z C-n") 'rtags-next-match)
+  (global-set-key (kbd "C-z C-p") 'rtags-previous-match)
+  (global-set-key (kbd "C-z <tab>") 'rtags-imenu)
+  (global-set-key (kbd "C-z D") 'rtags-diagnostics)
+  (global-set-key (kbd "C-z i") 'rtags-fixit)
+  (global-set-key (kbd "C-z I") 'rtags-fix-fixit-at-point)
+  (global-set-key (kbd "C-z DEL") 'rtags-location-stack-back)
+  (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
+  (global-set-key (kbd "C-z C-S-R") 'rtags-rename-symbol)
+  (global-set-key (kbd "C-z C-l") 'neph-rtags-expand-auto)
+
+  ;; Rtags janky replace-auto-with-symbol.  Needs work -- only works if you're in the symbol name
+  ;; itself, and the declaraction is of the style (auto ... pFoo) and not something fancier like a
+  ;; function declaration (needs more support from rtags)
+  (defun neph-rtags-expand-auto ()
+    "Expands current auto symbol with its definition"
+    (interactive)
+      (save-excursion
+        (let ((symb (rtags-current-symbol))
+              (tok (rtags-current-token))
+              (word (current-word)))
+          ;; If we have a symbol, and it's not the same as the token, and we see [auto ...] before
+          ;; us and [... =] after.  This is because we only support the pretty basic case.
+          ;;
+          ;; Checking tok!=symb is because sometimes rtags will tell us the current symbol is just
+          ;; the token name when it hasn't parsed enough to have all the type information.
+          (if (and symb (not (string= symb "")) (not (string= symb tok))
+                   (looking-back "auto [^=]*") (looking-at ".*="))
+              (progn
+                (re-search-backward "[\t\s]auto[\t\s]")
+                (forward-char 1)
+                (set-mark (point))
+                (re-search-forward word)
+                (delete-region (mark) (point))
+                (insert symb))
+            ;; else
+            (message "Couldn't find auto symbol at point")))))
+
+  (defun rtags-test-menu ()
+    "Test help text"
+    (rtags-location-stack-push)
+    (let* ((helm-source-grep
+            (helm-build-async-source
+                (capitalize (helm-grep-command t))
+              :header-name (lambda (name)
+                             "Rtags global menu thing")
+              :candidates-process (lambda ()
+                                    (with-temp-buffer
+                                      (rtags-call-rc ;; "--imenu"
+                                       "--list-symbols"
+                                       init
+                                       "-Y" "--imenu"
+                                       (if rtags-wildcard-symbol-names "--wildcard-symbol-names"))
+                                      (eval (read (buffer-string)))) )
+              :filter-one-by-one 'helm-grep-filter-one-by-one
+              :candidate-number-limit 9999
+              :nohighlight t
+              :mode-line helm-grep-mode-line-string
+              ;; We need to specify keymap here and as :keymap arg [1]
+              ;; to make it available in further resuming.
+              :keymap helm-grep-map
+              :history 'helm-grep-history
+              :action (helm-make-actions
+                       "Find file" 'helm-grep-action
+                       "Find file other frame" 'helm-grep-other-frame
+                       (lambda () (and (locate-library "elscreen")
+                                       "Find file in Elscreen"))
+                       'helm-grep-jump-elscreen
+                       "Save results in grep buffer" 'helm-grep-save-results
+                       "Find file other window" 'helm-grep-other-window)
+              :persistent-action 'helm-grep-persistent-action
+              :persistent-help "Jump to line (`C-u' Record in mark ring)"
+              :requires-pattern 2)))
+      (helm
+       :sources 'helm-source-grep
+       :input (if (region-active-p)
+                  (buffer-substring-no-properties (region-beginning) (region-end))
+                (thing-at-point 'symbol))
+       :buffer (format "*helm %s*" (if use-ack-p
+                                       "ack"
+                                     "grep"))
+       :default-directory (projectile-project-root)
+       :keymap helm-grep-map
+       :history 'helm-grep-history
+       :truncate-lines t)))
+
+  (defun rtags-global-imenu ()
+    (interactive)
+    (rtags-location-stack-push)
+    (let* ((fn (buffer-file-name))
+           (init (read-string "Initial search: "))
+           (alternatives (with-temp-buffer
+                           (message (concat "Using: " init))
+                           (rtags-call-rc :path fn "--imenu"
+                                          "--list-symbols" init
+                                          "-Y"
+                                          (when rtags-wildcard-symbol-names "--wildcard-symbol-names"))
+                           (eval (read (buffer-string)))))
+           (match (car alternatives)))
+      (if (> (length alternatives) 1)
+          (setq match (completing-read "Symbol: " alternatives nil t)))
+      (if match
+          (rtags-goto-location (with-temp-buffer (rtags-call-rc :path fn "-F" match) (buffer-string)))
+        (message "RTags: No symbols"))))
+
+  (global-set-key (kbd "C-z <C-M-tab>") 'rtags-global-imenu))
+
 (provide 'neph-lib)
