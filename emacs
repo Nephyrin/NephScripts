@@ -806,6 +806,12 @@
 ;;
 ;;(add-hook 'python-mode-hook 'neph-ycm-setup)
 
+;;
+;; Yasnippet
+;;
+
+(require 'yasnippet)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

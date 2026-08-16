@@ -1,12 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Yasnippet
-;;
-
-(require 'yasnippet)
-
-;;
 ;; Flycheck
 ;;
 
