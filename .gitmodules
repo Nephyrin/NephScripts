@@ -187,9 +187,6 @@
 [submodule "emacs.d/emacs-request"]
 	path = emacs.d/emacs-request
 	url = https://github.com/tkf/emacs-request
-[submodule "emacs.d/f.el"]
-	path = emacs.d/f.el
-	url = https://github.com/rejeep/f.el
 [submodule "emacs.d/emacs-websocket"]
 	path = emacs.d/emacs-websocket
 	url = https://github.com/ahyatt/emacs-websocket

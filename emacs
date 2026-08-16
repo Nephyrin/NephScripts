@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/f.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/editorconfig")
 (neph-add-to-load-path 'load-path "~/.emacs.d/xterm-color")
 (neph-add-to-load-path 'load-path "~/.emacs.d/eterm-256color")
@@ -228,6 +227,12 @@
 ;;
 (elpaca (s :host github :repo "magnars/s.el"
         :ref "dda84d38fffdaf0c9b12837b504b402af910d01d" :wait t))
+
+;;
+;; f
+;;
+(elpaca (f :host github :repo "rejeep/f.el"
+        :ref "931b6d0667fe03e7bf1c6c282d6d8d7006143c52" :wait t))
 
 ;; ---- end elpacified run ----
 
