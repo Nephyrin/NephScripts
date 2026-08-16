@@ -1067,159 +1067,6 @@
 
 
 ;;
-;; Custom binds
-;;
-
-;; Bound to shift + the window nav keys below
-(global-set-key (kbd "C-z C-S-S") 'neph-transpose-windows-backward)
-;; Note: was shadowed by diff-buffer-with-file prior to elpacification, commented
-;;(global-set-key (kbd "C-z C-S-D") 'transpose-windows)
-
-;; Revert without prompting
-(global-set-key (kbd "C-z R") 'neph-revert-buffer-noconfirm)
-
-; Quick eval-defun
-(global-set-key (kbd "C-z e") 'eval-region)
-(global-set-key (kbd "C-z E") 'eval-defun)
-
-(global-set-key (kbd "C-z C-S-G") 'gdb)
-(global-set-key (kbd "C-z M") 'gdb-many-windows)
-
-;; Delete trailing whitespace
-;; Note: was shadowed by ediff-current-file prior to elpacification, commented
-;;(global-set-key (kbd "C-z C-M-S-D") 'delete-trailing-whitespace)
-
-; helm shortcuts
-(global-set-key (kbd "C-z C-f") 'helm-find-files)
-(global-set-key (kbd "C-z h") 'helm-resume)
-
-;; Back one window
-(global-set-key (kbd "C-x O") 'neph-other-window-backward)
-
-; Scroll window
-(global-set-key (kbd "s-n") 'neph-scroll-up-one)
-(global-set-key (kbd "s-p") 'neph-scroll-down-one)
-(global-set-key (kbd "s-l") 'neph-move-to-window-center-line)
-
-; Fast window nav
-(global-set-key (kbd "C-z C-s") 'neph-other-window-backward)
-(global-set-key (kbd "C-z C-d") 'neph-other-window-forward)
-
-;; Diff current changes
-(global-set-key (kbd "C-z C-S-D") 'diff-buffer-with-file)
-(global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
-
-;; Keybind for enabling debug stuff quickly when I'm mad at something hanging.  Which is always.
-(global-set-key (kbd "C-z C-M-S-Q") 'neph-toggle-debug)
-
-;; Bonus align keys
-
-(global-set-key (kbd "C-z C-M-S-M") 'neph-run-makepkg-g-on-region)
-(global-set-key (kbd "C-z C-M-s") 'neph-align-smss-table)
-(global-set-key (kbd "C-z C-M-S-S") 'neph-markdownify-smss-table-yank)
-(global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
-(global-set-key (kbd "C-z C-a") 'align-regexp)
-(global-set-key (kbd "C-z a") 'neph-align-regexp-u)
-
-(global-set-key (kbd "M-u") 'toggle-case)
-(global-set-key (kbd "C-M-k") 'merge-next-line)
-(global-set-key (kbd "C-S-Y") 'yank-and-indent)
-(global-set-key (kbd "M-Y") 'smart-yank-before-line)
-
-(global-set-key (kbd "C-z C-S-B") 'bookmark-current-line)
-
-(global-set-key [(control shift up)] 'move-line-up)
-;; Prefer to org-mode's default bind
-(eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
-
-(global-set-key [(control shift down)] 'move-line-down)
-;; Prefer to org-mode's default bind
-(eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
-
-(global-set-key (kbd "M-P") 'smart-move-current-region-up)
-(global-set-key (kbd "M-N") 'smart-move-current-region-down)
-
-(global-set-key (kbd "C-S-o") 'open-next-line)
-
-; F3 inserts current filename into minibuffer
-(define-key minibuffer-local-map [f3] 'neph-insert-selected-window-buffer-name)
-
-(global-set-key (kbd "C-z C-e") 'p4-edit-current)
-
-;; Take slash away from electric indent ('electric-slash)
-(eval-after-load 'cc-mode
-  '(define-key c-mode-base-map "/" 'self-insert-command))
-;; (global-set-key (kbd "/") 'self-insert-command)
-
-;; Custom binds for existing commands
-(global-set-key (kbd "C-z C-k") 'copy-to-register)
-(global-set-key (kbd "C-z k") 'insert-register)
-(global-set-key (kbd "C-z C-j") 'point-to-register)
-(global-set-key (kbd "C-z j") 'jump-to-register)
-(global-set-key (kbd "C-z C-w") 'window-configuration-to-register)
-
-(global-set-key (kbd "C-c C-j") 'term-line-mode)
-(global-set-key (kbd "C-c C-k") 'term-char-mode)
-(global-set-key (kbd "C-M-a") 'back-to-indentation)
-(global-set-key (kbd "C-S-k") 'kill-whole-line)
-; Make ret auto-indent, but S-RET bypass
-;(define-key global-map (kbd "RET") 'newline)
-(global-set-key (kbd "<C-return>") 'electric-indent-just-newline)
-;; Merge with previous line
-(global-set-key (kbd "C-M-S-k") 'delete-indentation)
-
-(global-set-key (kbd "C-S-M-j") 'copy-line)
-(global-set-key (kbd "C-S-j") 'duplicate-line)
-
-;; Replaces backwards/forwards sexp.
-(global-set-key (kbd "C-M-f") 'jump-to-char)
-(global-set-key (kbd "C-M-b") 'backward-jump-to-char)
-(global-set-key (kbd "M-G") 'goto-line)
-
-(global-set-key (kbd "C-S-U") 'neph-backward-kill-line)
-(global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
-(global-set-key (kbd "M-@") 'neph-mark-current-word)
-(global-set-key (kbd "M-B") 'backward-to-word)
-(global-set-key (kbd "M-F") 'forward-to-word)
-(global-set-key (kbd "M-D") 'neph-kill-to-word)
-(global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
-
-(with-eval-after-load "sql"
-  (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
-
-;; Quick register movement.
-;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
-(global-set-key (kbd "C-z SPC") 'neph-point-to-register-quick)
-(global-set-key (kbd "C-z C-SPC") 'neph-jump-to-register-quick)
-
-(global-set-key (kbd "C-M-S-A") 'mark-current-line)
-
-(global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
-(global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
-
-(global-set-key (kbd "C-z T") 'touch-current-file)
-
-(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
-
-(global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
-
-(global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
-
-;; Non-hooked version is C-x C-k b
-(global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
-
-;; Disabled (requires semantic)
-;;(defun jump-to-container ()
-;;  (interactive)
-;;  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
-;;         (overlay (and tag (last (semantic-current-tag))))
-;;         (char (and overlay (overlay-start (car overlay)))))
-;;    (when char
-;;      (goto-char char))))
-;;
-;;(global-set-key (kbd "C-z C") 'jump-to-container)
-
-;;
 ;; zap-to-char
 (global-set-key (kbd "M-Z") 'backwards-zap-to-char)
 
@@ -1972,3 +1819,156 @@
 ;; Default install path from package
 (setq org-plantuml-jar-path
       (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+
+;;
+;; Custom binds
+;;
+
+;; Bound to shift + the window nav keys below
+(global-set-key (kbd "C-z C-S-S") 'neph-transpose-windows-backward)
+;; Note: was shadowed by diff-buffer-with-file prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-S-D") 'transpose-windows)
+
+;; Revert without prompting
+(global-set-key (kbd "C-z R") 'neph-revert-buffer-noconfirm)
+
+; Quick eval-defun
+(global-set-key (kbd "C-z e") 'eval-region)
+(global-set-key (kbd "C-z E") 'eval-defun)
+
+(global-set-key (kbd "C-z C-S-G") 'gdb)
+(global-set-key (kbd "C-z M") 'gdb-many-windows)
+
+;; Delete trailing whitespace
+;; Note: was shadowed by ediff-current-file prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-M-S-D") 'delete-trailing-whitespace)
+
+; helm shortcuts
+(global-set-key (kbd "C-z C-f") 'helm-find-files)
+(global-set-key (kbd "C-z h") 'helm-resume)
+
+;; Back one window
+(global-set-key (kbd "C-x O") 'neph-other-window-backward)
+
+; Scroll window
+(global-set-key (kbd "s-n") 'neph-scroll-up-one)
+(global-set-key (kbd "s-p") 'neph-scroll-down-one)
+(global-set-key (kbd "s-l") 'neph-move-to-window-center-line)
+
+; Fast window nav
+(global-set-key (kbd "C-z C-s") 'neph-other-window-backward)
+(global-set-key (kbd "C-z C-d") 'neph-other-window-forward)
+
+;; Diff current changes
+(global-set-key (kbd "C-z C-S-D") 'diff-buffer-with-file)
+(global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
+
+;; Keybind for enabling debug stuff quickly when I'm mad at something hanging.  Which is always.
+(global-set-key (kbd "C-z C-M-S-Q") 'neph-toggle-debug)
+
+;; Bonus align keys
+
+(global-set-key (kbd "C-z C-M-S-M") 'neph-run-makepkg-g-on-region)
+(global-set-key (kbd "C-z C-M-s") 'neph-align-smss-table)
+(global-set-key (kbd "C-z C-M-S-S") 'neph-markdownify-smss-table-yank)
+(global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
+(global-set-key (kbd "C-z C-a") 'align-regexp)
+(global-set-key (kbd "C-z a") 'neph-align-regexp-u)
+
+(global-set-key (kbd "M-u") 'toggle-case)
+(global-set-key (kbd "C-M-k") 'merge-next-line)
+(global-set-key (kbd "C-S-Y") 'yank-and-indent)
+(global-set-key (kbd "M-Y") 'smart-yank-before-line)
+
+(global-set-key (kbd "C-z C-S-B") 'bookmark-current-line)
+
+(global-set-key [(control shift up)] 'move-line-up)
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
+
+(global-set-key [(control shift down)] 'move-line-down)
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
+
+(global-set-key (kbd "M-P") 'smart-move-current-region-up)
+(global-set-key (kbd "M-N") 'smart-move-current-region-down)
+
+(global-set-key (kbd "C-S-o") 'open-next-line)
+
+; F3 inserts current filename into minibuffer
+(define-key minibuffer-local-map [f3] 'neph-insert-selected-window-buffer-name)
+
+(global-set-key (kbd "C-z C-e") 'p4-edit-current)
+
+;; Take slash away from electric indent ('electric-slash)
+(eval-after-load 'cc-mode
+  '(define-key c-mode-base-map "/" 'self-insert-command))
+;; (global-set-key (kbd "/") 'self-insert-command)
+
+;; Custom binds for existing commands
+(global-set-key (kbd "C-z C-k") 'copy-to-register)
+(global-set-key (kbd "C-z k") 'insert-register)
+(global-set-key (kbd "C-z C-j") 'point-to-register)
+(global-set-key (kbd "C-z j") 'jump-to-register)
+(global-set-key (kbd "C-z C-w") 'window-configuration-to-register)
+
+(global-set-key (kbd "C-c C-j") 'term-line-mode)
+(global-set-key (kbd "C-c C-k") 'term-char-mode)
+(global-set-key (kbd "C-M-a") 'back-to-indentation)
+(global-set-key (kbd "C-S-k") 'kill-whole-line)
+; Make ret auto-indent, but S-RET bypass
+;(define-key global-map (kbd "RET") 'newline)
+(global-set-key (kbd "<C-return>") 'electric-indent-just-newline)
+;; Merge with previous line
+(global-set-key (kbd "C-M-S-k") 'delete-indentation)
+
+(global-set-key (kbd "C-S-M-j") 'copy-line)
+(global-set-key (kbd "C-S-j") 'duplicate-line)
+
+;; Replaces backwards/forwards sexp.
+(global-set-key (kbd "C-M-f") 'jump-to-char)
+(global-set-key (kbd "C-M-b") 'backward-jump-to-char)
+(global-set-key (kbd "M-G") 'goto-line)
+
+(global-set-key (kbd "C-S-U") 'neph-backward-kill-line)
+(global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
+(global-set-key (kbd "M-@") 'neph-mark-current-word)
+(global-set-key (kbd "M-B") 'backward-to-word)
+(global-set-key (kbd "M-F") 'forward-to-word)
+(global-set-key (kbd "M-D") 'neph-kill-to-word)
+(global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
+
+(with-eval-after-load "sql"
+  (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
+
+;; Quick register movement.
+;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
+(global-set-key (kbd "C-z SPC") 'neph-point-to-register-quick)
+(global-set-key (kbd "C-z C-SPC") 'neph-jump-to-register-quick)
+
+(global-set-key (kbd "C-M-S-A") 'mark-current-line)
+
+(global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
+(global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
+
+(global-set-key (kbd "C-z T") 'touch-current-file)
+
+(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
+
+(global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
+
+(global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
+
+;; Non-hooked version is C-x C-k b
+(global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
+
+;; Disabled (requires semantic)
+;;(defun jump-to-container ()
+;;  (interactive)
+;;  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
+;;         (overlay (and tag (last (semantic-current-tag))))
+;;         (char (and overlay (overlay-start (car overlay)))))
+;;    (when char
+;;      (goto-char char))))
+;;
+;;(global-set-key (kbd "C-z C") 'jump-to-container)
