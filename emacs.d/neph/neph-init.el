@@ -1,15 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
 ;;
-;; Consult/Vertico
-;;
-
-;; WIP
-;;(require 'consult)
-;;(require 'vertico)
-;;(require 'counsel-projectile)
-
-;;
 ;; Project
 ;;
 

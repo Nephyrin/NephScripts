@@ -501,6 +501,15 @@
 
 (require 'color-identifiers-mode)
 
+;;
+;; Consult/Vertico
+;;
+
+;; WIP
+;;(require 'consult)
+;;(require 'vertico)
+;;(require 'counsel-projectile)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
