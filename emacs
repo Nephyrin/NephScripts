@@ -155,6 +155,13 @@
 ;; ---- Config merged down from neph-init.el (WIP: killing neph-init) ----
 ;;
 
+;;
+;; Flyspell-lazy
+(require 'flyspell-lazy)
+(setq flyspell-lazy-idle-seconds 1)
+(setq flyspell-lazy-window-idle-seconds 1)
+(global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

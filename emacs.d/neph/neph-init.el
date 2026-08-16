@@ -2174,25 +2174,6 @@ If FORCE is not specified, toggle the current state."
     (message "!! js-beautify command not installed/available")))
 
 ;;
-;; Flyspell-lazy
-(require 'flyspell-lazy)
-(setq flyspell-lazy-idle-seconds 1)
-(setq flyspell-lazy-window-idle-seconds 1)
-
-;; With the lazy mode window timer set
-(defun flyspell-lazy-toggle (arg)
-  "Toggle flyspell lazy mode"
-  (interactive "p")
-  (if (and (boundp 'flyspell-mode) flyspell-mode)
-      (progn
-        (flyspell-mode 0)
-        (flyspell-lazy-mode 0))
-    (flyspell-lazy-mode t)
-    (flyspell-mode t)
-    (flyspell-lazy-check-visible)))
-(global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
-
-;;
 ;; Projectile
 ;;
 
