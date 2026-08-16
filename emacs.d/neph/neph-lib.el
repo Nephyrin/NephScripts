@@ -58,4 +58,30 @@
       ;; Otherwise chain to normal inhibit behavior
       (electric-pair-conservative-inhibit c))))
 
+;;
+;; Misc yank/text/font handling helpers
+;;
+
+(defun neph-yank-with-properties ()
+  "Yank text without stripping properties."
+  (interactive)
+  (let ((yank-excluded-properties nil))
+    (yank)))
+
+(defun neph-copy-face-to-font-lock-face (start end)
+  "Copy all 'face' properties with 'font-lock-face' in the region START to END."
+  (interactive "r")
+  (save-excursion
+    (let ((pos start))
+      (while (< pos end)
+        (let ((next (next-single-property-change pos 'face nil end))
+              (current-face (get-text-property pos 'face)))
+          (when current-face
+            ;; Add the new property
+            (put-text-property pos next 'font-lock-face current-face)
+            ;; Remove the old property
+            )
+            ;;(remove-list-of-text-properties pos next '(face)))
+          (setq pos next))))))
+
 (provide 'neph-lib)
