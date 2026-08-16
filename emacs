@@ -16,7 +16,6 @@
   (add-to-list path dir))
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
-(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ht")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/.emacs.d/bui.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/compat.el")
@@ -203,6 +202,12 @@
 ;;
 (elpaca (dash :host github :repo "magnars/dash.el"
         :ref "6db80c711ce947f6c6fa11e5c2257fff2c79d139" :wait t))
+
+;; Global libraries macros in here (and also )
+(elpaca (ht :host github :repo "Wilfred/ht.el"
+        :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6" :wait t)
+  (require 'ht)
+  )
 
 ;; ---- end elpacified run ----
 
@@ -1326,9 +1331,6 @@
   (setq desktop-base-file-name "emacs-server-desktop")
   (setq desktop-base-lock-name "emacs-server-desktop.lock")
   (desktop-save-mode 1))
-
-;; Global libraries macros in here (and also )
-(require 'ht)
 
 
 ;;

@@ -226,9 +226,6 @@
 [submodule "emacs.d/lsp-mode"]
 	path = emacs.d/lsp-mode
 	url = https://github.com/emacs-lsp/lsp-mode
-[submodule "emacs.d/emacs-ht"]
-	path = emacs.d/emacs-ht
-	url = https://github.com/Wilfred/ht.el
 [submodule "emacs.d/emacs-spinner"]
 	path = emacs.d/emacs-spinner
 	url = https://github.com/Malabarba/spinner.el
