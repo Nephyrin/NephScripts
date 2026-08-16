@@ -10,15 +10,6 @@
 ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
 
 ;;
-;; Yaml mode
-;;
-(require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
-(with-eval-after-load "yaml-mode"
-  (add-hook 'yaml-mode-hook 'neph-space-cfg))
-
-;;
 ;; Custom binds
 ;;
 

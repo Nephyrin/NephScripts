@@ -1548,6 +1548,16 @@
 (add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
 (define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
 
+;;
+;; Yaml mode
+;;
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
+(with-eval-after-load "yaml-mode"
+  (add-hook 'yaml-mode-hook 'neph-space-cfg))
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
