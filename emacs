@@ -20,7 +20,6 @@
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
-(neph-add-to-load-path 'load-path "~/.emacs.d/company-quickhelp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
 (neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc-1.0.24")
 (neph-add-to-load-path 'load-path "~/.emacs.d/copilot")
@@ -623,6 +622,12 @@
   (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
     ;; --
   )
+
+;;
+;; company-quickhelp
+;;
+(elpaca (company-quickhelp :host github :repo "expez/company-quickhelp"
+        :ref "9505fb09d064581da142d75c139d48b5cf695bd5" :wait t))
 
 ;; ---- end elpacified run ----
 
