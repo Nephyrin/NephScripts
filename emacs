@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/highlight-symbol")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rust-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rustic")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lua-mode")
@@ -294,6 +293,35 @@
   (add-hook 'python-ts-mode-hook 'indent-bars-mode)
   )
 
+;;
+;; Highlight Symbol
+;;
+(elpaca (highlight-symbol :host github :repo "nschum/highlight-symbol.el"
+        :ref "7a789c779648c55b16e43278e51be5898c121b3a" :wait t)
+  (require 'highlight-symbol)
+
+  ;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
+  ;; See https://github.com/nschum/highlight-symbol.el/issues/26
+  ;(defun highlight-symbol-add-symbol-with-face (symbol face)
+  ;  (save-excursion
+  ;    (goto-char (point-min))
+  ;    (while (re-search-forward symbol nil t)
+  ;      (let ((ov (make-overlay (match-beginning 0)
+  ;                              (match-end 0))))
+  ;        (overlay-put ov 'highlight-symbol t)
+  ;        (overlay-put ov 'face face)))))
+  ;
+  ;(defun highlight-symbol-remove-symbol (_symbol)
+  ;  (dolist (ov (overlays-in (point-min) (point-max)))
+  ;    (when (overlay-get ov 'highlight-symbol)
+  ;      (delete-overlay ov))))
+
+  ;; TODO Should this merge with highlight-symbol? mostly I want highlight-phrase and highlight-regexp but with
+  ;; highlight-symbol's added functionality, it's odd that highlight-symbol didn't build on the former.
+
+  (setq highlight-symbol-idle-delay 0.3)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -329,32 +357,6 @@
 
 
 
-
-;;
-;; Highlight Symbol
-;;
-(require 'highlight-symbol)
-
-;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
-;; See https://github.com/nschum/highlight-symbol.el/issues/26
-;(defun highlight-symbol-add-symbol-with-face (symbol face)
-;  (save-excursion
-;    (goto-char (point-min))
-;    (while (re-search-forward symbol nil t)
-;      (let ((ov (make-overlay (match-beginning 0)
-;                              (match-end 0))))
-;        (overlay-put ov 'highlight-symbol t)
-;        (overlay-put ov 'face face)))))
-;
-;(defun highlight-symbol-remove-symbol (_symbol)
-;  (dolist (ov (overlays-in (point-min) (point-max)))
-;    (when (overlay-get ov 'highlight-symbol)
-;      (delete-overlay ov))))
-
-;; TODO Should this merge with highlight-symbol? mostly I want highlight-phrase and highlight-regexp but with
-;; highlight-symbol's added functionality, it's odd that highlight-symbol didn't build on the former.
-
-(setq highlight-symbol-idle-delay 0.3)
 
 
 ;;
