@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
-(neph-add-to-load-path 'load-path "~/.emacs.d/smarttabs")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ido-vertical-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rainbow-delimiters")
@@ -981,6 +980,15 @@
 ;; (elpaca (function-args :host github :repo "abo-abo/function-args"
 ;;         :ref "33ed7e45027b6ce2e455467f7a1a05ca4abdd078"))
 
+;;
+;; Smart Tabs
+;;
+(elpaca (smart-tabs-mode :host github :repo "jcsalomon/smarttabs"
+        :ref "cd19892677ec9a2c378c828aa7cef9a2b2bd1c0e" :wait t)
+  (require 'smart-tabs-mode)
+  (smart-tabs-insinuate 'c 'javascript 'c++)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1117,13 +1125,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-;;
-;; Smart Tabs
-;;
-
-(require 'smart-tabs-mode)
-(smart-tabs-insinuate 'c 'javascript 'c++)
 
 
 ;;

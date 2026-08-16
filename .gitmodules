@@ -82,9 +82,6 @@
 [submodule "zsh.d/syntax-highlighting"]
 	path = zsh.d/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "emacs.d/smarttabs"]
-	path = emacs.d/smarttabs
-	url = https://github.com/jcsalomon/smarttabs
 [submodule "emacs.d/p4.el"]
 	path = emacs.d/p4.el
 	url = https://github.com/gareth-rees/p4.el.git
