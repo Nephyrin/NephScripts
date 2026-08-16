@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lsp-ui")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-pyright")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-treemacs")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-lsp")
@@ -856,6 +855,20 @@
 (elpaca (posframe :host github :repo "tumashu/posframe" :protocol ssh
         :ref "06b939cfb06168782fc378043ff35bd7fec203b8" :wait t))
 
+;;
+;; lsp-ui
+;;
+(elpaca (lsp-ui :host github :repo "emacs-lsp/lsp-ui"
+        :ref "030d36960338fd633a98b332bc3734c412c25ca6" :wait t)
+  (require 'lsp-ui)
+  (require 'lsp-ui-flycheck)
+  (require 'lsp-headerline)
+  (require 'lsp-modeline)
+  (require 'lsp-diagnostics)
+  (setq lsp-ui-doc-show-with-cursor t)
+  (setq lsp-ui-peek-always-show t)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1003,14 +1016,6 @@
 
 (require 'lsp-treemacs)
 (lsp-treemacs-sync-mode 1)
-
-(require 'lsp-ui)
-(require 'lsp-ui-flycheck)
-(require 'lsp-headerline)
-(require 'lsp-modeline)
-(require 'lsp-diagnostics)
-(setq lsp-ui-doc-show-with-cursor t)
-(setq lsp-ui-peek-always-show t)
 
 (require 'dap-mode)
 ;;(require 'dap-cpptools)
