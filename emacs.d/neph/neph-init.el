@@ -6,16 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; remember-notes
-;;
-
-;; New in 24.4
-(if (fboundp 'remember-notes)
-    (progn
-      (setq initial-buffer-choice 'remember-notes)
-      (setq remember-notes-buffer-name "#Notes")))
-
-;;
 ;; Mode line
 ;;
 
