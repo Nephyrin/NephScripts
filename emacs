@@ -881,6 +881,11 @@
 (require 'lsp-treemacs)
 (lsp-treemacs-sync-mode 1)
 
+(require 'treemacs)
+(require 'treemacs-mouse-interface)
+(require 'treemacs-hydras)
+;;(require 'treemacs-projectile)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

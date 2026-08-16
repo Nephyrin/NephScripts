@@ -1,10 +1,6 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'treemacs)
-(require 'treemacs-mouse-interface)
-(require 'treemacs-hydras)
 (require 'pkg-info)
-;;(require 'treemacs-projectile)
 (require 'lsp-ui)
 (require 'lsp-ui-flycheck)
 (require 'lsp-headerline)
