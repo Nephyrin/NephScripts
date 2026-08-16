@@ -19,7 +19,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
-(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-async") ; helm dep
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm")
 (neph-add-to-load-path 'load-path "~/.emacs.d/fzf")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-swoop")
@@ -429,6 +428,12 @@
 ;;
 (elpaca (vertico :host github :repo "minad/vertico"
         :ref "67c73b7ae3079e24b5369b54a740d79eb9d2b978" :wait t))
+
+;;
+;; async
+;;
+(elpaca (async :host github :repo "jwiegley/emacs-async"
+        :ref "0d52411d3accc3e11a2c64838703a8ce9755c77c" :wait t))
 
 ;; ---- end elpacified run ----
 
