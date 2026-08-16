@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/editorconfig")
 (neph-add-to-load-path 'load-path "~/.emacs.d/xterm-color")
 (neph-add-to-load-path 'load-path "~/.emacs.d/eterm-256color")
 (neph-add-to-load-path 'load-path "~/.emacs.d/markdown-mode")
@@ -233,6 +232,12 @@
 ;;
 (elpaca (f :host github :repo "rejeep/f.el"
         :ref "931b6d0667fe03e7bf1c6c282d6d8d7006143c52" :wait t))
+
+;;
+;; editorconfig
+;;
+(elpaca (editorconfig :host github :repo "editorconfig/editorconfig-emacs" :protocol ssh
+        :ref "f7588dd1a216bfd0a89109ae7bcc3a7da74824c1" :wait t))
 
 ;; ---- end elpacified run ----
 
