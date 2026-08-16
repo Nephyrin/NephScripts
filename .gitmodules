@@ -109,9 +109,6 @@
 [submodule "emacs.d/flyspell-lazy"]
 	path = emacs.d/flyspell-lazy
 	url = https://github.com/rolandwalker/flyspell-lazy
-[submodule "emacs.d/irony-mode"]
-	path = emacs.d/irony-mode
-	url = https://github.com/Sarcasm/irony-mode
 [submodule "emacs.d/company-irony"]
 	path = emacs.d/company-irony
 	url = https://github.com/Sarcasm/company-irony

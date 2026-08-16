@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/irony-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-irony")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flycheck-irony")
 (neph-add-to-load-path 'load-path "~/.emacs.d/popup-el")
@@ -942,6 +941,19 @@
   (global-set-key (kbd "C-z <C-down>")  'neph-ccls-navigate-right)
   )
 
+;;
+;; Irony-mode (deprecated)
+;;   DEPRECATED - going to drop if ccls + lsp keeps working well
+;;
+;;(require 'neph-irony-autoload)
+(elpaca (irony :host github :repo "Sarcasm/irony-mode"
+        :files (:defaults "server")
+        :ref "c3ae899b61124a747ebafc705086345e460ac08e" :wait t)
+  (add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
+
+  ;; FIXME irony-mode breaks on headers due to that missing (car found)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1078,16 +1090,6 @@
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
-
-;;
-;; Irony-mode (deprecated)
-;;   DEPRECATED - going to drop if ccls + lsp keeps working well
-;;
-;;(require 'neph-irony-autoload)
-
-(add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
-
-;; FIXME irony-mode breaks on headers due to that missing (car found)
 
 ;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
 ;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
