@@ -267,13 +267,6 @@
 
 
 ;;
-;; Highlight/unhighlight dwim binds (neph-highlight-dwim / neph-unhighlight-dwim in neph-lib)
-;;
-(global-set-key (kbd "C-z H") 'neph-highlight-dwim)
-(global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
-
-
-;;
 ;; Rust mode
 ;;
 
@@ -1051,12 +1044,6 @@
 (global-set-key (kbd "C-z C") 'magit-commit)
 
 ;;
-;; Artist mode
-;;
-(global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
-
-
-;;
 ;; Yaml mode
 ;;
 (require 'yaml-mode)
@@ -1065,10 +1052,6 @@
 (with-eval-after-load "yaml-mode"
   (add-hook 'yaml-mode-hook 'neph-space-cfg))
 
-
-;;
-;; zap-to-char
-(global-set-key (kbd "M-Z") 'backwards-zap-to-char)
 
 ;;
 ;; ace-jump-mode
@@ -1972,3 +1955,20 @@
 ;;      (goto-char char))))
 ;;
 ;;(global-set-key (kbd "C-z C") 'jump-to-container)
+
+;;
+;; Highlight/unhighlight dwim binds (neph-highlight-dwim / neph-unhighlight-dwim in neph-lib)
+;;
+(global-set-key (kbd "C-z H") 'neph-highlight-dwim)
+(global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
+
+
+;;
+;; Artist mode
+;;
+(global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
+
+
+;;
+;; zap-to-char
+(global-set-key (kbd "M-Z") 'backwards-zap-to-char)
