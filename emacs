@@ -975,6 +975,12 @@
         :files (:defaults "dict")
         :ref "2e83566ddfa758c69afe50b8a1c62a66f47471e3" :wait t))
 
+;;
+;; function-args
+;;
+;; (elpaca (function-args :host github :repo "abo-abo/function-args"
+;;         :ref "33ed7e45027b6ce2e455467f7a1a05ca4abdd078"))
+
 ;; ---- end elpacified run ----
 
 ;;

@@ -73,9 +73,6 @@
 [submodule "emacs.d/projectile"]
 	path = emacs.d/projectile
 	url = https://github.com/bbatsov/projectile
-[submodule "emacs.d/function-args"]
-	path = emacs.d/function-args
-	url = https://github.com/abo-abo/function-args
 [submodule "zsh.d/autosuggestions"]
 	path = zsh.d/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
