@@ -1663,6 +1663,19 @@
 (global-set-key (kbd "C-S-M-j") 'copy-line)
 (global-set-key (kbd "C-S-j") 'duplicate-line)
 
+;; Replaces backwards/forwards sexp.
+(global-set-key (kbd "C-M-f") 'jump-to-char)
+(global-set-key (kbd "C-M-b") 'backward-jump-to-char)
+(global-set-key (kbd "M-G") 'goto-line)
+
+(global-set-key (kbd "C-S-U") 'neph-backward-kill-line)
+(global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
+(global-set-key (kbd "M-@") 'neph-mark-current-word)
+(global-set-key (kbd "M-B") 'backward-to-word)
+(global-set-key (kbd "M-F") 'forward-to-word)
+(global-set-key (kbd "M-D") 'neph-kill-to-word)
+(global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
