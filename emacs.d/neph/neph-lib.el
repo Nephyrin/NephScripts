@@ -205,4 +205,66 @@ explicit input."
      (font-lock-mode t)
      (compilation-minor-mode t))))
 
+;;
+;; Htmlize
+;;
+
+;; Hacky thing to htmlize a region and send it straight to browser
+;;(defun neph-html-region ()
+;;  (interactive)
+;;  (let* ((regionp (region-active-p))
+;;         (beg (and regionp (region-beginning)))
+;;         (end (and regionp (region-end)))
+;;         (buf (current-buffer))
+;;         ;; poor man's with-temp-killring (requires let*)
+;;         (kill-ring (list "temp kill ring"))
+;;         (kill-ring-yank-pointer kill-ring))
+;;    (with-temp-buffer
+;;      ;;(switch-to-buffer (current-buffer) nil t)
+;;      (rename-buffer "*Neph HTMLIZE Temp Buffer*" t)
+;;      (font-lock-mode -1) ;; We want to keep the face properties from the source buffer always
+;;      (insert-buffer-substring-as-yank buf beg end)
+;;      (with-current-buffer (htmlize-buffer)
+;;        (write-file "~/.emacs.d/htmlize-temp.htm"))))
+;;        ;;(kill-buffer)))
+;;    ;; This is the way the help actually suggests you prevent it from opening this buffer.
+;;    (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+;;                                      display-buffer-alist)))
+;;      (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
+
+(defun neph-html-region ()
+  (interactive)
+  (require 'htmlize)
+  (with-current-buffer
+      (htmlize-region (point) (mark))
+    (write-file "~/.emacs.d/htmlize-temp.htm"))
+  ;;(kill-buffer)))
+  ;; FIXME font from (face-attribute 'default :family)
+  ;; FIXME charset utf-8?
+  (start-process-shell-command "neph-html-region" nil "xdg-open ~/.emacs.d/htmlize-temp.htm"))
+
+(defun neph-html-copy ()
+  "Copy the selected region to the clipboard as html.  Requires awk and xclip be available."
+  (interactive)
+  (require 'htmlize)
+  ;; Detect some modes that clash with htmlize, set mode to inline-css for maximal CnP compatibility
+  (let ((ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode))
+        (htmlize-output-type 'inline-css)
+        (htmlize-pre-style 't))
+    ;; Disable incompatible modes, run htmlize, re-enable
+    (when ghl (global-hl-line-mode -1))
+    (with-current-buffer
+        (htmlize-region (region-beginning) (region-end))
+      (write-file "~/.emacs.d/htmlize-temp.htm"))
+    (when ghl (global-hl-line-mode 1)))
+  ;; Awful awk script to skip all the doctype/html/body/head document tags and just select the 'pre'
+  ;; tag, then stuff it onto the clipboard
+  (start-process-shell-command "neph-html-copy" nil
+                               (concat "awk -i inplace '/^ *<pre/ { inpre=1; };"
+                                       "  /^ *<\\/pre/ { inpre=0; print };"
+                                       "  inpre { print };'"
+                                       "  ~/.emacs.d/htmlize-temp.htm && "
+                                       "xclip -quiet -i -selection clipboard -target text/html"
+                                       "  ~/.emacs.d/htmlize-temp.htm")))
+
 (provide 'neph-lib)

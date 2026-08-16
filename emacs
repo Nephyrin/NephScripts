@@ -449,6 +449,12 @@
 (setq lua-indent-level 2)
 
 
+;;
+;; Htmlize
+(autoload 'htmlize-buffer "htmlize" "htmlize" t)
+
+;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
