@@ -136,9 +136,6 @@
 [submodule "emacs.d/yaml-mode"]
 	path = emacs.d/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode
-[submodule "emacs.d/lsp-mode"]
-	path = emacs.d/lsp-mode
-	url = https://github.com/emacs-lsp/lsp-mode
 [submodule "emacs.d/lsp-treemacs"]
 	path = emacs.d/lsp-treemacs
 	url = https://github.com/emacs-lsp/lsp-treemacs

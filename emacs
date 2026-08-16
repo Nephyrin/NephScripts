@@ -26,8 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lsp-mode/clients")
-(neph-add-to-load-path 'load-path "~/.emacs.d/lsp-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-docker")
 (neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/elisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/treemacs/src/extra")
@@ -713,6 +711,47 @@
 (elpaca (yaml :host github :repo "zkry/yaml.el" :protocol ssh
         :ref "73fde9d8fbbaf2596449285df9eb412ae9dd74d9" :wait t))
 
+;;
+;; C++ Helper mode(s) : Company/lsp and associated helper libraries
+;;
+(elpaca (lsp-mode :host github :repo "emacs-lsp/lsp-mode"
+        :files (:defaults "clients/*.el")
+        :ref "0c8f043eb3d1d516f46e3c50c78fbab22f0612a9" :wait t)
+  (require 'lsp-mode)
+  (require 'company)
+  (require 'company-quickhelp)
+
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+  (setq company-quickhelp-color-background "black")
+
+  ;; LSP performance recommended
+  (setq read-process-output-max 1048576)
+  (setq gc-cons-threshold 100000000)
+
+  (setq lsp-lens-enable nil)
+
+  ;; FIXME?
+  ;;(with-eval-after-load 'lsp-mode
+  ;;  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+
+  ;; ~/.config/clangd/config.yaml:
+  ;; # https://clangd.llvm.org/config
+  ;;   CompileFlags:
+  ;;     Add: [-Wall]
+  (setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--query-driver=/usr/bin/**/clang-*,/usr/bin/**/clang++-*,/usr/bin/**/gcc-*,/usr/bin/**/g++-*,/usr/bin/g++,/usr/bin/gcc,/usr/bin/clang,/usr/bin/clang++" "--enable-config"
+                                  "-j" "50" "--log=info"
+                                  "--all-scopes-completion" "--background-index" "--rename-file-limit=0"
+                                  "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
+    ;; --
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -865,58 +904,6 @@
 (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
 (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
 (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
-
-;;
-;; C++ Helper mode(s) : Company/lsp and associated helper libraries
-;;
-
-(require 'lsp-mode)
-(require 'company)
-(require 'company-quickhelp)
-
-(advice-add (if (progn (require 'json)
-                       (fboundp 'json-parse-buffer))
-                'json-parse-buffer
-              'json-read)
-            :around
-            #'lsp-booster--advice-json-parse)
-(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
-
-(setq company-quickhelp-color-background "black")
-
-;; LSP performance recommended
-(setq read-process-output-max 1048576)
-(setq gc-cons-threshold 100000000)
-
-(setq lsp-lens-enable nil)
-
-;; FIXME?
-;;(with-eval-after-load 'lsp-mode
-;;  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
-
-;; ~/.config/clangd/config.yaml:
-;; # https://clangd.llvm.org/config
-;;   CompileFlags:
-;;     Add: [-Wall]
-(setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--query-driver=/usr/bin/**/clang-*,/usr/bin/**/clang++-*,/usr/bin/**/gcc-*,/usr/bin/**/g++-*,/usr/bin/g++,/usr/bin/gcc,/usr/bin/clang,/usr/bin/clang++" "--enable-config"
-                                "-j" "50" "--log=info"
-                                "--all-scopes-completion" "--background-index" "--rename-file-limit=0"
-                                "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
-
-;;
-;; Fix intelephense
-;;
-
-;; The vscode extension allows passing this based on the intelephense.maxMemory setting (which isn't actually an
-;; intelephense setting and glues this --max-old-space-size option into some node launching glue somewhere.)
-;; FIXME lsp-package-path doesn't work if intelephense isn't installed and i gave up on reading the garbage code
-;;(with-eval-after-load "lsp-php"
-;;  (setq lsp-intelephense-server-command
-;;        (list "env" "NODE_OPTIONS=\"--max-old-space-size=24000\""
-;;              ;; Default path lookup the package does -- by putting 'env' first it breaks the register-time looking up
-;;              ;; of the path to the nested server, which isn't on PATH if it's auto-installed.
-;;              (or (executable-find "intelephense") (lsp-package-path 'intelephense))
-;;              "--stdio")))
 
 ;; cquery
 (setq lsp-pyright-multi-root nil)
