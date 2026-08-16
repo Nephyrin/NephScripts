@@ -1758,6 +1758,11 @@
 (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
 (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
 
+;;
+;; mmm/jinja/salt mode
+;;
+(require 'salt-mode)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

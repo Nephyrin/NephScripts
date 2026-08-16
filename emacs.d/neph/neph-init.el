@@ -37,11 +37,6 @@
 ;;     (linum-mode 1)))
 
 ;;
-;; mmm/jinja/salt mode
-;;
-(require 'salt-mode)
-
-;;
 ;; Theme
 ;;
 
