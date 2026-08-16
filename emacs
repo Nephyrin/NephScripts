@@ -314,6 +314,10 @@
   (setq desktop-base-lock-name "emacs-server-desktop.lock")
   (desktop-save-mode 1))
 
+;; Global libraries macros in here (and also )
+(require 'ht)
+
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

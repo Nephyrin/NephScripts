@@ -1,8 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;; Global libraries macros in here (and also )
-(require 'ht)
-
 ;;
 ;; Xterm color
 ;;
