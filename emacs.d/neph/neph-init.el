@@ -3,34 +3,6 @@
 ;; Global libraries macros in here (and also )
 (require 'ht)
 
-; (global-ede-mode t)
-
-; Hide toolbar, hide menu in console mode
-(menu-bar-mode -1)
-; OS X builds can lack these, check
-(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (functionp 'tool-bar-mode)   (tool-bar-mode -1))
-
-(setq split-width-threshold 240)
-(setq split-height-threshold 50)
-;; TODO customize display-buffer alist so we don't split frames too aggressively for browsing top-level buffers, but do
-;; for things like xref popups.  Might require also tweaking split-window-sensibly or overriding the split-window
-;; parameters when entering display buffer with a top-level vs widget window.
-;; (setq display-buffer-alist '("\\*Async Shell Command\\*" (display-buffer-no-window))
-
-(require 'speedbar)
-(speedbar-change-initial-expansion-list "buffers")
-
-(global-set-key  [f8] 'speedbar-get-focus)
-(global-set-key (kbd "C-c C-f") 'find-dired)
-
-; Trailing spaces and whitespace
-(require 'whitespace)
-(global-whitespace-mode)
-; Options list of whitespace to mess with, 'face' option uses faces per type
-; instead of replacement chars
-(setq whitespace-style (quote (face trailing tabs)))
-
 ;;
 ;; Electric mode tweaks
 ;;
