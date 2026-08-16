@@ -151,9 +151,6 @@
 [submodule "emacs.d/avy"]
 	path = emacs.d/avy
 	url = https://github.com/abo-abo/avy
-[submodule "emacs.d/pfuture"]
-	path = emacs.d/pfuture
-	url = https://github.com/Alexander-Miller/pfuture
 [submodule "emacs.d/lsp-ui"]
 	path = emacs.d/lsp-ui
 	url = https://github.com/emacs-lsp/lsp-ui

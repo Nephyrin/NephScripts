@@ -27,7 +27,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-window")
-(neph-add-to-load-path 'load-path "~/.emacs.d/pfuture")
 (neph-add-to-load-path 'load-path "~/.emacs.d/avy")
 (neph-add-to-load-path 'load-path "~/.emacs.d/yaml.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-mode/clients")
@@ -692,6 +691,12 @@
 ;;
 (elpaca (hydra :host github :repo "abo-abo/hydra"
         :ref "317e1de33086637579a7aeb60f77ed0405bf359b" :wait t))
+
+;;
+;; pfuture
+;;
+(elpaca (pfuture :host github :repo "Alexander-Miller/pfuture"
+        :ref "19b53aebbc0f2da31de6326c495038901bffb73c" :wait t))
 
 ;; ---- end elpacified run ----
 
