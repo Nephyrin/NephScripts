@@ -704,4 +704,174 @@ If FORCE is not specified, toggle the current state."
     (require 'flycheck-irony)
     (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
 
+;;
+;; Rtags
+;;   DEPRECATED - going to drop if ccls + lsp keeps working well
+;;
+
+;; Rtags is installed separate from NephScripts, don't assume it is available
+;; Don't load it in non-interactive mode, we don't want to issue calls to rc/etc.
+(if (and (not noninteractive) (require 'rtags-disabled nil t))
+    (progn
+      (require 'company)
+      (require 'company-quickhelp)
+      (require 'company-rtags)
+      ;; If we wanted to use rtags instead of irony-mode above
+      ;;(with-eval-after-load "flycheck" (require flycheck-rtags))
+
+      (cl-defun popup-tip (string
+                           &key
+                           point
+                           (around t)
+                           width
+                           (height 15)
+                           min-height
+                           max-width
+                           truncate
+                           margin
+                           margin-left
+                           margin-right
+                           scroll-bar
+                           parent
+                           parent-offset
+                           nowait
+                           nostrip
+                           prompt
+                           &aux tip lines)
+        (tooltip-show string))
+
+      (add-to-list 'company-backends 'company-rtags)
+
+      (setq company-idle-delay nil)
+
+      (setq company-async-timeout 10000)
+      (setq company-rtags-max-wait 10000)
+      (setq rtags-completions-enabled t) ; Needed?
+      (setq rtags-track-container t)
+      (setq company-rtags-use-async nil)
+
+      (setq rtags-use-helm nil)
+      (setq rtags-max-bookmark-count 10)
+
+      (setq rtags-autostart-diagnostics t)
+      (setq rtags-find-file-case-insensitive t)
+      ;; FIXME rtags bug, it tries to do this but ends up not? Commented out, I think turned out unnecessary
+      ;;(add-hook 'window-configuration-change-hook 'rtags-update-buffer-list)
+
+      ;; FIXME: Messy, kinda works. Remaining problem is the results-buffer-other-window behavior --
+      ;; we ideally want to wrap rtags-switch-to-buffer *within* handle-results-buffer, and do more
+      ;; logic on where to open the results window it is trying to other-window-open
+      ;;
+      ;; I think the logic we want is split-current-pane-if-sensible-always
+
+      (setq rtags-show-containing-function t)
+      (defun neph-rtags-split-window ()
+        ;;(message "neph-rtags-split-window!")
+        ;;(message "Trying default split with %d" split-height-threshold)
+        (let ((window (split-window-sensibly)))
+          ;;(message "Called!")
+          (if window window
+            ;;(message "Trying lessened-height split")
+            (let ((split-height-threshold 80))
+              (split-window-sensibly)))))
+      (defun neph-rtags-other-window ()
+        ;;(message "neph-rtags-other-window!")
+        (if (boundp 'neph-rtags-original-command-window)
+            (if (eq neph-rtags-original-command-window (get-buffer-window rtags-buffer-name))
+                (progn
+                  ;;(message "other-window: Falling back to split")
+                  (neph-rtags-split-window))
+              ;;(message "other-window: Using original")
+              neph-rtags-original-command-window)
+          ;;(message "other-window: using other-window 1")
+          (other-window 1)))
+
+      (setq rtags-popup-results-buffer t)
+      (setq rtags-results-buffer-other-window t)
+      (setq rtags-split-window-function 'neph-rtags-split-window)
+      (setq rtags-other-window-function 'neph-rtags-other-window)
+
+      (defadvice rtags-find-references-at-point (around neph-rtags-find-references-at-point activate)
+        ;;(message "find-references-at-point advice!")
+        ;;(let ((neph-rtags-original-command-window (selected-window)))
+          ad-do-it)
+      (defadvice rtags-handle-results-buffer (around neph-rtags-handle-results-buffer activate)
+        ;;(message "ADVICE rtags-handle-results-buffer")
+        (let ((split-height-threshold 80))
+          ad-do-it))
+
+      (defadvice rtags-select (around neph-rtags-select activate)
+        ;;(message "ADVICE rtags-select")
+        ad-do-it)
+      (defadvice rtags-switch-to-buffer (around neph-rtags-switch-to-buffer activate)
+        ;;(message "ADVICE rtags-switch-to-buffer")
+        ad-do-it)
+      (defadvice rtags-select-other-window (around neph-rtags-select-other-window activate)
+        ;;(message "ADVICE rtags-select-other-window")
+        ad-do-it)
+      (defadvice rtags-jump-to-first-match (around neph-rtags-jump-to-first-match activate)
+        ;;(message "ADVICE rtags-jump-to-first-match")
+        ad-do-it)
+      (defadvice rtags-goto-location (around neph-rtags-goto-location activate)
+        ;;(message "ADVICE rtags-goto-location")
+        ad-do-it)
+      (defadvice rtags-rtags-show-target-in-other-window (around neph-rtags-rtags-show-target-in-other-window activate)
+        ;;(message "ADVICE rtags-rtags-show-target-in-other-window")
+        ad-do-it)
+
+
+      (setq rtags-enable-unsaved-reparsing nil)
+      (rtags-set-periodic-reparse-timeout nil)
+
+      (setq rtags-tooltips-enabled nil)
+      (setq rtags-display-current-error-as-tooltip nil)
+      (setq rtags-display-summary-as-tooltip nil)
+
+      ;; When using rtags provide a backend to irony
+      (defun irony-cdb-rtags-neph (command &rest args)
+        (cl-case command
+          (get-compile-options (irony-cdb-rtags-neph--get-compile-options))))
+
+      (defun irony-cdb-rtags-neph--get-compile-options ()
+        (if (rtags-is-running)
+          (let ((path (rtags-buffer-file-name)))
+            (when path
+              (with-temp-buffer
+                (rtags-call-rc :path path "--sources" path "--compilation-flags-only" "--compilation-flags-pwd" "--compilation-flags-split-line")
+                (let* ((str (buffer-substring-no-properties (point-min) (point-max)))
+                       (result (split-string str "\n" t))
+                       (pwdraw (car-safe result))
+                       (pwd (when (and pwdraw (string= (substring pwdraw 0 5) "pwd: ")) (substring pwdraw 5))))
+                  (when pwd
+                    (list (cons
+                           (append '("-Wextra" "-ferror-limit=0")
+                                   (delete "-fpch-preprocess"
+                                           ;; Stripping first two (c++ -c) and last 3 (-o output
+                                           ;; input) args for just the file specific compilation
+                                           ;; flags
+                                           (butlast
+                                            (nthcdr
+                                             2
+                                             ;; Strip leading pwd: and take everything up to
+                                             ;; the next pwd:
+                                             ;;
+                                             ;; (multi-compile mode -- pwd: means start of
+                                             ;; next mode for file)
+                                             ;;
+                                             ;; TODO: Ideally we'd somehow combine the
+                                             ;; multiple entries
+                                             (seq-take-while
+                                              (lambda (e)
+                                                (not (string-prefix-p "pwd: " e)))
+                                              (nthcdr 1 result)))
+                                            ;; (v-- end of butlast)
+                                            3)))
+                           pwd)))))))
+          ;; Else, warn and nill
+          (message "irony-cdb-rtags-neph: No RDM, cannot pull flags for this file")
+          nil)))
+  ;; Else - No rtags
+  ;; Provide the irony backend but make it always return nuh
+  (defun irony-cdb-rtags-neph (command &rest args) nil))
+
 (provide 'neph-lib)
