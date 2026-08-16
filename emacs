@@ -18,7 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
-;(neph-add-to-load-path 'load-path "~/.emacs.d/ecb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/color-identifiers-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/consult")
 (neph-add-to-load-path 'load-path "~/.emacs.d/vertico")
@@ -391,6 +390,24 @@
         :files (:defaults "lisp/*.py")
         :ref "7c7691c26d735aab3ebb642f898a9e878d2df212" :wait t))
 
+;;
+;; ECB
+;;
+
+;;(require 'ecb)
+;(setq ecb-show-sources-in-directories-buffer 'always)
+;(setq ecb-layout-name "left7")
+;(setq ecb-tip-of-the-day nil)
+;(setq ecb-windows-width 0.1)
+;
+;;; Quiet startup warning
+;(setq ecb-options-version "2.40")
+;
+;(global-set-key (kbd "C-z q") 'ecb-activate)
+;(global-set-key (kbd "C-z Q") 'ecb-deactivate)
+;; (elpaca (ecb :host github :repo "emacsmirror/ecb"
+;;         :ref "1330a44cf3c171781083b0b926ab7622f64e6e81"))
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -445,22 +462,6 @@
 ;(setq multi-term-program "/bin/bash")
 ;
 ;(global-set-key (kbd "C-x t") 'multi-term-dedicated-open)
-
-;;
-;; ECB
-;;
-
-;;(require 'ecb)
-;(setq ecb-show-sources-in-directories-buffer 'always)
-;(setq ecb-layout-name "left7")
-;(setq ecb-tip-of-the-day nil)
-;(setq ecb-windows-width 0.1)
-;
-;;; Quiet startup warning
-;(setq ecb-options-version "2.40")
-;
-;(global-set-key (kbd "C-z q") 'ecb-activate)
-;(global-set-key (kbd "C-z Q") 'ecb-deactivate)
 
 ;;
 ;; Color identifiers mode
