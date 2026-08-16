@@ -1249,6 +1249,11 @@
                            (propertize (concat which-func " ") 'face 'neph-modeline-which-func))
                          (when valid-neph-sticky-header neph-sticky-header)))))
 
+;;
+;; God mode
+(autoload 'god-mode "god-mode" "god-mode" t)
+(global-set-key (kbd "C-z C-z") 'god-local-mode)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

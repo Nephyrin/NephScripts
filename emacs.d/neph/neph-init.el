@@ -6,13 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; God mode
-;;
-
-(autoload 'god-mode "god-mode" "god-mode" t)
-(global-set-key (kbd "C-z C-z") 'god-local-mode)
-
-;;
 ;; Scrolling
 ;;
 
