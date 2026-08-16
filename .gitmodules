@@ -187,9 +187,6 @@
 [submodule "emacs.d/lsp-docker"]
 	path = emacs.d/lsp-docker
 	url = git@github.com:emacs-lsp/lsp-docker.git
-[submodule "emacs.d/yaml.el"]
-	path = emacs.d/yaml.el
-	url = git@github.com:zkry/yaml.el.git
 [submodule "emacs.d/copilot"]
 	path = emacs.d/copilot
 	url = git@github.com:zerolfx/copilot.el.git
