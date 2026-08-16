@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/eterm-256color")
 (neph-add-to-load-path 'load-path "~/.emacs.d/markdown-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/evil")
 (neph-add-to-load-path 'load-path "~/.emacs.d/indent-bars")
@@ -246,6 +245,13 @@
   (require 'xterm-color)
   )
 
+;(require 'eterm-256color) FIXME debug-init
+
+;;(add-hook 'term-mode-hook #'eterm-256color-mode)
+(elpaca (eterm-256color :host github :repo "dieggsy/eterm-256color"
+        :files (:defaults "eterm-256color.ti")
+        :ref "0f0dab497239ebedbc9c4a48b3ec8cce4a47e980" :wait t))
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -255,10 +261,6 @@
 (setq flyspell-lazy-window-idle-seconds 1)
 (global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
 
-
-;(require 'eterm-256color) FIXME debug-init
-
-;;(add-hook 'term-mode-hook #'eterm-256color-mode)
 
 
 ;;
