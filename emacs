@@ -1142,6 +1142,44 @@
 (require 'neph-modeline-util)
 (add-hook 'find-file-hook 'neph-cache-projectile-info)
 
+(setq neph-modeline-path
+      '(:eval (let* ((rawname (buffer-file-name))
+                     (bufname (if rawname (propertize rawname 'face 'neph-modeline-path) nil))
+                     ;; Paths to replace. Of the form ((search replace) ...)
+                     (replacements (list (list (getenv "HOME") "~"))))
+                ;; Also replace projectile root with project name when available
+                (when (and (featurep 'projectile) (bound-and-true-p neph-cached-projectile-project-root))
+                  (cl-pushnew (list neph-cached-projectile-project-root
+                                    (concat neph-cached-projectile-project-name "/"))
+                              replacements))
+                (if bufname
+                    (progn
+                      ;; Trim filename from path
+                      (setq bufname (replace-regexp-in-string "/[^/]*$" "/" bufname))
+                      ;; Apply neph-modeline-shortpaths replacements
+                      (while replacements
+                        (let* ((search (car (car replacements)))
+                               (replace (car (cdr (car replacements))))
+                               (splitname (split-string bufname (concat "^" (regexp-quote search))))
+                               (remainder (car (cdr splitname))))
+                          (if remainder
+                              (setq bufname
+                                    (concat
+                                     ;; This blows away the default propertize, they're not additive.
+                                     (propertize replace 'face 'neph-modeline-path-replacement)
+                                     (propertize remainder 'face 'neph-modeline-path)))))
+                        (setq replacements (cdr replacements)))
+                      ;; Return
+                      bufname)
+                  ""))))
+
+(setq neph-modeline-bufstat
+      '(:eval (cond (buffer-read-only
+                     (propertize " RO " 'face 'neph-modeline-stat-readonly))
+                    ((buffer-modified-p)
+                     (propertize " ** " 'face 'neph-modeline-stat-modified))
+                    (t (propertize " -- " 'face 'neph-modeline-stat-clean)))))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

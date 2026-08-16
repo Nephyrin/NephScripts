@@ -111,4 +111,54 @@ static char * %s[] = {
     (setq-local neph-cached-projectile-project-root (projectile-project-root))
     (setq-local neph-cached-projectile-project-name (projectile-project-name))))
 
+(defface neph-modeline-hud
+  '((t (:inherit mode-line-face)))
+  "Neph modeline hud face")
+(defface neph-modeline-id
+  '((t (:inherit mode-line-face
+        :foreground "#DD5"
+        :weight bold)))
+  "Neph modeline buffer id face")
+(defface neph-modeline-mode
+  '((t (:inherit mode-line-face
+        :foreground "#464")))
+  "Neph modeline mode face")
+(defface neph-modeline-misc
+  '((t (:inherit mode-line-face
+        :height 75
+        :foreground "#444"
+        :width condensed)))
+  "Neph modeline minor info face")
+(defface neph-modeline-path
+  '((t (:inherit mode-line-face
+        :foreground "#DFDDDD")))
+  "Neph modeline path face")
+(defface neph-modeline-path-replacement
+  '((t (:inherit neph-modeline-path
+        :foreground "#7F7777")))
+  "Neph modeline path face for replacements made by neph-modeline-shortpaths")
+(defface neph-modeline-id-inactive
+  '((t (:inherit neph-modeline-id
+        :foreground "#CC9")))
+  "Neph modeline buffer id inactive face")
+(defface neph-modeline-stat-readonly
+  '((t (:inherit mode-line-face
+        :foreground "#6666EE"
+        :box (:line-width 2))))
+  "Neph modeline readonly status face")
+(defface neph-modeline-stat-modified
+  '((t (:inherit mode-line-face
+        :foreground "#FF5555"
+        :weight bold)))
+  "Neph modeline modified status face")
+(defface neph-modeline-stat-clean
+  '((t (:inherit mode-line-face
+        :foreground "#555")))
+  "Neph modeline clean status face")
+(defface neph-modeline-which-func
+  '((t (:inherit mode-line-face
+        :foreground "#666"
+        :height 90)))
+  "Neph modeline which-func-mode face")
+
 (provide 'neph-modeline-util)
