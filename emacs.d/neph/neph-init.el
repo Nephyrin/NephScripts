@@ -1,7 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'rg)
-
 ;;
 ;; multiple-cursors
 ;;

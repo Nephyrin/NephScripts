@@ -707,6 +707,11 @@
 ;; Defaults on
 (add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
 
+;;
+;; RG
+;;
+(require 'rg)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
