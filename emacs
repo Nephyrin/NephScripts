@@ -904,6 +904,13 @@
 
 (require 'jsonrpc)
 
+(require 'dape)
+
+;; Dape config
+(add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+(setq dape-inlay-hints t)
+(setq dape-cwd-function 'projectile-project-root)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

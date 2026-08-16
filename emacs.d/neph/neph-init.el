@@ -1,15 +1,9 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-(require 'dape)
 (require 'helm-lsp)
 ;;(require 'lsp-clangd)
 (require 'ccls)
 
-
-;; Dape config
-(add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
-(setq dape-inlay-hints t)
-(setq dape-cwd-function 'projectile-project-root)
 
 ;; Block ccls autoregister, register it ourself
 ;; TODO Example hook from gpt might work
