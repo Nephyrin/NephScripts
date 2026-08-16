@@ -1673,4 +1673,28 @@ If this is a local file, turn it into a tramp file file with said information."
   ;; Go to indent
   (back-to-indentation))
 
+(defun bookmark-current-line ()
+  "Bookmark the current line, using itself as the bookmark name"
+  (interactive)
+  (let ((line (thing-at-point 'line t)))
+    (when (string-match "[ \t\n]*$" line)
+      (setq line (replace-match "" nil nil line)))
+    (bookmark-set line)
+    (message (concat "Created bookmark: " line))))
+
+(defun move-line-up ()
+  "Move the current line up."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move the current line down."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
 (provide 'neph-lib)

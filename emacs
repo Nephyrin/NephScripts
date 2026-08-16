@@ -1618,6 +1618,16 @@
 (global-set-key (kbd "C-S-Y") 'yank-and-indent)
 (global-set-key (kbd "M-Y") 'smart-yank-before-line)
 
+(global-set-key (kbd "C-z C-S-B") 'bookmark-current-line)
+
+(global-set-key [(control shift up)] 'move-line-up)
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
+
+(global-set-key [(control shift down)] 'move-line-down)
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
