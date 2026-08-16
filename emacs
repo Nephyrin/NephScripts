@@ -18,7 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
-(neph-add-to-load-path 'load-path "~/neph/emacs.d/polymode")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/skewer-mode")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-web-server")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/emacs-websocket")
@@ -362,6 +361,12 @@
 ;;
 (elpaca (js2-mode :host github :repo "mooz/js2-mode"
         :ref "5165f4dc3805add174e48f0d64c5617d10ac3507" :wait t))
+
+;;
+;; polymode
+;;
+(elpaca (polymode :host github :repo "polymode/polymode"
+        :ref "291e2fed6e723d857a5eac59c375aad6fbddf473" :wait t))
 
 ;; ---- end elpacified run ----
 

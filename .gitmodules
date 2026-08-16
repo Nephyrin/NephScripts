@@ -187,9 +187,6 @@
 [submodule "emacs.d/emacs-web-server"]
 	path = emacs.d/emacs-web-server
 	url = https://github.com/skeeto/emacs-web-server
-[submodule "emacs.d/polymode"]
-	path = emacs.d/polymode
-	url = https://github.com/polymode/polymode
 [submodule "emacs.d/emacs-gdb"]
 	path = emacs.d/emacs-gdb
 	url = https://github.com/weirdNox/emacs-gdb
