@@ -1,26 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 ;;
-;; Indent bars
-;;
-(require 'indent-bars)
-(require 'indent-bars-ts)
-(setq indent-bars-width-frac 0.05)
-
-(setq indent-bars-treesit-support t)
-(setq indent-bars-treesit-wrap '((python argument_list parameters
-                                         list list_comprehension
-                                         dictionary dictionary_comprehension
-                                         parenthesized_expression subscript)))
-(setq indent-bars-treesit-ignore-blank-lines-types '("module"))
-
-(setq indent-bars-prefer-character nil)
-(setq indent-bars-depth-update-delay 0.0)
-
-;; SiGnIfiCaNt WhItEsPaCe
-(add-hook 'python-mode-hook 'indent-bars-mode)
-(add-hook 'python-ts-mode-hook 'indent-bars-mode)
-
-;;
 ;; Highlight Symbol
 ;;
 (require 'highlight-symbol)
