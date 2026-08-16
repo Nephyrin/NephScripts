@@ -142,9 +142,6 @@
 [submodule "emacs.d/lsp-ui"]
 	path = emacs.d/lsp-ui
 	url = https://github.com/emacs-lsp/lsp-ui
-[submodule "emacs.d/emacs-ccls"]
-	path = emacs.d/emacs-ccls
-	url = https://github.com/MaskRay/emacs-ccls
 [submodule "emacs.d/dap-mode"]
 	path = emacs.d/dap-mode
 	url = https://github.com/emacs-lsp/dap-mode
