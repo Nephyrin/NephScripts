@@ -19,7 +19,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
-(neph-add-to-load-path 'load-path "~/.emacs.d/helm-swoop")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-ag")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-rg")
 (neph-add-to-load-path 'load-path "~/.emacs.d/wgrep") ;; For rg.el
@@ -502,6 +501,17 @@
   (setq fzf/window-height 50)
   )
 
+;;
+;; Helm Swoop
+;;
+(elpaca (helm-swoop :host github :repo "emacsorphanage/helm-swoop"
+        :ref "df90efd4476dec61186d80cace69276a95b834d2" :wait t)
+  (require 'helm-swoop)
+
+  (global-set-key (kbd "C-z M-s") 'helm-swoop)
+  (global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -623,14 +633,6 @@
 
 ;; Use ncdu to look at not-ignored files in a directory in this list:
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
-
-;;
-;; Helm Swoop
-;;
-(require 'helm-swoop)
-
-(global-set-key (kbd "C-z M-s") 'helm-swoop)
-(global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
 
 ;;
 ;; Helm AG and Helm RG and RG they're all different
