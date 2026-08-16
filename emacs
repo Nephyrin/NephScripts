@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 (neph-add-to-load-path 'load-path "~/.emacs.d/dap-mode")
-(neph-add-to-load-path 'load-path "~/.emacs.d/posframe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-ui")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-pyright")
 (neph-add-to-load-path 'load-path "~/.emacs.d/lsp-treemacs")
@@ -850,6 +849,12 @@
   (setq dape-inlay-hints t)
   (setq dape-cwd-function 'projectile-project-root)
   )
+
+;;
+;; posframe
+;;
+(elpaca (posframe :host github :repo "tumashu/posframe" :protocol ssh
+        :ref "06b939cfb06168782fc378043ff35bd7fec203b8" :wait t))
 
 ;; ---- end elpacified run ----
 
