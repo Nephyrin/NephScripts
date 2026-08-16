@@ -1,8 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;; popup.el for rtags tooltips (needed anymore?)
-(autoload 'popup "popup" "Popup tooltip thing." t)
-
 ;; function-args modes (Disabled pending semantic)
 ;;;;(require 'function-args)
 ;;(fa-config-default)

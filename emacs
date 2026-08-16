@@ -1005,6 +1005,9 @@
 ;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
 ;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
 
+;; popup.el for rtags tooltips (needed anymore?)
+(autoload 'popup "popup" "Popup tooltip thing." t)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)
