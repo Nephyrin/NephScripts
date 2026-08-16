@@ -271,9 +271,6 @@
 [submodule "emacs.d/salt-mode"]
 	path = emacs.d/salt-mode
 	url = https://github.com/glynnforrest/salt-mode
-[submodule "emacs.d/xterm-color"]
-	path = emacs.d/xterm-color
-	url = https://github.com/atomontage/xterm-color
 [submodule "emacs.d/eterm-256color"]
 	path = emacs.d/eterm-256color
 	url = https://github.com/dieggsy/eterm-256color

@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/xterm-color")
 (neph-add-to-load-path 'load-path "~/.emacs.d/eterm-256color")
 (neph-add-to-load-path 'load-path "~/.emacs.d/markdown-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/evil")
@@ -239,6 +238,14 @@
 (elpaca (editorconfig :host github :repo "editorconfig/editorconfig-emacs" :protocol ssh
         :ref "f7588dd1a216bfd0a89109ae7bcc3a7da74824c1" :wait t))
 
+;;
+;; Xterm color
+;;
+(elpaca (xterm-color :host github :repo "atomontage/xterm-color"
+        :ref "4b21b619841c93c4700039a93eb1881beee9248c" :wait t)
+  (require 'xterm-color)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -247,11 +254,6 @@
 (setq flyspell-lazy-idle-seconds 1)
 (setq flyspell-lazy-window-idle-seconds 1)
 (global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
-
-;;
-;; Xterm color
-;;
-(require 'xterm-color)
 
 
 ;(require 'eterm-256color) FIXME debug-init
