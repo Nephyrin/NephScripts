@@ -1386,6 +1386,15 @@
 ;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
 ;; (setq projectile-switch-project-action 'projectile-find-file)
 
+;;
+;; php-mode
+;;
+(require 'php-mode)
+
+(add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
+(add-hook 'php-mode-hook 'neph-tab-cfg)
+(add-hook 'php-mode-hook 'neph-lsp-if-projectile)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

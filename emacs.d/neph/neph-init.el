@@ -6,15 +6,6 @@
 ;;(setq moo-select-method 'helm)
 
 ;;
-;; php-mode
-;;
-(require 'php-mode)
-
-(add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
-(add-hook 'php-mode-hook 'neph-tab-cfg)
-(add-hook 'php-mode-hook 'neph-lsp-if-projectile)
-
-;;
 ;; Web-mode
 ;;
 
