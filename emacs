@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
@@ -968,6 +967,13 @@
         :ref "2af1c6c8a33ffa44e99d0e4df8769ca3d4098dd9" :wait t)
   (autoload 'popup "popup" "Popup tooltip thing." t)
   )
+
+;;
+;; auto-complete
+;;
+(elpaca (auto-complete :host github :repo "auto-complete/auto-complete"
+        :files (:defaults "dict")
+        :ref "2e83566ddfa758c69afe50b8a1c62a66f47471e3" :wait t))
 
 ;; ---- end elpacified run ----
 

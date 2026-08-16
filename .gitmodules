@@ -115,9 +115,6 @@
 [submodule "emacs.d/magit-ghub"]
 	path = emacs.d/magit-ghub
 	url = https://github.com/magit/ghub
-[submodule "emacs.d/auto-complete"]
-	path = emacs.d/auto-complete
-	url = https://github.com/auto-complete/auto-complete
 [submodule "emacs.d/emacs-gdb"]
 	path = emacs.d/emacs-gdb
 	url = https://github.com/weirdNox/emacs-gdb
