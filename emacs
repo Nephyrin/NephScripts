@@ -938,13 +938,6 @@
 (global-set-key (kbd "C-z P h") 'neph-p4vc-history)
 
 ;;
-;; Ediff
-(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-merge-split-window-function 'split-window-horizontally)
-
-;;
 ;; Projectile
 ;;
 
@@ -1047,66 +1040,6 @@
 (setq web-mode-enable-current-element-highlight t)
 (setq web-mode-enable-auto-pairing t)
 (add-to-list 'auto-mode-alist '(".html?$" . web-mode))
-
-;;
-;; Neph mode. Aka enable defaults in programming modes
-;;
-
-;; Default modes
-
-(add-to-list 'auto-mode-alist '("/yaourtrc\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("/bash-fc.[^/]+\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.ma?k\\'" . makefile-mode))
-(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.service.d/.+\\.conf\\'" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.sch\\'" . c-mode))
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.svelte\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . neph-bash-mode))
-(add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
-;; Default .j2 files to conf-mode, though these are jinja files that could be anything
-(add-to-list 'auto-mode-alist '("\\.j2\\'" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
-;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
-(add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
-(add-hook 'js-mode-hook 'neph-js-mode-hook)
-(add-hook 'typescript-ts-mode-hook 'neph-tab-cfg)
-(add-hook 'tsx-ts-mode-hook 'neph-tab-cfg)
-(add-hook 'sh-mode-hook 'neph-space-cfg)
-(add-hook 'conf-space-mode-hook 'neph-space-cfg)
-(add-hook 'sql-mode-hook 'neph-space-cfg)
-(add-hook 'python-mode-hook 'neph-space-cfg)
-(add-hook 'python-ts-mode-hook 'neph-space-cfg)
-(add-hook 'java-mode-hook 'neph-space-cfg)
-(add-hook 'lisp-mode-hook 'neph-space-cfg)
-(add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
-(add-hook 'rustic-mode-hook 'neph-space-cfg)
-(add-hook 'conf-mode-hook 'neph-space-cfg)
-(add-hook 'typescript-ts-mode-hook 'neph-space-cfg)
-(add-hook 'go-ts-mode-hook 'neph-space-cfg)
-(add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
-                                             ; should have path detection or
-                                             ; something
-
-;; Modes to try to auto-start lsp in, if they're part of a project
-(add-hook 'c-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'c++-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'sh-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'python-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'python-ts-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'typescript-ts-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'tsx-ts-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'go-ts-mode-hook 'neph-lsp-if-projectile)
-
-(add-hook 'lsp-after-open-hook 'neph-lsp-mode)
-
-;;
-;; Web-mode indent config
-;;
-
-(add-hook 'web-mode-hook 'neph-web-tab-cfg)
 
 ;;
 ;; IswitchBuffers
@@ -1811,6 +1744,73 @@
 ;; re-builder
 (autoload 're-builder "re-builder" "re-builder" t)
 (setq reb-re-syntax 'string)
+
+;;
+;; Ediff
+(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function 'split-window-horizontally)
+(setq ediff-merge-split-window-function 'split-window-horizontally)
+
+;;
+;; Neph mode. Aka enable defaults in programming modes
+;;
+
+;; Default modes
+
+(add-to-list 'auto-mode-alist '("/yaourtrc\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("/bash-fc.[^/]+\\'" . sh-mode))
+(add-to-list 'auto-mode-alist '("\\.ma?k\\'" . makefile-mode))
+(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.service.d/.+\\.conf\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.sch\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.svelte\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . neph-bash-mode))
+(add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
+;; Default .j2 files to conf-mode, though these are jinja files that could be anything
+(add-to-list 'auto-mode-alist '("\\.j2\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
+(add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
+(add-hook 'js-mode-hook 'neph-js-mode-hook)
+(add-hook 'typescript-ts-mode-hook 'neph-tab-cfg)
+(add-hook 'tsx-ts-mode-hook 'neph-tab-cfg)
+(add-hook 'sh-mode-hook 'neph-space-cfg)
+(add-hook 'conf-space-mode-hook 'neph-space-cfg)
+(add-hook 'sql-mode-hook 'neph-space-cfg)
+(add-hook 'python-mode-hook 'neph-space-cfg)
+(add-hook 'python-ts-mode-hook 'neph-space-cfg)
+(add-hook 'java-mode-hook 'neph-space-cfg)
+(add-hook 'lisp-mode-hook 'neph-space-cfg)
+(add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
+(add-hook 'rustic-mode-hook 'neph-space-cfg)
+(add-hook 'conf-mode-hook 'neph-space-cfg)
+(add-hook 'typescript-ts-mode-hook 'neph-space-cfg)
+(add-hook 'go-ts-mode-hook 'neph-space-cfg)
+(add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
+                                             ; should have path detection or
+                                             ; something
+
+;; Modes to try to auto-start lsp in, if they're part of a project
+(add-hook 'c-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'c++-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'sh-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'python-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'python-ts-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'typescript-ts-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'tsx-ts-mode-hook 'neph-lsp-if-projectile)
+(add-hook 'go-ts-mode-hook 'neph-lsp-if-projectile)
+
+(add-hook 'lsp-after-open-hook 'neph-lsp-mode)
+
+;;
+;; Web-mode indent config
+;;
+
+(add-hook 'web-mode-hook 'neph-web-tab-cfg)
 
 ;;
 ;; ; #120F14
