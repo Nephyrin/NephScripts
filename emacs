@@ -870,6 +870,14 @@
 ;;              (or (executable-find "intelephense") (lsp-package-path 'intelephense))
 ;;              "--stdio")))
 
+;; cquery
+(setq lsp-pyright-multi-root nil)
+(setq lsp-pyright-langserver-command "pyright")
+
+;; Pyright settings are snapshot on library load??
+(setq lsp-pyright-multi-root nil)
+(require 'lsp-pyright)
+
 ;; Split out so that it can be auto-compiled/native-compiled
 (message "loading init")
 (require 'neph-init)

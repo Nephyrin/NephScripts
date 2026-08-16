@@ -1,8 +1,5 @@
 ;; -*- mode: Emacs-Lisp; -*-
 
-;; cquery
-(setq lsp-pyright-multi-root nil)
-(setq lsp-pyright-langserver-command "pyright")
 (require 'lsp-treemacs)
 (require 'treemacs)
 (require 'treemacs-mouse-interface)
@@ -15,9 +12,6 @@
 (require 'lsp-modeline)
 (require 'lsp-diagnostics)
 
-;; Pyright settings are snapshot on library load??
-(setq lsp-pyright-multi-root nil)
-(require 'lsp-pyright)
 (require 'dap-mode)
 ;;(require 'dap-cpptools)
 (require 'dap-ui)
