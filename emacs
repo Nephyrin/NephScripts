@@ -20,7 +20,6 @@
 (neph-add-to-load-path 'load-path "~/neph/emacs.d/auto-complete")
 (neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
-(neph-add-to-load-path 'load-path "~/.emacs.d/phi-search")
 (neph-add-to-load-path 'load-path "~/.emacs.d/swiper")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/company-quickhelp")
@@ -591,6 +590,19 @@
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
   )
 
+;;
+;; phi-search
+(elpaca (phi-search :host github :repo "zk-phi/phi-search"
+        :ref "40b86bfe9ae15377fbee842b1de3d93c2eb7dd69" :wait t)
+  (autoload 'phi-search "phi-search" "Phi Search." t)
+
+  (global-set-key (kbd "C-S-s") 'phi-search)
+  (global-set-key (kbd "C-S-r") 'phi-search-backward)
+
+  (with-eval-after-load "phisearch"
+    (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -718,16 +730,6 @@
 ;;
 (require 'rg)
 
-
-;;
-;; phi-search
-(autoload 'phi-search "phi-search" "Phi Search." t)
-
-(global-set-key (kbd "C-S-s") 'phi-search)
-(global-set-key (kbd "C-S-r") 'phi-search-backward)
-
-(with-eval-after-load "phisearch"
-  (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
 
 
 ;;
