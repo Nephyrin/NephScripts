@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
 (neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc-1.0.24")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
@@ -1271,6 +1270,14 @@
         :main "lisp/transient.el"
         :ref "150e9d625ba28747812a7243f79d61ea927aacc6" :wait t))
 
+;;
+;; RG
+;;
+(elpaca (rg :host github :repo "dajva/rg.el" :protocol ssh
+        :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98" :wait t)
+  (require 'rg)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1392,11 +1399,6 @@
 
 ;; Use ncdu to look at not-ignored files in a directory in this list:
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
-
-;;
-;; RG
-;;
-(require 'rg)
 
 
 

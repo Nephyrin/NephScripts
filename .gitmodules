@@ -67,9 +67,6 @@
 [submodule "emacs.d/treepy"]
 	path = emacs.d/treepy
 	url = https://github.com/volrath/treepy.el
-[submodule "emacs.d/rg.el"]
-	path = emacs.d/rg.el
-	url = git@github.com:dajva/rg.el.git
 [submodule "emacs.d/auto-compile"]
 	path = emacs.d/auto-compile
 	url = https://github.com/emacscollective/auto-compile
