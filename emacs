@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/mmm-jinja2")
 (neph-add-to-load-path 'load-path "~/.emacs.d/salt-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-modes")
 (neph-add-to-load-path 'load-path "~/.emacs.d/llama") ;; dep of magit
@@ -1237,6 +1236,12 @@
 ;;
 (elpaca (mmm-mode :host github :repo "purcell/mmm-mode"
         :ref "1b4ada30ae6d35a7c9156fb7a706607eb7566592" :wait t))
+
+;;
+;; mmm-jinja2
+;;
+(elpaca (mmm-jinja2 :host github :repo "glynnforrest/mmm-jinja2"
+        :ref "c8cb763174fa2fb61b9a0e5e0ff8cb0210f8492f" :wait t))
 
 ;; ---- end elpacified run ----
 
