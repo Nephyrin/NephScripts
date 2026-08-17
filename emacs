@@ -24,7 +24,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/magit-popup")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-ghub/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/treepy")
@@ -1277,6 +1276,12 @@
         :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98" :wait t)
   (require 'rg)
   )
+
+;;
+;; magit-popup
+;;
+(elpaca (magit-popup :host github :repo "magit/magit-popup"
+        :ref "d8585fa39f88956963d877b921322530257ba9f5" :wait t))
 
 ;; ---- end elpacified run ----
 
