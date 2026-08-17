@@ -13,9 +13,6 @@
 [submodule "emacs.d/clang-complete-async.git"]
 	path = emacs.d/clang-complete-async.git
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
-[submodule "emacs.d/magit"]
-	path = emacs.d/magit
-	url = https://github.com/magit/magit
 [submodule "bin/git-imerge.git"]
 	path = bin/git-imerge.git
 	url = https://github.com/Nephyrin/git-imerge.git

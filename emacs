@@ -24,7 +24,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/magit/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 ;(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
@@ -1306,6 +1305,27 @@
         :main "lisp/with-editor.el"
         :ref "f514f23258af67a10fc8e1c431bfe94702b6e65b" :wait t))
 
+;;
+;; Magit
+;;
+
+;; Fix magit in that mode
+;; https://github.com/magit/magit/issues/5220
+(elpaca (magit :host github :repo "magit/magit"
+        :main "lisp/magit.el"
+        :ref "afefc998149a9baae62c670ef05d1ebaf6713cfe" :wait t)
+  (setq magit-tramp-pipe-stty-settings 'pty)
+
+  (require 'with-editor)
+  (require 'magit)
+  (require 'magit-blame)
+  (global-set-key (kbd "C-z C-<return>") 'magit-status)
+  (global-set-key (kbd "C-z L") 'magit-blame-mode)
+  (global-set-key (kbd "C-z x") 'magit)
+  (global-set-key (kbd "C-z X") 'magit-ediff-stage)
+  (global-set-key (kbd "C-z C") 'magit-commit)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1442,23 +1462,6 @@
 
 
 
-
-;;
-;; Magit
-;;
-
-;; Fix magit in that mode
-;; https://github.com/magit/magit/issues/5220
-(setq magit-tramp-pipe-stty-settings 'pty)
-
-(require 'with-editor)
-(require 'magit)
-(require 'magit-blame)
-(global-set-key (kbd "C-z C-<return>") 'magit-status)
-(global-set-key (kbd "C-z L") 'magit-blame-mode)
-(global-set-key (kbd "C-z x") 'magit)
-(global-set-key (kbd "C-z X") 'magit-ediff-stage)
-(global-set-key (kbd "C-z C") 'magit-commit)
 
 
 ;;
