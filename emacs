@@ -1066,7 +1066,11 @@
 ;; flyspell-lazy
 ;;
 (elpaca (flyspell-lazy :host github :repo "rolandwalker/flyspell-lazy"
-        :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10"))
+        :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10")
+  (require 'flyspell-lazy)
+  (setq flyspell-lazy-idle-seconds 1)
+  (setq flyspell-lazy-window-idle-seconds 1)
+  (global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle))
 
 ;;
 ;; Projectile
@@ -1209,7 +1213,25 @@
 ;; ace-jump-mode
 ;;
 (elpaca (ace-jump-mode :host github :repo "winterTTr/ace-jump-mode"
-        :ref "c60f7d2e84c9eb283627e30d1949462f403d877b"))
+        :ref "c60f7d2e84c9eb283627e30d1949462f403d877b")
+  (autoload
+    'ace-jump-mode
+    "ace-jump-mode"
+    "Emacs quick move minor mode"
+    t)
+
+  (autoload
+    'ace-jump-mode-pop-mark
+    "ace-jump-mode"
+    "Ace jump back:-)"
+    t)
+  (eval-after-load "ace-jump-mode"
+    '(ace-jump-mode-enable-mark-sync))
+
+  ;; TODO Drop ace-jump?
+  (require 'avy)
+  (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
+  (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1))
 
 ;;
 ;; mmm-mode
@@ -1380,15 +1402,6 @@
 ;; ---- end package configuration ----
 
 ;;
-;; Flyspell-lazy
-(require 'flyspell-lazy)
-(setq flyspell-lazy-idle-seconds 1)
-(setq flyspell-lazy-window-idle-seconds 1)
-(global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
-
-
-
-;;
 ;; ansi color mode
 ;;
 (require 'ansi-color-overlay-mode)
@@ -1514,29 +1527,6 @@
 
 
 
-
-;;
-;; ace-jump-mode
-;;
-
-(autoload
-  'ace-jump-mode
-  "ace-jump-mode"
-  "Emacs quick move minor mode"
-  t)
-
-(autoload
-  'ace-jump-mode-pop-mark
-  "ace-jump-mode"
-  "Ace jump back:-)"
-  t)
-(eval-after-load "ace-jump-mode"
-  '(ace-jump-mode-enable-mark-sync))
-
-;; TODO Drop ace-jump?
-(require 'avy)
-(define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
-(define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
 
 ;;
 ;; Misc
