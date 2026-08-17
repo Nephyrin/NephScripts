@@ -67,9 +67,6 @@
 [submodule "emacs.d/magit-ghub"]
 	path = emacs.d/magit-ghub
 	url = https://github.com/magit/ghub
-[submodule "emacs.d/yaml-mode"]
-	path = emacs.d/yaml-mode
-	url = https://github.com/yoshiki/yaml-mode
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k

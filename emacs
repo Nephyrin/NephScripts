@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/yaml-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-jump-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/mmm-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/mmm-jinja2")
@@ -1217,6 +1216,18 @@
   (add-to-list 'auto-mode-alist '(".html?$" . web-mode))
   )
 
+;;
+;; Yaml mode
+;;
+(elpaca (yaml-mode :host github :repo "yoshiki/yaml-mode"
+        :ref "40067a10ac1360f0b9533f0bbbb2eea128e2574d" :wait t)
+  (require 'yaml-mode)
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
+  (with-eval-after-load "yaml-mode"
+    (add-hook 'yaml-mode-hook 'neph-space-cfg))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1375,15 +1386,6 @@
 (global-set-key (kbd "C-z x") 'magit)
 (global-set-key (kbd "C-z X") 'magit-ediff-stage)
 (global-set-key (kbd "C-z C") 'magit-commit)
-
-;;
-;; Yaml mode
-;;
-(require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
-(with-eval-after-load "yaml-mode"
-  (add-hook 'yaml-mode-hook 'neph-space-cfg))
 
 
 ;;
