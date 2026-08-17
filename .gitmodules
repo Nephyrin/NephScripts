@@ -64,9 +64,6 @@
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
-[submodule "emacs.d/magit-transient"]
-	path = emacs.d/magit-transient
-	url = https://github.com/magit/transient
 [submodule "emacs.d/treepy"]
 	path = emacs.d/treepy
 	url = https://github.com/volrath/treepy.el
