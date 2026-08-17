@@ -17,7 +17,6 @@
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/counsel-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rg.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
 (neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc-1.0.24")
@@ -1136,6 +1135,12 @@
   ;;                                                      neph-ignored-patterns " -and ")
   ;;                                           " -print0")))
   )
+
+;;
+;; counsel-projectile
+;;
+(elpaca (counsel-projectile :host github :repo "ericdanan/counsel-projectile"
+        :ref "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b" :wait t))
 
 ;; ---- end elpacified run ----
 
