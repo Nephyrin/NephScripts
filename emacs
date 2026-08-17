@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit/lisp")
-(neph-add-to-load-path 'load-path "~/.emacs.d/with-editor/lisp") ;; Part of magit project, dep
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 ;(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
@@ -1299,6 +1298,13 @@
 ;;
 ;; (elpaca (powerline :host github :repo "milkypostman/powerline"
 ;;         :ref "8a246902e86a0c59015bb897a9c59be9729ef5c4"))
+
+;;
+;; with-editor
+;;
+(elpaca (with-editor :host github :repo "magit/with-editor"
+        :main "lisp/with-editor.el"
+        :ref "f514f23258af67a10fc8e1c431bfe94702b6e65b" :wait t))
 
 ;; ---- end elpacified run ----
 
