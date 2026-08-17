@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit/lisp")
-(neph-add-to-load-path 'load-path "~/.emacs.d/treepy")
 (neph-add-to-load-path 'load-path "~/.emacs.d/with-editor/lisp") ;; Part of magit project, dep
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
@@ -1288,6 +1287,12 @@
 (elpaca (ghub :host github :repo "magit/ghub"
         :main "ghub-pkg.el"
         :ref "0d7c81eee3ba0c6e029605e545173721c39947d7" :wait t))
+
+;;
+;; treepy
+;;
+(elpaca (treepy :host github :repo "volrath/treepy.el"
+        :ref "3ac940e97f3d03e48ca9d7fcd74916a9b01c72f3" :wait t))
 
 ;; ---- end elpacified run ----
 

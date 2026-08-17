@@ -58,9 +58,6 @@
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
-[submodule "emacs.d/treepy"]
-	path = emacs.d/treepy
-	url = https://github.com/volrath/treepy.el
 [submodule "emacs.d/auto-compile"]
 	path = emacs.d/auto-compile
 	url = https://github.com/emacscollective/auto-compile
