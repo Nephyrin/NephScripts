@@ -27,7 +27,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")
-;; (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/auto-compile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/elpaca") ;; pinned submodule, see bootstrap below
@@ -1360,6 +1359,30 @@
 ;; (elpaca (color-theme-sunburst :host github :repo "neomantic-zz/Emacs-Sunburst-Color-Theme"
 ;;         :ref "5b54dec51e031fd44c1af142dbe2bf3aa1411318"))
 
+;;
+;; purple-haze (needs to be made into a neph-purple-haze-theme.el)
+;;
+;; (elpaca (purple-haze-theme :host github :repo "Nephyrin/emacs-purple-haze-theme"
+;;         :ref "1fa0e55a68d8a92c2dcdef0428dec0b7b9df752b"))
+;; (set-face-attribute 'cursor nil :background "#D96E26")
+;; (load-theme 'purple-haze t)
+
+;; (set-face-attribute 'mode-line nil :height 82)
+;; (set-face-background 'hl-line "#19151D")
+;; (set-face-attribute 'vertical-border nil :foreground "#222")
+;; (set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
+;; ; These are way too strong by default
+;; (set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
+;; (set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
+;; (set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
+;; (set-face-attribute 'rainbow-delimiters-depth-4-face nil   :foreground "#baf")
+;; (set-face-attribute 'rainbow-delimiters-depth-5-face nil   :foreground "#a9e")
+;; (set-face-attribute 'rainbow-delimiters-depth-6-face nil   :foreground "#98e")
+;; (set-face-attribute 'rainbow-delimiters-depth-7-face nil   :foreground "#87d")
+;; (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
+;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
+;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1521,28 +1544,6 @@
 (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
 (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
 
-;;
-;; purple-haze (needs to be made into a neph-purple-haze-theme.el)
-;;
-
-;; (set-face-attribute 'cursor nil :background "#D96E26")
-;; (load-theme 'purple-haze t)
-
-;; (set-face-attribute 'mode-line nil :height 82)
-;; (set-face-background 'hl-line "#19151D")
-;; (set-face-attribute 'vertical-border nil :foreground "#222")
-;; (set-face-attribute 'web-mode-block-face nil :background "#0E0B10")
-;; ; These are way too strong by default
-;; (set-face-attribute 'rainbow-delimiters-depth-1-face nil   :foreground "#fff")
-;; (set-face-attribute 'rainbow-delimiters-depth-2-face nil   :foreground "#dcf")
-;; (set-face-attribute 'rainbow-delimiters-depth-3-face nil   :foreground "#cbf")
-;; (set-face-attribute 'rainbow-delimiters-depth-4-face nil   :foreground "#baf")
-;; (set-face-attribute 'rainbow-delimiters-depth-5-face nil   :foreground "#a9e")
-;; (set-face-attribute 'rainbow-delimiters-depth-6-face nil   :foreground "#98e")
-;; (set-face-attribute 'rainbow-delimiters-depth-7-face nil   :foreground "#87d")
-;; (set-face-attribute 'rainbow-delimiters-depth-8-face nil   :foreground "#76d")
-;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
-;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
 ;;
 ;; Misc
 ;;
