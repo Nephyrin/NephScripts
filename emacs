@@ -1294,6 +1294,12 @@
 (elpaca (treepy :host github :repo "volrath/treepy.el"
         :ref "3ac940e97f3d03e48ca9d7fcd74916a9b01c72f3" :wait t))
 
+;;
+;; powerline
+;;
+;; (elpaca (powerline :host github :repo "milkypostman/powerline"
+;;         :ref "8a246902e86a0c59015bb897a9c59be9729ef5c4"))
+
 ;; ---- end elpacified run ----
 
 ;;
