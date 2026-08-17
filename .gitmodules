@@ -55,9 +55,6 @@
 [submodule "emacs.d/with-editor"]
 	path = emacs.d/with-editor
 	url = https://github.com/magit/with-editor
-[submodule "emacs.d/magit-ghub"]
-	path = emacs.d/magit-ghub
-	url = https://github.com/magit/ghub
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k

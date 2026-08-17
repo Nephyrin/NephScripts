@@ -24,7 +24,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/magit-ghub/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/treepy")
 (neph-add-to-load-path 'load-path "~/.emacs.d/with-editor/lisp") ;; Part of magit project, dep
@@ -1282,6 +1281,13 @@
 ;;
 (elpaca (magit-popup :host github :repo "magit/magit-popup"
         :ref "d8585fa39f88956963d877b921322530257ba9f5" :wait t))
+
+;;
+;; ghub
+;;
+(elpaca (ghub :host github :repo "magit/ghub"
+        :main "ghub-pkg.el"
+        :ref "0d7c81eee3ba0c6e029605e545173721c39947d7" :wait t))
 
 ;; ---- end elpacified run ----
 
