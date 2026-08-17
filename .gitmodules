@@ -97,9 +97,6 @@
 [submodule "emacs.d/auto-compile"]
 	path = emacs.d/auto-compile
 	url = https://github.com/emacscollective/auto-compile
-[submodule "emacs.d/php-mode"]
-	path = emacs.d/php-mode
-	url = git@github.com:emacs-php/php-mode.git
 [submodule "emacs.d/cond-let"]
 	path = emacs.d/cond-let
 	url = https://github.com/tarsius/cond-let.git

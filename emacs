@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/php-mode/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/web-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/yaml-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-jump-mode")
@@ -1186,6 +1185,19 @@
   ;; (setq projectile-switch-project-action 'projectile-find-file)
   )
 
+;;
+;; php-mode
+;;
+(elpaca (php-mode :host github :repo "emacs-php/php-mode" :protocol ssh
+        :main "lisp/php-mode.el"
+        :ref "4792988a120d6ac515ba16605278d04cb8be0d69" :wait t)
+  (require 'php-mode)
+
+  (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
+  (add-hook 'php-mode-hook 'neph-tab-cfg)
+  (add-hook 'php-mode-hook 'neph-lsp-if-projectile)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1327,15 +1339,6 @@
 
 
 
-
-;;
-;; php-mode
-;;
-(require 'php-mode)
-
-(add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
-(add-hook 'php-mode-hook 'neph-tab-cfg)
-(add-hook 'php-mode-hook 'neph-lsp-if-projectile)
 
 ;;
 ;; Web-mode
