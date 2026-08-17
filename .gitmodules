@@ -46,9 +46,6 @@
 [submodule "emacs.d/ample-zen"]
 	path = emacs.d/ample-zen
 	url = https://github.com/mjwall/ample-zen
-[submodule "emacs.d/projectile"]
-	path = emacs.d/projectile
-	url = https://github.com/bbatsov/projectile
 [submodule "zsh.d/autosuggestions"]
 	path = zsh.d/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions

@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/php-mode/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/web-mode")
@@ -1095,6 +1094,49 @@
 (elpaca (flyspell-lazy :host github :repo "rolandwalker/flyspell-lazy"
         :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10" :wait t))
 
+;;
+;; Projectile
+;;
+
+
+;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
+(elpaca (projectile :host github :repo "bbatsov/projectile"
+        :ref "f12fdae30a36e3614fa6944969bf37dec9998301" :wait t)
+  (setq helm-projectile-fuzzy-match nil)
+
+  ;; In server mode, let's just load it synchronously
+  (require 'projectile)
+
+  (setq projectile-switch-project-action 'projectile-find-file)
+
+  (with-eval-after-load "projectile"
+    (setq projectile-project-root-files
+          (remove "?*.sln" projectile-project-root-files))
+    (setq projectile-completion-system 'helm)
+    (setq projectile-generic-command "fd . -E '/.*cache' --hidden -0")
+    (setq projectile-indexing-method 'alien)
+    (setq projectile-project-name-function 'neph-projectile-project-name)
+    (setq projectile-enable-caching 'persistent)
+    ;; caching big projects still very slow even with fd
+    ;(setq projectile-files-cache-expire 3600)
+    (projectile-global-mode t)
+    (with-eval-after-load "helm"
+      ;; This just wraps some stuff with 'helpers' like helm-projectile-find-file which is hella slow because it tries to
+      ;; pull in dired too and such.  Should bind/turn on those things one and a time if they're handy, otherwise projectile
+      ;; commands already use the helm completion backend.
+      ;;(helm-projectile-on)
+      ))
+
+
+  ;;(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
+  ;;                               "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
+  ;;                               "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
+  ;;  (setq projectile-generic-command (concat "find . -type f "
+  ;;                                           (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
+  ;;                                                      neph-ignored-patterns " -and ")
+  ;;                                           " -print0")))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1236,46 +1278,6 @@
 
 
 
-
-;;
-;; Projectile
-;;
-
-
-;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
-(setq helm-projectile-fuzzy-match nil)
-
-;; In server mode, let's just load it synchronously
-(require 'projectile)
-
-(setq projectile-switch-project-action 'projectile-find-file)
-
-(with-eval-after-load "projectile"
-  (setq projectile-project-root-files
-        (remove "?*.sln" projectile-project-root-files))
-  (setq projectile-completion-system 'helm)
-  (setq projectile-generic-command "fd . -E '/.*cache' --hidden -0")
-  (setq projectile-indexing-method 'alien)
-  (setq projectile-project-name-function 'neph-projectile-project-name)
-  (setq projectile-enable-caching 'persistent)
-  ;; caching big projects still very slow even with fd
-  ;(setq projectile-files-cache-expire 3600)
-  (projectile-global-mode t)
-  (with-eval-after-load "helm"
-    ;; This just wraps some stuff with 'helpers' like helm-projectile-find-file which is hella slow because it tries to
-    ;; pull in dired too and such.  Should bind/turn on those things one and a time if they're handy, otherwise projectile
-    ;; commands already use the helm completion backend.
-    ;;(helm-projectile-on)
-    ))
-
-
-;;(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
-;;                               "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
-;;                               "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
-;;  (setq projectile-generic-command (concat "find . -type f "
-;;                                           (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
-;;                                                      neph-ignored-patterns " -and ")
-;;                                           " -print0")))
 
 (require 'helm-projectile)
 
