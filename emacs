@@ -27,7 +27,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter-fringe")
-(neph-add-to-load-path 'load-path "~/.emacs.d/fringe-helper")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rainbow-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/p4.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flyspell-lazy")
@@ -1054,6 +1053,17 @@
 (elpaca (git-gutter :host github :repo "syohex/emacs-git-gutter"
         :ref "1ede3a688f3c60bd915d890a06d1509c7236167c" :wait t))
 
+;;
+;; fringe-helper
+;;
+(elpaca (fringe-helper :host github :repo "nschum/fringe-helper.el"
+        :ref "c02fae16cda709f102dee56338075e257240b385" :wait t)
+  (require 'fringe-helper)
+  (require 'git-gutter)
+  (require 'git-gutter-fringe)
+  (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1195,11 +1205,6 @@
 
 
 
-
-(require 'fringe-helper)
-(require 'git-gutter)
-(require 'git-gutter-fringe)
-(autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
 
 ;;
 ;; P4
