@@ -1048,18 +1048,20 @@
 ;; fringe-helper
 ;;
 (elpaca (fringe-helper :host github :repo "nschum/fringe-helper.el"
-        :ref "c02fae16cda709f102dee56338075e257240b385" :wait t)
-  (require 'fringe-helper)
-  (require 'git-gutter)
-  (require 'git-gutter-fringe)
-  (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
-  )
+        :ref "c02fae16cda709f102dee56338075e257240b385" :wait t))
 
 ;;
 ;; git-gutter-fringe
 ;;
 (elpaca (git-gutter-fringe :host github :repo "syohex/emacs-git-gutter-fringe"
-        :ref "c12179ece35538c94d7928572f523a7145f1fb49" :wait t))
+        :ref "c12179ece35538c94d7928572f523a7145f1fb49" :wait t)
+  ;; Load order is load-bearing: fringe-helper -> git-gutter -> git-gutter-fringe.
+  ;; Hosted here (the dependency-order-last of the trio) so all three are built.
+  (require 'fringe-helper)
+  (require 'git-gutter)
+  (require 'git-gutter-fringe)
+  (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
+  )
 
 ;;
 ;; rainbow-mode
