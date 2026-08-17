@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/flyspell-lazy")
 (neph-add-to-load-path 'load-path "~/.emacs.d/projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/php-mode/lisp")
@@ -1089,6 +1088,12 @@
   (global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
   (global-set-key (kbd "C-z P h") 'neph-p4vc-history)
   )
+
+;;
+;; flyspell-lazy
+;;
+(elpaca (flyspell-lazy :host github :repo "rolandwalker/flyspell-lazy"
+        :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10" :wait t))
 
 ;; ---- end elpacified run ----
 
