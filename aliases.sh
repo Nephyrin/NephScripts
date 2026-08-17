@@ -412,52 +412,65 @@ owned_cd()
 NEPH_TMPDIR_PREFIX="${TMPDIR:-/tmp}/neph-"
 ct()
 {
-  # Passed a name?  Make or cd into it (`ct foo` -> maybe create /tmp/neph-foo otherwide cd in)
+  # What should these directories be made as
+  local mask=077
+  # additive
+  # it has to be an octal thing for the fuckin command and also zsh might not be in "octalzeros" mode yay
+  mask=$(printf '%#o' $(( 8#$(umask) | 8#$mask )))
+
+  local dir
+
+  # Passed a name?  Make it if needed (`ct foo` -> maybe create /tmp/neph-foo otherwide cd in)
   if [[ $# -gt 0 ]]; then
-    local dir="$*"
-    if [[ $dir = *" "* || $dir = */* ]]; then
-      eerr "Invalid dir '$dir'"
+    dir="$*"
+    local r='^[a-zA-Z0-9.-_]+$'
+    if ! [[ $dir =~ $r ]]; then
+      eerr "Invalid dir '$dir', must match '$r'"
       return 1
     fi
+
     dir="${NEPH_TMPDIR_PREFIX}${dir}"
-    if [[ -d $dir ]]; then
-      # TOCTOU lol
-      local newfd
-      local fail
-      { exec {newfd}<"$dir" && [[ -O /dev/fd/"$newfd" ]] && cd -P /dev/fd/"$newfd"; } || fail=1
-      exec {newfd}<&-
-      if [[ -n $fail ]]; then
-        eerr "Couldn't change to '$dir' or not owned by current user"
-        return 1
-      fi
-      return 0
-    elif mktemp -d "$dir"; then
-      cd -- "$dir" || { eerr; return 1; }
-    else
-      { eerr; return 1; }
+    if [[ ! -d $dir ]]; then
+      ( umask -- "$mask" && cmd mkdir -- "$dir" ) || { eerr "Could not create '$dir'"; return 1; }
     fi
-    return 0
   fi
 
+  # Generate a dir if not passed
   local i=0
-  local dir
   local attempt
   local name
   while [[ -z $dir ]] && (( ++i <= 10 )); do
     name=$(n_commonword 1 4 4)
     if [[ -n $name ]]; then
       attempt="${NEPH_TMPDIR_PREFIX}$name"
-      ( umask 077 && mkdir -v -- "$attempt"; ) && dir=$attempt
+      ( umask 077 && cmd mkdir -- "$attempt"; ) && dir=$attempt
     else
       # Use mktemp for its gibberish generation instead.  I guess n_commonword could fallback to gibberish for us or
       # something.
       ewarn "can't generate common words on this system, no dictionary?  Using mktemp."
-      dir=$(mktemp -d "${NEPH_TMPDIR_PREFIX}"XXX)
+      dir=$(cmd mktemp -d "${NEPH_TMPDIR_PREFIX}"XXX)
     fi
   done
   [[ -d $dir ]] || { eerr "Couldn't find an unused name after ten attempts?"; return 1; }
-  export NEPH_TEMP_DIR="$dir"
-  cd "$dir" || { eerr ; return 1; }
+
+  # cd into dir without getting TOCTOU'd lol
+  local newfd
+  local fail
+  {
+    exec {newfd}<"$dir" || fail="Cannot access '$dir' -- bad permissions or race"
+    [[ -n $fail ]] || [[ -O /dev/fd/"$newfd" ]] || fail="'$dir' is not owned by current user"
+    [[ -n $fail ]] || { showcmd cd -- "$dir"; cd -P /dev/fd/"$newfd"; } || fail="Could not cd into '$dir'"
+  }
+  exec {newfd}<&-
+  if [[ -n $fail ]]; then
+    eerr "$fail -- $(ls -ltrd -- "$dir")"
+    return 1
+  fi
+
+  # Wow we did it.  I'm not sure if this is just overengineered or a proof bash is unusable it has
+  # impossible-to-use-C-without-UB vibes
+
+  export NEPH_TEMP_DIR="$dir" # Other helpers use this
 }
 
 clt()
@@ -500,11 +513,12 @@ clt()
 
 rt()
 {
-  if [[ -n ${NEPH_TEMP_DIR-} && -d $NEPH_TEMP_DIR ]]; then
-    if ! cd -- "$NEPH_TEMP_DIR"; then
-      eerr "\$NEPH_TEMP_DIR \"$NEPH_TEMP_DIR\" not accessible"
+  if [[ -n ${NEPH_TEMP_DIR-} ]]; then
+    if [[ $NEPH_TEMP_DIR != "$NEPH_TMPDIR_PREFIX"?* ]]; then
+      eerr "\$NEPH_TEMP_DIR does not start with '$NEPH_TMPDIR_PREFIX'"
       return 1
     fi
+    ct "${NEPH_TEMP_DIR#"$NEPH_TMPDIR_PREFIX"}"
   else
     unset NEPH_TEMP_DIR
     estat "No temp dir in context"
