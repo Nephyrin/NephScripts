@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/git-modes")
 (neph-add-to-load-path 'load-path "~/.emacs.d/llama") ;; dep of magit
 (neph-add-to-load-path 'load-path "~/.emacs.d/cond-let") ;; dep of magit
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-transient/lisp")
@@ -1249,6 +1248,12 @@
         :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c" :wait t)
   (require 'salt-mode)
   )
+
+;;
+;; git-modes
+;;
+(elpaca (git-modes :host github :repo "magit/git-modes"
+        :ref "96abfb732d695cbd2075ba701254651a7b28d693" :wait t))
 
 ;; ---- end elpacified run ----
 

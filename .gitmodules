@@ -55,9 +55,6 @@
 [submodule "emacs.d/with-editor"]
 	path = emacs.d/with-editor
 	url = https://github.com/magit/with-editor
-[submodule "emacs.d/git-modes"]
-	path = emacs.d/git-modes
-	url = https://github.com/magit/git-modes
 [submodule "emacs.d/magit-popup"]
 	path = emacs.d/magit-popup
 	url = https://github.com/magit/magit-popup
