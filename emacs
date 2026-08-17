@@ -28,7 +28,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")
 
-(neph-add-to-load-path 'load-path "~/.emacs.d/auto-compile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/elpaca") ;; pinned submodule, see bootstrap below
 
 (dolist (dir neph-compile-stuff)
@@ -36,13 +35,6 @@
     (byte-recompile-directory dir 0)))
 
 (setq neph-compile-stuff nil)
-
-;; Turn on autocompile for everything else
-(require 'auto-compile)
-(setq auto-compile-verbose t)
-
-(auto-compile-on-load-mode)
-(auto-compile-on-save-mode)
 
 ;; Functions/macros live in neph-lib where they get byte-compiled; this file
 ;; does not, and keeps to wiring (requires, setqs, hooks, binds).
@@ -87,6 +79,14 @@
 ;; NOTE: transient, jsonrpc and compat are built into modern Emacs but pinned
 ;; here; declaring them removes them from the ignore list so the pins win.
 (add-hook 'after-init-hook #'elpaca-process-queues)
+
+;; Turn on autocompile for everything else. First elpaca package: activates
+;; before all following declarations/loads so on-load compile covers them.
+(elpaca (auto-compile :host github :repo "emacscollective/auto-compile"
+        :ref "01844064e3f2bb9f109a8a064998baf89a864fbc" :wait t)
+  (setq auto-compile-verbose t)
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode))
 
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
