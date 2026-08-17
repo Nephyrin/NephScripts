@@ -83,7 +83,7 @@
 ;; Turn on autocompile for everything else. First elpaca package: activates
 ;; before all following declarations/loads so on-load compile covers them.
 (elpaca (auto-compile :host github :repo "emacscollective/auto-compile"
-        :ref "01844064e3f2bb9f109a8a064998baf89a864fbc" :wait t)
+        :ref "01844064e3f2bb9f109a8a064998baf89a864fbc")
   (setq auto-compile-verbose t)
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
@@ -99,11 +99,11 @@
 ;; dash
 ;;
 (elpaca (dash :host github :repo "magnars/dash.el"
-        :ref "6db80c711ce947f6c6fa11e5c2257fff2c79d139" :wait t))
+        :ref "6db80c711ce947f6c6fa11e5c2257fff2c79d139"))
 
 ;; Global libraries macros in here (and also )
 (elpaca (ht :host github :repo "Wilfred/ht.el"
-        :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6" :wait t)
+        :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6")
   (require 'ht)
   )
 
@@ -111,43 +111,43 @@
 ;; bui
 ;;
 (elpaca (bui :host github :repo "alezost/bui.el" :protocol ssh
-        :ref "f3a137628e112a91910fd33c0cff0948fa58d470" :wait t))
+        :ref "f3a137628e112a91910fd33c0cff0948fa58d470"))
 
 ;;
 ;; compat
 ;;
 (elpaca (compat :host github :repo "phikal/compat.el" :protocol ssh
-        :ref "730f2c5ad62137ae6a6ea002a24ce9418954e441" :wait t))
+        :ref "730f2c5ad62137ae6a6ea002a24ce9418954e441"))
 
 ;;
 ;; spinner
 ;;
 (elpaca (spinner :host github :repo "Malabarba/spinner.el"
-        :ref "d4647ae87fb0cd24bc9081a3d287c860ff061c21" :wait t))
+        :ref "d4647ae87fb0cd24bc9081a3d287c860ff061c21"))
 
 ;;
 ;; s
 ;;
 (elpaca (s :host github :repo "magnars/s.el"
-        :ref "dda84d38fffdaf0c9b12837b504b402af910d01d" :wait t))
+        :ref "dda84d38fffdaf0c9b12837b504b402af910d01d"))
 
 ;;
 ;; f
 ;;
 (elpaca (f :host github :repo "rejeep/f.el"
-        :ref "931b6d0667fe03e7bf1c6c282d6d8d7006143c52" :wait t))
+        :ref "931b6d0667fe03e7bf1c6c282d6d8d7006143c52"))
 
 ;;
 ;; editorconfig
 ;;
 (elpaca (editorconfig :host github :repo "editorconfig/editorconfig-emacs" :protocol ssh
-        :ref "f7588dd1a216bfd0a89109ae7bcc3a7da74824c1" :wait t))
+        :ref "f7588dd1a216bfd0a89109ae7bcc3a7da74824c1"))
 
 ;;
 ;; Xterm color
 ;;
 (elpaca (xterm-color :host github :repo "atomontage/xterm-color"
-        :ref "4b21b619841c93c4700039a93eb1881beee9248c" :wait t)
+        :ref "4b21b619841c93c4700039a93eb1881beee9248c")
   (require 'xterm-color)
   )
 
@@ -156,13 +156,13 @@
 ;;(add-hook 'term-mode-hook #'eterm-256color-mode)
 (elpaca (eterm-256color :host github :repo "dieggsy/eterm-256color"
         :files (:defaults "eterm-256color.ti")
-        :ref "0f0dab497239ebedbc9c4a48b3ec8cce4a47e980" :wait t))
+        :ref "0f0dab497239ebedbc9c4a48b3ec8cce4a47e980"))
 
 ;;
 ;; Markdown mode
 ;;
 (elpaca (markdown-mode :host github :repo "jrblevin/markdown-mode" :protocol ssh
-        :ref "c765b73b370f0fcaaa3cee28b2be69652e2d2c39" :wait t)
+        :ref "c765b73b370f0fcaaa3cee28b2be69652e2d2c39")
   (autoload 'markdown-mode "markdown-mode"
      "Major mode for editing Markdown files" t)
   (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
@@ -177,13 +177,13 @@
 ;(require 'neph-evil-autoload)
 ;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
 (elpaca (evil :host github :repo "emacsmirror/evil"
-        :ref "2ce03d412c4e93b0b89eb43d796c991806415b8a" :wait t))
+        :ref "2ce03d412c4e93b0b89eb43d796c991806415b8a"))
 
 ;;
 ;; Indent bars
 ;;
 (elpaca (indent-bars :host github :repo "jdtsmith/indent-bars" :protocol ssh
-        :ref "aa07a3d812c64445d44796b85fca07044864f64b" :wait t)
+        :ref "aa07a3d812c64445d44796b85fca07044864f64b")
   (require 'indent-bars)
   (require 'indent-bars-ts)
   (setq indent-bars-width-frac 0.05)
@@ -207,7 +207,7 @@
 ;; Highlight Symbol
 ;;
 (elpaca (highlight-symbol :host github :repo "nschum/highlight-symbol.el"
-        :ref "7a789c779648c55b16e43278e51be5898c121b3a" :wait t)
+        :ref "7a789c779648c55b16e43278e51be5898c121b3a")
   (require 'highlight-symbol)
 
   ;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
@@ -236,13 +236,13 @@
 ;; rust-mode
 ;;
 (elpaca (rust-mode :host github :repo "rust-lang/rust-mode"
-        :ref "9915b3a585a7a75e9126df9e0e9d1df8057ae3cf" :wait t))
+        :ref "9915b3a585a7a75e9126df9e0e9d1df8057ae3cf"))
 
 ;;
 ;; Rust mode
 ;;
 (elpaca (rustic :host github :repo "brotzeit/rustic" :protocol ssh
-        :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b" :wait t)
+        :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b")
   (require 'rustic)
 
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
@@ -254,7 +254,7 @@
 ;; Lua mode
 ;;
 (elpaca (lua-mode :host github :repo "immerrr/lua-mode"
-        :ref "ad639c62e38a110d8d822c4f914af3e20b40ccc4" :wait t)
+        :ref "ad639c62e38a110d8d822c4f914af3e20b40ccc4")
   (autoload 'lua-mode "lua-mode"
      "Major mode for editing Lua files" t)
   (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
@@ -266,7 +266,7 @@
 ;;
 ;; Htmlize
 (elpaca (htmlize :host github :repo "hniksic/emacs-htmlize"
-        :ref "8db0aa6aab77475a732b7363f0d57bd3933c18fd" :wait t)
+        :ref "8db0aa6aab77475a732b7363f0d57bd3933c18fd")
   (autoload 'htmlize-buffer "htmlize" "htmlize" t)
 
   ;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
@@ -276,32 +276,32 @@
 ;; js2-mode
 ;;
 (elpaca (js2-mode :host github :repo "mooz/js2-mode"
-        :ref "5165f4dc3805add174e48f0d64c5617d10ac3507" :wait t))
+        :ref "5165f4dc3805add174e48f0d64c5617d10ac3507"))
 
 ;;
 ;; polymode
 ;;
 (elpaca (polymode :host github :repo "polymode/polymode"
-        :ref "291e2fed6e723d857a5eac59c375aad6fbddf473" :wait t))
+        :ref "291e2fed6e723d857a5eac59c375aad6fbddf473"))
 
 ;;
 ;; simple-httpd
 ;;
 (elpaca (simple-httpd :host github :repo "skeeto/emacs-web-server"
-        :ref "08535d0fad6a32fdc03d725ec74e10a754bb9c7a" :wait t))
+        :ref "08535d0fad6a32fdc03d725ec74e10a754bb9c7a"))
 
 ;;
 ;; skewer-mode
 ;;
 (elpaca (skewer-mode :host github :repo "skeeto/skewer-mode"
         :files (:defaults "skewer.js" "example.html")
-        :ref "a381049acc4fa2087615b4b3b26c0865841386bd" :wait t))
+        :ref "a381049acc4fa2087615b4b3b26c0865841386bd"))
 
 ;;
 ;; websocket
 ;;
 (elpaca (websocket :host github :repo "ahyatt/emacs-websocket"
-        :ref "d8ef1b764a7047b1163e8b9664bac5bd819058ed" :wait t))
+        :ref "d8ef1b764a7047b1163e8b9664bac5bd819058ed"))
 
 ;;
 ;; ein
@@ -309,7 +309,7 @@
 (elpaca (ein :host github :repo "millejoh/emacs-ipython-notebook"
         :main "lisp/ein.el"
         :files (:defaults "lisp/*.py")
-        :ref "7c7691c26d735aab3ebb642f898a9e878d2df212" :wait t))
+        :ref "7c7691c26d735aab3ebb642f898a9e878d2df212"))
 
 ;;
 ;; ECB
@@ -333,7 +333,7 @@
 ;; Color identifiers mode
 ;;
 (elpaca (color-identifiers-mode :host github :repo "ankurdave/color-identifiers-mode"
-        :ref "e35ee05588d84517193db07d94ce7f29ace10ef6" :wait t)
+        :ref "e35ee05588d84517193db07d94ce7f29ace10ef6")
   (require 'color-identifiers-mode)
   )
 
@@ -346,19 +346,19 @@
 ;;(require 'vertico)
 ;;(require 'counsel-projectile)
 (elpaca (consult :host github :repo "minad/consult"
-        :ref "45fdad7b234141ea572267024c8f4b08dd2e1022" :wait t))
+        :ref "45fdad7b234141ea572267024c8f4b08dd2e1022"))
 
 ;;
 ;; vertico
 ;;
 (elpaca (vertico :host github :repo "minad/vertico"
-        :ref "67c73b7ae3079e24b5369b54a740d79eb9d2b978" :wait t))
+        :ref "67c73b7ae3079e24b5369b54a740d79eb9d2b978"))
 
 ;;
 ;; async
 ;;
 (elpaca (async :host github :repo "jwiegley/emacs-async"
-        :ref "0d52411d3accc3e11a2c64838703a8ce9755c77c" :wait t))
+        :ref "0d52411d3accc3e11a2c64838703a8ce9755c77c"))
 
 ;;
 ;; Helm
@@ -366,7 +366,7 @@
 
 ;;(require 'helm-autoloads)
 (elpaca (helm :host github :repo "emacs-helm/helm"
-        :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd" :wait t)
+        :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd")
   (require 'helm)
   (require 'helm-mode)
   (require 'helm-command)
@@ -418,7 +418,7 @@
 ;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
 ;;               process-environment))
 (elpaca (fzf :host github :repo "bling/fzf.el"
-        :ref "3a55b983921c620fb5a2cc811f42aa4daaad8266" :wait t)
+        :ref "3a55b983921c620fb5a2cc811f42aa4daaad8266")
   (setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
   (setenv "FZF_DEFAULT_OPTS" nil)
   (require 'fzf)
@@ -433,7 +433,7 @@
 ;; Helm Swoop
 ;;
 (elpaca (helm-swoop :host github :repo "emacsorphanage/helm-swoop"
-        :ref "df90efd4476dec61186d80cace69276a95b834d2" :wait t)
+        :ref "df90efd4476dec61186d80cace69276a95b834d2")
   (require 'helm-swoop)
 
   (global-set-key (kbd "C-z M-s") 'helm-swoop)
@@ -444,7 +444,7 @@
 ;; Helm AG and Helm RG and RG they're all different
 ;;
 (elpaca (helm-ag :host github :repo "syohex/emacs-helm-ag"
-        :ref "67c572ae398506dc7e5e89657c1eebd532deff30" :wait t)
+        :ref "67c572ae398506dc7e5e89657c1eebd532deff30")
   (require 'helm-ag)
 
   (setq helm-ag-insert-at-point t)
@@ -481,7 +481,7 @@
 ;; Helm RG
 ;;
 (elpaca (helm-rg :host github :repo "nephyrin/helm-rg"
-        :ref "f2cb5d3649c1f77f97ce4f8a2cb51578b863c9be" :wait t)
+        :ref "f2cb5d3649c1f77f97ce4f8a2cb51578b863c9be")
   (require 'helm-rg)
 
   (setq helm-rg-default-extra-args '("--max-columns=120" "--max-columns-preview"))
@@ -507,13 +507,13 @@
 ;; wgrep
 ;;
 (elpaca (wgrep :host github :repo "mhayashi1120/Emacs-wgrep" :protocol ssh
-        :ref "f9687c28bbc2e84f87a479b6ce04407bb97cfb23" :wait t))
+        :ref "f9687c28bbc2e84f87a479b6ce04407bb97cfb23"))
 
 ;;
 ;; multiple-cursors
 ;;
 (elpaca (multiple-cursors :host github :repo "magnars/multiple-cursors.el"
-        :ref "c870c18462461df19382ecd2f9374c8b902cd804" :wait t)
+        :ref "c870c18462461df19382ecd2f9374c8b902cd804")
   (require 'multiple-cursors)
 
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -526,7 +526,7 @@
 ;;
 ;; phi-search
 (elpaca (phi-search :host github :repo "zk-phi/phi-search"
-        :ref "40b86bfe9ae15377fbee842b1de3d93c2eb7dd69" :wait t)
+        :ref "40b86bfe9ae15377fbee842b1de3d93c2eb7dd69")
   (autoload 'phi-search "phi-search" "Phi Search." t)
 
   (global-set-key (kbd "C-S-s") 'phi-search)
@@ -540,14 +540,14 @@
 ;; ivy
 ;;
 (elpaca (ivy :host github :repo "abo-abo/swiper"
-        :ref "c97ea72285f2428ed61b519269274d27f2b695f9" :wait t))
+        :ref "c97ea72285f2428ed61b519269274d27f2b695f9"))
 
 ;;
 ;; Company mode
 ;;
 ;;(require 'neph-company-autoload)
 (elpaca (company :host github :repo "company-mode/company-mode"
-        :ref "3ec40b0a0ea751b6c48f24abd58c8304deb53014" :wait t)
+        :ref "3ec40b0a0ea751b6c48f24abd58c8304deb53014")
   (require 'company)
 
   ;; Turn on in these modes
@@ -563,7 +563,7 @@
 ;; company-quickhelp
 ;;
 (elpaca (company-quickhelp :host github :repo "expez/company-quickhelp"
-        :ref "9505fb09d064581da142d75c139d48b5cf695bd5" :wait t))
+        :ref "9505fb09d064581da142d75c139d48b5cf695bd5"))
 
 ;;
 ;; deferred
@@ -581,7 +581,7 @@
 ;; Yasnippet
 ;;
 (elpaca (yasnippet :host github :repo "joaotavora/yasnippet"
-        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417" :wait t)
+        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417")
   (require 'yasnippet)
   )
 
@@ -589,13 +589,13 @@
 ;; epl
 ;;
 (elpaca (epl :host github :repo "cask/epl"
-        :ref "78ab7a85c08222cd15582a298a364774e3282ce6" :wait t))
+        :ref "78ab7a85c08222cd15582a298a364774e3282ce6"))
 
 ;;
 ;; pkg-info
 ;;
 (elpaca (pkg-info :host github :repo "emacsorphanage/pkg-info"
-        :ref "76ba7415480687d05a4353b27fea2ae02b8d9d61" :wait t)
+        :ref "76ba7415480687d05a4353b27fea2ae02b8d9d61")
   (require 'pkg-info)
   )
 
@@ -624,7 +624,7 @@
 ;; Flycheck
 ;;
 (elpaca (flycheck :host github :repo "flycheck/flycheck"
-        :ref "1d7c1b20782ccbaa6f97e37f5e1d0cee3d5eda8a" :wait t)
+        :ref "1d7c1b20782ccbaa6f97e37f5e1d0cee3d5eda8a")
   (autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
   )
 
@@ -632,38 +632,38 @@
 ;; hydra
 ;;
 (elpaca (hydra :host github :repo "abo-abo/hydra"
-        :ref "317e1de33086637579a7aeb60f77ed0405bf359b" :wait t))
+        :ref "317e1de33086637579a7aeb60f77ed0405bf359b"))
 
 ;;
 ;; pfuture
 ;;
 (elpaca (pfuture :host github :repo "Alexander-Miller/pfuture"
-        :ref "19b53aebbc0f2da31de6326c495038901bffb73c" :wait t))
+        :ref "19b53aebbc0f2da31de6326c495038901bffb73c"))
 
 ;;
 ;; avy
 ;;
 (elpaca (avy :host github :repo "abo-abo/avy"
-        :ref "cf95ba9582121a1c2249e3c5efdc51acd566d190" :wait t))
+        :ref "cf95ba9582121a1c2249e3c5efdc51acd566d190"))
 
 ;;
 ;; ace-window
 ;;
 (elpaca (ace-window :host github :repo "abo-abo/ace-window"
-        :ref "77115afc1b0b9f633084cf7479c767988106c196" :wait t))
+        :ref "77115afc1b0b9f633084cf7479c767988106c196"))
 
 ;;
 ;; yaml
 ;;
 (elpaca (yaml :host github :repo "zkry/yaml.el" :protocol ssh
-        :ref "73fde9d8fbbaf2596449285df9eb412ae9dd74d9" :wait t))
+        :ref "73fde9d8fbbaf2596449285df9eb412ae9dd74d9"))
 
 ;;
 ;; C++ Helper mode(s) : Company/lsp and associated helper libraries
 ;;
 (elpaca (lsp-mode :host github :repo "emacs-lsp/lsp-mode"
         :files (:defaults "clients/*.el")
-        :ref "0c8f043eb3d1d516f46e3c50c78fbab22f0612a9" :wait t)
+        :ref "0c8f043eb3d1d516f46e3c50c78fbab22f0612a9")
   (require 'lsp-mode)
   (require 'company)
   (require 'company-quickhelp)
@@ -703,7 +703,7 @@
 ;; lsp-docker
 ;;
 (elpaca (lsp-docker :host github :repo "emacs-lsp/lsp-docker" :protocol ssh
-        :ref "81ddb3fc68e1930352b6ca006d0ea609760be7d1" :wait t))
+        :ref "81ddb3fc68e1930352b6ca006d0ea609760be7d1"))
 
 ;;
 ;; treemacs
@@ -711,7 +711,7 @@
 (elpaca (treemacs :host github :repo "Alexander-Miller/treemacs"
         :main "src/elisp/treemacs.el"
         :files ("src/elisp/*.el" "src/extra/*.el" "icons" "src/scripts/treemacs*.py")
-        :ref "aa0944a29eee48302fd76b6c3a59c5aece114fa6" :wait t)
+        :ref "aa0944a29eee48302fd76b6c3a59c5aece114fa6")
   (require 'treemacs)
   (require 'treemacs-mouse-interface)
   (require 'treemacs-hydras)
@@ -720,7 +720,7 @@
 
 ;;(require 'lsp-clangd)
 (elpaca (ccls :host github :repo "MaskRay/emacs-ccls"
-        :ref "8648238a92e5fd1ca1b693c99d2824f8804736b0" :wait t)
+        :ref "8648238a92e5fd1ca1b693c99d2824f8804736b0")
   (require 'ccls)
 
   ;; Block ccls autoregister, register it ourself
@@ -768,7 +768,7 @@
 ;; jsonrpc
 ;;
 (elpaca (jsonrpc :host github :repo "emacs-straight/jsonrpc"
-        :ref "74268ee45494f40b3534164001b994e315490c27" :wait t)
+        :ref "74268ee45494f40b3534164001b994e315490c27")
   (require 'jsonrpc)
   )
 
@@ -777,7 +777,7 @@
 ;;
 (elpaca (copilot :host github :repo "zerolfx/copilot.el" :protocol ssh
         :files (:defaults "dist")
-        :ref "8f5e45405ead77fcbe85b5c02193f23449d2d518" :wait t)
+        :ref "8f5e45405ead77fcbe85b5c02193f23449d2d518")
   (require 'copilot)
 
   (global-set-key (kbd "C-M-<tab>") 'copilot-panel-complete)
@@ -796,7 +796,7 @@
 ;; dape
 ;;
 (elpaca (dape :host github :repo "svaante/dape"
-        :ref "9df3ea8db0206e58c245ed3a3cbabc37b01e7b55" :wait t)
+        :ref "9df3ea8db0206e58c245ed3a3cbabc37b01e7b55")
   (require 'dape)
 
   ;; Dape config
@@ -809,13 +809,13 @@
 ;; posframe
 ;;
 (elpaca (posframe :host github :repo "tumashu/posframe" :protocol ssh
-        :ref "06b939cfb06168782fc378043ff35bd7fec203b8" :wait t))
+        :ref "06b939cfb06168782fc378043ff35bd7fec203b8"))
 
 ;;
 ;; lsp-ui
 ;;
 (elpaca (lsp-ui :host github :repo "emacs-lsp/lsp-ui"
-        :ref "030d36960338fd633a98b332bc3734c412c25ca6" :wait t)
+        :ref "030d36960338fd633a98b332bc3734c412c25ca6")
   (require 'lsp-ui)
   (require 'lsp-ui-flycheck)
   (require 'lsp-headerline)
@@ -827,7 +827,7 @@
 
 ;; cquery
 (elpaca (lsp-pyright :host github :repo "emacs-lsp/lsp-pyright"
-        :ref "3756ff971797ae04fc43ca29c66ba4d854eff038" :wait t)
+        :ref "3756ff971797ae04fc43ca29c66ba4d854eff038")
   (setq lsp-pyright-multi-root nil)
   (setq lsp-pyright-langserver-command "pyright")
 
@@ -841,7 +841,7 @@
 ;;
 (elpaca (lsp-treemacs :host github :repo "emacs-lsp/lsp-treemacs"
         :files (:defaults "icons")
-        :ref "3e5550f278db74f15ebe34add0138b138207ec08" :wait t)
+        :ref "3e5550f278db74f15ebe34add0138b138207ec08")
   (require 'lsp-treemacs)
   (lsp-treemacs-sync-mode 1)
   )
@@ -851,7 +851,7 @@
 ;;
 (elpaca (dap-mode :host github :repo "emacs-lsp/dap-mode"
         :files (:defaults "icons")
-        :ref "b407773ebca56e3bd8e6a4643854e91cbde0c35e" :wait t)
+        :ref "b407773ebca56e3bd8e6a4643854e91cbde0c35e")
   (require 'dap-mode)
   ;;(require 'dap-cpptools)
   (require 'dap-ui)
@@ -863,7 +863,7 @@
 ;; helm-lsp
 ;;
 (elpaca (helm-lsp :host github :repo "emacs-lsp/helm-lsp"
-        :ref "c2c6974dadfac459b1a69a1217441283874cea92" :wait t)
+        :ref "c2c6974dadfac459b1a69a1217441283874cea92")
   (require 'helm-lsp)
 
   ;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
@@ -909,7 +909,7 @@
 ;;(require 'neph-irony-autoload)
 (elpaca (irony :host github :repo "Sarcasm/irony-mode"
         :files (:defaults "server")
-        :ref "c3ae899b61124a747ebafc705086345e460ac08e" :wait t)
+        :ref "c3ae899b61124a747ebafc705086345e460ac08e")
   (add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
 
   ;; FIXME irony-mode breaks on headers due to that missing (car found)
@@ -919,17 +919,17 @@
 ;; company-irony
 ;;
 (elpaca (company-irony :host github :repo "Sarcasm/company-irony"
-        :ref "b44711dfce445610c1ffaec4951c6ff3882b216a" :wait t))
+        :ref "b44711dfce445610c1ffaec4951c6ff3882b216a"))
 
 ;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
 ;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
 ;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
 (elpaca (flycheck-irony :host github :repo "Sarcasm/flycheck-irony"
-        :ref "34940ae5ab8f4c721d9c1118ebfc3496d7e67a84" :wait t))
+        :ref "34940ae5ab8f4c721d9c1118ebfc3496d7e67a84"))
 
 ;; popup.el for rtags tooltips (needed anymore?)
 (elpaca (popup :host github :repo "auto-complete/popup-el"
-        :ref "2af1c6c8a33ffa44e99d0e4df8769ca3d4098dd9" :wait t)
+        :ref "2af1c6c8a33ffa44e99d0e4df8769ca3d4098dd9")
   (autoload 'popup "popup" "Popup tooltip thing." t)
   )
 
@@ -938,7 +938,7 @@
 ;;
 (elpaca (auto-complete :host github :repo "auto-complete/auto-complete"
         :files (:defaults "dict")
-        :ref "2e83566ddfa758c69afe50b8a1c62a66f47471e3" :wait t))
+        :ref "2e83566ddfa758c69afe50b8a1c62a66f47471e3"))
 
 ;;
 ;; function-args
@@ -950,7 +950,7 @@
 ;; Smart Tabs
 ;;
 (elpaca (smart-tabs-mode :host github :repo "jcsalomon/smarttabs"
-        :ref "cd19892677ec9a2c378c828aa7cef9a2b2bd1c0e" :wait t)
+        :ref "cd19892677ec9a2c378c828aa7cef9a2b2bd1c0e")
   (require 'smart-tabs-mode)
   (smart-tabs-insinuate 'c 'javascript 'c++)
   )
@@ -972,7 +972,7 @@
 ;; ido
 ;;
 (elpaca (ido-vertical-mode :host github :repo "gempesaw/ido-vertical-mode.el"
-        :ref "b42e4227ed5d37b5d840a9d9d1cdaabf50e189b1" :wait t)
+        :ref "b42e4227ed5d37b5d840a9d9d1cdaabf50e189b1")
   (require 'ido)
   (require 'ido-vertical-mode)
   ;(autoload 'ido "ido" "Ido thing." t)
@@ -986,7 +986,7 @@
 ;; Rainbow Delimiters
 ;;
 (elpaca (rainbow-delimiters :host github :repo "Fanael/rainbow-delimiters"
-        :ref "93cd2dc873e7fedca7abc599cd97d46db4376ac7" :wait t)
+        :ref "93cd2dc873e7fedca7abc599cd97d46db4376ac7")
   (autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
   )
 
@@ -994,7 +994,7 @@
 ;; Minimap
 ;;
 (elpaca (minimap :host github :repo "dengste/minimap"
-        :ref "fc33fbfd802b167de85158e38a505b76708c4e3a" :wait t)
+        :ref "fc33fbfd802b167de85158e38a505b76708c4e3a")
   (autoload 'minimap-mode "minimap" "minimap" t)
 
   (with-eval-after-load "minimap"
@@ -1006,7 +1006,7 @@
 ;;
 ;; God mode
 (elpaca (god-mode :host github :repo "chrisdone/god-mode"
-        :ref "3ba1fea8ed3d7bddb4197f13b1fc0c33965f7841" :wait t)
+        :ref "3ba1fea8ed3d7bddb4197f13b1fc0c33965f7841")
   (autoload 'god-mode "god-mode" "god-mode" t)
   (global-set-key (kbd "C-z C-z") 'god-local-mode)
   )
@@ -1014,7 +1014,7 @@
 ;;
 ;; Misc modes
 (elpaca (fic-mode :host github :repo "lewang/fic-mode"
-        :ref "206fdfc96eed9ee42fdff21e25e4d26495d4854a" :wait t)
+        :ref "206fdfc96eed9ee42fdff21e25e4d26495d4854a")
   (autoload 'fic-mode "fic-mode" "fic-mode" t)
   (with-eval-after-load "fic-mode"
     (add-to-list 'fic-highlighted-words "XXX"))
@@ -1024,19 +1024,19 @@
 ;; git-gutter
 ;;
 (elpaca (git-gutter :host github :repo "syohex/emacs-git-gutter"
-        :ref "1ede3a688f3c60bd915d890a06d1509c7236167c" :wait t))
+        :ref "1ede3a688f3c60bd915d890a06d1509c7236167c"))
 
 ;;
 ;; fringe-helper
 ;;
 (elpaca (fringe-helper :host github :repo "nschum/fringe-helper.el"
-        :ref "c02fae16cda709f102dee56338075e257240b385" :wait t))
+        :ref "c02fae16cda709f102dee56338075e257240b385"))
 
 ;;
 ;; git-gutter-fringe
 ;;
 (elpaca (git-gutter-fringe :host github :repo "syohex/emacs-git-gutter-fringe"
-        :ref "c12179ece35538c94d7928572f523a7145f1fb49" :wait t)
+        :ref "c12179ece35538c94d7928572f523a7145f1fb49")
   ;; Load order is load-bearing: fringe-helper -> git-gutter -> git-gutter-fringe.
   ;; Hosted here (the dependency-order-last of the trio) so all three are built.
   (require 'fringe-helper)
@@ -1049,7 +1049,7 @@
 ;; rainbow-mode
 ;;
 (elpaca (rainbow-mode :host github :repo "emacsmirror/rainbow-mode"
-        :ref "1ef059c1c670adf58a82f86839d8fb568c128a16" :wait t))
+        :ref "1ef059c1c670adf58a82f86839d8fb568c128a16"))
 
 ;;
 ;; P4
@@ -1057,7 +1057,7 @@
 
 ;; p4.el
 (elpaca (p4 :host github :repo "gareth-rees/p4.el"
-        :ref "eff047caa75dbe4965defca9d1212454cdb755d5" :wait t)
+        :ref "eff047caa75dbe4965defca9d1212454cdb755d5")
   (autoload 'p4 "p4" "p4" t)
 
   ;; Note: was shadowed by p4-edit-current prior to elpacification, commented
@@ -1072,7 +1072,7 @@
 ;; flyspell-lazy
 ;;
 (elpaca (flyspell-lazy :host github :repo "rolandwalker/flyspell-lazy"
-        :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10" :wait t))
+        :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10"))
 
 ;;
 ;; Projectile
@@ -1081,7 +1081,7 @@
 
 ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
 (elpaca (projectile :host github :repo "bbatsov/projectile"
-        :ref "f12fdae30a36e3614fa6944969bf37dec9998301" :wait t)
+        :ref "f12fdae30a36e3614fa6944969bf37dec9998301")
   (setq helm-projectile-fuzzy-match nil)
 
   ;; In server mode, let's just load it synchronously
@@ -1121,13 +1121,13 @@
 ;; counsel-projectile
 ;;
 (elpaca (counsel-projectile :host github :repo "ericdanan/counsel-projectile"
-        :ref "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b" :wait t))
+        :ref "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b"))
 
 ;;
 ;; helm-projectile
 ;;
 (elpaca (helm-projectile :host github :repo "bbatsov/helm-projectile"
-        :ref "0ffb6b5f09c1d65d721c1111ebfa6cec0ba63234" :wait t)
+        :ref "0ffb6b5f09c1d65d721c1111ebfa6cec0ba63234")
   (require 'helm-projectile)
 
 
@@ -1173,7 +1173,7 @@
 ;;
 (elpaca (php-mode :host github :repo "emacs-php/php-mode" :protocol ssh
         :main "lisp/php-mode.el"
-        :ref "4792988a120d6ac515ba16605278d04cb8be0d69" :wait t)
+        :ref "4792988a120d6ac515ba16605278d04cb8be0d69")
   (require 'php-mode)
 
   (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
@@ -1185,7 +1185,7 @@
 ;; Web-mode
 ;;
 (elpaca (web-mode :host github :repo "fxbois/web-mode"
-        :ref "005aa62d6f41fbf9bc045cac3b3b772716ee8ba7" :wait t)
+        :ref "005aa62d6f41fbf9bc045cac3b3b772716ee8ba7")
   (require 'web-mode)
   (setq web-mode-indent-style 1)
   (setq web-mode-script-padding 2)
@@ -1203,7 +1203,7 @@
 ;; Yaml mode
 ;;
 (elpaca (yaml-mode :host github :repo "yoshiki/yaml-mode"
-        :ref "40067a10ac1360f0b9533f0bbbb2eea128e2574d" :wait t)
+        :ref "40067a10ac1360f0b9533f0bbbb2eea128e2574d")
   (require 'yaml-mode)
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
@@ -1215,25 +1215,25 @@
 ;; ace-jump-mode
 ;;
 (elpaca (ace-jump-mode :host github :repo "winterTTr/ace-jump-mode"
-        :ref "c60f7d2e84c9eb283627e30d1949462f403d877b" :wait t))
+        :ref "c60f7d2e84c9eb283627e30d1949462f403d877b"))
 
 ;;
 ;; mmm-mode
 ;;
 (elpaca (mmm-mode :host github :repo "purcell/mmm-mode"
-        :ref "1b4ada30ae6d35a7c9156fb7a706607eb7566592" :wait t))
+        :ref "1b4ada30ae6d35a7c9156fb7a706607eb7566592"))
 
 ;;
 ;; mmm-jinja2
 ;;
 (elpaca (mmm-jinja2 :host github :repo "glynnforrest/mmm-jinja2"
-        :ref "c8cb763174fa2fb61b9a0e5e0ff8cb0210f8492f" :wait t))
+        :ref "c8cb763174fa2fb61b9a0e5e0ff8cb0210f8492f"))
 
 ;;
 ;; mmm/jinja/salt mode
 ;;
 (elpaca (salt-mode :host github :repo "glynnforrest/salt-mode"
-        :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c" :wait t)
+        :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c")
   (require 'salt-mode)
   )
 
@@ -1241,32 +1241,32 @@
 ;; git-modes
 ;;
 (elpaca (git-modes :host github :repo "magit/git-modes"
-        :ref "96abfb732d695cbd2075ba701254651a7b28d693" :wait t))
+        :ref "96abfb732d695cbd2075ba701254651a7b28d693"))
 
 ;;
 ;; llama
 ;;
 (elpaca (llama :host github :repo "tarsius/llama"
-        :ref "2a89ba755b0459914a44b1ffa793e57f759a5b85" :wait t))
+        :ref "2a89ba755b0459914a44b1ffa793e57f759a5b85"))
 
 ;;
 ;; cond-let
 ;;
 (elpaca (cond-let :host github :repo "tarsius/cond-let"
-        :ref "0430bd1eb3493ea90d69feb6b7eb7dac3e10d0ba" :wait t))
+        :ref "0430bd1eb3493ea90d69feb6b7eb7dac3e10d0ba"))
 
 ;;
 ;; transient
 ;;
 (elpaca (transient :host github :repo "magit/transient"
         :main "lisp/transient.el"
-        :ref "150e9d625ba28747812a7243f79d61ea927aacc6" :wait t))
+        :ref "150e9d625ba28747812a7243f79d61ea927aacc6"))
 
 ;;
 ;; RG
 ;;
 (elpaca (rg :host github :repo "dajva/rg.el" :protocol ssh
-        :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98" :wait t)
+        :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98")
   (require 'rg)
   )
 
@@ -1274,20 +1274,20 @@
 ;; magit-popup
 ;;
 (elpaca (magit-popup :host github :repo "magit/magit-popup"
-        :ref "d8585fa39f88956963d877b921322530257ba9f5" :wait t))
+        :ref "d8585fa39f88956963d877b921322530257ba9f5"))
 
 ;;
 ;; ghub
 ;;
 (elpaca (ghub :host github :repo "magit/ghub"
         :main "ghub-pkg.el"
-        :ref "0d7c81eee3ba0c6e029605e545173721c39947d7" :wait t))
+        :ref "0d7c81eee3ba0c6e029605e545173721c39947d7"))
 
 ;;
 ;; treepy
 ;;
 (elpaca (treepy :host github :repo "volrath/treepy.el"
-        :ref "3ac940e97f3d03e48ca9d7fcd74916a9b01c72f3" :wait t))
+        :ref "3ac940e97f3d03e48ca9d7fcd74916a9b01c72f3"))
 
 ;;
 ;; powerline
@@ -1300,7 +1300,7 @@
 ;;
 (elpaca (with-editor :host github :repo "magit/with-editor"
         :main "lisp/with-editor.el"
-        :ref "f514f23258af67a10fc8e1c431bfe94702b6e65b" :wait t))
+        :ref "f514f23258af67a10fc8e1c431bfe94702b6e65b"))
 
 ;;
 ;; Magit
@@ -1310,7 +1310,7 @@
 ;; https://github.com/magit/magit/issues/5220
 (elpaca (magit :host github :repo "magit/magit"
         :main "lisp/magit.el"
-        :ref "afefc998149a9baae62c670ef05d1ebaf6713cfe" :wait t)
+        :ref "afefc998149a9baae62c670ef05d1ebaf6713cfe")
   (setq magit-tramp-pipe-stty-settings 'pty)
 
   (require 'with-editor)
@@ -1335,7 +1335,7 @@
 ;; Load theme selected by env
 ;;
 (elpaca (ample-zen-theme :host github :repo "mjwall/ample-zen"
-        :ref "3f360c177b7a487d580ed2538a6750535a57e361" :wait t)
+        :ref "3f360c177b7a487d580ed2538a6750535a57e361")
   (setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
                              (if envtheme envtheme
                                "ample-zen")))
