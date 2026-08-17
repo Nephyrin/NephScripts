@@ -18,12 +18,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
-(neph-add-to-load-path 'load-path "~/.emacs.d/jsonrpc-1.0.24")
-;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-deferred")
-;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-request")
-;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
-;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
-;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")
@@ -92,7 +86,7 @@
 (global-unset-key (kbd "C-z"))
 
 ;;
-;; ---- Config merged down from neph-init.el (WIP: killing neph-init) ----
+;; ---- Package configuration (elpaca declarations, dependency order) ----
 ;;
 
 ;;
@@ -1383,7 +1377,7 @@
 ;; (set-face-attribute 'rainbow-delimiters-depth-9-face nil   :foreground "#65c")
 ;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
 
-;; ---- end elpacified run ----
+;; ---- end package configuration ----
 
 ;;
 ;; Flyspell-lazy
