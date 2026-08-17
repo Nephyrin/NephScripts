@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
-;(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")
 ;; (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 
@@ -1354,6 +1353,12 @@
     (set-face-attribute 'default nil :height 120))
   (put 'downcase-region 'disabled nil)
   )
+
+;;
+;; color-theme-sunburst
+;;
+;; (elpaca (color-theme-sunburst :host github :repo "neomantic-zz/Emacs-Sunburst-Color-Theme"
+;;         :ref "5b54dec51e031fd44c1af142dbe2bf3aa1411318"))
 
 ;; ---- end elpacified run ----
 

@@ -25,9 +25,6 @@
 [submodule "powerline.git"]
 	path = powerline.git
 	url = https://github.com/powerline/powerline
-[submodule "emacs.d/sunburst-theme"]
-	path = emacs.d/sunburst-theme
-	url = https://github.com/neomantic-zz/Emacs-Sunburst-Color-Theme
 [submodule "bin/ls++-Term-ExtendedColor.git"]
 	path = bin/ls++-Term-ExtendedColor.git
 	url = https://github.com/trapd00r/Term-ExtendedColor
