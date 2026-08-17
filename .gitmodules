@@ -58,9 +58,6 @@
 [submodule "zsh.d/syntax-highlighting"]
 	path = zsh.d/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "emacs.d/p4.el"]
-	path = emacs.d/p4.el
-	url = https://github.com/gareth-rees/p4.el.git
 [submodule "bin/suncalc.git"]
 	path = bin/suncalc.git
 	url = https://github.com/mourner/suncalc

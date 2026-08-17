@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/p4.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flyspell-lazy")
 (neph-add-to-load-path 'load-path "~/.emacs.d/projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/helm-projectile")
@@ -1074,6 +1073,23 @@
 (elpaca (rainbow-mode :host github :repo "emacsmirror/rainbow-mode"
         :ref "1ef059c1c670adf58a82f86839d8fb568c128a16" :wait t))
 
+;;
+;; P4
+;;
+
+;; p4.el
+(elpaca (p4 :host github :repo "gareth-rees/p4.el"
+        :ref "eff047caa75dbe4965defca9d1212454cdb755d5" :wait t)
+  (autoload 'p4 "p4" "p4" t)
+
+  ;; Note: was shadowed by p4-edit-current prior to elpacification, commented
+  ;;(global-set-key (kbd "C-z C-e") 'neph-p4-edit-current)
+  (global-set-key (kbd "C-z P r") 'neph-p4-revert-current)
+  (global-set-key (kbd "C-z P t") 'neph-p4vc-tlv)
+  (global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
+  (global-set-key (kbd "C-z P h") 'neph-p4vc-history)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1215,20 +1231,6 @@
 
 
 
-
-;;
-;; P4
-;;
-
-;; p4.el
-(autoload 'p4 "p4" "p4" t)
-
-;; Note: was shadowed by p4-edit-current prior to elpacification, commented
-;;(global-set-key (kbd "C-z C-e") 'neph-p4-edit-current)
-(global-set-key (kbd "C-z P r") 'neph-p4-revert-current)
-(global-set-key (kbd "C-z P t") 'neph-p4vc-tlv)
-(global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
-(global-set-key (kbd "C-z P h") 'neph-p4vc-history)
 
 ;;
 ;; Projectile
