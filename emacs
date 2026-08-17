@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/helm-projectile")
 (neph-add-to-load-path 'load-path "~/.emacs.d/php-mode/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/web-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/yaml-mode")
@@ -1142,6 +1141,51 @@
 (elpaca (counsel-projectile :host github :repo "ericdanan/counsel-projectile"
         :ref "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b" :wait t))
 
+;;
+;; helm-projectile
+;;
+(elpaca (helm-projectile :host github :repo "bbatsov/helm-projectile"
+        :ref "0ffb6b5f09c1d65d721c1111ebfa6cec0ba63234" :wait t)
+  (require 'helm-projectile)
+
+
+  ;; Additional autoloads for helm-projectile
+  (autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
+  (autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
+  (autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
+
+  ;; WIP migrating to project.el as possible
+  (global-set-key (kbd "C-z M-f") 'projectile-find-file)
+  (global-set-key (kbd "C-c p a") 'projectile-find-other-file) ;; did projectile drop this bind or did I break loading its map, who knows
+  (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
+  (global-set-key (kbd "C-z M-g") 'helm-projectile-rg-cpp)
+  (global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
+  (global-set-key (kbd "C-z C-M-G") 'helm-do-ag-buffers)
+  (global-set-key (kbd "C-z g") 'helm-projectile-rg)
+  (global-set-key (kbd "C-z G") 'helm-projectile-ag-this-word)
+  ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
+  (global-set-key (kbd "C-z C-G") 'projectile-grep)
+  (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
+  (global-set-key (kbd "C-z B") 'helm-buffers-list)
+  (global-set-key (kbd "C-z p") 'projectile-switch-project)
+  ;; No, this is used as a prefix elsewhere
+  ;;(global-set-key (kbd "C-z C-p") 'helm-projectile)
+
+  (global-set-key (kbd "C-z C-p g") 'neph-projectile-switch-and-rg)
+  (global-set-key (kbd "C-z C-p M-g") 'neph-projectile-switch-and-rg-cpp)
+
+  (with-eval-after-load "helm-projectile"
+    (define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
+                                                            (interactive)
+                                                            (with-helm-alive-p
+                                                              ;; For some reason we need to have a lambda swallow the options string or helm-ag breaks
+                                                              (helm-exit-and-execute-action (lambda (&optional options)
+                                                                                              (interactive)
+                                                                                              (helm-projectile-ag)))))))
+  ;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
+  ;; (setq projectile-switch-project-action 'projectile-find-file)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1283,45 +1327,6 @@
 
 
 
-
-(require 'helm-projectile)
-
-
-;; Additional autoloads for helm-projectile
-(autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
-(autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
-(autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
-
-;; WIP migrating to project.el as possible
-(global-set-key (kbd "C-z M-f") 'projectile-find-file)
-(global-set-key (kbd "C-c p a") 'projectile-find-other-file) ;; did projectile drop this bind or did I break loading its map, who knows
-(global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
-(global-set-key (kbd "C-z M-g") 'helm-projectile-rg-cpp)
-(global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
-(global-set-key (kbd "C-z C-M-G") 'helm-do-ag-buffers)
-(global-set-key (kbd "C-z g") 'helm-projectile-rg)
-(global-set-key (kbd "C-z G") 'helm-projectile-ag-this-word)
-;; Non-incremental, but can be faster and supports prefix arg for filename globbing
-(global-set-key (kbd "C-z C-G") 'projectile-grep)
-(global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
-(global-set-key (kbd "C-z B") 'helm-buffers-list)
-(global-set-key (kbd "C-z p") 'projectile-switch-project)
-;; No, this is used as a prefix elsewhere
-;;(global-set-key (kbd "C-z C-p") 'helm-projectile)
-
-(global-set-key (kbd "C-z C-p g") 'neph-projectile-switch-and-rg)
-(global-set-key (kbd "C-z C-p M-g") 'neph-projectile-switch-and-rg-cpp)
-
-(with-eval-after-load "helm-projectile"
-  (define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
-                                                          (interactive)
-                                                          (with-helm-alive-p
-                                                            ;; For some reason we need to have a lambda swallow the options string or helm-ag breaks
-                                                            (helm-exit-and-execute-action (lambda (&optional options)
-                                                                                            (interactive)
-                                                                                            (helm-projectile-ag)))))))
-;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
-;; (setq projectile-switch-project-action 'projectile-find-file)
 
 ;;
 ;; php-mode
