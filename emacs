@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/ace-jump-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/mmm-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/mmm-jinja2")
 (neph-add-to-load-path 'load-path "~/.emacs.d/salt-mode")
@@ -1227,6 +1226,12 @@
   (with-eval-after-load "yaml-mode"
     (add-hook 'yaml-mode-hook 'neph-space-cfg))
   )
+
+;;
+;; ace-jump-mode
+;;
+(elpaca (ace-jump-mode :host github :repo "winterTTr/ace-jump-mode"
+        :ref "c60f7d2e84c9eb283627e30d1949462f403d877b" :wait t))
 
 ;; ---- end elpacified run ----
 
