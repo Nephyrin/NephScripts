@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/web-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/yaml-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ace-jump-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/mmm-mode")
@@ -1198,6 +1197,24 @@
   (add-hook 'php-mode-hook 'neph-lsp-if-projectile)
   )
 
+;;
+;; Web-mode
+;;
+(elpaca (web-mode :host github :repo "fxbois/web-mode"
+        :ref "005aa62d6f41fbf9bc045cac3b3b772716ee8ba7" :wait t)
+  (require 'web-mode)
+  (setq web-mode-indent-style 1)
+  (setq web-mode-script-padding 2)
+  (setq web-mode-style-padding 2)
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-block-face t)
+  (setq web-mode-enable-part-face t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-auto-pairing t)
+  (add-to-list 'auto-mode-alist '(".html?$" . web-mode))
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1339,22 +1356,6 @@
 
 
 
-
-;;
-;; Web-mode
-;;
-
-(require 'web-mode)
-(setq web-mode-indent-style 1)
-(setq web-mode-script-padding 2)
-(setq web-mode-style-padding 2)
-(setq web-mode-enable-css-colorization t)
-(setq web-mode-enable-comment-keywords t)
-(setq web-mode-enable-block-face t)
-(setq web-mode-enable-part-face t)
-(setq web-mode-enable-current-element-highlight t)
-(setq web-mode-enable-auto-pairing t)
-(add-to-list 'auto-mode-alist '(".html?$" . web-mode))
 
 ;;
 ;; Magit
