@@ -26,7 +26,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/git-gutter-fringe")
 (neph-add-to-load-path 'load-path "~/.emacs.d/rainbow-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/p4.el")
 (neph-add-to-load-path 'load-path "~/.emacs.d/flyspell-lazy")
@@ -1063,6 +1062,12 @@
   (require 'git-gutter-fringe)
   (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
   )
+
+;;
+;; git-gutter-fringe
+;;
+(elpaca (git-gutter-fringe :host github :repo "syohex/emacs-git-gutter-fringe"
+        :ref "c12179ece35538c94d7928572f523a7145f1fb49" :wait t))
 
 ;; ---- end elpacified run ----
 

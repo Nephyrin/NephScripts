@@ -7,9 +7,6 @@
 [submodule "bin/gti-git"]
 	path = bin/gti-git
 	url = https://github.com/rwos/gti.git
-[submodule "emacs.d/git-gutter-fringe"]
-	path = emacs.d/git-gutter-fringe
-	url = https://github.com/syohex/emacs-git-gutter-fringe
 [submodule "vim-powerline-for-fontpatcher"]
 	path = vim-powerline-for-fontpatcher
 	url = https://github.com/Lokaltog/vim-powerline
