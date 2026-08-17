@@ -31,9 +31,6 @@
 [submodule "bin/ls++-Term-ExtendedColor.git"]
 	path = bin/ls++-Term-ExtendedColor.git
 	url = https://github.com/trapd00r/Term-ExtendedColor
-[submodule "emacs.d/ample-zen"]
-	path = emacs.d/ample-zen
-	url = https://github.com/mjwall/ample-zen
 [submodule "zsh.d/autosuggestions"]
 	path = zsh.d/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions

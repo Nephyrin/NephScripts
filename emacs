@@ -28,7 +28,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 ;(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")
-(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/ample-zen")
 ;; (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/purple-haze-theme")
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/auto-compile")
@@ -1326,6 +1325,36 @@
   (global-set-key (kbd "C-z C") 'magit-commit)
   )
 
+;;
+;; Theme
+;;
+
+;(load-theme 'sunburst t)
+
+;; See also neph-ample-zen-theme.el
+
+;;
+;; Load theme selected by env
+;;
+(elpaca (ample-zen-theme :host github :repo "mjwall/ample-zen"
+        :ref "3f360c177b7a487d580ed2538a6750535a57e361" :wait t)
+  (setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
+                             (if envtheme envtheme
+                               "ample-zen")))
+
+  (load-neph-theme default-neph-theme)
+
+  (global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
+
+  ;; Default font
+  (set-face-attribute 'default nil :family "DejaVu Sans Mono")
+  (set-face-attribute 'default nil :height 100)
+  (when (eq system-type 'darwin)
+    (set-face-attribute 'default nil :family "Monaco")
+    (set-face-attribute 'default nil :height 120))
+  (put 'downcase-region 'disabled nil)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1486,33 +1515,6 @@
 (require 'avy)
 (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
 (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
-
-;;
-;; Theme
-;;
-
-;(load-theme 'sunburst t)
-
-;; See also neph-ample-zen-theme.el
-
-;;
-;; Load theme selected by env
-;;
-(setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
-                           (if envtheme envtheme
-                             "ample-zen")))
-
-(load-neph-theme default-neph-theme)
-
-(global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
-
-;; Default font
-(set-face-attribute 'default nil :family "DejaVu Sans Mono")
-(set-face-attribute 'default nil :height 100)
-(when (eq system-type 'darwin)
-  (set-face-attribute 'default nil :family "Monaco")
-  (set-face-attribute 'default nil :height 120))
-(put 'downcase-region 'disabled nil)
 
 ;;
 ;; purple-haze (needs to be made into a neph-purple-haze-theme.el)
