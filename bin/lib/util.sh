@@ -209,9 +209,20 @@ n_commonword() {
   local max="${3-5}"
   (n_validnum "$count" "$min" "$max" && (( min <= max ))) || die "invalid arguments to n_commonword"
   local wordsfile
-  # Try just 'words' symlink first, otherwise some englishish stuff
+
+  # try `xkcdpass` if available -- it's basically exactly this command, with a curated wordlist (eff), but only has 3-9
+  # char words
+  if [[ $min -ge 3 && $max -le 9 ]] && command -v xkcdpass &>/dev/null; then
+    words=$(xkcdpass --min "$min" --max "$max" -n 1 -c "$count")
+
+    if [[ -n $words ]]; then
+      out "$words"
+      return 0
+    fi
+  fi
+
+  # Otherwise try /usr/share/dict lists.  Try 'words' symlink first, otherwise some englishish stuff
   for candidate in /usr/share/dict/{words,usa,american-english,british-english,british}; do
-    einfo "Checking $candidate"
     [[ -f $candidate ]] || continue
     wordsfile=$candidate
     break
@@ -220,10 +231,14 @@ n_commonword() {
     eerr "Couldn't find any /usr/share/dict/words style wordlists on this system"
     return 1
   fi
+
+  # See if we can pull out matching words
   words="$(cat -- "$wordsfile" | grep -E "^[a-z]{$min,$max}$" | shuf -n"$count")"
   if n_is_zsh; then
+    # shellcheck disable=SC2296 # zsh
     words=("${(f)${words:-}}")
   else
+    # shellcheck disable=SC2128 # broken lint, thinks words is an array (true only after this line)
     read -a -r -d'' words <<< "$words"
   fi
   [[ ${#words[@]} -eq $count ]] || return 1
