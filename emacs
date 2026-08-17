@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/cond-let") ;; dep of magit
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-transient/lisp")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-popup")
 (neph-add-to-load-path 'load-path "~/.emacs.d/magit-ghub/lisp")
@@ -1259,6 +1258,12 @@
 ;;
 (elpaca (llama :host github :repo "tarsius/llama"
         :ref "2a89ba755b0459914a44b1ffa793e57f759a5b85" :wait t))
+
+;;
+;; cond-let
+;;
+(elpaca (cond-let :host github :repo "tarsius/cond-let"
+        :ref "0430bd1eb3493ea90d69feb6b7eb7dac3e10d0ba" :wait t))
 
 ;; ---- end elpacified run ----
 

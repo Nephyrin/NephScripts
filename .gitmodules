@@ -76,9 +76,6 @@
 [submodule "emacs.d/auto-compile"]
 	path = emacs.d/auto-compile
 	url = https://github.com/emacscollective/auto-compile
-[submodule "emacs.d/cond-let"]
-	path = emacs.d/cond-let
-	url = https://github.com/tarsius/cond-let.git
 [submodule "emacs.d/elpaca"]
 	path = emacs.d/elpaca
 	url = https://github.com/progfolio/elpaca.git
