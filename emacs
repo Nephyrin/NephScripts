@@ -25,7 +25,6 @@
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-ycmd")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/function-args")
 ;;(neph-add-to-load-path 'load-path "~/.emacs.d/emacs-gdb")
-(neph-add-to-load-path 'load-path "~/.emacs.d/salt-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/git-modes")
 (neph-add-to-load-path 'load-path "~/.emacs.d/llama") ;; dep of magit
 (neph-add-to-load-path 'load-path "~/.emacs.d/cond-let") ;; dep of magit
@@ -1243,6 +1242,14 @@
 (elpaca (mmm-jinja2 :host github :repo "glynnforrest/mmm-jinja2"
         :ref "c8cb763174fa2fb61b9a0e5e0ff8cb0210f8492f" :wait t))
 
+;;
+;; mmm/jinja/salt mode
+;;
+(elpaca (salt-mode :host github :repo "glynnforrest/salt-mode"
+        :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c" :wait t)
+  (require 'salt-mode)
+  )
+
 ;; ---- end elpacified run ----
 
 ;;
@@ -1425,11 +1432,6 @@
 (require 'avy)
 (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
 (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
-
-;;
-;; mmm/jinja/salt mode
-;;
-(require 'salt-mode)
 
 ;;
 ;; Theme
