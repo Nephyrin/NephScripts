@@ -43,6 +43,10 @@
 ;; <elpaca-sources-directory>/elpaca/ (installer layout); with the pinned
 ;; submodule elsewhere, give it a compat symlink.
 (let ((link (expand-file-name "sources/elpaca" elpaca-directory)))
+  ;; file-exists-p is nil for a dangling symlink, so clear one explicitly or
+  ;; make-symbolic-link errors on the existing link
+  (when (and (file-symlink-p link) (not (file-exists-p link)))
+    (delete-file link))
   (unless (file-exists-p link)
     (make-directory (file-name-directory link) t)
     (make-symbolic-link (expand-file-name "elpaca/" user-emacs-directory) link)))
