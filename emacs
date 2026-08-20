@@ -113,13 +113,13 @@
 ;;
 ;; bui
 ;;
-(elpaca (bui :host github :repo "alezost/bui.el" :protocol ssh
+(elpaca (bui :host github :repo "alezost/bui.el"
         :ref "f3a137628e112a91910fd33c0cff0948fa58d470"))
 
 ;;
 ;; compat
 ;;
-(elpaca (compat :host github :repo "phikal/compat.el" :protocol ssh
+(elpaca (compat :host github :repo "phikal/compat.el"
         :ref "730f2c5ad62137ae6a6ea002a24ce9418954e441"))
 
 ;;
@@ -143,7 +143,7 @@
 ;;
 ;; editorconfig
 ;;
-(elpaca (editorconfig :host github :repo "editorconfig/editorconfig-emacs" :protocol ssh
+(elpaca (editorconfig :host github :repo "editorconfig/editorconfig-emacs"
         :ref "f7588dd1a216bfd0a89109ae7bcc3a7da74824c1"))
 
 ;;
@@ -164,7 +164,7 @@
 ;;
 ;; Markdown mode
 ;;
-(elpaca (markdown-mode :host github :repo "jrblevin/markdown-mode" :protocol ssh
+(elpaca (markdown-mode :host github :repo "jrblevin/markdown-mode"
         :ref "c765b73b370f0fcaaa3cee28b2be69652e2d2c39")
   (autoload 'markdown-mode "markdown-mode"
      "Major mode for editing Markdown files" t)
@@ -185,7 +185,7 @@
 ;;
 ;; Indent bars
 ;;
-(elpaca (indent-bars :host github :repo "jdtsmith/indent-bars" :protocol ssh
+(elpaca (indent-bars :host github :repo "jdtsmith/indent-bars"
         :ref "aa07a3d812c64445d44796b85fca07044864f64b")
   (require 'indent-bars)
   (require 'indent-bars-ts)
@@ -244,7 +244,7 @@
 ;;
 ;; Rust mode
 ;;
-(elpaca (rustic :host github :repo "brotzeit/rustic" :protocol ssh
+(elpaca (rustic :host github :repo "brotzeit/rustic"
         :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b")
   (require 'rustic)
 
@@ -509,7 +509,7 @@
 ;;
 ;; wgrep
 ;;
-(elpaca (wgrep :host github :repo "mhayashi1120/Emacs-wgrep" :protocol ssh
+(elpaca (wgrep :host github :repo "mhayashi1120/Emacs-wgrep"
         :ref "f9687c28bbc2e84f87a479b6ce04407bb97cfb23"))
 
 ;;
@@ -658,7 +658,7 @@
 ;;
 ;; yaml
 ;;
-(elpaca (yaml :host github :repo "zkry/yaml.el" :protocol ssh
+(elpaca (yaml :host github :repo "zkry/yaml.el"
         :ref "73fde9d8fbbaf2596449285df9eb412ae9dd74d9"))
 
 ;;
@@ -705,7 +705,7 @@
 ;;
 ;; lsp-docker
 ;;
-(elpaca (lsp-docker :host github :repo "emacs-lsp/lsp-docker" :protocol ssh
+(elpaca (lsp-docker :host github :repo "emacs-lsp/lsp-docker"
         :ref "81ddb3fc68e1930352b6ca006d0ea609760be7d1"))
 
 ;;
@@ -778,7 +778,7 @@
 ;;
 ;; Copilot
 ;;
-(elpaca (copilot :host github :repo "zerolfx/copilot.el" :protocol ssh
+(elpaca (copilot :host github :repo "zerolfx/copilot.el"
         :files (:defaults "dist")
         :ref "8f5e45405ead77fcbe85b5c02193f23449d2d518")
   (require 'copilot)
@@ -811,7 +811,7 @@
 ;;
 ;; posframe
 ;;
-(elpaca (posframe :host github :repo "tumashu/posframe" :protocol ssh
+(elpaca (posframe :host github :repo "tumashu/posframe"
         :ref "06b939cfb06168782fc378043ff35bd7fec203b8"))
 
 ;;
@@ -1181,7 +1181,7 @@
 ;;
 ;; php-mode
 ;;
-(elpaca (php-mode :host github :repo "emacs-php/php-mode" :protocol ssh
+(elpaca (php-mode :host github :repo "emacs-php/php-mode"
         :main "lisp/php-mode.el"
         :ref "4792988a120d6ac515ba16605278d04cb8be0d69")
   (require 'php-mode)
@@ -1293,7 +1293,7 @@
 ;;
 ;; RG
 ;;
-(elpaca (rg :host github :repo "dajva/rg.el" :protocol ssh
+(elpaca (rg :host github :repo "dajva/rg.el"
         :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98")
   (require 'rg)
   )
