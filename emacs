@@ -15,12 +15,15 @@
   (add-to-list 'neph-compile-stuff dir)
   (add-to-list path dir))
 
-(neph-add-to-load-path 'load-path "~/.emacs.d/neph")
+;; The neph dir is NOT in the eager compile pass: neph-lib uses package macros
+;; (helm, dash) at compile time, so it can only compile after elpaca has built
+;; the packages -- the auto-compile declaration body below handles it.
+(add-to-list 'load-path "~/.emacs.d/neph")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
-(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")
 
 (neph-add-to-load-path 'load-path "~/.emacs.d/elpaca") ;; pinned submodule, see bootstrap below
 
@@ -29,10 +32,6 @@
     (byte-recompile-directory dir 0)))
 
 (setq neph-compile-stuff nil)
-
-;; Functions/macros live in neph-lib where they get byte-compiled; this file
-;; does not, and keeps to wiring (requires, setqs, hooks, binds).
-(require 'neph-lib)
 
 ;;
 ;; Elpaca (package manager; pinned submodule above -- no network installer)
@@ -80,7 +79,13 @@
         :ref "01844064e3f2bb9f109a8a064998baf89a864fbc")
   (setq auto-compile-verbose t)
   (auto-compile-on-load-mode)
-  (auto-compile-on-save-mode))
+  (auto-compile-on-save-mode)
+  ;; Functions/macros live in neph-lib where they get byte-compiled; this file
+  ;; does not, and keeps to wiring (requires, setqs, hooks, binds).  Compiled
+  ;; and loaded here -- the first declaration body, i.e. the earliest moment
+  ;; every package is built and on load-path for its compile-time macros.
+  (byte-recompile-directory "~/.emacs.d/neph" 0)
+  (require 'neph-lib))
 
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
@@ -816,7 +821,10 @@
   (require 'lsp-modeline)
   (require 'lsp-diagnostics)
   (setq lsp-ui-doc-show-with-cursor t)
-  (setq lsp-ui-peek-always-show t)
+  ;; Note: customized to nil in custom-set-variables, which ran last (and won)
+  ;; prior to elpacification; commented so the customized value still wins now
+  ;; that this body runs after init.
+  ;;(setq lsp-ui-peek-always-show t)
   )
 
 ;; cquery
@@ -1130,9 +1138,9 @@
 
 
   ;; Additional autoloads for helm-projectile
-  (autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
-  (autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
-  (autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
+  (autoload 'helm-projectile-ag "helm-projectile")
+  (autoload 'helm-projectile-switch-to-buffer "helm-projectile")
+  (autoload 'helm-projectile-switch-project "helm-projectile")
 
   ;; WIP migrating to project.el as possible
   (global-set-key (kbd "C-z M-f") 'projectile-find-file)
@@ -1424,11 +1432,6 @@
   (add-to-list 'auto-mode-alist '("\.proto$" . c-mode)))
 
 
-
-
-
-
-
 ;;
 ;; htmlfontify
 ;;
@@ -1513,19 +1516,12 @@
 ;; (concat "ncdu " (mapconcat (lambda (x) (concat "--exclude '" x "'")) grep-find-ignored-files " "))
 
 
-
 ;;
 ;; Swiper
 (autoload 'swiper "swiper" "Swiper popup thing" t)
 (global-set-key (kbd "C-z s") 'swiper)
 
 (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
-
-
-
-
-
-
 
 
 ;;
