@@ -27,7 +27,27 @@
                         '(fill-column-indicator ((t :background nil :foreground "#444")))
                         '(cursor ((t :background "#D96E26" )))
                         '(copilot-overlay-face ((t :foreground "#7A5555" )))
-                        '(lsp-inlay-hint-face ((t :foreground "#555" :height 0.7))))
+                        '(lsp-inlay-hint-face ((t :foreground "#555" :height 0.7)))
+                        ;; goto-address-mode link -- just underline
+                        '(link ((t (:foreground unspecified :weight unspecified))))
+                        ;; Ansi colors bootstrapped from bl1nk konsole theme
+                        '(ansi-color-black          ((t (:foreground "#1B1D1E" :background "#1B1D1E"))))
+                        '(ansi-color-red            ((t (:foreground "#F92672" :background "#F92672"))))
+                        '(ansi-color-green          ((t (:foreground "#82B414" :background "#82B414"))))
+                        '(ansi-color-yellow         ((t (:foreground "#FD971F" :background "#FD971F"))))
+                        '(ansi-color-blue           ((t (:foreground "#4E82AA" :background "#4E82AA"))))
+                        '(ansi-color-magenta        ((t (:foreground "#8C54FE" :background "#8C54FE"))))
+                        '(ansi-color-cyan           ((t (:foreground "#465457" :background "#465457"))))
+                        '(ansi-color-white          ((t (:foreground "#CCCCC6" :background "#CCCCC6"))))
+                        ;; Bright / intense variants  (Color0Intense..Color7Intense)
+                        '(ansi-color-bright-black   ((t (:foreground "#505354" :background "#505354"))))
+                        '(ansi-color-bright-red     ((t (:foreground "#FF5995" :background "#FF5995"))))
+                        '(ansi-color-bright-green   ((t (:foreground "#B6E354" :background "#B6E354"))))
+                        '(ansi-color-bright-yellow  ((t (:foreground "#FEED6C" :background "#FEED6C"))))
+                        '(ansi-color-bright-blue    ((t (:foreground "#0C73C2" :background "#0C73C2"))))
+                        '(ansi-color-bright-magenta ((t (:foreground "#9E6FFE" :background "#9E6FFE"))))
+                        '(ansi-color-bright-cyan    ((t (:foreground "#899CA1" :background "#899CA1"))))
+                        '(ansi-color-bright-white   ((t (:foreground "#F8F8F2" :background "#F8F8F2")))))
 
 ;; linum
 (custom-theme-set-variables 'neph-ample-zen
@@ -221,10 +241,12 @@
 ;; ediff
 (require 'ediff)
 (custom-theme-set-faces 'neph-ample-zen
+                        '(ediff-current-diff-Ancestor ((t ( :foreground unspecified :background "#201525" ))))
                         '(ediff-current-diff-A ((t ( :foreground unspecified :background "#412421" ))))
                         '(ediff-current-diff-B ((t ( :foreground unspecified :background "#143111" ))))
-                        '(ediff-fine-diff-A ((t ( :foreground unspecified :background "#811411" ))))
-                        '(ediff-fine-diff-B ((t ( :foreground unspecified :background "#148111" )))))
+                        '(ediff-current-diff-C ((t ( :foreground unspecified :background "#164040" ))))
+                        '(ediff-fine-diff-A ((t ( :foreground unspecified :background "#611311" ))))
+                        '(ediff-fine-diff-B ((t ( :foreground unspecified :background "#146111" )))))
 
 ;; Semantic (disabled)
                                         ; (set-face-attribute 'semantic-tag-boundary-face nil :overline "#544")
