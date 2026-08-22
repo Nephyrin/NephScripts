@@ -475,6 +475,7 @@ explicit input."
 ;;                                      display-buffer-alist)))
 ;;      (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
 
+;; FIXME also flycheck mode is broken
 (defun neph-html-region ()
   (interactive)
   (require 'htmlize)
