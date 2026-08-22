@@ -3563,12 +3563,40 @@ beginning of it and the point to the end of it if so"
 (global-set-key (kbd "C-z C") 'magit-commit)
 
 ;;
+;; Load local aliases
+;;
+
+;;
 ;; Theme
 ;;
 
 ;(load-theme 'sunburst t)
 
 ;; See also neph-ample-zen-theme.el
+
+;;
+;; Local aliases
+;;
+
+;; Why is this not a thing in emacs
+;;
+;; why does it still not have a cache dir for elc and require manually deciding between source and bytecode at every
+;; level
+(defun neph-compile-and-load (file)
+  "Force compile FILE and then load it."
+  (byte-recompile-file file nil 0) ;; 0 as fourth arg means create-if-missing. Duh.
+  (load (byte-compile-dest-file file) nil))
+
+;; Local aliases if they exist
+(defun neph-reload-local ()
+  (interactive)
+  "Reload machine-local aliases (~/.aliases.local.el)"
+  (let ((aliases "~/.aliases.local.el"))
+    (when (file-exists-p aliases)
+      (neph-compile-and-load aliases))))
+
+(neph-reload-local)
+
 
 ;;
 ;; Load theme selected by env
