@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -euo pipefail
 
 out() { printf "%s\n" "$*"; }
 die() { [[ -n ${quiet-} ]] && exit 0; out >&2 "!! ${*-Failed}"; exit 1; }
