@@ -132,6 +132,9 @@ zdir() {
   cmd cd -- "$outdir"
 }
 
+fdf() { fd -t f "$@"; }
+fdd() { fd -t d "$@"; }
+
 # marchive <archive> [<archive> ...]
 #
 # Moves the archive to $PWD and then runs autounzip on it.
