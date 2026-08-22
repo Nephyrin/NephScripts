@@ -184,29 +184,37 @@
 ;; Misc yank/text/font handling helpers
 ;;
 
-(defun neph-yank-with-properties ()
+(defun neph-yank-preserving-fontlock ()
   "Yank text without stripping properties."
   (interactive)
   (let ((yank-excluded-properties nil))
     (yank)))
 
-(defun neph-copy-face-to-font-lock-face (start end)
-  "Copy all 'face' properties with 'font-lock-face' in the region START to END."
-  (interactive "r")
+(defun neph-copy-property-on-region (from to start end &optional remove)
+  "Copy all FROM property values to the TO property in the region START to END.
+
+Useful for e.g. copying the 'face property to 'font-lock-face.
+
+If REMOVE is t, delete the FROM property, otherwise it is left."
   (save-excursion
     (let ((pos start))
       (while (< pos end)
-        (let ((next (next-single-property-change pos 'face nil end))
-              (current-face (get-text-property pos 'face)))
+        (let ((next (next-single-property-change pos from nil end))
+              (current-face (get-text-property pos from)))
           (when current-face
             ;; Add the new property
-            (put-text-property pos next 'font-lock-face current-face)
+            (put-text-property pos next to current-face)
             ;; Remove the old property
-            )
-            ;;(remove-list-of-text-properties pos next '(face)))
+            (when remove (remove-list-of-text-properties pos next (list from))))
           (setq pos next))))))
 
-;;
+;; This is useful for taking the effective face of something and "saving" it as the overridden font-lock face.
+;; FIXME really, though, I want to do this only for the text I'm adding to the kill ring and not permanently
+(defun neph-copy-face-to-font-lock-face (start end)
+  "Copy all 'face' properties to 'font-lock-face' in the region START to END."
+  (interactive "r")
+  (neph-copy-property-on-region 'face 'font-lock-face start end))
+
 ;; Xterm color
 ;;
 (require 'xterm-color)
