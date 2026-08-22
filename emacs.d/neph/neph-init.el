@@ -2238,6 +2238,11 @@ If FORCE is not specified, toggle the current state."
         default-name)))
 
 (with-eval-after-load "projectile"
+  ;; Unusable w/tramp
+  (advice-add 'projectile-project-root :before-while
+  (lambda (&optional dir)
+    (not (file-remote-p (or dir default-directory)))))
+
   (setq projectile-project-root-files
         (remove "?*.sln" projectile-project-root-files))
   (setq projectile-completion-system 'helm)
