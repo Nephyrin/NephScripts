@@ -669,6 +669,7 @@ explicit input."
 (require 'helm-bookmark)
 ;; Not sure what I'm configuring wrong but autoloads doesn't always
 (require 'helm-for-files)
+(require 'helm-ring)
 ;;(require 'helm-config)
 (require 'helm-for-files)
 
