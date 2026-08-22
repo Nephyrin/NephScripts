@@ -314,6 +314,11 @@ pjournal() {
   journalctl "$@" -o json | stdbuf -oL jq -r "$jq_format" | awk "$awk_format"
 }
 
+remakepkg() {
+  [[ -e ./PKGBUILD ]] || { eerr "no pkgbuild"; return 1; }
+  cmd rm -rf --one-file-system -- pkg src
+  cmd makepkg "$@"
+}
 
 # Shorthand rdp
 # Tries to find xfreerdp2 or 3 as a fallback (which performs much worse) and launches it with sane options
