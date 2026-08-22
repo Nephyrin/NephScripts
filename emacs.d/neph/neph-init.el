@@ -3012,8 +3012,13 @@ If this is a local file, turn it into a tramp file file with said information."
 (defun bookmark-current-line ()
   "Bookmark the current line, using itself as the bookmark name"
   (interactive)
-  (let ((line (thing-at-point 'line t)))
+  (let ((line (thing-at-point 'line nil)))
+        ;; WIP Could somehow include headerline stuff
+        ;;(container (when (fboundp 'lsp-headerline--build-string)
+    ;;             (format "%s  %s" (lsp-headerline--build-symbol-string) (lsp-headerline--build-project-string)))))
     (when (string-match "[ \t\n]*$" line)
+      (setq line (replace-match "" nil nil line)))
+    (when (string-match "^[ \t\n]*" line)
       (setq line (replace-match "" nil nil line)))
     (bookmark-set line)
     (message (concat "Created bookmark: " line))))
