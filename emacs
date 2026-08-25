@@ -1067,8 +1067,9 @@
         :ref "eff047caa75dbe4965defca9d1212454cdb755d5")
   (autoload 'p4 "p4" "p4" t)
 
-  ;; Note: was shadowed by p4-edit-current prior to elpacification, commented
-  ;;(global-set-key (kbd "C-z C-e") 'neph-p4-edit-current)
+  ;; Un-shadowed: the p4-edit-current duplicate that used to win this bind was
+  ;; removed upstream
+  (global-set-key (kbd "C-z C-e") 'neph-p4-edit-current)
   (global-set-key (kbd "C-z P r") 'neph-p4-revert-current)
   (global-set-key (kbd "C-z P t") 'neph-p4vc-tlv)
   (global-set-key (kbd "C-z P c") 'neph-p4vc-revgraph)
@@ -2281,8 +2282,6 @@
 
 ; F3 inserts current filename into minibuffer
 (define-key minibuffer-local-map [f3] 'neph-insert-selected-window-buffer-name)
-
-(global-set-key (kbd "C-z C-e") 'p4-edit-current)
 
 ;; Take slash away from electric indent ('electric-slash)
 (eval-after-load 'cc-mode
