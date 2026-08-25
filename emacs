@@ -2034,6 +2034,14 @@
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
 
+;;
+;; Local aliases
+;;
+
+;; Local aliases if they exist. Runs after the package queue: neph-reload-local
+;; lives in neph-lib, which loads in the auto-compile declaration body.
+(add-hook 'elpaca-after-init-hook #'neph-reload-local t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
