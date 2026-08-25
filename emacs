@@ -1380,8 +1380,14 @@
   (global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
 
   ;; Default font
+
+  ;; No! This breaks in daemon mode. Running it prior to any frames existing just hoses the font.
+  ;;(set-frame-font "DejaVu Sans Mono-10" nil t)
+
+  ;; doesn't support the nice "-10" syntax apparently despite docs suggesting it should
   (set-face-attribute 'default nil :family "DejaVu Sans Mono")
   (set-face-attribute 'default nil :height 100)
+
   (when (eq system-type 'darwin)
     (set-face-attribute 'default nil :family "Monaco")
     (set-face-attribute 'default nil :height 120))
