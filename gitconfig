@@ -98,6 +98,9 @@
   dc = diff --cached
   ap = add -p .
   hmr = "!x() { ( set -e; source ~/bin/lib/util.sh; [[ $# -le 1 ]] || die \"usage: git hmr [remote branch name]\"; local b; b=$(git symbolic-ref HEAD --short); [[ ${b:-main} != main ]] || die \"Not pushing no branch/main\"; local target=$b; [[ ${target#johns/} != \"$target\" ]] || target=johns/$target;cmd git push -u origin HEAD:\"$target\"; cmd xdg-open \"https://gitlab.steamos.cloud/holo/holo/-/merge_requests/new?merge_request%5Bsource_branch%5D=$target${1:+&merge_request%5Btarget_branch%5D=$1}\"; ); }; x"
+  fixl = "log --abbrev=12 --format=fixes"
+  fix = "fixl -1"
+  cpx = cherry-pick -x
 
 [column]
   ui = auto
