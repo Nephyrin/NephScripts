@@ -76,8 +76,19 @@
   llx = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
   st = status --ignore-submodule=untracked
   stt = status --untracked=no
+  ff = merge --ff-only
+  # git feat <branchname> [upstream]
+  #   Create a feature branch from either origin/main or the second arg
+  #
+  #   Prepends $USER/ to branch name unless it contains slashes
+  #   Prepends origin/ to upstream unless it contains slashes
+  feat = "!b=$1 && { [[ $b = */* ]] || b=$USER/$b; } && u=${2-main} && { [[ $u = */* ]] || u=origin/$u; } && set -x && git switch -c \"$b\" --no-track \"$u\" #"
+  # Delete the current branch
+  killbranch = "!b=$(git branch --show-current) && { [[ -n $b ]] || { echo >&2 \"Not on a branch\"; exit 1; }; } && set -x; git switch --detach && git branch -D -- \"$b\" #"
   pff = pull --ff-only
   cm = commit -m
+  root = rev-parse --show-toplevel
+  fa = fetch --all --prune --tags
   bzaq = !git bz attach -n -e $(git merge-base HEAD @{u})..
   exec = ! exec
   eval = ! eval
