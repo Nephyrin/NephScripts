@@ -11,7 +11,10 @@
 
 [core]
   excludesfile = $HOME/.gitignore
-  pager = diff-so-fancy | less --tabs=4 -RFX
+  pager = "if command -v delta &>/dev/null; then delta -n --hyperlinks --navigate;\
+  elif command -v diff-so-fancy &>/dev/null; then diff-so-fancy | less --tabs=4 -RFX;\
+  elif command -v bat &>/dev/null; then bat -p;\
+  else less --tabs=4 -RFX; fi"
 
 # ; For git-repacking large files causing OOMs. These options all only affect
 # ; packing speed, not result, unless noted.
