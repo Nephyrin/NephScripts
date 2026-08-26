@@ -55,6 +55,7 @@
 
 [alias]
   fcl = "!cd \"${GIT_PREFIX:-.}\" && set -x && git reset -- \"$@\" && git checkout -f -- \"$@\" #"
+  dc = diff --cached
   mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
   ll = log --oneline --decorate
   lp = log --patch
