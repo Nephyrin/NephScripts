@@ -44,11 +44,10 @@
 [merge]
   renamelimit = 9000
   conflictstyle = diff3
-  tool = gitmerge
+  tool = meld
 
-; The "gitmerge" tool just passes variables to ~/bin/gitmerge
-[mergetool "gitmerge"]
-  cmd = $HOME/bin/gitmerge $BASE $LOCAL $REMOTE $MERGED
+[mergetool "meld"]
+  cmd = meld --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --diff "$LOCAL" "$MERGED" "$REMOTE"
 
 [push]
   default = simple
