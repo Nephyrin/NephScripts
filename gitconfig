@@ -116,16 +116,21 @@
 
 [rebase]
   autoStash = true
+  autosquash = true
+
 [init]
   defaultBranch = main
+
 [diff-so-fancy]
   stripLeadingSymbols = false
   first-run = false
+
 [color "diff-highlight"]
   oldNormal = red bold
   oldHighlight = red bold 52
   newNormal = green bold
   newHighlight = green bold 22
+
 [color "diff"]
   meta = yellow
   frag = magenta bold
@@ -139,3 +144,13 @@
 
 [rebase]
   autoStash = true
+
+[status]
+  submoduleSummary = true
+
+[pretty]
+  # This must be used in conjunction with --abbrev=12 to match the kernel.org format
+  fixes = "Fixes: %h (\"%s\")"
+
+[interactive]
+  diffFilter = delta --color-only
