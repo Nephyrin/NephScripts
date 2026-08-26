@@ -20,9 +20,13 @@
 ;; display without special handling.  Everything else sees plain text: `goto-address-mode', isearch, occur and friends
 ;; just work.
 ;;
-;; Changing the colors means rewriting the stashed bytes: `ansi-color-format-apply-sgr' applies SGR parameters on top of
-;; a region's look (`ansi-color-format-set-foreground' and friends choose them for you), `ansi-color-format-copy-sgr'
-;; picks up the look at point to apply elsewhere, and `ansi-color-format-set-link' makes a region a hyperlink.
+;; Changing the colors means rewriting the stashed bytes:
+;; `ansi-color-format-apply-sgr' applies SGR parameters on top of a region's
+;; look (`ansi-color-format-set-foreground' and friends choose them for you),
+;; `ansi-color-format-copy-sgr' picks up the look at point to apply elsewhere,
+;; `ansi-color-format-set-link' makes a region a hyperlink, and
+;; `ansi-color-format-add-links' turns the URLs in a region into hyperlinks.
+;; `ansi-color-format-menu' puts all of that in a transient menu.
 ;;
 ;; Usage:
 ;;
@@ -576,6 +580,72 @@ Interactively, URL defaults to the link at point."
                                 (ansi-color-format--osc8 state))))))))
   (ansi-color-format--refontify-after beg end))
 
+;;;; Finding URLs to link
+
+(defcustom ansi-color-format-link-schemes
+  '("http" "https" "ftp" "ftps" "sftp" "file" "ssh" "git")
+  "URL schemes that `ansi-color-format-add-links' turns into hyperlinks."
+  :type '(repeat string))
+
+(defun ansi-color-format--url-regexp ()
+  "Return a regexp matching a URL, generously: see `ansi-color-format--url-end'."
+  (concat "\\<" (regexp-opt ansi-color-format-link-schemes)
+          "://[^[:space:]<>\"'`]+"))
+
+(defun ansi-color-format--url-end (beg end)
+  "Return where the URL matched in BEG..END really ends.
+Sentence punctuation after it is left out, as is a closing bracket that
+pairs with nothing inside the URL: \"(https://x.example/a[])\" gives
+\"https://x.example/a[]\", while \"https://x.example/a(b)\" keeps its
+parenthesis."
+  (let ((url (buffer-substring-no-properties beg end))
+        (again t))
+    (while (and again (> (length url) 0))
+      (let* ((last (aref url (1- (length url))))
+             (open (cdr (assq last '((?\) . ?\() (?\] . ?\[) (?} . ?{))))))
+        (setq again (or (memq last '(?. ?, ?\; ?: ?! ??))
+                        (and open
+                             (> (seq-count (lambda (c) (eq c last)) url)
+                                (seq-count (lambda (c) (eq c open)) url)))))
+        (when again
+          (setq url (substring url 0 -1)))))
+    (+ beg (length url))))
+
+(defun ansi-color-format--link-at (pos)
+  "Return the URL of the OSC 8 hyperlink covering POS, if any."
+  (let ((own (and (ansi-color-format--run-start-p pos)
+                  (ansi-color-format--link-in
+                   (get-text-property pos 'ansi-color-escapes)))))
+    (if own
+        (cdr own)
+      (ansi-color-format--link-before pos))))
+
+(defun ansi-color-format-add-links (beg end)
+  "Make the URLs in BEG..END that are not hyperlinks yet into OSC 8 hyperlinks.
+URLs are recognized by the schemes in `ansi-color-format-link-schemes';
+see `ansi-color-format--url-end' for where they end.  Interactively,
+use the region, or the whole buffer if there is none.  Return how
+many were linked."
+  (interactive (if (use-region-p)
+                   (list (region-beginning) (region-end))
+                 (list (point-min) (point-max))))
+  (ansi-color-format--check)
+  (let ((count 0)
+        (regexp (ansi-color-format--url-regexp)))
+    (save-excursion
+      (save-match-data
+        (goto-char beg)
+        (while (re-search-forward regexp end t)
+          (let* ((start (match-beginning 0))
+                 (stop (ansi-color-format--url-end start (match-end 0))))
+            (unless (ansi-color-format--link-at start)
+              (ansi-color-format-set-link
+               start stop (buffer-substring-no-properties start stop))
+              (setq count (1+ count)))
+            (goto-char stop)))))
+    (message "Linked %d URL%s" count (if (= count 1) "" "s"))
+    count))
+
 ;;;; Choosing colors
 
 (defconst ansi-color-format--color-names
@@ -739,6 +809,11 @@ Toggling the mode changes buffer positions, so it resets undo history."
   (interactive "r")
   (ansi-color-format--check)
   (jit-lock-refontify beg (ansi-color-format--decode-region beg end)))
+
+;; The menu lives in its own file, loaded on first use, so that
+;; `transient' is not loaded (or byte-compiled against) at startup.
+(autoload 'ansi-color-format-menu "ansi-color-format-menu"
+  "Change the look of the region with ANSI escape sequences, from a menu." t)
 
 (provide 'ansi-color-format)
 
