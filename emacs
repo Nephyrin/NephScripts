@@ -126,6 +126,7 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/treepy")
 (neph-add-to-load-path 'load-path "~/.emacs.d/with-editor/lisp") ;; Part of magit project, dep
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
+(neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-format")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 ;(neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/sunburst-theme")
 (neph-add-to-load-path 'custom-theme-load-path "~/.emacs.d/neph")

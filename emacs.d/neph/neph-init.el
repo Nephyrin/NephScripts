@@ -240,6 +240,11 @@ If REMOVE is t, delete the FROM property, otherwise it is left."
 (require 'ansi-color-overlay-mode)
 
 ;;
+;; ansi color as a file format: M-x ansi-color-format-mode
+;;
+(require 'ansi-color-format)
+
+;;
 ;; gdb ansi color
 ;;
 (require 'gdb-ansi-color)
