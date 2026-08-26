@@ -89,10 +89,6 @@
   cm = commit -m
   root = rev-parse --show-toplevel
   fa = fetch --all --prune --tags
-  bzaq = !git bz attach -n -e $(git merge-base HEAD @{u})..
-  exec = ! exec
-  eval = ! eval
-  root = !pwd
   fetch-current = "! upstream=\"$(git rev-parse --symbolic-full-name @{u})\"; remote=\"${upstream#refs/remotes/}\"; if [[ -n $remote && $remote != $upstream ]]; then echo \"+ git fetch ${remote%%/*}\" && git fetch \"${remote%%/*}\"; else echo >&2 \"Could not find upstream (@{u} is \\\"$upstream\\\")\"; fi;"
   su = submodule update --init --recursive
   emails = "!x() { local b=\"$1\"; [[ -n $b ]] || b=HEAD; git log --format=\"format:%ae\" \"$b\" | sort | uniq; }; x"
