@@ -112,7 +112,6 @@
   algorithm = patience
 
 [rerere]
-  enable = true
   enabled = true
 
 [rebase]
