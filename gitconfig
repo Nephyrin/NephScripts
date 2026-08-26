@@ -46,7 +46,7 @@
 
 [merge]
   renamelimit = 9000
-  conflictstyle = diff3
+  conflictStyle = zdiff3
   tool = meld
 
 [mergetool "meld"]
