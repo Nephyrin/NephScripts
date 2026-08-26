@@ -235,11 +235,6 @@ If REMOVE is t, delete the FROM property, otherwise it is left."
   (neph-term-color-region 0 (point-max)))
 
 ;;
-;; ansi color mode
-;;
-(require 'ansi-color-overlay-mode)
-
-;;
 ;; ansi color as a file format: M-x ansi-color-format-mode
 ;;
 (require 'ansi-color-format)
