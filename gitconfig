@@ -52,6 +52,9 @@
 [mergetool "meld"]
   cmd = meld --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --diff "$LOCAL" "$MERGED" "$REMOTE"
 
+[mergetool "xe"]
+  cmd = $HOME/bin/git-ediff-merge $BASE $LOCAL $REMOTE $MERGED
+
 [push]
   default = simple
   autoSetupRemote = true
