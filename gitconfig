@@ -62,6 +62,7 @@
   lpd = log --patch .
   llp = log --patch --oneline --decorate
   st = status --ignore-submodule=untracked
+  stt = status --untracked=no
   pff = pull --ff-only
   cm = commit -m
   bzaq = !git bz attach -n -e $(git merge-base HEAD @{u})..
