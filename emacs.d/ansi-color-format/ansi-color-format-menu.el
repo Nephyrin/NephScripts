@@ -174,8 +174,7 @@
     ("p" ansi-color-format-menu--apply-sgr)
     ("P" "copy look at point" ansi-color-format-copy-sgr)]]
   ["Links and text"
-   ("l" "insert link" ansi-color-format-insert-link)
-   ("L" ansi-color-format-menu--set-link)
+   ("l" ansi-color-format-menu--set-link)
    ("A" ansi-color-format-menu--add-links)
    ("e" ansi-color-format-menu--decode)
    ("q" "quit" transient-quit-one)]
