@@ -13,7 +13,7 @@ trap cleanup EXIT
 
 USER=nephyrin
 PASS=dumbpass
-PACKAGES=(zsh nano fd bat less ripgrep yarn npm rustup tmux)
+PACKAGES=(zsh nano fd bat less ripgrep yarn npm pnpm rustup tmux openssh socat noto-fonts-emoji noto-fonts openai-codex)
 AUR_PACKAGES=(paru)
 
 ## Blank container
@@ -92,6 +92,9 @@ setup_root() {
   echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel
   # Setup machineid for build step, final step clears it
   systemd-machine-id-setup
+
+  # tz
+  ln -svfT ../usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 
   # claude-code
   #
