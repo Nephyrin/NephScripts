@@ -10,10 +10,10 @@
 ;;
 ;; It is built on Emacs's file-format layer (`format-alist', the machinery behind `enriched-mode').  Turning the mode on
 ;; removes every escape sequence from the buffer text and stashes its bytes in an `ansi-color-escapes' text property on
-;; the text that follows it.  Saving hands those bytes back to `write-region' as annotations, so the buffer itself is
-;; never touched on save and an unedited buffer writes back byte for byte.  Because the bytes ride along with the text
-;; they precede, typed text lands inside the same escapes as its neighbors, and killing colored text takes its escapes
-;; with it.  Turning the mode off puts the bytes back into the text.
+;; the text that follows it.  Saving puts the bytes back into the copy of the buffer that `write-region' writes, so
+;; the buffer itself is never touched on save and an unedited buffer writes back byte for byte.  Because the bytes ride
+;; along with the text they precede, typed text lands inside the same escapes as its neighbors, and killing colored text
+;; takes its escapes with it.  Turning the mode off puts the bytes back into the text.
 ;;
 ;; Colors and OSC 8 hyperlinks are a view derived from the stashed bytes by a jit-lock function, the way font-lock
 ;; derives faces from keywords, so text that arrives with stashes attached (yank, undo, `insert-buffer') is recolored on
@@ -148,14 +148,22 @@ Return the new end of the region."
             ;; Adjacent sequences form one stash.
             (while (looking-at ansi-color-format--sequence-regexp)
               (goto-char (match-end 0)))
-            (ansi-color-format--stash-or-trail
-             start (delete-and-extract-region start (point)))))))
+            ;; Plain bytes: with properties they would carry the stash of
+            ;; the run they sat in, which carries the one before it, and
+            ;; so on back to the start of the buffer.
+            (let ((bytes (buffer-substring-no-properties start (point))))
+              (delete-region start (point))
+              (ansi-color-format--stash-or-trail start bytes))))))
     (prog1 (marker-position end)
       (set-marker end nil))))
 
+;; Decoding and encoding the whole buffer are not edits: they keep the
+;; modified flag, and they record no undo (the mode resets undo history
+;; anyway, since they move every position).
+
 (defun ansi-color-format--decode-buffer ()
-  "Decode every escape sequence in the buffer, keeping the modified flag."
-  (let ((modified (buffer-modified-p)))
+  "Decode every escape sequence in the buffer."
+  (with-silent-modifications
     (save-excursion
       (save-restriction
         (widen)
@@ -166,24 +174,36 @@ Return the new end of the region."
         (when (search-forward "\e" nil t)
           (let ((beg (line-beginning-position)))
             (jit-lock-refontify
-             beg (ansi-color-format--decode-region beg (point-max)))))))
-    (restore-buffer-modified-p modified)))
+             beg (ansi-color-format--decode-region beg (point-max)))))))))
 
 (defun ansi-color-format--encode-buffer ()
   "Put the stashed escape sequences back into the buffer text."
-  (let ((modified (buffer-modified-p))
-        (inhibit-read-only t)
-        (inhibit-modification-hooks t))
+  (with-silent-modifications
     (save-excursion
       (save-restriction
         (widen)
-        (format-insert-annotations
-         (ansi-color-format-encode (point-min) (point-max) (current-buffer)))
+        (ansi-color-format-encode (point-min) (point-max) (current-buffer))
+        ;; `fontified' goes too (the mode refontifies afterwards anyway),
+        ;; so that the text is left with no properties at all and the
+        ;; interval per escape sequence that removing them leaves behind
+        ;; can be merged away.
         (remove-list-of-text-properties
          (point-min) (point-max)
-         (cons 'ansi-color-escapes ansi-color-format--derived-properties))
-        (ansi-color-format--clear-trailing)))
-    (restore-buffer-modified-p modified)))
+         (append '(ansi-color-escapes fontified)
+                 ansi-color-format--derived-properties))
+        (ansi-color-format--merge-bare-intervals)
+        (ansi-color-format--clear-trailing)))))
+
+(defun ansi-color-format--merge-bare-intervals ()
+  "Merge each run of text without properties into a single interval.
+Removing properties leaves their interval boundaries behind;
+`set-text-properties' is what merges them."
+  (let ((pos (point-min)))
+    (while (< pos (point-max))
+      (let ((next (next-property-change pos nil (point-max))))
+        (unless (text-properties-at pos)
+          (set-text-properties pos next nil))
+        (setq pos next)))))
 
 ;;;; The file format
 
@@ -192,30 +212,55 @@ Return the new end of the region."
 The decoding half of the `ansi-color' entry in `format-alist'."
   (ansi-color-format--decode-region from to))
 
-(defun ansi-color-format-encode (from to _orig-buf)
-  "Return `write-region' annotations restoring the escape sequences in FROM..TO.
-FROM and TO are nil when the whole buffer is being written.  The
-encoding half of the `ansi-color' entry in `format-alist'."
-  (let ((from (or from (point-min)))
-        (to (or to (point-max)))
-        (annotations nil))
-    (let ((pos from))
-      (while (< pos to)
+(defun ansi-color-format-encode (from to orig-buf)
+  "Put the escape sequences stashed in FROM..TO back into the text.
+Return the new end.  The encoding half of the `ansi-color' entry in
+`format-alist'.  Saving runs this on a copy of the buffer, which
+carries the stashes as text properties and has had the trailing
+sequences inserted already (see `ansi-color-format--annotate-trailing').
+Disabling the mode and `format-encode-region' run it in place, with
+ORIG-BUF the current buffer, and then the trailing sequences are
+inserted here."
+  (save-excursion
+    (let ((end (copy-marker to t))
+          (pos from))
+      (while (< pos end)
         (let ((bytes (get-text-property pos 'ansi-color-escapes)))
           (when bytes
-            (push (cons pos bytes) annotations)))
+            (goto-char pos)
+            (insert bytes)
+            (setq pos (point))))
         (setq pos (next-single-property-change pos 'ansi-color-escapes
-                                               nil to))))
-    (pcase ansi-color-format--trailing
-      (`(,marker . ,bytes)
-       (when (<= from marker to)
-         (push (cons (marker-position marker) bytes) annotations))))
-    (sort annotations #'car-less-than-car)))
+                                               nil end)))
+      (when (eq orig-buf (current-buffer))
+        (pcase ansi-color-format--trailing
+          (`(,marker . ,bytes)
+           (when (<= from marker end)
+             (goto-char marker)
+             (insert bytes)))))
+      (prog1 (marker-position end)
+        (set-marker end nil)))))
 
-(add-to-list 'format-alist
-             '(ansi-color "Text colored with ANSI escape sequences."
-                          nil ansi-color-format-decode ansi-color-format-encode
-                          nil ansi-color-format-mode nil))
+(defun ansi-color-format--annotate-trailing (start end)
+  "Return a `write-region' annotation for the trailing sequences, if in START..END.
+START and END are as `write-region' got them: nil for the whole buffer,
+or START a string, which has nothing to do with the buffer.  On
+`write-region-annotate-functions' while the mode is on: the copy of
+the buffer that `ansi-color-format-encode' then works on receives the
+annotation as text, since the marker holding them stays behind."
+  (pcase ansi-color-format--trailing
+    (`(,marker . ,bytes)
+     (and (not (stringp start))
+          (<= (or start (point-min)) marker (or end (point-max)))
+          (list (cons (marker-position marker) bytes))))))
+
+;; Encoding modifies the text (a copy of it, when saving), rather than
+;; returning annotations, so that the file is written in big chunks
+;; instead of one `write' call per escape sequence.
+(setf (alist-get 'ansi-color format-alist)
+      '("Text colored with ANSI escape sequences."
+        nil ansi-color-format-decode ansi-color-format-encode
+        t ansi-color-format-mode nil))
 
 ;;;; Reading the stashes
 
@@ -769,6 +814,8 @@ Interactively, choose them by name; `none' switches them all off."
   (unless font-lock-mode
     (setq-local char-property-alias-alist '((face font-lock-face))))
   (jit-lock-register #'ansi-color-format--fontify)
+  (add-hook 'write-region-annotate-functions
+            #'ansi-color-format--annotate-trailing nil t)
   (add-hook 'after-revert-hook #'ansi-color-format--after-revert nil t)
   (add-hook 'after-change-major-mode-hook
             #'ansi-color-format--after-change-major-mode nil t))
@@ -776,6 +823,8 @@ Interactively, choose them by name; `none' switches them all off."
 (defun ansi-color-format--teardown ()
   "Remove the view machinery and hooks from the current buffer."
   (jit-lock-unregister #'ansi-color-format--fontify)
+  (remove-hook 'write-region-annotate-functions
+               #'ansi-color-format--annotate-trailing t)
   (remove-hook 'after-revert-hook #'ansi-color-format--after-revert t)
   (remove-hook 'after-change-major-mode-hook
                #'ansi-color-format--after-change-major-mode t))
