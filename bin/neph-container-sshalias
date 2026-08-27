@@ -6,30 +6,44 @@ name=${1#pod-}
 
 die() { printf >&2 "\n\n%s\n" "!! $*"; exit 1; }
 
+cmd=()
+
 {
-  podman inspect "$name" &>/dev/null || die "No such container: $name"
+  json=$(podman inspect -- "$name") 2>/dev/null || die "No such container: $name"
+  runtime=$(jq '.[0].OCIRuntime' -r <<< "$json")
 
-  provision() {
-    set -euo pipefail
+  echo "[-] Found container, runtime $runtime"
 
-    exec {lock}>/run/neph-container-ssh.lock
-    flock "$lock"
+  if [[ $runtime = *krun ]]; then
+    echo "[-] krun-based container, this will only work if you spawned sshd on port 2222"
+    netns=$(jq '.[0].NetworkSettings.SandboxKey' -r <<< "$json")
+    [[ -n $netns ]] || die "Couldn't determine network namespace for container"
+    cmd=(podman unshare nsenter --net="$netns" -- nc 127.0.0.1 2222)
+  else
+    provision() {
+      set -euo pipefail
 
-    cat > /etc/authorized_keys.new
-    echo "AuthorizedKeysFile /etc/authorized_keys" > /etc/ssh/sshd_config.d/77-yolo.conf.new
+      exec {lock}>/run/neph-container-ssh.lock
+      flock "$lock"
 
-    [[ -x /usr/sbin/sshd ]] || pacman -S openssh --needed --noconfirm
-    ssh-keygen -A
+      cat > /etc/authorized_keys.new
+      echo "AuthorizedKeysFile /etc/authorized_keys" > /etc/ssh/sshd_config.d/77-yolo.conf.new
 
-    mv /etc/authorized_keys{.new,}
-    mv /etc/ssh/sshd_config.d/77-yolo.conf{.new,}
-  }
+      [[ -x /usr/sbin/sshd ]] || pacman -S openssh --needed --noconfirm
+      ssh-keygen -A
 
-  echo "[-] Provisioning sshd in container '$name'"
+      mv /etc/authorized_keys{.new,}
+      mv /etc/ssh/sshd_config.d/77-yolo.conf{.new,}
+    }
 
-  cat ~/.ssh/id_rsa.pub |
-    podman exec -u 0 -i "$name" bash -c "$(typeset -f provision) && provision" \
-      || die "Provisioning failed, see above"
+    echo "[-] Provisioning sshd in container '$name'"
+
+    cat ~/.ssh/id_rsa.pub |
+      podman exec -u 0 -i "$name" bash -c "$(typeset -f provision) && provision" \
+        || die "Provisioning failed, see above"
+
+    cmd=(podman exec -u 0 -i "$name" /usr/sbin/sshd -i -e)
+  fi
 } >&2 <&-
 
-podman exec -u 0 -i "$name" /usr/sbin/sshd -i -e
+exec "${cmd[@]}"

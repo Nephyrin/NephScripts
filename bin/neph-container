@@ -21,6 +21,7 @@ usage() (
   out "  --detach, -d             Spawn async rather than with -ti"
   out "  --wait-init, -W          In detach mode, block until spawned container passes init (or exits)"
   out "  --krun                   Use krun backend in podman"
+  out "  --ssh                    Enable SSH and register pubkeys from ~/.ssh"
   out "  --claude, -C             RW Mount ~/.claude and ~/.claude.json for nested claude usage, default to claude"
   out "                           entrypoint."
   out "  --codex, -X              RW Mount ~/.codex for nested codex usage"
@@ -35,7 +36,7 @@ usage() (
   out "  --help, -h               Show this help and exit"
 )
 
-parse_args 'neph-container' 'n:kw:dWCXSp:P:h' 'name:,keep,workdir:,detach,wait-init,krun,claude,codex,passwordless-sudo,localports:,localportrange:,pkg:,help' "$@" || { usage eerr; exit 1; }
+parse_args 'neph-container' 'n:kw:dWCXSp:P:h' 'name:,keep,workdir:,detach,wait-init,krun,ssh,claude,codex,passwordless-sudo,localports:,localportrange:,pkg:,help' "$@" || { usage eerr; exit 1; }
 
 name="$(get_merged_option name n)"
 workdir="$(get_merged_option workdir w)"
@@ -50,6 +51,7 @@ help=$(get_merged_option h help)
 passwordless_sudo=$(get_merged_option passwordless-sudo S)
 wait_init=$(get_merged_option wait-init W)
 krun=$(get_merged_option krun)
+ssh=$(get_merged_option ssh)
 
 raw_args=() # for shellcheck's sake
 eval raw_args="($(get_args))"
@@ -75,7 +77,7 @@ done
 [[ -z $keep || -n $name ]] || die "--keep requires passing a --name"
 [[ -n $workdir ]] || workdir=$PWD
 
-podargs=()
+podargs=(--init)
 
 # parse localports
 add_port() {
@@ -136,7 +138,12 @@ fi
 # --krun
 if [[ -n $krun ]]; then
   # breaks with --user currently, could be an arg
-  podargs+=(--runtime=/usr/bin/krun --user=0 --env "NEPHARCH_USER=nephyrin")
+  podargs+=(--runtime=/usr/bin/krun --annotation krun.use_passt=1 --user=0 --env "NEPHARCH_USER=nephyrin")
+fi
+# --ssh
+if [[ -n $ssh ]]; then
+  podargs+=(--env "NEPHARCH_SSHD_AUTHORIZED_KEYS=$(cat ~/.ssh/*.pub)"
+            --env "NEPHARCH_SSHD=1")
 fi
 
 

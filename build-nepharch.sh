@@ -162,6 +162,8 @@ setup_root_final() {
   echo 'ALL    ALL=(root) NOPASSWD: /init.sh' > /etc/sudoers.d/zz-entrypoint
   echo 'Defaults!/init.sh env_keep += "NEPHARCH_INIT_PACKAGES"' >> /etc/sudoers.d/zz-entrypoint
   echo 'Defaults!/init.sh env_keep += "NEPHARCH_PASSWORDLESS_SUDO"' >> /etc/sudoers.d/zz-entrypoint
+  echo 'Defaults!/init.sh env_keep += "NEPHARCH_SSHD_AUTHORIZED_KEYS"' >> /etc/sudoers.d/zz-entrypoint
+  echo 'Defaults!/init.sh env_keep += "NEPHARCH_SSHD"' >> /etc/sudoers.d/zz-entrypoint
 }
 
 cmd buildah config --user root "$ctr"
