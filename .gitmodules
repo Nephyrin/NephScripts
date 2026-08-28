@@ -368,3 +368,6 @@
 [submodule "emacs.d/llama"]
 	path = emacs.d/llama
 	url = https://github.com/tarsius/llama.git
+[submodule "zsh.d/plugins/fzf-tab"]
+	path = zsh.d/plugins/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab
