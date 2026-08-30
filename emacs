@@ -22,7 +22,6 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
-(neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-overlay-mode")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-format")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 
@@ -1426,11 +1425,6 @@
 ;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#A00")
 
 ;; ---- end package configuration ----
-
-;;
-;; ansi color mode
-;;
-(require 'ansi-color-overlay-mode)
 
 ;;
 ;; ansi color as a file format: M-x ansi-color-format-mode
