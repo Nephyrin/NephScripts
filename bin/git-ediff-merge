@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+. ~/bin/lib/util.sh
+
+cmd=xe
+
+if [[ -z $DISPLAY && -z $WAYLAND_DISPLAY ]]; then
+  ewarn "No display, using ec"
+  cmd=ec
+fi
+
+[[ $# -eq 4 ]] || die "Usage: git-ediff-merge BASE LOCAL REMOTE MERGED"
+
+BASE=$(realpath -se -- "$1")
+LOCAL=$(realpath -se -- "$2")
+REMOTE=$(realpath -se -- "$3")
+MERGED=$(realpath -se -- "$4")
+
+# TODO spawn indirect buffers for the latter two diffs so the highlighting doesn't comingle
+cmd "$cmd" --eval "(let ((base (pop server-eval-args-left))
+                         (local (pop server-eval-args-left))
+                         (remote (pop server-eval-args-left))
+                         (merged (pop server-eval-args-left))
+                         (basef (selected-frame))
+                         (localf (make-frame))
+                         (remotef (make-frame)))
+                     (with-selected-frame basef (ediff-merge-files-with-ancestor remote local base nil merged))
+                     (with-selected-frame localf (ediff-files base local))
+                     (with-selected-frame remotef (ediff-files base remote)))" \
+           "$BASE" "$LOCAL" "$REMOTE" "$MERGED"

@@ -43,3 +43,6 @@
 [submodule "emacs.d/elpaca"]
 	path = emacs.d/elpaca
 	url = https://github.com/progfolio/elpaca.git
+[submodule "zsh.d/plugins/fzf-tab"]
+	path = zsh.d/plugins/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab

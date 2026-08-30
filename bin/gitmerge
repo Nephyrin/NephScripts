@@ -1,6 +1,0 @@
-#!/bin/sh
-BASE=$1
-LOCAL=$2
-REMOTE=$3
-MERGED=$4
-cleangtk meld --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --diff "$LOCAL" "$MERGED" "$REMOTE"

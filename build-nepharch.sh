@@ -13,7 +13,7 @@ trap cleanup EXIT
 
 USER=nephyrin
 PASS=dumbpass
-PACKAGES=(zsh nano fd bat less ripgrep yarn npm rustup tmux)
+PACKAGES=(zsh nano fd bat less ripgrep yarn npm pnpm rustup tmux openssh socat noto-fonts-emoji noto-fonts openai-codex)
 AUR_PACKAGES=(paru)
 
 ## Blank container
@@ -93,6 +93,9 @@ setup_root() {
   # Setup machineid for build step, final step clears it
   systemd-machine-id-setup
 
+  # tz
+  ln -svfT ../usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+
   # claude-code
   #
   # Install globally in /usr/local/ -- the default user gets a self-updatable version below, but this will give you ~something if overriding the homedir
@@ -162,6 +165,8 @@ setup_root_final() {
   echo 'ALL    ALL=(root) NOPASSWD: /init.sh' > /etc/sudoers.d/zz-entrypoint
   echo 'Defaults!/init.sh env_keep += "NEPHARCH_INIT_PACKAGES"' >> /etc/sudoers.d/zz-entrypoint
   echo 'Defaults!/init.sh env_keep += "NEPHARCH_PASSWORDLESS_SUDO"' >> /etc/sudoers.d/zz-entrypoint
+  echo 'Defaults!/init.sh env_keep += "NEPHARCH_SSHD_AUTHORIZED_KEYS"' >> /etc/sudoers.d/zz-entrypoint
+  echo 'Defaults!/init.sh env_keep += "NEPHARCH_SSHD"' >> /etc/sudoers.d/zz-entrypoint
 }
 
 cmd buildah config --user root "$ctr"

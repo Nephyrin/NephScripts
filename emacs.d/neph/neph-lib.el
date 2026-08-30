@@ -2073,6 +2073,10 @@ beginning of it and the point to the end of it if so"
   (zap-to-char (* -1 arg) char))
 
 ;;
+;; Load local aliases
+;;
+
+;;
 ;; Theme
 ;;
 

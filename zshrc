@@ -126,7 +126,7 @@ export ZSH_CUSTOM=~/.zsh.d/
 # Custom plugins may be added to ~/.zsh.d/oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git compleat zsh-syntax-highlighting zsh-autosuggestions direnv)
+plugins=(git compleat zsh-syntax-highlighting zsh-autosuggestions direnv fzf-tab)
 
 # User configuration
 

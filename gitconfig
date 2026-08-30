@@ -10,8 +10,11 @@
   ui = true
 
 [core]
-  excludesfile = /home/johns/.gitignore
-  pager = diff-so-fancy | less --tabs=4 -RFX
+  excludesfile = $HOME/.gitignore
+  pager = "if command -v delta &>/dev/null; then delta -n --hyperlinks --navigate;\
+  elif command -v diff-so-fancy &>/dev/null; then diff-so-fancy | less --tabs=4 -RFX;\
+  elif command -v bat &>/dev/null; then bat -p;\
+  else less --tabs=4 -RFX; fi"
 
 # ; For git-repacking large files causing OOMs. These options all only affect
 # ; packing speed, not result, unless noted.
@@ -43,12 +46,14 @@
 
 [merge]
   renamelimit = 9000
-  conflictstyle = diff3
-  tool = gitmerge
+  conflictStyle = zdiff3
+  tool = meld
 
-; The "gitmerge" tool just passes variables to ~/bin/gitmerge
-[mergetool "gitmerge"]
-  cmd = $HOME/bin/gitmerge $BASE $LOCAL $REMOTE $MERGED
+[mergetool "meld"]
+  cmd = meld --diff "$BASE" "$LOCAL" --diff "$BASE" "$REMOTE" --diff "$LOCAL" "$MERGED" "$REMOTE"
+
+[mergetool "xe"]
+  cmd = $HOME/bin/git-ediff-merge $BASE $LOCAL $REMOTE $MERGED
 
 [push]
   default = simple
@@ -56,18 +61,34 @@
 
 [alias]
   fcl = "!cd \"${GIT_PREFIX:-.}\" && set -x && git reset -- \"$@\" && git checkout -f -- \"$@\" #"
+  dc = diff --cached
   mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
   ll = log --oneline --decorate
+  # Simple, no decorations
+  lls = log --oneline --no-decorate
+  # Summary for patchnotes
+  lln = log --oneline --no-decorate --no-merges
+  ln = log --oneline --no-decorate --no-merges -n 1
   lp = log --patch
   lpd = log --patch .
   llp = log --patch --oneline --decorate
+  llg = log --oneline --decorate --graph
+  llx = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
   st = status --ignore-submodule=untracked
+  stt = status --untracked=no
+  ff = merge --ff-only
+  # git feat <branchname> [upstream]
+  #   Create a feature branch from either origin/main or the second arg
+  #
+  #   Prepends $USER/ to branch name unless it contains slashes
+  #   Prepends origin/ to upstream unless it contains slashes
+  feat = "!b=$1 && { [[ $b = */* ]] || b=$USER/$b; } && u=${2-main} && { [[ $u = */* ]] || u=origin/$u; } && set -x && git switch -c \"$b\" --no-track \"$u\" #"
+  # Delete the current branch
+  killbranch = "!b=$(git branch --show-current) && { [[ -n $b ]] || { echo >&2 \"Not on a branch\"; exit 1; }; } && set -x; git switch --detach && git branch -D -- \"$b\" #"
   pff = pull --ff-only
   cm = commit -m
-  bzaq = !git bz attach -n -e $(git merge-base HEAD @{u})..
-  exec = ! exec
-  eval = ! eval
-  root = !pwd
+  root = rev-parse --show-toplevel
+  fa = fetch --all --prune --tags
   fetch-current = "! upstream=\"$(git rev-parse --symbolic-full-name @{u})\"; remote=\"${upstream#refs/remotes/}\"; if [[ -n $remote && $remote != $upstream ]]; then echo \"+ git fetch ${remote%%/*}\" && git fetch \"${remote%%/*}\"; else echo >&2 \"Could not find upstream (@{u} is \\\"$upstream\\\")\"; fi;"
   su = submodule update --init --recursive
   emails = "!x() { local b=\"$1\"; [[ -n $b ]] || b=HEAD; git log --format=\"format:%ae\" \"$b\" | sort | uniq; }; x"
@@ -77,6 +98,9 @@
   dc = diff --cached
   ap = add -p .
   hmr = "!x() { ( set -e; source ~/bin/lib/util.sh; [[ $# -le 1 ]] || die \"usage: git hmr [remote branch name]\"; local b; b=$(git symbolic-ref HEAD --short); [[ ${b:-main} != main ]] || die \"Not pushing no branch/main\"; local target=$b; [[ ${target#johns/} != \"$target\" ]] || target=johns/$target;cmd git push -u origin HEAD:\"$target\"; cmd xdg-open \"https://gitlab.steamos.cloud/holo/holo/-/merge_requests/new?merge_request%5Bsource_branch%5D=$target${1:+&merge_request%5Btarget_branch%5D=$1}\"; ); }; x"
+  fixl = "log --abbrev=12 --format=fixes"
+  fix = "fixl -1"
+  cpx = cherry-pick -x
 
 [column]
   ui = auto
@@ -88,21 +112,25 @@
   algorithm = patience
 
 [rerere]
-  enable = true
   enabled = true
 
 [rebase]
   autoStash = true
+  autosquash = true
+
 [init]
   defaultBranch = main
+
 [diff-so-fancy]
   stripLeadingSymbols = false
   first-run = false
+
 [color "diff-highlight"]
   oldNormal = red bold
   oldHighlight = red bold 52
   newNormal = green bold
   newHighlight = green bold 22
+
 [color "diff"]
   meta = yellow
   frag = magenta bold
@@ -110,3 +138,19 @@
   old = red bold
   new = green bold
   whitespace = red reverse
+
+[rerere]
+  enabled = true
+
+[rebase]
+  autoStash = true
+
+[status]
+  submoduleSummary = true
+
+[pretty]
+  # This must be used in conjunction with --abbrev=12 to match the kernel.org format
+  fixes = "Fixes: %h (\"%s\")"
+
+[interactive]
+  diffFilter = delta --color-only
