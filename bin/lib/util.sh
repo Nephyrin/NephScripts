@@ -59,6 +59,42 @@ n_hostname() {
   fi
 }
 
+# Invoke `jobs` but reformat the output into something parsable
+#
+# Outputs newline pairs:
+#   %1 Done
+#   %2 Running
+#   %3 Stopped
+#
+# Example usage:
+#   while read -r job status; do
+#     echo "$job is $status"
+#   done < <(n_jobs)
+n_jobs() {
+  # FIXME zsh doesn't reap 'done' states the same way bash does here, wont be in output, footgun
+
+  if n_is_zsh; then
+    # zsh has $jobstates and doesn't really need this helper, but provide matching output
+    local job
+    # shellcheck disable=all # zsh
+    {
+      local -A snapshot=("${(@kv)jobstates}")
+      for job in "${(@k)snapshot}"; do
+        out "$job" "${(C)${snapshot[$job]%%:*}}" # capitalize state to match bash
+      done
+    }
+  else
+    # bash form, parse jobs command
+    # groups: 1=jobid 2=Status
+    # Some output, like the weird '+/-' indicator, are not captured currently
+    local regex='^\[([0-9]+)\][^ ]* +([^ s]+)'
+    local line
+    while IFS= read -r line; do
+      [[ $line =~ $regex ]] && out "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+    done < <(builtin jobs)
+  fi
+}
+
 rightPad() {
   local padding=$1
   local str="${*:2}"
