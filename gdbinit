@@ -8,6 +8,8 @@ set print object on
 set pagination off
 set disassembly-flavor intel
 
+set index-cache enabled
+
 # I want to not-care about SIGPIPE more often than I want to care
 handle SIGPIPE nostop print pass
 
