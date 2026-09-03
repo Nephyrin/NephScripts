@@ -35,6 +35,8 @@ if [[ $- == *i* ]]; then # Only if interactive
   # Show mdstat
   [[ ! -f /proc/mdstat ]] || cat /proc/mdstat
 
+  # Use ccache
+  ccache_on silent
 
   # Load fzf
   # FIXME Shouldn't this just be enabling the zsh fzf plugin?
