@@ -74,6 +74,7 @@
   llx = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
   st = status --ignore-submodule=untracked
   stt = status --untracked=no
+  shf = show --format=full
   ff = merge --ff-only
   # git feat <branchname> [upstream]
   #   Create a feature branch from either origin/main or the second arg
