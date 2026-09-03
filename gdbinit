@@ -17,6 +17,9 @@ handle SIGPIPE nostop print pass
 handle SIG38 noprint nostop pass
 # set prompt [gdb]
 
+#set non-stop on
+set debuginfod enabled on
+set debuginfod verbose 1
 
 define broff
   call setenv("DONT_BREAK_ON_ASSERT", "1", 1)
