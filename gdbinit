@@ -15,8 +15,8 @@ handle SIGPIPE nostop print pass
 
 # Used by libdl apparently, rarely useful
 handle SIG38 noprint nostop pass
+# set prompt [gdb]
 
-set prompt [gdb] 
 
 define broff
   call setenv("DONT_BREAK_ON_ASSERT", "1", 1)
