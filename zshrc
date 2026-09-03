@@ -290,7 +290,9 @@ zle -N _neph_last_dir
 # interactively cd from `dirs -p` and `cdpath`
 neph-fzf-cd-history-widget() {
   setopt localoptions pipefail no_aliases 2>/dev/null
-  local dir="$(printf "%s\0" "${dirstack[@]}" "${cdpath[@]}" | FZF_DEFAULT_OPTS="--read0 --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" $(__fzfcmd) +m)"
+  local dir="$({ printf "%s\0" "${dirstack[@]}" "${cdpath[@]}" && find "${dirstack[@]}" "${cdpath[@]}" -type d -mindepth 1 -maxdepth 1 -print0 } \
+                 | FZF_DEFAULT_OPTS="--read0 --reverse --scheme=path --bind=ctrl-z:ignore ${FZF_DEFAULT_OPTS-} ${FZF_ALT_C_OPTS-}" \
+                   $(__fzfcmd) +m)"
   if [[ -z "$dir" ]]; then
     zle reset-prompt
     return 0
