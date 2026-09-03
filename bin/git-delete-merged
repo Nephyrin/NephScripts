@@ -1,0 +1,106 @@
+#!/bin/bash
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+trap "die Error, see above" ERR
+
+# Common branch names not to offer deletion of
+IGNORED=(main staging beta rel release master prep)
+
+if [[ $# -eq 1 ]]; then
+  targetbranch="$1"
+else
+  currentfull=$(git rev-parse --symbolic-full-name HEAD)
+  current=${currentfull#refs/heads/}
+
+  [[ $current != "$currentfull" ]] || ewarn "Not on a named branch"
+
+  targetbranch=$current
+fi
+
+einfo "Checking for branches merged into $targetbranch"
+
+
+rawbranches=$(cmd git branch --format='%(refname:short)' --merged "$targetbranch")
+mapfile -t rawbranches <<< "$rawbranches"
+topicbranches=()
+otherbranches=()
+# Filter
+for branch in "${rawbranches[@]}"; do
+  unset ignored
+  for ignore in "${IGNORED[@]}" "$targetbranch"; do
+    if [[ $branch = "$ignore" ]]; then
+      ignored=1
+      break
+    fi
+  done
+  [[ -z ${ignored-} ]] || continue
+
+  # Sort topic/non-topic
+  if [[ ${branch%/*} != "$branch" ]]; then
+    topicbranches+=("$branch")
+  else
+    otherbranches+=("$branch")
+  fi
+done
+
+if [[ $(( ${#topicbranches[@]} + ${#otherbranches[@]} )) -eq 0 ]]; then
+  estat "No unmerged branches"
+  exit 0
+fi
+
+info
+info "Branches merged with target branch ($(sh_c 33)$targetbranch$(sh_c)):"
+
+if [[ ${#otherbranches[@]} -ne 0 ]]; then
+  info
+  info "  $(sh_c 34)Normal branches$(sh_c):"
+  info
+fi
+
+# main branches
+for branch in "${otherbranches[@]}"; do
+  info "    $(sh_c 37)$branch$(sh_c)"
+done
+
+if [[ ${#topicbranches[@]} -ne 0 ]]; then
+  info
+  info "  $(sh_c 34)Topic branches$(sh_c):"
+  info
+fi
+
+# decorate topic branches differently
+for branch in "${topicbranches[@]}"; do
+  prefix=${branch%%/*}
+  suffix=${branch#*/}
+  info "    $(sh_c 34)$prefix$(sh_c 36)/$(sh_c 37)$suffix$(sh_c)"
+done
+
+info
+
+prompt=$(eprompt "Delete? [all/normal/topic/no]") || true
+
+unset deletetopic
+unset deletenormal
+if [[ $prompt = "topic" ]]; then
+  deletetopic=1
+elif [[ $prompt = "normal" ]]; then
+  deletenormal=1
+elif [[ $prompt = "all" ]]; then
+  deletetopic=1
+  deletenormal=1
+fi
+
+# Deleting
+if [[ -n ${deletetopic-} ]]; then
+  for branch in "${topicbranches[@]}"; do
+    cmd git branch -D -- "$branch"
+  done
+fi
+
+if [[ -n ${deletenormal-} ]]; then
+  for branch in "${otherbranches[@]}"; do
+    cmd git branch -D -- "$branch"
+  done
+fi
