@@ -7,11 +7,11 @@ set -e
 
 
 #cmd gdb -ex "handle SIGPIPE noprint nostop pass" -ex run --args \
-export NEPH_RP="$HOME/bin/nephrp"
+cmd export NEPH_RP="$HOME/bin/nephrp"
 cmd rdm --rp-path "$HOME/bin/nephrp" --error-limit 0 --rp-nice-value 10 \
-        --progress --default-argument "-Wextra" \
-        --validate-file-maps --disable-sighandler \
-        "$@" 2>/dev/null
+        --progress --default-argument "-Wextra -ftemplate-depth=2048" \
+        --validate-file-maps \
+        "$@"
 
 # --disable-sighandler
 # -R --no-libclang-include-path  --completion-diagnostics
