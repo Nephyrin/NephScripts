@@ -1,0 +1,75 @@
+#!/bin/bash
+
+##
+## Prints a colorful summary of a file or directory, meant for fzf preview panes but could be used for whatever.
+##   fzf presents a non-terminal so this script always prints in color
+##
+## Usage: neph-preview-file <file>
+##
+## Usage w/fzf:
+##   fzf --preview "neph-preview-file {}"
+##
+## Usage w/fzf shell helpers:
+##   FZF_ALT_C_OPTS="--preview \"neph-preview-file {}\"
+##   FZF_CTRL_T_OPTS="--preview \"neph-preview-file {}\"
+
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+SCRIPT_NAME="$(basename -- "$0")"
+
+file=$*
+if [[ ! -e $file ]]; then
+  # Just show the output and note that it isn't a thing
+  out "[ $SCRIPT_NAME: not a file/dir ]"
+  out
+  out "$*"
+  exit 0
+fi
+
+ezac=(eza -F --color-scale=age --icons --smart-group --git \
+                --time-style=relative -l --sort=modified --color=always)
+
+## Show one-line stat of file
+if command -v eza &>/dev/null; then
+  "${ezac[@]}" -d -- "$file" ||:
+else
+  ls -ltr -d --color=always -- "$file" ||:
+fi
+echo
+
+## PKGBUILD preview
+if [[ -d $file ]]; then
+  # If directory is an arch package, pull out a few bits
+  lines=$(grep 2>/dev/null -P '^(pkgbase|pkgname|pkgrel)=' -- "$file"/PKGBUILD | bat -pP -lsh --color=always) ||:
+  [[ -n $lines ]] && printf "%s\n\n" "$lines"
+fi
+
+# Show a few lines of history
+lines=$(git ll --color=always -n 5 -- "$file" 2>/dev/null) ||:
+[[ -n $lines ]] && printf "%s\n\n" "$lines"
+
+if [[ -d $file ]]; then
+  ## End with directory contents
+  if command -v eza &>/dev/null; then
+    "${ezac[@]}" -- "$file" ||:
+  else
+    ls -ltr --color=always -- "$file" ||:
+  fi
+else
+  ## End with file contents
+  enc=$(file -b --mime-encoding 2>/dev/null) ||:
+  if [[ $enc = binary ]]; then
+    echo "<binary file>"
+  elif command -v bat &>/dev/null; then
+    # Bat wont spew binary in -f mode, so can proceed even if `file` isn't available as a second binary checker
+    # (it just prints some confusing warning, hence preferring to check file first)
+    bat -fpP -- "$file" ||:
+  elif [[ -n $enc ]]; then
+    # Only raw cat it if we're sure it isn't binary spew (primarily because it could be massive and lag fzf)
+    cat -- "$file" ||:
+  else
+    echo "Cannot preview file without \`file\` or \`bat\` to avoid spewing binary"
+  fi
+fi

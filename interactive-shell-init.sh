@@ -50,66 +50,8 @@ if [[ $- == *i* ]]; then # Only if interactive
   ! type fd &>/dev/null || export FZF_CTRL_T_COMMAND="fd --hidden"
   ! type fd &>/dev/null || export FZF_ALT_C_COMMAND="fd --hidden -E .git -t d"
 
-  # Generic function to generate a preview
-  _neph_fzf_preview() {
-    set -o pipefail
-    local file=$1
-    local ezac=(eza -F --color-scale=age --icons --smart-group --git \
-                    --time-style=relative -l --sort=modified --color=always)
-    local lines
-
-    ## Show one-line stat of file
-    if command -v eza &>/dev/null; then
-      "${ezac[@]}" -d -- "$file"
-    else
-      ls -ltr -d --color=always -- "$file"
-    fi
-    echo
-
-    ## PKGBUILD preview
-    if [[ -d $file ]]; then
-      # If directory is an arch package, pull out a few bits
-      lines=$(grep 2>/dev/null -P '^(pkgbase|pkgname|pkgrel)=' -- "$file"/PKGBUILD | bat -pP -lsh --color=always)
-      [[ -n $lines ]] && printf "%s\n\n" "$lines"
-    fi
-
-    # Show a few lines of history for dir
-    lines=$(git ll --color=always -n 5 -- "$file" 2>/dev/null)
-    [[ -n $lines ]] && printf "%s\n\n" "$lines"
-
-    if [[ -d $file ]]; then
-      ## Scrollable directory contents
-      if command -v eza &>/dev/null; then
-        "${ezac[@]}" -- "$file"
-      else
-        ls -ltr --color=always -- "$file"
-      fi
-    else
-      ## Scrollable file contents
-      local enc
-      enc=$(file -b --mime-encoding 2>/dev/null) ||:
-      if [[ $enc = binary ]]; then
-        echo "<binary file>"
-      elif command -v bat &>/dev/null; then
-        # Bat wont spew binary in -f mode, so can proceed even if `file` isn't available as a second binary checker
-        # (it just prints some confusing warning, hence preferring to check file first)
-        bat -fpP -- "$file"
-      elif [[ -n $enc ]]; then
-        # Only raw cat it if we're sure it isn't binary spew (primarily because it could be massive and lag fzf)
-        cat -- "$file"
-      else
-        echo "Cannot preview file without \`file\` or \`bat\` to avoid spewing binary"
-      fi
-    fi
-  }
-
-  ## TODO abusing the tab-trick to make this stuff searchable would be neat
-  # fzf does dumb quote parsing out of this, not a full eval -- just escaping \ and " seems to work
-  _neph_fzf_preview_sh="$(typeset -f _neph_fzf_preview); _neph_fzf_preview {}"
-  _neph_fzf_preview_sh=${_neph_fzf_preview_sh//\\/\\\\}
-  _neph_fzf_preview_sh=${_neph_fzf_preview_sh//\"/\\\"}
-  export FZF_DEFAULT_OPTS="--preview \"${_neph_fzf_preview_sh}\""
-  unset _neph_fzf_preview_sh
+  export FZF_CTRL_T_OPTS="--preview \"neph-preview-file {}\""
+  export FZF_ALT_C_OPTS="--preview \"neph-preview-file {}\""
 
   # Enable a floating pane in tmux mode
   # export FZF_TMUX_OPTS='-p90%,40% -x 0% -y 100%'
