@@ -19,6 +19,7 @@ handle SIG38 noprint nostop pass
 
 #set non-stop on
 set debuginfod enabled on
+#set debuginfod urls https://debuginfod.archlinux.org https://debuginfod.elfutils.org
 set debuginfod verbose 1
 
 # lazy_load_cmd("foo", "path_to_foo.{gdb,py}", call_after_load = False)
