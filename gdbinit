@@ -59,6 +59,19 @@ end
 python lazy_load_cmd("gef", "/usr/share/gef/gef.py", call_after_load = False)
 python lazy_load_cmd("lpwn", "/usr/share/pwndbg/gdbinit.py", call_after_load = False)
 
+define systemlibs
+  sharedlibrary ^/\(usr\|lib\)/
+end
+
+define tj
+  if $argc != 1
+    echo Invalid useage
+  else
+    tbreak $arg0
+    jump $arg0
+  end
+end
+
 define broff
   call setenv("DONT_BREAK_ON_ASSERT", "1", 1)
   call unsetenv("RAISE_ON_ASSERT")
