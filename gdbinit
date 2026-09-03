@@ -21,6 +21,43 @@ handle SIG38 noprint nostop pass
 set debuginfod enabled on
 set debuginfod verbose 1
 
+# lazy_load_cmd("foo", "path_to_foo.{gdb,py}", call_after_load = False)
+#   Defines a command that will source the relevant file and optionally re-call the command.
+#
+# call_after_load - if set, except the library to re-define this command name, and chain-call the real version after
+#                   load.  Handles cases where the load fails.
+
+python
+class lazy_load_cmd(gdb.Command):
+  def __init__(self, command, source, call_after_load = True):
+    super().__init__(command, gdb.COMMAND_USER)
+    self._tried = False
+    self._command = command
+    self._source = source
+    self._docall = call_after_load
+  def invoke(self, arg, from_tty):
+    if self._tried:
+      # Recursed -- library load failed (or didn't define the function)
+      #
+      # If we raise here the outer gdb.execute double prints the error, so error is handled outside
+      self._tried = False
+      return
+    gdb.execute(f"source {self._source}")
+    # `source` always succeeds and just prints an error, try to recursively call the real command now and if the library
+    # failed to steal the command from us it'll just hit the recursion check.
+    self._tried = True
+    if self._docall:
+      gdb.execute(f"{self._command} {arg}", from_tty=from_tty)
+      if not self._tried:
+        # Recursion happened, command didn't get registered
+        raise gdb.GdbError(f"Failed to load source for `{self._command}` command, or the source did not " + \
+                            "define the command, see above.\n    (via: `source {self._source}`)")
+    self._tried = False
+end
+
+python lazy_load_cmd("gef", "/usr/share/gef/gef.py", call_after_load = False)
+python lazy_load_cmd("lpwn", "/usr/share/pwndbg/gdbinit.py", call_after_load = False)
+
 define broff
   call setenv("DONT_BREAK_ON_ASSERT", "1", 1)
   call unsetenv("RAISE_ON_ASSERT")
