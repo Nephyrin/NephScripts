@@ -112,6 +112,12 @@
 
 ; Trailing spaces and whitespace
 (require 'whitespace)
+
+;; !! global-whitespace-mode initializes font-lock configs on every buffer, but if there's no font-lock configuration
+;;    from another mode in that buffer, it accidentally turns on just string-highlighting, which is weird and annoying.
+(add-hook 'whitespace-mode-hook
+          (lambda () (unless font-lock-defaults (setq-local font-lock-keywords-only t))))
+
 (global-whitespace-mode)
 ; Options list of whitespace to mess with, 'face' option uses faces per type
 ; instead of replacement chars
