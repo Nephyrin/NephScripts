@@ -64,9 +64,7 @@
   dc = diff --cached
   mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
   ll = log --oneline --decorate
-  # Simple, no decorations
   lls = log --oneline --no-decorate
-  # Summary for patchnotes
   lln = log --oneline --no-decorate --no-merges
   ln = log --oneline --no-decorate --no-merges -n 1
   lp = log --patch
