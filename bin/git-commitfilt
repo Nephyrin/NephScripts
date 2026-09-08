@@ -84,6 +84,10 @@ process_line() {
   index="${line%% *}"
   line="${line#* }"
 
+  outfile="$tmpdir"/"$index"
+  # Might not find anything to print but harvester needs to know we're done
+  : > "$outfile"
+
   # Prune search delimiter but keep as non-searched suffix
   if [[ -n $search_delimiter ]]; then
     suffix=${line#*"$search_delimiter"}
@@ -113,9 +117,9 @@ process_line() {
     hcommit=$commit
     [[ -n $highlight ]] && hcommit=$SH_HIGHLIGHT$commit$SH_RESET
 
-    printf "%s %s%s%s%s$delim" "$commit" "$prefix" "$hcommit" "$remaining" "$suffix" >> "$tmpdir"/"$index"
+    printf "%s %s%s%s%s$delim" "$commit" "$prefix" "$hcommit" "$remaining" "$suffix" >> "$outfile"
   done
-  mv "$tmpdir"/"$index" "$outdir"
+  mv "$outfile" "$outdir"
 }
 
 # To preserve order each job makes its own output in tmpdir, this waits for them then prints in sequential order.
