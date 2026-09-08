@@ -1,0 +1,158 @@
+#!/bin/bash
+
+#
+# Filter a list of lines for git commits.  For each commit found, emit the commit followed by the line it was found in,
+# optionally highlighted.
+#
+
+set -euo pipefail
+# shellcheck source=./lib/util.sh
+. ~/bin/lib/util.sh
+
+## Args and usage
+# usage [as_error=1]
+usage() {
+  if [[ -n ${1-} ]]; then
+    eerr_splitlines "$usage_text"
+    exit 1
+  else
+    einfo_splitlines "$usage_text"
+    exit 0
+  fi
+}
+
+usage_text= # (for shellcheck)
+n_readvar usage_text <<'EOF' #               keep help text below 81st column ->|
+Usage: git-commitfilt [options]
+  Filter a list of lines for git commits.  For each commit found, emit the
+  commit followed by the line it was found in, optionally highlighted.
+
+--search-delimiter <delim>  If provided, stop looking for valid commit hashes in each input after this (e.g. '::' or $'\t')
+--highlight / -H            Highlight the commit with ansi color code.
+--max / -m <num>            Max commits to emit per line.  -m 1 will emit each line at most once, with the first commit found.
+--nul / -z                  Input/output lines are separated by NUL rather than newline
+--help / -h                 Show this help.
+EOF
+
+# Parse args XX --v
+parse_args 'git-commitfilt' 'Hm:zh' 'search-delimiter:,highlight,max:,nul,help' "$@" || usage 1
+[[ -n $(get_merged_option help h) ]] && usage
+
+eval args="($(get_args))"
+[[ ${#args[@]} -eq 0 ]] || usage 1
+
+max=$(get_merged_option max m)
+highlight=$(get_merged_option highlight H)
+nul=$(get_merged_option nul z)
+search_delimiter=$(get_option search-delimiter)
+
+SH_HIGHLIGHT=$(sh_c_unchecked 7 1 35)
+SH_RESET=$(sh_c_unchecked)
+
+
+## Temp files setup and cleanup
+unset tmpdir
+# shellcheck disable=SC2329 # bugged. Only detects `trap` usage at toplevel I guess?
+cleanup() {
+  local ret=$?
+
+  while read -r job state; do
+    kill -- "%$job"
+  done < <(n_jobs)
+
+  [[ -z ${tmpdir-} ]] || rm -rf --one-file-system -- "${tmpdir}"
+  unset tmpdir
+
+  return "$ret"
+}
+trap cleanup EXIT
+tmpdir=$(mktemp -d --tmpdir git-commitfilt-tmp-XXX)
+[[ -d $tmpdir ]] || die "Couldn't create a temp dir"
+
+# output dir
+outdir="$tmpdir"/out
+mkdir -- "$outdir"
+
+# Escape code for the delimiter.  Passed to printf format or '${delim@E}'
+# since we cannot store a raw NUL in strings
+delim='\n'
+[[ -n $nul ]] && delim='\0'
+
+#while IFS= read -r -d "${delim@E}" line || [[ -n $line ]]; do
+process_line() {
+  line="$1"
+  index="${line%% *}"
+  line="${line#* }"
+
+  # Prune search delimiter but keep as non-searched suffix
+  if [[ -n $search_delimiter ]]; then
+    suffix=${line#*"$search_delimiter"}
+    line=${line%%"$search_delimiter"*}
+  fi
+
+  # Find all commits in line
+  accumulated=""
+  found=0
+  suffix=""
+  remaining=$line
+  while [[ $remaining =~ [0-9a-fA-F]{4,} ]]; do
+    [[ -z $max ]] || (( found++ < max )) || break
+    commit=${BASH_REMATCH[0]}
+
+    # Line leading up to commit
+    prefix=$accumulated${remaining%%"$commit"*}
+    # Line following commit
+    remaining=${remaining#*"$commit"}
+    # Push new prefix+commit into accum
+    accumulated=$prefix$commit
+
+    # Reject matches that aren't really commits
+    [[ $(git cat-file -t "$commit" 2>/dev/null ||:) = commit ]] || continue
+
+    # Print line with commit highlighted, prepended with the commit in question for fzf `nth` purposes
+    hcommit=$commit
+    [[ -n $highlight ]] && hcommit=$SH_HIGHLIGHT$commit$SH_RESET
+
+    printf "%s %s%s%s%s$delim" "$commit" "$prefix" "$hcommit" "$remaining" "$suffix" >> "$tmpdir"/"$index"
+  done
+  mv "$tmpdir"/"$index" "$outdir"
+}
+
+# To preserve order each job makes its own output in tmpdir, this waits for them then prints in sequential order.
+#
+# Bottlenecks on thousands of jobs if using `cat`, but inline bash read jankery is plenty fast to keep up in the
+# read/print loop.  Similarly we background-spawn the `rm` so the core loop isn't waiting on processes.
+#
+# (this is a sign this should've been a python script)
+harvest_files() {
+  set -euo pipefail
+  i=0
+  while :; do
+    next="$outdir"/$(( ++i ))
+    while [[ ! -f $next ]]; do sleep 0.01; done
+    exec {fd}<"$next"
+    while :; do
+      read -d $'\0' -u "$fd" -r file || [[ -n $file ]] || break
+      printf "%s$delim" "$file"
+    done
+    exec {fd}<&-
+    rm "$next" &
+  done
+}
+
+harvest_files &
+harvest_pid=$!
+
+# Copy these into subcommand
+vars=""
+for var in tmpdir outdir search_delimiter max highlight delim SH_HIGHLIGHT SH_RESET; do
+  vars+="${vars:+;}$var=${!var@Q}"
+done
+
+awk '{ print NR,$0 }' | tr '\n' '\0' | \
+  xargs -I{} -0 -P$(( $(nproc) * 2 )) -- bash -c "set -euo pipefail; $vars; $(typeset -f process_line); process_line \"\$@\"" -- {}
+
+# Wait for all files to be harvested
+while [[ -n $(find /"$outdir" -mindepth 1 | head -n1) ]]; do sleep 0.05; done
+kill -- $harvest_pid
+wait
