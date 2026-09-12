@@ -2274,8 +2274,6 @@
 ;; Bonus align keys
 
 (global-set-key (kbd "C-z C-M-S-M") 'neph-run-makepkg-g-on-region)
-(global-set-key (kbd "C-z C-M-s") 'neph-align-smss-table)
-(global-set-key (kbd "C-z C-M-S-S") 'neph-markdownify-smss-table-yank)
 (global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)

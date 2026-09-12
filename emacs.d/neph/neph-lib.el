@@ -1551,8 +1551,8 @@ If this is a local file, turn it into a tramp file file with said information."
                   (concat protoline ".*?\\(\\s-*\\)=[^/]+;\\(\\s-*\\)//\\(\\s-*\\)")
                   (+ protoline-groups 3) 1 nil))))
 
-(defun neph-align-smss-table ()
-  "Helper to align a copied table from SMSS."
+(defun neph-align-tsv-table ()
+  "Helper to align a TSV table."
   (interactive)
   (let ((tab-width 1)
         (start (region-beginning)))
@@ -1564,17 +1564,28 @@ If this is a local file, turn it into a tramp file file with said information."
       (while (re-search-forward (kbd "TAB") (region-end) t)
         (replace-match " ")))))
 
-(defun neph-markdownify-smss-table-yank ()
-  "Helper to transform a copied table from SMSS to markdown (from-killring version)."
+(defun neph-yank-markdown-convert-table-with-heading ()
+  "Yank, but run through `neph-markdown-convert-table-with-heading' first."
   (interactive)
-  (let ((start (point))
-        (deactivate-mark))
-    (yank)
-    (neph-markdownify-smss-table start (point))
-    (push-mark start)))
+  (yank)
+  (neph-markdown-convert-table-with-heading (mark) (point)))
 
-(defun neph-markdownify-smss-table (start end)
-  "Helper to transform a copied table from SMSS to markdown.  Region is used unless START/END are passed."
+(defun neph-markdown-convert-table-with-heading (start end)
+  "Helper to transform a TSV style table between START and END to markdown.
+This is just markdown-table-convert-region with a bit to insert a header divider."
+  (interactive "r")
+  (require 'markdown-mode)
+  (save-mark-and-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (end-of-line)
+      ;; Markdown mode treats this line as a heading when converting. Arguably incorrectly.
+      (insert "\n-")
+      (markdown-table-convert-region 0 (point-max)))))
+
+;; I made this before i knew markdown.el had markdown-table-convert-region that handled it
+(defun neph-markdownify-tsv-table-nih (start end)
   (interactive "r")
   (if (or (region-active-p) (not (called-interactively-p))) ;; Don't operate on inactive region
       (save-excursion
