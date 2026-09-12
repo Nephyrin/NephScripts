@@ -76,12 +76,16 @@
 ;; NOTE: transient, jsonrpc and compat are built into modern Emacs but pinned
 ;; here; declaring them removes them from the ignore list so the pins win.
 (add-hook 'after-init-hook #'elpaca-process-queues)
-;; By default elpaca pops its log buffer whenever packages need building, and
-;; inside elpaca-wait that buffer re-renders every event synchronously (a full
-;; rebuild of the event table each time) -- with a hundred packages building
-;; that pegs the main thread and starves the build scheduler. Never auto-open
-;; it during init; failures are surfaced right after the wait instead.
-(setq elpaca-log-functions '(elpaca-log-command-query))
+;; elpaca shows its log while packages build on a cold boot, which is useful
+;; progress -- but inside elpaca-wait it re-renders that buffer synchronously on
+;; every event (elpaca--log-update-on-info skips its debounce), and with ~100
+;; packages the full re-render per event pegs the main thread and starves the
+;; build scheduler. Force the debounced path even while waiting (the timer
+;; still fires from elpaca-wait's sit-for loop) and render at most twice a
+;; second instead of the default 50.
+(setq elpaca-log-interval 0.5)
+(advice-add 'elpaca--log-update-on-info :around
+            (lambda (orig e) (let ((elpaca--waiting nil)) (funcall orig e))))
 
 ;; Turn on autocompile for everything else. First elpaca package: activates
 ;; before all following declarations/loads so on-load compile covers them.
