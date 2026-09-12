@@ -2044,13 +2044,18 @@
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
 
+;; This config is eager by design: mode hooks fire on *scratch*, desktop restore
+;; and command-line files all happen before after-init-hook would process the
+;; elpaca queue, and they expect packages and neph-lib to be there. Finish the
+;; queue here, inside init, so everything below and after sees a loaded world.
+(elpaca-wait)
+
 ;;
 ;; Local aliases
 ;;
 
-;; Local aliases if they exist. Runs after the package queue: neph-reload-local
-;; lives in neph-lib, which loads in the auto-compile declaration body.
-(add-hook 'elpaca-after-init-hook #'neph-reload-local t)
+;; Local aliases if they exist
+(neph-reload-local)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
