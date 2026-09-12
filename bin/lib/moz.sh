@@ -67,8 +67,8 @@
 #   MOZBUILDTREE=${MOZTREE}-build-beta
 #   MOZOBJ=opt-beta
 
-[[ -z $ZSH_VERSION ]] || source "$(dirname "${(%):-%x}")/util.sh"
-[[ -z $BASH ]] || source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
+[[ -z ${ZSH_VERSION:-} ]] || source "$(dirname "${(%):-%x}")/util.sh"
+[[ -z ${BASH:-} ]] || source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
 
 _update_mozinfo() {
   if [[ -z "$MOZPATH" || -z "$MOZOBJ" ]]; then

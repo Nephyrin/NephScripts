@@ -30,36 +30,4 @@ export MOZ_ENABLE_WAYLAND=1
 # Breaks all font rendering if you don't have the right xdg-desktop-portal-{gnome,gtk}
 export GTK_USE_PORTAL=1
 
-plugin_container="$(get_option p)"
-
-cmd cd ~/firefox-nightly
-
-if [ -n "$(get_option g)" ]; then
-  if [[ -n $plugin_container ]]; then
-    pids=($(cmd pgrep -f plugin-container || true))
-  else
-    pids=($(cmd pgrep firefox || true))
-  fi
-  if [[ -n $pids ]]; then
-    estat "Existing instances"
-    ps $pids
-  else
-    estat "No existing instances found"
-  fi
-
-  if [[ -n $plugin_container ]]; then
-    if [[ $(get_option r) ]]; then
-      [[ ${#pids[@]} -eq 1 ]] || die "-r can only auto-run if one plugin-container is found, but found ${#pids[@]}: ${pids[*]}"
-      plugin_run=(-ex "attach ${pids[0]}" -ex continue)
-    fi
-    [[ $(num_args) -eq 0 ]] || die "Can't pass args with -p"
-    cmd gdb ./plugin-container "${plugin_run[@]}"
-  else
-    [[ -z $(get_option r) ]] || run="-ex run"
-    cmd cleangtk gdb $run --args ./firefox "${app_args[@]}"
-  fi
-else
-  [[ -z $plugin_container ]] || die "-p doesn't make sense without -g"
-  [[ -z $(get_option r) ]] || die "-r doesn't make sense without -g"
-  cmd cleangtk ~/firefox-nightly/firefox "${app_args[@]}"
-fi
+exec ~/firefox-nightly/firefox "$@"

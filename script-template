@@ -12,7 +12,7 @@ set -euo pipefail
 ## Args and usage
 
 #                                            keep help text below 81st column ->|
-n_init_args_and_usage 'my_scriptXX' 'option,help,XX' 'ohXX' "$@" <<'EOF'
+n_init_args_and_usage 'my_scriptXX' 'ohXX' 'option,help,XX' "$@" <<'EOF'
 Usage: my_scriptXX [options] [--] arg arg2 XX
   Help text here XX
 

@@ -29,7 +29,7 @@ fi
 
 mkdir -p /sys/fs/cgroup/{cpu,blkio}/"$cgroup"
 echo "$cpu_shares" > /sys/fs/cgroup/cpu/"$cgroup"/cpu.shares
-echo "$blkio_weight" > /sys/fs/cgroup/blkio/"$cgroup"/blkio.weight
+echo "$blkio_weight" > /sys/fs/cgroup/blkio/"$cgroup"/blkio.bfq.weight
 echo $$ > /sys/fs/cgroup/cpu/"$cgroup"/cgroup.procs
 echo $$ > /sys/fs/cgroup/blkio/"$cgroup"/cgroup.procs
 

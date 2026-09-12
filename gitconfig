@@ -64,9 +64,7 @@
   dc = diff --cached
   mergepoint = "!x() { git config branch.\"$1\".merge 2>/dev/null; }; x $(git thisbranch)"
   ll = log --oneline --decorate
-  # Simple, no decorations
   lls = log --oneline --no-decorate
-  # Summary for patchnotes
   lln = log --oneline --no-decorate --no-merges
   ln = log --oneline --no-decorate --no-merges -n 1
   lp = log --patch
@@ -76,6 +74,7 @@
   llx = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
   st = status --ignore-submodule=untracked
   stt = status --untracked=no
+  shf = show --format=full
   ff = merge --ff-only
   # git feat <branchname> [upstream]
   #   Create a feature branch from either origin/main or the second arg

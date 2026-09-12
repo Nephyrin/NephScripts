@@ -39,7 +39,7 @@ while IFS= read -r -d$'\n' line; do
   done
 
   if [[ $len -eq -1 ]]; then
-    msg=$'\033[2;31m'"$(printf "%$(( $pad - ${#len} ))s%s" '' '??')"
+    msg=$'\033[2;31m'"$(printf "%$(( pad - 1 ))s%s" '' '??')"
   elif [[ $len -eq 0 ]]; then
     msg="$(printf "%$(( $pad + 1 ))s" "")"
   else

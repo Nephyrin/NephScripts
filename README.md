@@ -11,7 +11,23 @@ particular bit.
 Most ~/bin/ stuff *should* be path agnostic, but the bashrc assumes ~/bin
 exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
 
+## Submodules
+
+A bunch of the zsh/emacs stuff has submodules for specific versions of
+tools/plugins/etc.  After cloning/pulling one should run:
+
+    git submodule update --init --recursive
+
+A lot of said submodules use github ssh URLs. If you do not have a
+github-enabled ssh key you could jam this in your git config:
+
+    [url "https://github.com/"]
+    insteadOf = git@github.com:
+
 ## Setup / symlinks for various things:
+
+_I'm probably not keeping this list up to date with everything in here_
+
         # Scripts/bash
         ln -sv $repo/bin            ~/bin
         ln -sv $repo/bashrc         ~/.bashrc
@@ -60,16 +76,6 @@ exists. Various mozilla-related scripts assume ~/moz/ and ~/moz/moz-git/
 
         # atuin
         ln -sv $repo/atuin ~/.config/
-
-## Various mozilla things assume:
-
-- ~/moz/mozilla-central and other mozilla-* things are mozilla mercurial repos
-- ~/moz/moz-git and ~/moz/moz-git-map are mozilla-git and hg-git-mapfile repos
-  (for ghg/ghup/gmq/etc hg<->git scripts)
-  - See:
-    - https://github.com/Nephyrin/mozilla-git
-    - https://github.com/Nephyrin/mozilla-git-hg-mapfile
-- ~/moz/cfg is symlinked to $repo/moz/cfg
 
 ## Contact
 - john@pointysoftware.net

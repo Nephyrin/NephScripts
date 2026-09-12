@@ -2,5 +2,6 @@
 
 nephscripts="$(readlink -f "$(dirname "$(readlink -f "$0")")"/..)"
 export GTK2_RC_FILES="$nephscripts"/clearlooks.gtkrc
+export GTK_THEME=Adwaita
 
 "$@"
