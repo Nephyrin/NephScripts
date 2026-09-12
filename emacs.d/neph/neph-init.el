@@ -73,6 +73,10 @@
 (setq tab-width 2)
 
 (global-auto-revert-mode t)
+;; Default but add /tmp -- 'notify' is pretty bad and seems to listen to subdirectories, resulting in tons of churn
+;; listening to random ass events from /tmp/ subdirs. Some scripts like `parallel` murder us.
+(setq auto-revert-notify-exclude-dir-regexp
+      "^\\(?:/\\(?:afs/\\|tmp\\|m\\(?:edia/\\|nt\\)\\|\\(?:ne\\|tmp_mn\\)t/\\)\\)\\|^/[^/:|][^/|]+:")
 
 (setq backup-directory-alist
       `((".*" . , "~/.emacscache/autosave")))
