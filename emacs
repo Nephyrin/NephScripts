@@ -1304,7 +1304,6 @@
 ;;
 (elpaca (web-mode :host github :repo "fxbois/web-mode"
         :ref "005aa62d6f41fbf9bc045cac3b3b772716ee8ba7")
-  (require 'web-mode)
   (setq web-mode-indent-style 1)
   (setq web-mode-script-padding 2)
   (setq web-mode-style-padding 2)
