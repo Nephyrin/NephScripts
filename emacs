@@ -577,8 +577,6 @@
 ;;
 (elpaca (helm-swoop :host github :repo "emacsorphanage/helm-swoop"
         :ref "df90efd4476dec61186d80cace69276a95b834d2")
-  (require 'helm-swoop)
-
   (global-set-key (kbd "C-z M-s") 'helm-swoop)
   (global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
   )
