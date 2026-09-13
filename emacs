@@ -888,10 +888,7 @@
 ;; jsonrpc
 ;;
 (elpaca (jsonrpc :host github :repo "emacs-straight/jsonrpc"
-        :ref "74268ee45494f40b3534164001b994e315490c27")
-  (require 'jsonrpc)
-  )
-
+        :ref "74268ee45494f40b3534164001b994e315490c27"))
 ;;
 ;; Copilot
 ;;
