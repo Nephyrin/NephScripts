@@ -686,8 +686,6 @@
 ;;(require 'neph-company-autoload)
 (elpaca (company :host github :repo "company-mode/company-mode"
         :ref "3ec40b0a0ea751b6c48f24abd58c8304deb53014")
-  (require 'company)
-
   ;; Turn on in these modes
   (add-hook 'c-mode-common-hook   'neph-company-setup)
   (add-hook 'python-mode-hook     'neph-company-setup)
@@ -696,7 +694,6 @@
   (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
     ;; --
   )
-
 ;;
 ;; company-quickhelp
 ;;
