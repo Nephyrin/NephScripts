@@ -397,10 +397,10 @@
 ;;
 (elpaca (rustic :host github :repo "brotzeit/rustic"
         :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b")
-  (require 'rustic)
-
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
-  (setq rustic-indent-offset 2)
+  ;; rustic-indent-offset only comes into existence, as an alias, when rustic loads
+  (with-eval-after-load 'rustic
+    (setq rustic-indent-offset 2))
   (setq rust-indent-offset 2)
   )
 
