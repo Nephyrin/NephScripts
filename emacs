@@ -1251,9 +1251,6 @@
 ;;
 (elpaca (helm-projectile :host github :repo "bbatsov/helm-projectile"
         :ref "0ffb6b5f09c1d65d721c1111ebfa6cec0ba63234")
-  (require 'helm-projectile)
-
-
   ;; Additional autoloads for helm-projectile
   (autoload 'helm-projectile-ag "helm-projectile")
   (autoload 'helm-projectile-switch-to-buffer "helm-projectile")
