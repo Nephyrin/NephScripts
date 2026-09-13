@@ -1798,7 +1798,13 @@
   (setq desktop-base-lock-name "emacs-server-desktop.lock")
   ;; Enabled once the package queue is done so restored buffers get their modes
   ;; (desktop's own after-init read no longer fires by then, so read explicitly)
-  (add-hook 'elpaca-after-init-hook (lambda () (desktop-save-mode 1) (desktop-read))))
+  (add-hook 'elpaca-after-init-hook
+            (lambda ()
+              ;; desktop.el handles --no-desktop from after-init-hook, which has
+              ;; already run by the time it gets loaded here.
+              (unless (member "--no-desktop" command-line-args)
+                (desktop-save-mode 1)
+                (desktop-read)))))
 
 
 ;;
