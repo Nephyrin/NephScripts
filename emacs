@@ -738,7 +738,10 @@
 ;; Yasnippet
 ;;
 (elpaca (yasnippet :host github :repo "joaotavora/yasnippet"
-        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417"))
+        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417")
+  ;; Note: the eager require used to register snippet-mode for snippet files at
+  ;; startup; now that happens when the first yas-minor-mode buffer loads it.
+  )
 
 ;;
 ;; epl
@@ -2124,14 +2127,9 @@
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
 
-;; This config is eager by design: mode hooks fire on *scratch*, desktop restore
-;; and command-line files all happen before after-init-hook would process the
-;; elpaca queue, and they expect packages and neph-lib to be there. Finish the
-;; queue here, inside init, so everything below and after sees a loaded world.
-;;
 ;; Customizations -- kept in custom.el and loaded once the package queue is done
-;; (elpaca's replacement for after-init-hook), so customized values of package
-;; variables win as they always did.
+;; (elpaca-after-init-hook, elpaca's replacement for after-init-hook), so
+;; customized values of package variables win as they always did.
 ;;
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror 'nomessage)))
