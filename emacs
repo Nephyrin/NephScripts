@@ -20,7 +20,6 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
-(neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-format")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 
@@ -59,16 +58,13 @@
 ;; package (~60 at once): the main process starves and small boxes OOM.
 (setq elpaca-queue-limit (num-processors))
 ;; Features that Package-Requires may name but which must never be installed:
-;; provided by a sibling file in an already-declared repo's build, vendored in
-;; this repo, or genuinely absent today (dependents already cope).
+;; provided by a sibling file in an already-declared repo's build, or genuinely
+;; absent today (dependents already cope). Ignoring a feature also hides its own
+;; dependencies from elpaca's compile load-path, so anything a dependent needs
+;; at compile time is declared as a package instead (helm-core, lv, counsel...).
 (setq elpaca-ignored-dependencies
       (append elpaca-ignored-dependencies
-              '(helm-core   ; ships in the helm repo's build
-                counsel     ; ships in the swiper repo's build (declared as ivy)
-                swiper      ; ships in the swiper repo's build (declared as ivy)
-                lv          ; ships in the hydra repo's build
-                magit-section ; ships in the magit repo's build
-                pos-tip     ; vendored dir on load-path
+              '(magit-section ; ships in the magit repo's build
                 wfnames     ; helm dep, absent today; helm degrades
                 cfrs        ; treemacs dep, absent today
                 goto-chg    ; evil-pkg.el dep, absent today; evil never loaded
@@ -519,8 +515,14 @@
 ;;
 
 ;;(require 'helm-autoloads)
+;; helm-core is the same repo's core files as their own package, so its async
+;; dependency reaches the compile load-path of everything that requires helm.
+(elpaca (helm-core :host github :repo "emacs-helm/helm"
+        :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd"
+        :files ("helm-core.el" "helm-lib.el" "helm-source.el" "helm-multi-match.el")))
 (elpaca (helm :host github :repo "emacs-helm/helm"
-        :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd")
+        :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd"
+        :files (:defaults (:exclude "helm-core.el" "helm-lib.el" "helm-source.el" "helm-multi-match.el")))
   (helm-mode 1)
 
   ;; Since 215005e25718 helm's default score func is just crazy broken
@@ -680,7 +682,15 @@
 ;; ivy
 ;;
 (elpaca (ivy :host github :repo "abo-abo/swiper"
-        :ref "c97ea72285f2428ed61b519269274d27f2b695f9"))
+        :ref "c97ea72285f2428ed61b519269274d27f2b695f9"
+        :files (:defaults (:exclude "swiper.el" "counsel.el"))))
+;; The same repo's other two packages (counsel-projectile requires counsel).
+(elpaca (swiper :host github :repo "abo-abo/swiper"
+        :ref "c97ea72285f2428ed61b519269274d27f2b695f9"
+        :files ("swiper.el")))
+(elpaca (counsel :host github :repo "abo-abo/swiper"
+        :ref "c97ea72285f2428ed61b519269274d27f2b695f9"
+        :files ("counsel.el")))
 
 ;;
 ;; Company mode
@@ -696,6 +706,12 @@
   (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
     ;; --
   )
+;;
+;; pos-tip -- vendored in emacs.d; a local package so company-quickhelp can
+;; compile against it
+;;
+(elpaca (pos-tip :repo "~/.emacs.d/pos-tip"))
+
 ;;
 ;; company-quickhelp
 ;;
@@ -764,8 +780,13 @@
 ;;
 ;; hydra
 ;;
+;; lv ships in hydra's repo; lsp-mode requires it.
+(elpaca (lv :host github :repo "abo-abo/hydra"
+        :ref "317e1de33086637579a7aeb60f77ed0405bf359b"
+        :files ("lv.el")))
 (elpaca (hydra :host github :repo "abo-abo/hydra"
-        :ref "317e1de33086637579a7aeb60f77ed0405bf359b"))
+        :ref "317e1de33086637579a7aeb60f77ed0405bf359b"
+        :files (:defaults (:exclude "lv.el"))))
 
 ;;
 ;; pfuture
