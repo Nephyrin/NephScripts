@@ -56,6 +56,9 @@
 ;; This setup has never version-checked packages; pinned refs are reviewed as
 ;; a working set, so drop elpaca's hard-failing dependency version check.
 (setq elpaca-default-build-steps (delq 'elpaca-check-version elpaca-default-build-steps))
+;; Unlimited by default, which on a cold boot means one `emacs --batch' per ready
+;; package (~60 at once): the main process starves and small boxes OOM.
+(setq elpaca-queue-limit (num-processors))
 ;; Features that Package-Requires may name but which must never be installed:
 ;; provided by a sibling file in an already-declared repo's build, vendored in
 ;; this repo, or genuinely absent today (dependents already cope).
