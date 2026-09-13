@@ -826,7 +826,7 @@
 ;; yaml
 ;;
 (elpaca (yaml :host github :repo "zkry/yaml.el"
-        :ref "73fde9d8fbbaf2596449285df9eb412ae9dd74d9"))
+        :ref "b72c188381a0cc6596b683e4cf1fed51a0706a39"))
 
 ;;
 ;; C++ Helper mode(s) : Company/lsp and associated helper libraries
