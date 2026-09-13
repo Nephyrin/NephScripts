@@ -74,16 +74,18 @@
 ;; NOTE: transient, jsonrpc and compat are built into modern Emacs but pinned
 ;; here; declaring them removes them from the ignore list so the pins win.
 (add-hook 'after-init-hook #'elpaca-process-queues)
-;; elpaca shows its log while packages build on a cold boot, which is useful
-;; progress -- but inside elpaca-wait it re-renders that buffer synchronously on
-;; every event (elpaca--log-update-on-info skips its debounce), and with ~100
-;; packages the full re-render per event pegs the main thread and starves the
-;; build scheduler. Force the debounced path even while waiting (the timer
-;; still fires from elpaca-wait's sit-for loop) and render at most twice a
-;; second instead of the default 50.
-(setq elpaca-log-interval 0.5)
-(advice-add 'elpaca--log-update-on-info :around
-            (lambda (orig e) (let ((elpaca--waiting nil)) (funcall orig e))))
+;; The log refreshes on a debounce timer while packages build; each refresh is
+;; a full re-render, so the default 0.02s interval is far too eager.
+(setq elpaca-log-interval 1.0)
+;; Things that need the whole queue done (the elpaca equivalent of
+;; after-init-hook): show failures, load the machine-local aliases.
+(add-hook 'elpaca-after-init-hook
+          (lambda ()
+            (when (cl-loop for (_ . e) in (elpaca--queued)
+                           thereis (eq (elpaca<-status (cdr e)) 'failed))
+              (require 'elpaca-log)
+              (elpaca-log "#unique | failed" t))
+            (neph-reload-local)))
 
 ;; Turn on autocompile for everything else. First elpaca package: activates
 ;; before all following declarations/loads so on-load compile covers them.
@@ -2056,20 +2058,6 @@
 ;; and command-line files all happen before after-init-hook would process the
 ;; elpaca queue, and they expect packages and neph-lib to be there. Finish the
 ;; queue here, inside init, so everything below and after sees a loaded world.
-(elpaca-wait)
-;; The queue is quiet now, so opening the log is cheap: show init-time failures.
-(when (cl-loop for (_ . e) in (elpaca--queued)
-               thereis (eq (elpaca<-status e) 'failed))
-  (require 'elpaca-log)
-  (elpaca-log "#unique | failed" t))
-
-;;
-;; Local aliases
-;;
-
-;; Local aliases if they exist
-(neph-reload-local)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
