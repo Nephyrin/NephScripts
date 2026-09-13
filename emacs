@@ -87,6 +87,9 @@
               (elpaca-log "#unique | failed" t))
             (neph-reload-local)))
 
+; Clear suspend-frame binding to use C-z as a prefix
+(global-unset-key (kbd "C-z"))
+
 ;;
 ;; Theme -- first in the queue, and the one package init waits for so the
 ;; frame is themed from the start. The loader is run-once init code, so it
@@ -249,9 +252,6 @@
   (global-set-key (kbd "C-z H") 'neph-highlight-dwim)
   (global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
   (global-set-key (kbd "M-Z") 'backwards-zap-to-char))
-
-; Clear suspend-frame binding to use C-z as a prefix
-(global-unset-key (kbd "C-z"))
 
 ;;
 ;; ---- Package configuration (elpaca declarations, dependency order) ----
