@@ -2127,6 +2127,143 @@
 ;;                     :foreground "#666"
 ;;                     :box '(:line-width 1 :color "#333" :style nil))
 
+;; Global hl-line-mode block
+
+;;
+;; isearch tweaks
+
+;;
+;; Line-highlight
+
+;;
+
+;; highlight the current line; set a custom face, so we can
+;; recognize from the normal marking (selection)
+(defface hl-line '((t (:background "Gray")))
+  "Face to use for `hl-line-face'." :group 'hl-line)
+(setq hl-line-face 'hl-line)
+;(global-hl-line-mode t)
+
+;;
+;; PlantUML
+;;
+
+;; Default install path from package
+(setq org-plantuml-jar-path
+      (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+
+;;
+;; Custom binds
+;;
+
+;; Bound to shift + the window nav keys below
+;; Note: was shadowed by diff-buffer-with-file prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-S-D") 'transpose-windows)
+
+;; Revert without prompting
+
+; Quick eval-defun
+(global-set-key (kbd "C-z e") 'eval-region)
+(global-set-key (kbd "C-z E") 'eval-defun)
+
+(global-set-key (kbd "C-z C-S-G") 'gdb)
+(global-set-key (kbd "C-z M") 'gdb-many-windows)
+
+;; Delete trailing whitespace
+;; Note: was shadowed by ediff-current-file prior to elpacification, commented
+;;(global-set-key (kbd "C-z C-M-S-D") 'delete-trailing-whitespace)
+
+; helm shortcuts
+(global-set-key (kbd "C-z C-f") 'helm-find-files)
+(global-set-key (kbd "C-z h") 'helm-resume)
+
+;; Back one window
+
+; Scroll window
+
+; Fast window nav
+
+;; Diff current changes
+(global-set-key (kbd "C-z C-S-D") 'diff-buffer-with-file)
+(global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
+
+;; Keybind for enabling debug stuff quickly when I'm mad at something hanging.  Which is always.
+
+;; Bonus align keys
+
+(global-set-key (kbd "C-z C-a") 'align-regexp)
+(global-set-key (kbd "C-z a") 'neph-align-regexp-u)
+
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
+
+;; Prefer to org-mode's default bind
+(eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
+
+; F3 inserts current filename into minibuffer
+
+;; Take slash away from electric indent ('electric-slash)
+(eval-after-load 'cc-mode
+  '(define-key c-mode-base-map "/" 'self-insert-command))
+;; (global-set-key (kbd "/") 'self-insert-command)
+
+;; Custom binds for existing commands
+(global-set-key (kbd "C-z C-k") 'copy-to-register)
+(global-set-key (kbd "C-z k") 'insert-register)
+(global-set-key (kbd "C-z C-j") 'point-to-register)
+(global-set-key (kbd "C-z j") 'jump-to-register)
+(global-set-key (kbd "C-z C-w") 'window-configuration-to-register)
+
+(global-set-key (kbd "C-c C-j") 'term-line-mode)
+(global-set-key (kbd "C-c C-k") 'term-char-mode)
+(global-set-key (kbd "C-M-a") 'back-to-indentation)
+(global-set-key (kbd "C-S-k") 'kill-whole-line)
+; Make ret auto-indent, but S-RET bypass
+;(define-key global-map (kbd "RET") 'newline)
+(global-set-key (kbd "<C-return>") 'electric-indent-just-newline)
+;; Merge with previous line
+(global-set-key (kbd "C-M-S-k") 'delete-indentation)
+
+
+;; Replaces backwards/forwards sexp.
+(global-set-key (kbd "M-G") 'goto-line)
+
+
+(with-eval-after-load "sql"
+  (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
+
+;; Quick register movement.
+;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
+
+
+
+;; Non-hooked version is C-x C-k b
+
+;; Disabled (requires semantic)
+;;(defun jump-to-container ()
+;;  (interactive)
+;;  (let* ((tag (and (functionp 'semantic-current-tag) (semantic-current-tag)))
+;;         (overlay (and tag (last (semantic-current-tag))))
+;;         (char (and overlay (overlay-start (car overlay)))))
+;;    (when char
+;;      (goto-char char))))
+;;
+;;(global-set-key (kbd "C-z C") 'jump-to-container)
+
+;;
+;; Highlight/unhighlight dwim binds (neph-highlight-dwim / neph-unhighlight-dwim in neph-lib)
+;;
+
+
+;;
+;; Artist mode
+;;
+(global-set-key (kbd "C-z C-M-a") 'artist-mode) ;; C-c C-c exits artist mode
+
+
+;;
+;; zap-to-char
+
 ;; Customizations -- kept in custom.el and loaded once the package queue is done
 ;; (elpaca-after-init-hook, elpaca's replacement for after-init-hook), so
 ;; customized values of package variables win as they always did.
