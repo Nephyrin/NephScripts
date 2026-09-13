@@ -406,7 +406,7 @@
 ;;
 ;; Rust mode
 ;;
-(elpaca (rustic :host github :repo "brotzeit/rustic"
+(elpaca (rustic :host github :repo "emacs-rustic/rustic" ;; the pin lives on the fork, not the archived original
         :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b")
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
   ;; rustic-indent-offset only comes into existence, as an alias, when rustic loads
