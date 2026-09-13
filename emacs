@@ -1366,9 +1366,7 @@
 ;; mmm/jinja/salt mode
 ;;
 (elpaca (salt-mode :host github :repo "glynnforrest/salt-mode"
-        :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c")
-  (require 'salt-mode)
-  )
+        :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c"))
 
 ;;
 ;; git-modes
