@@ -1397,9 +1397,7 @@
 ;; RG
 ;;
 (elpaca (rg :host github :repo "dajva/rg.el"
-        :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98")
-  (require 'rg)
-  )
+        :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98"))
 
 ;;
 ;; magit-popup
