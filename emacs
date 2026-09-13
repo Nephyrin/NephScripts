@@ -929,18 +929,12 @@
 ;;
 (elpaca (lsp-ui :host github :repo "emacs-lsp/lsp-ui"
         :ref "030d36960338fd633a98b332bc3734c412c25ca6")
-  (require 'lsp-ui)
-  (require 'lsp-ui-flycheck)
-  (require 'lsp-headerline)
-  (require 'lsp-modeline)
-  (require 'lsp-diagnostics)
   (setq lsp-ui-doc-show-with-cursor t)
   ;; Note: customized to nil in custom-set-variables, which ran last (and won)
   ;; prior to elpacification; commented so the customized value still wins now
   ;; that this body runs after init.
   ;;(setq lsp-ui-peek-always-show t)
   )
-
 ;; cquery
 (elpaca (lsp-pyright :host github :repo "emacs-lsp/lsp-pyright"
         :ref "3756ff971797ae04fc43ca29c66ba4d854eff038")
