@@ -1152,10 +1152,10 @@
 (elpaca (git-gutter-fringe :host github :repo "syohex/emacs-git-gutter-fringe"
         :ref "c12179ece35538c94d7928572f523a7145f1fb49")
   ;; Load order is load-bearing: fringe-helper -> git-gutter -> git-gutter-fringe.
-  ;; Hosted here (the dependency-order-last of the trio) so all three are built.
-  (require 'fringe-helper)
-  (require 'git-gutter)
-  (require 'git-gutter-fringe)
+  ;; git-gutter-fringe requires the other two itself, so hanging it off git-gutter's
+  ;; load keeps that order without pulling anything in at startup.
+  (with-eval-after-load 'git-gutter
+    (require 'git-gutter-fringe))
   (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
   )
 
