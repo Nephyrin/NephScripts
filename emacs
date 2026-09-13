@@ -895,20 +895,19 @@
 (elpaca (copilot :host github :repo "zerolfx/copilot.el"
         :files (:defaults "dist")
         :ref "8f5e45405ead77fcbe85b5c02193f23449d2d518")
-  (require 'copilot)
-
+  (autoload 'copilot-panel-complete "copilot" nil t)
   (global-set-key (kbd "C-M-<tab>") 'copilot-panel-complete)
   ;; This is apparently C-S-<tab>
   (global-set-key (kbd "C-<iso-lefttab>") 'copilot-complete)
-  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "C-e") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "C-k") 'copilot-clear-overlay)
-  (define-key copilot-completion-map (kbd "C-M-n") 'copilot-accept-completion-by-line)
-  (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
-  (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
-  (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
+  (with-eval-after-load 'copilot
+    (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+    (define-key copilot-completion-map (kbd "C-e") 'copilot-accept-completion)
+    (define-key copilot-completion-map (kbd "C-k") 'copilot-clear-overlay)
+    (define-key copilot-completion-map (kbd "C-M-n") 'copilot-accept-completion-by-line)
+    (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
+    (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
+    (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion))
   )
-
 ;;
 ;; dape
 ;;
