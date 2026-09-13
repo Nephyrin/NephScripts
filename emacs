@@ -265,9 +265,7 @@
 
 ;; Global libraries macros in here (and also )
 (elpaca (ht :host github :repo "Wilfred/ht.el"
-        :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6")
-  (require 'ht)
-  )
+        :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6"))
 
 ;;
 ;; bui
