@@ -487,9 +487,7 @@
 ;; Color identifiers mode
 ;;
 (elpaca (color-identifiers-mode :host github :repo "ankurdave/color-identifiers-mode"
-        :ref "e35ee05588d84517193db07d94ce7f29ace10ef6")
-  (require 'color-identifiers-mode)
-  )
+        :ref "e35ee05588d84517193db07d94ce7f29ace10ef6"))
 
 ;;
 ;; Consult/Vertico
