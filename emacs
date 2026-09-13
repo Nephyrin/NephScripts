@@ -1477,6 +1477,16 @@
   (global-set-key (kbd "C-z x") 'magit)
   (global-set-key (kbd "C-z X") 'magit-ediff-stage)
   (global-set-key (kbd "C-z C") 'magit-commit)
+  ;; global-git-commit-mode came free with the eager (require 'magit). Loading
+  ;; git-commit costs ~2s, so do it on the first commit-message file instead;
+  ;; from then on the mode's own find-file-hook handles the rest.
+  (add-hook 'find-file-hook
+            (lambda ()
+              (when (and buffer-file-name (not (featurep 'git-commit))
+                         (string-match-p "/\\(\\(\\(COMMIT\\|NOTES\\|PULLREQ\\|MERGEREQ\\|TAG\\)_EDIT\\|MERGE_\\|\\)MSG\\|\\(BRANCH\\|EDIT\\)_DESCRIPTION\\)\\'"
+                                         buffer-file-name))
+                (require 'git-commit)
+                (git-commit-setup-check-buffer))))
   )
 
 ;;
