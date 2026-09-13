@@ -84,7 +84,7 @@
 (add-hook 'elpaca-after-init-hook
           (lambda ()
             (when (cl-loop for (_ . e) in (elpaca--queued)
-                           thereis (eq (elpaca<-status (cdr e)) 'failed))
+                           thereis (eq (elpaca<-status e) 'failed))
               (require 'elpaca-log)
               (elpaca-log "#unique | failed" t))
             (neph-reload-local)))
