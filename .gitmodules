@@ -41,7 +41,7 @@
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
 [submodule "emacs.d/elpaca"]
-	path = emacs.d/elpaca
+	path = emacs.d/elpaca.git
 	url = https://github.com/progfolio/elpaca.git
 [submodule "zsh.d/plugins/fzf-tab"]
 	path = zsh.d/plugins/fzf-tab

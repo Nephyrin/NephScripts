@@ -25,7 +25,7 @@
 (neph-add-to-load-path 'load-path "~/.emacs.d/ansi-color-format")
 (neph-add-to-load-path 'load-path "~/.emacs.d/gdb-ansi-color")
 
-(neph-add-to-load-path 'load-path "~/.emacs.d/elpaca") ;; pinned submodule, see bootstrap below
+(neph-add-to-load-path 'load-path "~/.emacs.d/elpaca.git") ;; pinned submodule, see bootstrap below
 
 (dolist (dir neph-compile-stuff)
   (when (and dir (file-directory-p dir))
@@ -37,19 +37,17 @@
 ;; Elpaca (package manager; pinned submodule above -- no network installer)
 ;;
 
-;; Clones/builds live outside the repo checkout
-(setq elpaca-directory (expand-file-name "elpaca-store/" user-emacs-directory))
-;; elpaca's async build helpers assume its own source lives at
-;; <elpaca-sources-directory>/elpaca/ (installer layout); with the pinned
-;; submodule elsewhere, give it a compat symlink.
-(let ((link (expand-file-name "sources/elpaca" elpaca-directory)))
+;; elpaca owns ~/.emacs.d/elpaca/ (its default: sources/, builds/, ...); its own
+;; source is the pinned submodule at ~/.emacs.d/elpaca.git, which sources/elpaca
+;; points at so elpaca's build subprocesses find it where they expect.
+(let ((link (expand-file-name "elpaca/sources/elpaca" user-emacs-directory)))
   ;; file-exists-p is nil for a dangling symlink, so clear one explicitly or
   ;; make-symbolic-link errors on the existing link
   (when (and (file-symlink-p link) (not (file-exists-p link)))
     (delete-file link))
   (unless (file-exists-p link)
     (make-directory (file-name-directory link) t)
-    (make-symbolic-link (expand-file-name "elpaca/" user-emacs-directory) link)))
+    (make-symbolic-link (expand-file-name "elpaca.git/" user-emacs-directory) link)))
 ;; Fail closed: recipes come ONLY from the (elpaca ...) declarations in this
 ;; file -- no MELPA/ELPA menus, no network beyond the pinned :ref clones.
 ;; Must be set before the first declaration is evaluated.
