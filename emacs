@@ -843,8 +843,6 @@
 ;;(require 'lsp-clangd)
 (elpaca (ccls :host github :repo "MaskRay/emacs-ccls"
         :ref "8648238a92e5fd1ca1b693c99d2824f8804736b0")
-  (require 'ccls)
-
   ;; Block ccls autoregister, register it ourself
   ;; TODO Example hook from gpt might work
   ;; (defun my-ccls-setup (workspace)
@@ -883,9 +881,9 @@
            "-v=1")))
 
   ;; Default off
-  (add-to-list 'lsp-disabled-clients 'ccls)
+  (with-eval-after-load 'lsp-mode
+    (add-to-list 'lsp-disabled-clients 'ccls))
   )
-
 ;;
 ;; jsonrpc
 ;;
