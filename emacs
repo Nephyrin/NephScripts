@@ -728,9 +728,7 @@
 ;; pkg-info
 ;;
 (elpaca (pkg-info :host github :repo "emacsorphanage/pkg-info"
-        :ref "76ba7415480687d05a4353b27fea2ae02b8d9d61")
-  (require 'pkg-info)
-  )
+        :ref "76ba7415480687d05a4353b27fea2ae02b8d9d61"))
 
 ;;
 ;; YouCompleteMe (deprecated for LSP, remove?)
