@@ -1294,8 +1294,6 @@
 (elpaca (php-mode :host github :repo "emacs-php/php-mode"
         :main "lisp/php-mode.el"
         :ref "4792988a120d6ac515ba16605278d04cb8be0d69")
-  (require 'php-mode)
-
   (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
   (add-hook 'php-mode-hook 'neph-tab-cfg)
   (add-hook 'php-mode-hook 'neph-lsp-if-projectile)
