@@ -87,6 +87,69 @@
               (elpaca-log "#unique | failed" t))
             (neph-reload-local)))
 
+;;
+;; Theme -- first in the queue, and the one package init waits for so the
+;; frame is themed from the start. The loader is run-once init code, so it
+;; lives here rather than in neph-lib.
+;;
+
+(defun load-neph-theme (neph-theme)
+  "Load the given theme, possibly with neph wrapper"
+  (interactive (list (read-string "Theme: ")))
+  ;; Disable all existing
+  (dolist (elem custom-enabled-themes)
+    (disable-theme elem))
+  ;; Custom handlers
+  (if (string= neph-theme "ample-zen")
+      (progn
+        (load-theme 'ample-zen t)
+        (load-theme 'neph-ample-zen t))
+    ;; Safe handlers
+    (if (string= neph-theme "tango")
+        (load-theme 'tango t)
+      ;; Else just forward to load-theme
+      (load-theme (intern neph-theme))))
+  (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
+    (color-identifiers:refresh))
+  (when (and (boundp 'display-line-numbers-mode) display-line-numbers-mode)
+    (display-line-numbers-mode nil)
+    (display-line-numbers-mode t))
+  (redisplay))
+
+(defun neph-whiteboard-mode ()
+  "Enter or exit whiteboard mode"
+  (interactive)
+  (if (member 'ample-zen custom-enabled-themes)
+      (progn (load-neph-theme "whiteboard")
+             (global-whitespace-mode -1))
+    (load-neph-theme "ample-zen")
+    (global-whitespace-mode t)))
+
+(elpaca (ample-zen-theme :host github :repo "mjwall/ample-zen"
+        :ref "3f360c177b7a487d580ed2538a6750535a57e361" :wait t)
+  (setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
+                             (if envtheme envtheme
+                               "ample-zen")))
+
+  (load-neph-theme default-neph-theme)
+
+  (global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
+
+  ;; Default font
+
+  ;; No! This breaks in daemon mode. Running it prior to any frames existing just hoses the font.
+  ;;(set-frame-font "DejaVu Sans Mono-10" nil t)
+
+  ;; doesn't support the nice "-10" syntax apparently despite docs suggesting it should
+  (set-face-attribute 'default nil :family "DejaVu Sans Mono")
+  (set-face-attribute 'default nil :height 100)
+
+  (when (eq system-type 'darwin)
+    (set-face-attribute 'default nil :family "Monaco")
+    (set-face-attribute 'default nil :height 120))
+  (put 'downcase-region 'disabled nil)
+  )
+
 ;; Turn on autocompile for everything else. First elpaca package: activates
 ;; before all following declarations/loads so on-load compile covers them.
 (elpaca (auto-compile :host github :repo "emacscollective/auto-compile"
@@ -1463,34 +1526,6 @@
 ;; See also neph-ample-zen-theme.el
 
 ;;
-;; Load theme selected by env
-;;
-(elpaca (ample-zen-theme :host github :repo "mjwall/ample-zen"
-        :ref "3f360c177b7a487d580ed2538a6750535a57e361")
-  (setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
-                             (if envtheme envtheme
-                               "ample-zen")))
-
-  (load-neph-theme default-neph-theme)
-
-  (global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
-
-  ;; Default font
-
-  ;; No! This breaks in daemon mode. Running it prior to any frames existing just hoses the font.
-  ;;(set-frame-font "DejaVu Sans Mono-10" nil t)
-
-  ;; doesn't support the nice "-10" syntax apparently despite docs suggesting it should
-  (set-face-attribute 'default nil :family "DejaVu Sans Mono")
-  (set-face-attribute 'default nil :height 100)
-
-  (when (eq system-type 'darwin)
-    (set-face-attribute 'default nil :family "Monaco")
-    (set-face-attribute 'default nil :height 120))
-  (put 'downcase-region 'disabled nil)
-  )
-
-;;
 ;; color-theme-sunburst
 ;;
 ;; (elpaca (color-theme-sunburst :host github :repo "neomantic-zz/Emacs-Sunburst-Color-Theme"
@@ -1633,8 +1668,6 @@
 ;; Swiper
 (autoload 'swiper "swiper" "Swiper popup thing" t)
 (global-set-key (kbd "C-z s") 'swiper)
-
-
 
 ;;
 ;; Misc
@@ -2326,15 +2359,11 @@
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)
 
-
-
 ;; Prefer to org-mode's default bind
 (eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
 
 ;; Prefer to org-mode's default bind
 (eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
-
-
 
 ; F3 inserts current filename into minibuffer
 
@@ -2370,10 +2399,6 @@
 
 ;; Quick register movement.
 ;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
-
-
-
-
 
 
 
