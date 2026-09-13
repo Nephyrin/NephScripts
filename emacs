@@ -716,9 +716,7 @@
 ;; Yasnippet
 ;;
 (elpaca (yasnippet :host github :repo "joaotavora/yasnippet"
-        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417")
-  (require 'yasnippet)
-  )
+        :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417"))
 
 ;;
 ;; epl
