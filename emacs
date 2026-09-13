@@ -1,3 +1,4 @@
+;; -*- lexical-binding: nil; -*-
 ;; This nonsense has to be set before *any* LSP stuff is touched or loaded by e.g. compile-directory
 (setenv "LSP_USE_PLISTS" "true")
 
