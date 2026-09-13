@@ -654,8 +654,6 @@
 ;;
 (elpaca (multiple-cursors :host github :repo "magnars/multiple-cursors.el"
         :ref "c870c18462461df19382ecd2f9374c8b902cd804")
-  (require 'multiple-cursors)
-
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-.") 'mc/unmark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
