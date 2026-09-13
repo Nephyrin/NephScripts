@@ -1248,13 +1248,15 @@
     (setq projectile-enable-caching 'persistent)
     ;; caching big projects still very slow even with fd
     ;(setq projectile-files-cache-expire 3600)
-    (projectile-global-mode t)
     (with-eval-after-load "helm"
       ;; This just wraps some stuff with 'helpers' like helm-projectile-find-file which is hella slow because it tries to
       ;; pull in dired too and such.  Should bind/turn on those things one and a time if they're handy, otherwise projectile
       ;; commands already use the helm completion backend.
       ;;(helm-projectile-on)
       ))
+  ;; On from startup, as before: the LSP auto-start hook is gated on projectile
+  ;; being loaded, and dape's cwd and the modeline project cache call into it.
+  (projectile-mode 1)
 
 
   ;;(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
