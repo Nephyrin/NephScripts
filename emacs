@@ -795,10 +795,6 @@
 (elpaca (lsp-mode :host github :repo "emacs-lsp/lsp-mode"
         :files (:defaults "clients/*.el")
         :ref "0c8f043eb3d1d516f46e3c50c78fbab22f0612a9")
-  (require 'lsp-mode)
-  (require 'company)
-  (require 'company-quickhelp)
-
   (advice-add (if (progn (require 'json)
                          (fboundp 'json-parse-buffer))
                   'json-parse-buffer
@@ -829,7 +825,6 @@
                                   "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
     ;; --
   )
-
 ;;
 ;; lsp-docker
 ;;
