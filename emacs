@@ -307,9 +307,7 @@
 ;; Xterm color
 ;;
 (elpaca (xterm-color :host github :repo "atomontage/xterm-color"
-        :ref "4b21b619841c93c4700039a93eb1881beee9248c")
-  (require 'xterm-color)
-  )
+        :ref "4b21b619841c93c4700039a93eb1881beee9248c"))
 
 ;(require 'eterm-256color) FIXME debug-init
 
