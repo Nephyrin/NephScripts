@@ -974,13 +974,20 @@
 ;;
 (elpaca (helm-lsp :host github :repo "emacs-lsp/helm-lsp"
         :ref "c2c6974dadfac459b1a69a1217441283874cea92")
-  (require 'helm-lsp)
-
   ;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
-  (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+  (with-eval-after-load 'lsp-mode
+    (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol))
 
   (global-set-key (kbd "C-z M-l")   'neph-ccls-reformat-definition)
   ;; LSP UI keys, some are not used but reserved from equivalents in rtags configuration
+  ;; These commands have no autoload cookies upstream, so declare them here rather than
+  ;; loading their packages up front.
+  (autoload 'lsp-ui-peek-find-references "lsp-ui-peek" nil t)
+  (autoload 'lsp-ui-peek-find-definitions "lsp-ui-peek" nil t)
+  (autoload 'lsp-ui-imenu "lsp-ui-imenu" nil t)
+  (autoload 'ccls-call-hierarchy "ccls-call-hierarchy" nil t)
+  (autoload 'lsp-find-references "lsp-mode" nil t)
+  (autoload 'flycheck-list-errors "flycheck" nil t)
   (global-set-key (kbd "C-z C-,")   'lsp-ui-peek-find-references)
   (global-set-key (kbd "C-z C-.")   'xref-find-definitions)
   (global-set-key (kbd "M-.")       'lsp-ui-peek-find-definitions)
