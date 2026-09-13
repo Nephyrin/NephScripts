@@ -519,21 +519,12 @@
 ;;(require 'helm-autoloads)
 (elpaca (helm :host github :repo "emacs-helm/helm"
         :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd")
-  (require 'helm)
-  (require 'helm-mode)
-  (require 'helm-command)
-  (require 'helm-bookmark)
-  ;; Not sure what I'm configuring wrong but autoloads doesn't always
-  (require 'helm-for-files)
-  (require 'helm-ring)
-  ;;(require 'helm-config)
-  (require 'helm-for-files)
-
   (helm-mode 1)
 
   ;; Since 215005e25718 helm's default score func is just crazy broken
   ;; and puts really-fuzzy matches above extremely-direct matches
-  (setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
+  (with-eval-after-load 'helm-core
+    (setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score))
   ;;Default: (setq helm-fuzzy-default-score-fn 'helm-fuzzy-flex-style-score)
 
   (global-set-key (kbd "C-z F") 'neph-helm-find-in-directory)
