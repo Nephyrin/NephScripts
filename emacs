@@ -93,13 +93,99 @@
         :ref "01844064e3f2bb9f109a8a064998baf89a864fbc")
   (setq auto-compile-verbose t)
   (auto-compile-on-load-mode)
-  (auto-compile-on-save-mode)
-  ;; Functions/macros live in neph-lib where they get byte-compiled; this file
-  ;; does not, and keeps to wiring (requires, setqs, hooks, binds).  Compiled
-  ;; and loaded here -- the first declaration body, i.e. the earliest moment
-  ;; every package is built and on load-path for its compile-time macros.
-  (byte-recompile-directory "~/.emacs.d/neph" 0)
-  (require 'neph-lib))
+  (auto-compile-on-save-mode))
+
+;;
+;; neph-lib: the config's functions/macros, as a local elpaca package so it is
+;; byte-compiled after its compile-time dependencies (helm, dash) are built.
+;; Everything that points at a neph-lib function is registered here, once the
+;; library exists.
+;;
+(elpaca (neph-lib :repo "~/.emacs.d/neph-lib")
+  (require 'neph-lib)
+  (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
+  (advice-add 'y-or-n-p :around #'neph-y-or-n-p)
+  (setq electric-pair-inhibit-predicate 'neph-electric-pair-inhibit-predicate)
+  (add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
+  (add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . neph-bash-mode))
+  (add-hook 'js-mode-hook 'neph-js-mode-hook)
+  (add-hook 'typescript-ts-mode-hook 'neph-tab-cfg)
+  (add-hook 'tsx-ts-mode-hook 'neph-tab-cfg)
+  (add-hook 'sh-mode-hook 'neph-space-cfg)
+  (add-hook 'conf-space-mode-hook 'neph-space-cfg)
+  (add-hook 'sql-mode-hook 'neph-space-cfg)
+  (add-hook 'python-mode-hook 'neph-space-cfg)
+  (add-hook 'python-ts-mode-hook 'neph-space-cfg)
+  (add-hook 'java-mode-hook 'neph-space-cfg)
+  (add-hook 'lisp-mode-hook 'neph-space-cfg)
+  (add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
+  (add-hook 'rustic-mode-hook 'neph-space-cfg)
+  (add-hook 'conf-mode-hook 'neph-space-cfg)
+  (add-hook 'typescript-ts-mode-hook 'neph-space-cfg)
+  (add-hook 'go-ts-mode-hook 'neph-space-cfg)
+  (add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
+  (add-hook 'c-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'c++-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'sh-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'python-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'python-ts-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'typescript-ts-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'tsx-ts-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'go-ts-mode-hook 'neph-lsp-if-projectile)
+  (add-hook 'lsp-after-open-hook 'neph-lsp-mode)
+  (add-hook 'web-mode-hook 'neph-web-tab-cfg)
+  (global-set-key (kbd "C-z C-u") 'sudoize-buffer)
+  (global-set-key (kbd "C-z C-M-u") 'drop-sudo)
+  (add-hook 'eshell-mode-hook 'neph-disable-global-hl-line)
+  (add-hook 'term-mode-hook 'neph-disable-global-hl-line)
+  (add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
+  (define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
+  (global-set-key (kbd "C-z C-S-S") 'neph-transpose-windows-backward)
+  (global-set-key (kbd "C-z R") 'neph-revert-buffer-noconfirm)
+  (global-set-key (kbd "C-x O") 'neph-other-window-backward)
+  (global-set-key (kbd "s-n") 'neph-scroll-up-one)
+  (global-set-key (kbd "s-p") 'neph-scroll-down-one)
+  (global-set-key (kbd "s-l") 'neph-move-to-window-center-line)
+  (global-set-key (kbd "C-z C-s") 'neph-other-window-backward)
+  (global-set-key (kbd "C-z C-d") 'neph-other-window-forward)
+  (global-set-key (kbd "C-z C-M-S-Q") 'neph-toggle-debug)
+  (global-set-key (kbd "C-z C-M-S-M") 'neph-run-makepkg-g-on-region)
+  (global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
+  (global-set-key (kbd "M-u") 'toggle-case)
+  (global-set-key (kbd "C-M-k") 'merge-next-line)
+  (global-set-key (kbd "C-S-Y") 'yank-and-indent)
+  (global-set-key (kbd "M-Y") 'smart-yank-before-line)
+  (global-set-key (kbd "C-z C-S-B") 'bookmark-current-line)
+  (global-set-key [(control shift up)] 'move-line-up)
+  (global-set-key [(control shift down)] 'move-line-down)
+  (global-set-key (kbd "M-P") 'smart-move-current-region-up)
+  (global-set-key (kbd "M-N") 'smart-move-current-region-down)
+  (global-set-key (kbd "C-S-o") 'open-next-line)
+  (define-key minibuffer-local-map [f3] 'neph-insert-selected-window-buffer-name)
+  (global-set-key (kbd "C-S-M-j") 'copy-line)
+  (global-set-key (kbd "C-S-j") 'duplicate-line)
+  (global-set-key (kbd "C-M-f") 'jump-to-char)
+  (global-set-key (kbd "C-M-b") 'backward-jump-to-char)
+  (global-set-key (kbd "C-S-U") 'neph-backward-kill-line)
+  (global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
+  (global-set-key (kbd "M-@") 'neph-mark-current-word)
+  (global-set-key (kbd "M-B") 'backward-to-word)
+  (global-set-key (kbd "M-F") 'forward-to-word)
+  (global-set-key (kbd "M-D") 'neph-kill-to-word)
+  (global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
+  (global-set-key (kbd "C-z SPC") 'neph-point-to-register-quick)
+  (global-set-key (kbd "C-z C-SPC") 'neph-jump-to-register-quick)
+  (global-set-key (kbd "C-M-S-A") 'mark-current-line)
+  (global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
+  (global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
+  (global-set-key (kbd "C-z T") 'touch-current-file)
+  (global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
+  (global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
+  (global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
+  (global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
+  (global-set-key (kbd "C-z H") 'neph-highlight-dwim)
+  (global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
+  (global-set-key (kbd "M-Z") 'backwards-zap-to-char))
 
 ; Clear suspend-frame binding to use C-z as a prefix
 (global-unset-key (kbd "C-z"))
@@ -1548,7 +1634,6 @@
 (autoload 'swiper "swiper" "Swiper popup thing" t)
 (global-set-key (kbd "C-z s") 'swiper)
 
-(define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
 
 
 ;;
@@ -1577,7 +1662,6 @@
 ;; Disable silly "type Y-E-S" prompts
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(advice-add 'y-or-n-p :around #'neph-y-or-n-p)
 
 ; This just makes things slower. Maybe useful on spinning disks?
 (setq cache-long-line-scans nil)
@@ -1666,7 +1750,6 @@
 ;; Electric mode tweaks
 ;;
 
-(setq electric-pair-inhibit-predicate 'neph-electric-pair-inhibit-predicate)
 
 ;;
 ;; Mark & Mark Ring
@@ -1923,7 +2006,6 @@
 
 ;;
 ;; Ediff
-(add-hook 'ediff-prepare-buffer-hook 'neph-ediff-mode)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq ediff-merge-split-window-function 'split-window-horizontally)
@@ -1942,7 +2024,6 @@
 (add-to-list 'auto-mode-alist '("\\.sch\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.svelte\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("/PKGBUILD\\'" . neph-bash-mode))
 (add-to-list 'auto-mode-alist '("/\\.?bash\\(rc\\|_profile\\)\\'" . sh-mode))
 ;; Default .j2 files to conf-mode, though these are jinja files that could be anything
 (add-to-list 'auto-mode-alist '("\\.j2\\'" . conf-mode))
@@ -1951,42 +2032,16 @@
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 ;; Use js-mode for vpc/vgc/res files for now, using tab-cfg
 (add-to-list 'auto-mode-alist '("\.\\(v[pg]c\\|res\\)$" . js-mode))
-(add-hook 'js-mode-hook 'neph-js-mode-hook)
-(add-hook 'typescript-ts-mode-hook 'neph-tab-cfg)
-(add-hook 'tsx-ts-mode-hook 'neph-tab-cfg)
-(add-hook 'sh-mode-hook 'neph-space-cfg)
-(add-hook 'conf-space-mode-hook 'neph-space-cfg)
-(add-hook 'sql-mode-hook 'neph-space-cfg)
-(add-hook 'python-mode-hook 'neph-space-cfg)
-(add-hook 'python-ts-mode-hook 'neph-space-cfg)
-(add-hook 'java-mode-hook 'neph-space-cfg)
-(add-hook 'lisp-mode-hook 'neph-space-cfg)
-(add-hook 'emacs-lisp-mode-hook 'neph-space-cfg)
-(add-hook 'rustic-mode-hook 'neph-space-cfg)
-(add-hook 'conf-mode-hook 'neph-space-cfg)
-(add-hook 'typescript-ts-mode-hook 'neph-space-cfg)
-(add-hook 'go-ts-mode-hook 'neph-space-cfg)
-(add-hook 'c-mode-common-hook 'neph-tab-cfg) ; Default to tabs mode for now,
                                              ; should have path detection or
                                              ; something
 
 ;; Modes to try to auto-start lsp in, if they're part of a project
-(add-hook 'c-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'c++-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'sh-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'python-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'python-ts-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'typescript-ts-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'tsx-ts-mode-hook 'neph-lsp-if-projectile)
-(add-hook 'go-ts-mode-hook 'neph-lsp-if-projectile)
 
-(add-hook 'lsp-after-open-hook 'neph-lsp-mode)
 
 ;;
 ;; Web-mode indent config
 ;;
 
-(add-hook 'web-mode-hook 'neph-web-tab-cfg)
 
 ;;
 ;; IswitchBuffers
@@ -2028,8 +2083,6 @@
  '(:application tramp :protocol "rsync")
  'remote-direct-async-process)
 
-(global-set-key (kbd "C-z C-u") 'sudoize-buffer)
-(global-set-key (kbd "C-z C-M-u") 'drop-sudo)
 
 ;; Term key overrides
 (with-eval-after-load 'term
@@ -2207,13 +2260,9 @@
  '(ccls-code-lens-mouse-face ((t (:underline t)))))
 
 ;; Global hl-line-mode block
-(add-hook 'eshell-mode-hook 'neph-disable-global-hl-line)
-(add-hook 'term-mode-hook 'neph-disable-global-hl-line)
 
 ;;
 ;; isearch tweaks
-(add-hook 'isearch-mode-end-hook 'isearch-exit-at-start-hook)
-(define-key isearch-mode-map (kbd "C-.") 'kill-isearch-match)
 
 ;;
 ;; Line-highlight
@@ -2240,12 +2289,10 @@
 ;;
 
 ;; Bound to shift + the window nav keys below
-(global-set-key (kbd "C-z C-S-S") 'neph-transpose-windows-backward)
 ;; Note: was shadowed by diff-buffer-with-file prior to elpacification, commented
 ;;(global-set-key (kbd "C-z C-S-D") 'transpose-windows)
 
 ;; Revert without prompting
-(global-set-key (kbd "C-z R") 'neph-revert-buffer-noconfirm)
 
 ; Quick eval-defun
 (global-set-key (kbd "C-z e") 'eval-region)
@@ -2263,53 +2310,33 @@
 (global-set-key (kbd "C-z h") 'helm-resume)
 
 ;; Back one window
-(global-set-key (kbd "C-x O") 'neph-other-window-backward)
 
 ; Scroll window
-(global-set-key (kbd "s-n") 'neph-scroll-up-one)
-(global-set-key (kbd "s-p") 'neph-scroll-down-one)
-(global-set-key (kbd "s-l") 'neph-move-to-window-center-line)
 
 ; Fast window nav
-(global-set-key (kbd "C-z C-s") 'neph-other-window-backward)
-(global-set-key (kbd "C-z C-d") 'neph-other-window-forward)
 
 ;; Diff current changes
 (global-set-key (kbd "C-z C-S-D") 'diff-buffer-with-file)
 (global-set-key (kbd "C-z C-M-S-D") 'ediff-current-file)
 
 ;; Keybind for enabling debug stuff quickly when I'm mad at something hanging.  Which is always.
-(global-set-key (kbd "C-z C-M-S-Q") 'neph-toggle-debug)
 
 ;; Bonus align keys
 
-(global-set-key (kbd "C-z C-M-S-M") 'neph-run-makepkg-g-on-region)
-(global-set-key (kbd "C-z C-M-p") 'neph-align-protobuf-message)
 (global-set-key (kbd "C-z C-a") 'align-regexp)
 (global-set-key (kbd "C-z a") 'neph-align-regexp-u)
 
-(global-set-key (kbd "M-u") 'toggle-case)
-(global-set-key (kbd "C-M-k") 'merge-next-line)
-(global-set-key (kbd "C-S-Y") 'yank-and-indent)
-(global-set-key (kbd "M-Y") 'smart-yank-before-line)
 
-(global-set-key (kbd "C-z C-S-B") 'bookmark-current-line)
 
-(global-set-key [(control shift up)] 'move-line-up)
 ;; Prefer to org-mode's default bind
 (eval-after-load 'org '(define-key org-mode-map [(control shift up)] nil))
 
-(global-set-key [(control shift down)] 'move-line-down)
 ;; Prefer to org-mode's default bind
 (eval-after-load 'org '(define-key org-mode-map [(control shift down)] nil))
 
-(global-set-key (kbd "M-P") 'smart-move-current-region-up)
-(global-set-key (kbd "M-N") 'smart-move-current-region-down)
 
-(global-set-key (kbd "C-S-o") 'open-next-line)
 
 ; F3 inserts current filename into minibuffer
-(define-key minibuffer-local-map [f3] 'neph-insert-selected-window-buffer-name)
 
 ;; Take slash away from electric indent ('electric-slash)
 (eval-after-load 'cc-mode
@@ -2333,45 +2360,24 @@
 ;; Merge with previous line
 (global-set-key (kbd "C-M-S-k") 'delete-indentation)
 
-(global-set-key (kbd "C-S-M-j") 'copy-line)
-(global-set-key (kbd "C-S-j") 'duplicate-line)
 
 ;; Replaces backwards/forwards sexp.
-(global-set-key (kbd "C-M-f") 'jump-to-char)
-(global-set-key (kbd "C-M-b") 'backward-jump-to-char)
 (global-set-key (kbd "M-G") 'goto-line)
 
-(global-set-key (kbd "C-S-U") 'neph-backward-kill-line)
-(global-set-key (kbd "C-M-S-Z") 'current-word-to-kill-ring)
-(global-set-key (kbd "M-@") 'neph-mark-current-word)
-(global-set-key (kbd "M-B") 'backward-to-word)
-(global-set-key (kbd "M-F") 'forward-to-word)
-(global-set-key (kbd "M-D") 'neph-kill-to-word)
-(global-set-key (kbd "<M-S-delete>") 'neph-backward-kill-to-word)
 
 (with-eval-after-load "sql"
   (define-key sql-mode-map (kbd "C-c C-a") 'sql-send-secondary))
 
 ;; Quick register movement.
 ;; Default to register 7 since it's awkward to hit, leaving other registers available for explicit.
-(global-set-key (kbd "C-z SPC") 'neph-point-to-register-quick)
-(global-set-key (kbd "C-z C-SPC") 'neph-jump-to-register-quick)
 
-(global-set-key (kbd "C-M-S-A") 'mark-current-line)
 
-(global-set-key (kbd "C-x 2") 'vsplit-last-buffer)
-(global-set-key (kbd "C-x 3") 'hsplit-last-buffer)
 
-(global-set-key (kbd "C-z T") 'touch-current-file)
 
-(global-set-key (kbd "C-z C-S-n") 'neph-buffer-name-to-kill-ring)
 
-(global-set-key (kbd "C-z C-!") 'neph-xdg-open-this-file)
 
-(global-set-key (kbd "C-z C-S-c") 'neph-show-file-coding)
 
 ;; Non-hooked version is C-x C-k b
-(global-set-key (kbd "C-x C-k C-b") 'neph-kmacro-bind-to-key-amalgamate)
 
 ;; Disabled (requires semantic)
 ;;(defun jump-to-container ()
@@ -2387,8 +2393,6 @@
 ;;
 ;; Highlight/unhighlight dwim binds (neph-highlight-dwim / neph-unhighlight-dwim in neph-lib)
 ;;
-(global-set-key (kbd "C-z H") 'neph-highlight-dwim)
-(global-set-key (kbd "C-z C-H") 'neph-unhighlight-dwim)
 
 
 ;;
@@ -2399,4 +2403,3 @@
 
 ;;
 ;; zap-to-char
-(global-set-key (kbd "M-Z") 'backwards-zap-to-char)

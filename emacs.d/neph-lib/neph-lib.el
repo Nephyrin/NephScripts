@@ -1,4 +1,7 @@
-;; -*- lexical-binding: nil; -*-
+;;; neph-lib.el --- byte-compiled functions for ~/.emacs  -*- lexical-binding: nil; -*-
+;; Package-Requires: ((helm "0") (dash "0"))
+;; Built and loaded by elpaca as a local package; the requires above are its
+;; compile-time macro dependencies (with-helm-alive-p, -some->>).
 ;;
 ;; neph-lib: functions and macros for the emacs config.
 ;;
