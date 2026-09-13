@@ -565,7 +565,6 @@
         :ref "3a55b983921c620fb5a2cc811f42aa4daaad8266")
   (setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
   (setenv "FZF_DEFAULT_OPTS" nil)
-  (require 'fzf)
   (global-set-key (kbd "C-z C-S-f") 'fzf)
   (global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
   (setq fzf/args "--no-hscroll --print-query -x --no-unicode")
