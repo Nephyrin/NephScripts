@@ -342,8 +342,6 @@
 ;;
 (elpaca (indent-bars :host github :repo "jdtsmith/indent-bars"
         :ref "aa07a3d812c64445d44796b85fca07044864f64b")
-  (require 'indent-bars)
-  (require 'indent-bars-ts)
   (setq indent-bars-width-frac 0.05)
 
   (setq indent-bars-treesit-support t)
