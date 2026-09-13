@@ -55,6 +55,9 @@
 ;; (nil on Arch builds) and warns when both fail; the date only feeds the
 ;; version check dropped below.
 (defvar elpaca-core-date (list -1))
+;; No installer snippet here; this bootstrap mirrors installer 0.12. elpaca warns
+;; when the two drift, which is worth hearing again after a pin bump.
+(defvar elpaca-installer-version 0.12)
 (require 'elpaca)
 ;; This setup has never version-checked packages; pinned refs are reviewed as
 ;; a working set, so drop elpaca's hard-failing dependency version check.
