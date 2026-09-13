@@ -1321,7 +1321,6 @@
 ;;
 (elpaca (yaml-mode :host github :repo "yoshiki/yaml-mode"
         :ref "40067a10ac1360f0b9533f0bbbb2eea128e2574d")
-  (require 'yaml-mode)
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
   (with-eval-after-load "yaml-mode"
