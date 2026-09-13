@@ -943,7 +943,8 @@
 
   ;; Pyright settings are snapshot on library load??
   (setq lsp-pyright-multi-root nil)
-  (require 'lsp-pyright)
+  ;; The pyright client is only useful once lsp-mode is running
+  (with-eval-after-load 'lsp-mode (require 'lsp-pyright))
   )
 
 ;;
@@ -952,8 +953,9 @@
 (elpaca (lsp-treemacs :host github :repo "emacs-lsp/lsp-treemacs"
         :files (:defaults "icons")
         :ref "3e5550f278db74f15ebe34add0138b138207ec08")
-  (require 'lsp-treemacs)
-  (lsp-treemacs-sync-mode 1)
+  (with-eval-after-load 'lsp-mode
+    (require 'lsp-treemacs)
+    (lsp-treemacs-sync-mode 1))
   )
 
 ;;
@@ -962,11 +964,13 @@
 (elpaca (dap-mode :host github :repo "emacs-lsp/dap-mode"
         :files (:defaults "icons")
         :ref "b407773ebca56e3bd8e6a4643854e91cbde0c35e")
-  (require 'dap-mode)
+  ;; Debugging only matters inside an lsp session; load with lsp-mode
+  (with-eval-after-load 'lsp-mode
+    (require 'dap-mode)
   ;;(require 'dap-cpptools)
-  (require 'dap-ui)
-  (require 'dap-mouse)
-  (require 'dap-hydra)
+    (require 'dap-ui)
+    (require 'dap-mouse)
+    (require 'dap-hydra))
   )
 
 ;;
@@ -1203,7 +1207,6 @@
   (setq helm-projectile-fuzzy-match nil)
 
   ;; In server mode, let's just load it synchronously
-  (require 'projectile)
 
   (setq projectile-switch-project-action 'projectile-find-file)
 
