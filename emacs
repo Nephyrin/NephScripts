@@ -1442,10 +1442,9 @@
         :ref "afefc998149a9baae62c670ef05d1ebaf6713cfe")
   (setq magit-tramp-pipe-stty-settings 'pty)
 
-  (require 'with-editor)
-  (require 'magit)
-  (require 'magit-blame)
   (global-set-key (kbd "C-z C-<return>") 'magit-status)
+  ;; magit-blame-mode has no autoload cookie, so declare one
+  (autoload 'magit-blame-mode "magit-blame" nil nil)
   (global-set-key (kbd "C-z L") 'magit-blame-mode)
   (global-set-key (kbd "C-z x") 'magit)
   (global-set-key (kbd "C-z X") 'magit-ediff-stage)
