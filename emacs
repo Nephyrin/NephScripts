@@ -1347,7 +1347,6 @@
     '(ace-jump-mode-enable-mark-sync))
 
   ;; TODO Drop ace-jump?
-  (require 'avy)
   (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
   (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1))
 
