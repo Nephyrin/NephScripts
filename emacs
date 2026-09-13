@@ -586,22 +586,22 @@
 ;;
 (elpaca (helm-ag :host github :repo "syohex/emacs-helm-ag"
         :ref "67c572ae398506dc7e5e89657c1eebd532deff30")
-  (require 'helm-ag)
-
   (setq helm-ag-insert-at-point t)
   ;; (setq helm-ag-always-set-extra-option t)
 
-  (define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
-  (add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
-  (add-to-list 'helm-sources-using-default-as-input 'helm-ag-source)
-  ;; Helm's auto-affinity thing seems to massively slow it down when the system is
-  ;; under heavy load, even if that load is in low priority compilation cgroups.
-  ;;
-  ;; A common query with all files in cache goes from 20s -> 2s for me with this,
-  ;; similar to running the query on an idle system. It sounds like this affinity
-  ;; thing is trying to work around poor OS-level behavior to begin with, but with
-  ;; it disabled the Right Thing™ seems to happen on my systems.
-  (setq helm-ag-base-command (concat helm-ag-base-command " --noaffinity"))
+  (with-eval-after-load 'helm-files
+    (define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag))
+  (with-eval-after-load 'helm-ag
+    (add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
+    (add-to-list 'helm-sources-using-default-as-input 'helm-ag-source)
+    ;; Helm's auto-affinity thing seems to massively slow it down when the system is
+    ;; under heavy load, even if that load is in low priority compilation cgroups.
+    ;;
+    ;; A common query with all files in cache goes from 20s -> 2s for me with this,
+    ;; similar to running the query on an idle system. It sounds like this affinity
+    ;; thing is trying to work around poor OS-level behavior to begin with, but with
+    ;; it disabled the Right Thing™ seems to happen on my systems.
+    (setq helm-ag-base-command (concat helm-ag-base-command " --noaffinity")))
 
   (global-set-key (kbd "C-M-z C-M-n") 'neph-helm-ag-next)
   (global-set-key (kbd "C-M-z C-M-p") 'neph-helm-ag-prev)
