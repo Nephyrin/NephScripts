@@ -1188,7 +1188,6 @@
 ;;
 (elpaca (flyspell-lazy :host github :repo "rolandwalker/flyspell-lazy"
         :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10")
-  (require 'flyspell-lazy)
   (setq flyspell-lazy-idle-seconds 1)
   (setq flyspell-lazy-window-idle-seconds 1)
   (global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle))
