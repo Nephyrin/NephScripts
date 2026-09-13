@@ -623,12 +623,11 @@
 ;;
 (elpaca (helm-rg :host github :repo "nephyrin/helm-rg"
         :ref "f2cb5d3649c1f77f97ce4f8a2cb51578b863c9be")
-  (require 'helm-rg)
-
   (setq helm-rg-default-extra-args '("--max-columns=120" "--max-columns-preview"))
 
   (add-hook 'neph-rg-bounce-navigation-mode-hook 'neph-rg-bounce-navigation-mode-handler)
-  (define-key helm-rg--bounce-mode-map (kbd "C-c C-e") #'neph-rg-bounce-navigation-mode)
+  (with-eval-after-load 'helm-rg
+    (define-key helm-rg--bounce-mode-map (kbd "C-c C-e") #'neph-rg-bounce-navigation-mode))
 
   (define-key neph-rg-bounce-navigation-mode-map (kbd "g") #'helm-rg--bounce-refresh)
   (define-key neph-rg-bounce-navigation-mode-map (kbd "r") #'helm-rg--bounce-refresh-current-file)
