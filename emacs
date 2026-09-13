@@ -50,6 +50,10 @@
 ;; file -- no MELPA/ELPA menus, no network beyond the pinned :ref clones.
 ;; Must be set before the first declaration is evaluated.
 (setq elpaca-menu-functions '(elpaca-menu-declarations))
+;; elpaca dates Emacs from a release table (ends at 30.2) or emacs-build-time
+;; (nil on Arch builds) and warns when both fail; the date only feeds the
+;; version check dropped below.
+(defvar elpaca-core-date (list -1))
 (require 'elpaca)
 ;; This setup has never version-checked packages; pinned refs are reviewed as
 ;; a working set, so drop elpaca's hard-failing dependency version check.
