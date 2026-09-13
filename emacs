@@ -913,14 +913,11 @@
 ;;
 (elpaca (dape :host github :repo "svaante/dape"
         :ref "9df3ea8db0206e58c245ed3a3cbabc37b01e7b55")
-  (require 'dape)
-
   ;; Dape config
   (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
   (setq dape-inlay-hints t)
   (setq dape-cwd-function 'projectile-project-root)
   )
-
 ;;
 ;; posframe
 ;;
