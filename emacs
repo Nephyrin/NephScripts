@@ -1089,8 +1089,6 @@
 ;;
 (elpaca (ido-vertical-mode :host github :repo "gempesaw/ido-vertical-mode.el"
         :ref "b42e4227ed5d37b5d840a9d9d1cdaabf50e189b1")
-  (require 'ido)
-  (require 'ido-vertical-mode)
   ;(autoload 'ido "ido" "Ido thing." t)
   ;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
   (ido-vertical-mode 1)
