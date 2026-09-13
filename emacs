@@ -15,10 +15,9 @@
   (add-to-list 'neph-compile-stuff dir)
   (add-to-list path dir))
 
-;; The neph dir is NOT in the eager compile pass: neph-lib uses package macros
-;; (helm, dash) at compile time, so it can only compile after elpaca has built
-;; the packages -- the auto-compile declaration body below handles it.
-(add-to-list 'load-path "~/.emacs.d/neph")
+;; Init-safe local files (modeline util, theme, multi-term); neph-lib lives in
+;; its own elpaca package so it can use package macros at compile time.
+(neph-add-to-load-path 'load-path "~/.emacs.d/neph")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/neph")
 (neph-add-to-load-path 'load-path "~/.emacs.d/neph-autoloads")
 (neph-add-to-load-path 'load-path "~/.emacs.d/pos-tip")
