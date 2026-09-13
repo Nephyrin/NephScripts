@@ -59,6 +59,11 @@
 ;; when the two drift, which is worth hearing again after a pin bump.
 (defvar elpaca-installer-version 0.12)
 (require 'elpaca)
+;; elpaca's own commands beyond the core (elpaca-info, elpaca-manager, ...) are
+;; autoloaded from a file its installer generates; do the same for the submodule.
+(unless (require 'elpaca-autoloads nil t)
+  (elpaca-generate-autoloads "elpaca" (expand-file-name "elpaca.git/" user-emacs-directory))
+  (require 'elpaca-autoloads))
 ;; This setup has never version-checked packages; pinned refs are reviewed as
 ;; a working set, so drop elpaca's hard-failing dependency version check.
 (setq elpaca-default-build-steps (delq 'elpaca-check-version elpaca-default-build-steps))
