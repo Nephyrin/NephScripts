@@ -1068,7 +1068,6 @@
 ;;
 (elpaca (smart-tabs-mode :host github :repo "jcsalomon/smarttabs"
         :ref "cd19892677ec9a2c378c828aa7cef9a2b2bd1c0e")
-  (require 'smart-tabs-mode)
   (smart-tabs-insinuate 'c 'javascript 'c++)
   )
 
