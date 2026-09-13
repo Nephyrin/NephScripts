@@ -364,8 +364,6 @@
 ;;
 (elpaca (highlight-symbol :host github :repo "nschum/highlight-symbol.el"
         :ref "7a789c779648c55b16e43278e51be5898c121b3a")
-  (require 'highlight-symbol)
-
   ;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
   ;; See https://github.com/nschum/highlight-symbol.el/issues/26
   ;(defun highlight-symbol-add-symbol-with-face (symbol face)
