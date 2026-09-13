@@ -838,12 +838,8 @@
         :main "src/elisp/treemacs.el"
         :files ("src/elisp/*.el" "src/extra/*.el" "icons" "src/scripts/treemacs*.py")
         :ref "aa0944a29eee48302fd76b6c3a59c5aece114fa6")
-  (require 'treemacs)
-  (require 'treemacs-mouse-interface)
-  (require 'treemacs-hydras)
   ;;(require 'treemacs-projectile)
   )
-
 ;;(require 'lsp-clangd)
 (elpaca (ccls :host github :repo "MaskRay/emacs-ccls"
         :ref "8648238a92e5fd1ca1b693c99d2824f8804736b0")
