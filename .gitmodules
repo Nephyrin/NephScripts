@@ -7,99 +7,24 @@
 [submodule "bin/gti-git"]
 	path = bin/gti-git
 	url = https://github.com/rwos/gti.git
-[submodule "emacs.d/helm"]
-	path = emacs.d/helm
-	url = https://github.com/emacs-helm/helm.git
-[submodule "emacs.d/fic-mode.git"]
-	path = emacs.d/fic-mode.git
-	url = https://github.com/lewang/fic-mode.git
-[submodule "emacs.d/git-gutter-fringe"]
-	path = emacs.d/git-gutter-fringe
-	url = https://github.com/syohex/emacs-git-gutter-fringe
 [submodule "vim-powerline-for-fontpatcher"]
 	path = vim-powerline-for-fontpatcher
 	url = https://github.com/Lokaltog/vim-powerline
-[submodule "emacs.d/git-gutter"]
-	path = emacs.d/git-gutter
-	url = https://github.com/syohex/emacs-git-gutter.git
 [submodule "emacs.d/clang-complete-async.git"]
 	path = emacs.d/clang-complete-async.git
 	url = https://github.com/Golevka/emacs-clang-complete-async.git
-[submodule "emacs.d/magit"]
-	path = emacs.d/magit
-	url = https://github.com/magit/magit
-[submodule "emacs.d/fringe-helper"]
-	path = emacs.d/fringe-helper
-	url = https://github.com/nschum/fringe-helper.el.git
 [submodule "bin/git-imerge.git"]
 	path = bin/git-imerge.git
 	url = https://github.com/Nephyrin/git-imerge.git
-[submodule "emacs.d/ace-jump-mode"]
-	path = emacs.d/ace-jump-mode
-	url = https://github.com/winterTTr/ace-jump-mode
-[submodule "emacs.d/purple-haze-theme"]
-	path = emacs.d/purple-haze-theme
-	url = https://github.com/Nephyrin/emacs-purple-haze-theme.git
-[submodule "emacs.d/powerline"]
-	path = emacs.d/powerline
-	url = https://github.com/milkypostman/powerline
 [submodule "moz/hacky.mk"]
 	path = moz/hacky.mk
 	url = https://github.com/bgirard/hacky.mk.git
-[submodule "emacs.d/god-mode"]
-	path = emacs.d/god-mode
-	url = https://github.com/chrisdone/god-mode
 [submodule "powerline.git"]
 	path = powerline.git
 	url = https://github.com/powerline/powerline
-[submodule "emacs.d/web-mode"]
-	path = emacs.d/web-mode
-	url = https://github.com/fxbois/web-mode
-[submodule "emacs.d/ido-vertical-mode"]
-	path = emacs.d/ido-vertical-mode
-	url = https://github.com/gempesaw/ido-vertical-mode.el
-[submodule "emacs.d/color-identifiers-mode"]
-	path = emacs.d/color-identifiers-mode
-	url = https://github.com/ankurdave/color-identifiers-mode
-[submodule "emacs.d/dash"]
-	path = emacs.d/dash
-	url = https://github.com/magnars/dash.el
-[submodule "emacs.d/sunburst-theme"]
-	path = emacs.d/sunburst-theme
-	url = https://github.com/neomantic-zz/Emacs-Sunburst-Color-Theme
-[submodule "emacs.d/minimap"]
-	path = emacs.d/minimap
-	url = https://github.com/dengste/minimap
-[submodule "emacs.d/rainbow-delimiters"]
-	path = emacs.d/rainbow-delimiters
-	url = https://github.com/Fanael/rainbow-delimiters
 [submodule "bin/ls++-Term-ExtendedColor.git"]
 	path = bin/ls++-Term-ExtendedColor.git
 	url = https://github.com/trapd00r/Term-ExtendedColor
-[submodule "emacs.d/markdown-mode"]
-	path = emacs.d/markdown-mode
-	url = git@github.com:jrblevin/markdown-mode.git
-[submodule "emacs.d/company-mode"]
-	path = emacs.d/company-mode
-	url = https://github.com/company-mode/company-mode
-[submodule "emacs.d/ample-zen"]
-	path = emacs.d/ample-zen
-	url = https://github.com/mjwall/ample-zen
-[submodule "emacs.d/lua-mode"]
-	path = emacs.d/lua-mode
-	url = https://github.com/immerrr/lua-mode
-[submodule "emacs.d/projectile"]
-	path = emacs.d/projectile
-	url = https://github.com/bbatsov/projectile
-[submodule "emacs.d/function-args"]
-	path = emacs.d/function-args
-	url = https://github.com/abo-abo/function-args
-[submodule "emacs.d/swiper"]
-	path = emacs.d/swiper
-	url = https://github.com/abo-abo/swiper
-[submodule "emacs.d/popup-el"]
-	path = emacs.d/popup-el
-	url = https://github.com/auto-complete/popup-el
 [submodule "zsh.d/autosuggestions"]
 	path = zsh.d/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
@@ -109,265 +34,15 @@
 [submodule "zsh.d/syntax-highlighting"]
 	path = zsh.d/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "emacs.d/ecb"]
-	path = emacs.d/ecb
-	url = https://github.com/emacsmirror/ecb
-[submodule "emacs.d/smarttabs"]
-	path = emacs.d/smarttabs
-	url = https://github.com/jcsalomon/smarttabs
-[submodule "emacs.d/p4.el"]
-	path = emacs.d/p4.el
-	url = https://github.com/gareth-rees/p4.el.git
-[submodule "emacs.d/helm-ag"]
-	path = emacs.d/helm-ag
-	url = https://github.com/syohex/emacs-helm-ag
 [submodule "bin/suncalc.git"]
 	path = bin/suncalc.git
 	url = https://github.com/mourner/suncalc
-[submodule "emacs.d/helm-projectile"]
-	path = emacs.d/helm-projectile
-	url = https://github.com/bbatsov/helm-projectile
-[submodule "emacs.d/phi-search"]
-	path = emacs.d/phi-search
-	url = https://github.com/zk-phi/phi-search
-[submodule "emacs.d/multiple-cursors"]
-	path = emacs.d/multiple-cursors
-	url = https://github.com/magnars/multiple-cursors.el
-[submodule "emacs.d/highlight-symbol"]
-	path = emacs.d/highlight-symbol
-	url = https://github.com/nschum/highlight-symbol.el
-[submodule "emacs.d/rainbow-mode"]
-	path = emacs.d/rainbow-mode
-	url = https://github.com/emacsmirror/rainbow-mode
-[submodule "emacs.d/with-editor"]
-	path = emacs.d/with-editor
-	url = https://github.com/magit/with-editor
-[submodule "emacs.d/flyspell-lazy"]
-	path = emacs.d/flyspell-lazy
-	url = https://github.com/rolandwalker/flyspell-lazy
-[submodule "emacs.d/evil"]
-	path = emacs.d/evil
-	url = https://github.com/emacsmirror/evil
-[submodule "emacs.d/company-quickhelp"]
-	path = emacs.d/company-quickhelp
-	url = https://github.com/expez/company-quickhelp
-[submodule "emacs.d/irony-mode"]
-	path = emacs.d/irony-mode
-	url = https://github.com/Sarcasm/irony-mode
-[submodule "emacs.d/company-irony"]
-	path = emacs.d/company-irony
-	url = https://github.com/Sarcasm/company-irony
-[submodule "emacs.d/flycheck-irony"]
-	path = emacs.d/flycheck-irony
-	url = https://github.com/Sarcasm/flycheck-irony
-[submodule "emacs.d/flycheck"]
-	path = emacs.d/flycheck
-	url = https://github.com/flycheck/flycheck
-[submodule "emacs.d/fzf"]
-	path = emacs.d/fzf
-	url = https://github.com/bling/fzf.el
-[submodule "emacs.d/htmlize"]
-	path = emacs.d/htmlize
-	url = https://github.com/hniksic/emacs-htmlize
-[submodule "emacs.d/emacs-async"]
-	path = emacs.d/emacs-async
-	url = https://github.com/jwiegley/emacs-async
-[submodule "emacs.d/git-modes"]
-	path = emacs.d/git-modes
-	url = https://github.com/magit/git-modes
-[submodule "emacs.d/magit-popup"]
-	path = emacs.d/magit-popup
-	url = https://github.com/magit/magit-popup
-[submodule "emacs.d/magit-ghub"]
-	path = emacs.d/magit-ghub
-	url = https://github.com/magit/ghub
-[submodule "emacs.d/emacs-ycmd"]
-	path = emacs.d/emacs-ycmd
-	url = https://github.com/abingham/emacs-ycmd
-[submodule "emacs.d/s.el"]
-	path = emacs.d/s.el
-	url = https://github.com/magnars/s.el
-[submodule "emacs.d/emacs-deferred"]
-	path = emacs.d/emacs-deferred
-	url = https://github.com/kiwanami/emacs-deferred
-[submodule "emacs.d/emacs-request"]
-	path = emacs.d/emacs-request
-	url = https://github.com/tkf/emacs-request
-[submodule "emacs.d/f.el"]
-	path = emacs.d/f.el
-	url = https://github.com/rejeep/f.el
-[submodule "emacs.d/emacs-websocket"]
-	path = emacs.d/emacs-websocket
-	url = https://github.com/ahyatt/emacs-websocket
-[submodule "emacs.d/emacs-ipython-notebook"]
-	path = emacs.d/emacs-ipython-notebook
-	url = https://github.com/millejoh/emacs-ipython-notebook
-[submodule "emacs.d/auto-complete"]
-	path = emacs.d/auto-complete
-	url = https://github.com/auto-complete/auto-complete
-[submodule "emacs.d/skewer-mode"]
-	path = emacs.d/skewer-mode
-	url = https://github.com/skeeto/skewer-mode
-[submodule "emacs.d/emacs-web-server"]
-	path = emacs.d/emacs-web-server
-	url = https://github.com/skeeto/emacs-web-server
-[submodule "emacs.d/js2-mode"]
-	path = emacs.d/js2-mode
-	url = https://github.com/mooz/js2-mode
-[submodule "emacs.d/polymode"]
-	path = emacs.d/polymode
-	url = https://github.com/polymode/polymode
-[submodule "emacs.d/emacs-gdb"]
-	path = emacs.d/emacs-gdb
-	url = https://github.com/weirdNox/emacs-gdb
-[submodule "emacs.d/hydra"]
-	path = emacs.d/hydra
-	url = https://github.com/abo-abo/hydra
-[submodule "emacs.d/yaml-mode"]
-	path = emacs.d/yaml-mode
-	url = https://github.com/yoshiki/yaml-mode
-[submodule "emacs.d/lsp-mode"]
-	path = emacs.d/lsp-mode
-	url = https://github.com/emacs-lsp/lsp-mode
-[submodule "emacs.d/emacs-ht"]
-	path = emacs.d/emacs-ht
-	url = https://github.com/Wilfred/ht.el
-[submodule "emacs.d/emacs-spinner"]
-	path = emacs.d/emacs-spinner
-	url = https://github.com/Malabarba/spinner.el
-[submodule "emacs.d/lsp-treemacs"]
-	path = emacs.d/lsp-treemacs
-	url = https://github.com/emacs-lsp/lsp-treemacs
-[submodule "emacs.d/treemacs"]
-	path = emacs.d/treemacs
-	url = https://github.com/Alexander-Miller/treemacs
-[submodule "emacs.d/ace-window"]
-	path = emacs.d/ace-window
-	url = https://github.com/abo-abo/ace-window
-[submodule "emacs.d/avy"]
-	path = emacs.d/avy
-	url = https://github.com/abo-abo/avy
-[submodule "emacs.d/pfuture"]
-	path = emacs.d/pfuture
-	url = https://github.com/Alexander-Miller/pfuture
-[submodule "emacs.d/lsp-ui"]
-	path = emacs.d/lsp-ui
-	url = https://github.com/emacs-lsp/lsp-ui
-[submodule "emacs.d/emacs-ccls"]
-	path = emacs.d/emacs-ccls
-	url = https://github.com/MaskRay/emacs-ccls
-[submodule "emacs.d/dap-mode"]
-	path = emacs.d/dap-mode
-	url = https://github.com/emacs-lsp/dap-mode
-[submodule "emacs.d/helm-lsp"]
-	path = emacs.d/helm-lsp
-	url = https://github.com/emacs-lsp/helm-lsp
-[submodule "emacs.d/yasnippet"]
-	path = emacs.d/yasnippet
-	url = https://github.com/joaotavora/yasnippet
-[submodule "emacs.d/pkg-info"]
-	path = emacs.d/pkg-info
-	url = https://github.com/emacsorphanage/pkg-info
-[submodule "emacs.d/epl"]
-	path = emacs.d/epl
-	url = https://github.com/cask/epl
-[submodule "emacs.d/helm-swoop"]
-	path = emacs.d/helm-swoop
-	url = https://github.com/emacsorphanage/helm-swoop
 [submodule "zsh.d/powerlevel10k"]
 	path = zsh.d/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
-[submodule "emacs.d/mmm-mode"]
-	path = emacs.d/mmm-mode
-	url = https://github.com/purcell/mmm-mode
-[submodule "emacs.d/mmm-jinja2"]
-	path = emacs.d/mmm-jinja2
-	url = https://github.com/glynnforrest/mmm-jinja2
-[submodule "emacs.d/salt-mode"]
-	path = emacs.d/salt-mode
-	url = https://github.com/glynnforrest/salt-mode
-[submodule "emacs.d/xterm-color"]
-	path = emacs.d/xterm-color
-	url = https://github.com/atomontage/xterm-color
-[submodule "emacs.d/eterm-256color"]
-	path = emacs.d/eterm-256color
-	url = https://github.com/dieggsy/eterm-256color
-[submodule "emacs.d/magit-transient"]
-	path = emacs.d/magit-transient
-	url = https://github.com/magit/transient
-[submodule "emacs.d/treepy"]
-	path = emacs.d/treepy
-	url = https://github.com/volrath/treepy.el
-[submodule "emacs.d/helm-rg"]
-	path = emacs.d/helm-rg
-	# Upstream abandoned
-	url = https://github.com/nephyrin/helm-rg
-[submodule "emacs.d/posframe"]
-	path = emacs.d/posframe
-	url = git@github.com:tumashu/posframe.git
-[submodule "emacs.d/bui.el"]
-	path = emacs.d/bui.el
-	url = git@github.com:alezost/bui.el.git
-[submodule "emacs.d/rustic"]
-	path = emacs.d/rustic
-	url = git@github.com:brotzeit/rustic.git
-[submodule "emacs.d/rust-mode"]
-	path = emacs.d/rust-mode
-	url = https://github.com/rust-lang/rust-mode
-[submodule "emacs.d/lsp-pyright"]
-	path = emacs.d/lsp-pyright
-	url = https://github.com/emacs-lsp/lsp-pyright
-[submodule "emacs.d/compat.el"]
-	path = emacs.d/compat.el
-	url = git@github.com:phikal/compat.el.git
-[submodule "emacs.d/rg.el"]
-	path = emacs.d/rg.el
-	url = git@github.com:dajva/rg.el.git
-[submodule "emacs.d/wgrep"]
-	path = emacs.d/wgrep
-	url = git@github.com:mhayashi1120/Emacs-wgrep.git
-[submodule "emacs.d/lsp-docker"]
-	path = emacs.d/lsp-docker
-	url = git@github.com:emacs-lsp/lsp-docker.git
-[submodule "emacs.d/yaml.el"]
-	path = emacs.d/yaml.el
-	url = git@github.com:zkry/yaml.el.git
-[submodule "emacs.d/editorconfig"]
-	path = emacs.d/editorconfig
-	url = git@github.com:editorconfig/editorconfig-emacs.git
-[submodule "emacs.d/copilot"]
-	path = emacs.d/copilot
-	url = git@github.com:zerolfx/copilot.el.git
-[submodule "emacs.d/indent-bars"]
-	path = emacs.d/indent-bars
-	url = git@github.com:jdtsmith/indent-bars.git
-[submodule "emacs.d/auto-compile"]
-	path = emacs.d/auto-compile
-	url = https://github.com/emacscollective/auto-compile
-[submodule "emacs.d/php-mode"]
-	path = emacs.d/php-mode
-	url = git@github.com:emacs-php/php-mode.git
-[submodule "emacs.d/consult"]
-	path = emacs.d/consult
-	url = https://github.com/minad/consult.git
-[submodule "emacs.d/vertico"]
-	path = emacs.d/vertico
-	url = https://github.com/minad/vertico.git
-[submodule "emacs.d/counsel-projectile"]
-	path = emacs.d/counsel-projectile
-	url = https://github.com/ericdanan/counsel-projectile.git
-[submodule "emacs.d/dape"]
-	path = emacs.d/dape
-	url = https://github.com/svaante/dape.git
-[submodule "emacs.d/jsonrpc"]
-	path = emacs.d/jsonrpc
-	url = https://github.com/emacs-straight/jsonrpc.git
-[submodule "emacs.d/cond-let"]
-	path = emacs.d/cond-let
-	url = https://github.com/tarsius/cond-let.git
-[submodule "emacs.d/llama"]
-	path = emacs.d/llama
-	url = https://github.com/tarsius/llama.git
+[submodule "emacs.d/elpaca"]
+	path = emacs.d/elpaca.git
+	url = https://github.com/progfolio/elpaca.git
 [submodule "zsh.d/plugins/fzf-tab"]
 	path = zsh.d/plugins/fzf-tab
 	url = https://github.com/Aloxaf/fzf-tab

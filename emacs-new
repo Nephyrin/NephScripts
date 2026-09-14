@@ -1,0 +1,2432 @@
+;;; emacs-new --- Elpaca translation of ~/.emacs load-paths + neph-init package config  -*- lexical-binding: nil; -*-
+;;
+;; TEMPLATE — NOT WIRED IN YET.  Do not symlink or load this file.
+;; One (elpaca ...) declaration per emacs.d/ submodule (109 total), pinned via inline
+;; :ref to the exact commit the submodule gitlink points at, each followed by that
+;; package's config lifted verbatim from emacs.d/neph/neph-init.el into the body.
+;; Declaration order mirrors the load-path order of the current `emacs' file.
+;;
+;; Elpaca bootstrap is intentionally absent; at wiring time it goes at the marker
+;; below.  Grep TODO-elpaca for everything that needs a decision at wiring time.
+;;
+;; Semantics to remember (verified against elpaca master, installer 0.12):
+;;  - All (elpaca ...) forms enqueue during init; installation/builds run from
+;;    after-init-hook; declaration BODIES run after the ENTIRE queue finishes, in
+;;    declaration order.  Config that today runs during init (theme load, global
+;;    modes) shifts to post-init.  In particular neph-init's custom-set-variables
+;;    monolith runs during init, so it will run BEFORE these bodies instead of
+;;    after them — override direction flips vs today; see per-block TODO-elpaca
+;;    notes for the affected variables.
+;;  - A failed package drops its body and cascades failure to dependents, loudly.
+;;  - Never use :wait in this file (it would break later-declared dependencies).
+;;  - Repos land in <elpaca-directory>/sources/<basename-of-:repo>.  Zero-network
+;;    migration: pre-seed each sources/<basename> by moving the existing submodule
+;;    checkout (dir -> basename map derives from .gitmodules; no basename
+;;    collisions exist).  Do NOT pre-seed builds/.
+;;
+;; Accounting notes:
+;;  - .gitmodules contains a stale stanza "emacs.d/clang-complete-async.git" with
+;;    no gitlink; intentionally absent here.
+;;  - Old `emacs' line 64 adds nonexistent "~/.emacs.d/jsonrpc-1.0.24" (dead); the
+;;    real jsonrpc submodule is declared below.
+;;  - Deliberately NOT translated (stays in neph-init): built-in-emacs config, the
+;;    neph-base-cfg/neph-space-cfg/neph-tab-cfg hub functions (2367-2563), modeline
+;;    (1826-2032), Custom-binds section (2711-3443), dead rtags blocks (1365-1536,
+;;    1565-1695), custom-set-variables/faces monolith (3645-3791), default font
+;;    (3602-3607).
+
+;; This nonsense has to be set before *any* LSP stuff is touched or loaded by
+;; e.g. compile-directory  [lifted from ~/.emacs:1-2; elpaca builds byte-compile
+;; in child processes that inherit this environment]
+(setenv "LSP_USE_PLISTS" "true")
+
+;; Don't load outdated .elc files, it's basically never what was intended.
+;; [lifted from ~/.emacs:4-5]
+(setq load-prefer-newer t)
+
+;; ---------------------------------------------------------------------------
+;; Elpaca safety rails — fail closed, no network beyond the pinned repos.
+;; ---------------------------------------------------------------------------
+
+;; Recipes may come ONLY from the declarations in this file.  Must be evaluated
+;; before the first (elpaca ...) form: menu lookup happens at declaration time,
+;; and the default menus would git-clone MELPA on first use.
+(setq elpaca-menu-functions '(elpaca-menu-declarations))
+
+;; TODO-elpaca: << elpaca bootstrap block goes here at wiring time (installer
+;; pinned to a reviewed commit; its recipe is self-contained and menu-free). >>
+
+(with-eval-after-load 'elpaca
+  ;; Today's init has no version checking at all (no package.el); pinned commits
+  ;; are reviewed as a working set.  elpaca-check-version would hard-fail any
+  ;; package whose Package-Requires minimum exceeds a pinned dep's Version:
+  ;; header, so disable the step globally for parity.
+  ;; TODO-elpaca: partial rebuilds (built dependent + deleted dep build dir)
+  ;; re-add the check at runtime; if that ever fires, the failure message names
+  ;; the exact package/version — decide then between bumping the pin and
+  ;; per-recipe :build (:not elpaca-check-version).
+  (setq elpaca-default-build-steps
+        (delq 'elpaca-check-version elpaca-default-build-steps))
+  ;; Features that Package-Requires may name but which must never be installed:
+  ;; provided by a sibling file in an already-declared repo's build, vendored
+  ;; below, or genuinely absent today (in which case dependents already cope).
+  (setq elpaca-ignored-dependencies
+        (append elpaca-ignored-dependencies
+                '(helm-core   ; ships in the helm repo's build
+                  counsel     ; ships in the swiper repo's build (declared as ivy)
+                  swiper      ; ships in the swiper repo's build (declared as ivy)
+                  lv          ; ships in the hydra repo's build
+                  magit-section ; ships in the magit repo's build
+                  pos-tip     ; vendored plain dir (load-path above/below)
+                  ;; TODO-elpaca: wfnames (helm) and cfrs (treemacs) are real
+                  ;; upstream deps that are simply absent today; behavior is
+                  ;; unchanged, but wanting those features later means adding
+                  ;; pinned declarations for them.
+                  wfnames
+                  cfrs
+                  ;; TODO-elpaca: goto-chg is named by evil-pkg.el but absent
+                  ;; today too — and evil itself is never loaded (its config is
+                  ;; fully commented in neph-init).  Without this entry the
+                  ;; fail-closed setup would fail evil's build outright.
+                  goto-chg
+                  request-deferred)))) ; ships in the request repo's build;
+                                       ; only matters if the disabled ycmd
+                                       ; stack is ever re-enabled
+;; NOTE: transient, jsonrpc, and compat are built into modern Emacs but pinned
+;; submodules here; declaring a package removes it from elpaca's ignore list, so
+;; the pinned versions win.  Never add those three to the list above.
+
+;; ---------------------------------------------------------------------------
+;; Vendored non-submodule dirs (no gitlinks; unchanged from today)
+;; ---------------------------------------------------------------------------
+(add-to-list 'load-path "~/.emacs.d/neph")
+(add-to-list 'load-path "~/.emacs.d/neph-autoloads")
+(add-to-list 'load-path "~/.emacs.d/pos-tip")                 ; company-quickhelp dep
+(add-to-list 'load-path "~/.emacs.d/ansi-color-overlay-mode")
+(add-to-list 'load-path "~/.emacs.d/gdb-ansi-color")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/neph")
+;; protobuf-mode comes from the system install — nothing to declare.
+;; TODO-elpaca: the old ~/.emacs byte-recompile-directory loop covered these
+;; vendored dirs; decide their compile story at wiring time (auto-compile's
+;; on-load mode may suffice).
+
+;; ---------------------------------------------------------------------------
+;; Package declarations (order mirrors ~/.emacs load-path order)
+;; ---------------------------------------------------------------------------
+
+;;; ------------------------------------------------------------------
+;;; dash  [dir dash | cfg neph-init.el:— | hub neph-init.el:1253,1261]
+;; NOTE: ~/.emacs load-path comment for this dir reads "dependency of ht".
+(elpaca (dash :host github :repo "magnars/dash.el"
+              :ref "6db80c711ce947f6c6fa11e5c2257fff2c79d139"))
+
+;;; ------------------------------------------------------------------
+;;; ht  [dir emacs-ht | cfg neph-init.el:14-15 | hub neph-init.el:1190-1193]
+(elpaca (ht :host github :repo "Wilfred/ht.el"
+            :ref "3c1677f1bf2ded2ab07edffb7d17def5d2b5b6f6")
+  ;; -- lifted verbatim from neph-init.el:14-15 --
+  ;; Global libraries macros in here (and also )
+  (require 'ht)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; bui  [dir bui.el | cfg neph-init.el:— | hub —]
+;;; No config; dependency (helm-lsp / lsp-treemacs). Submodule URL is ssh.
+(elpaca (bui :host github :repo "alezost/bui.el" :protocol ssh
+             :ref "f3a137628e112a91910fd33c0cff0948fa58d470"))
+
+;;; ------------------------------------------------------------------
+;;; compat  [dir compat.el | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (compat :host github :repo "phikal/compat.el" :protocol ssh
+                :ref "730f2c5ad62137ae6a6ea002a24ce9418954e441"))
+
+;;; ------------------------------------------------------------------
+;;; spinner  [dir emacs-spinner | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (spinner :host github :repo "Malabarba/spinner.el"
+                 :ref "d4647ae87fb0cd24bc9081a3d287c860ff061c21"))
+
+;;; ------------------------------------------------------------------
+;;; s  [dir s.el | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (s :host github :repo "magnars/s.el"
+           :ref "dda84d38fffdaf0c9b12837b504b402af910d01d"))
+
+;;; ------------------------------------------------------------------
+;;; f  [dir f.el | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (f :host github :repo "rejeep/f.el"
+           :ref "931b6d0667fe03e7bf1c6c282d6d8d7006143c52"))
+
+;;; ------------------------------------------------------------------
+;;; editorconfig  [dir editorconfig | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (editorconfig :host github :repo "editorconfig/editorconfig-emacs" :protocol ssh
+                      :ref "f7588dd1a216bfd0a89109ae7bcc3a7da74824c1"))
+
+;;; ------------------------------------------------------------------
+;;; xterm-color  [dir xterm-color | cfg neph-init.el:209-212 | hub neph-init.el:217]
+(elpaca (xterm-color :host github :repo "atomontage/xterm-color"
+                     :ref "4b21b619841c93c4700039a93eb1881beee9248c")
+  ;; -- lifted verbatim from neph-init.el:209-212 --
+  ;;
+  ;; Xterm color
+  ;;
+  (require 'xterm-color)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; eterm-256color  [dir eterm-256color | cfg neph-init.el:213-215 (all commented out) | hub —]
+(elpaca (eterm-256color :host github :repo "dieggsy/eterm-256color"
+                        :ref "0f0dab497239ebedbc9c4a48b3ec8cce4a47e980"
+                        ;; eterm-256color-compile runs `tic' on eterm-256color.ti, resolved next to
+                        ;; the loaded library; the default :files directive does not link *.ti.
+                        :files (:defaults "eterm-256color.ti"))
+  ;; -- lifted verbatim from neph-init.el:213-215 --
+  ;(require 'eterm-256color) FIXME debug-init
+
+  ;;(add-hook 'term-mode-hook #'eterm-256color-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; markdown-mode  [dir markdown-mode | cfg neph-init.el:251-259 | hub neph-init.el:2867-2938, 3686]
+(elpaca (markdown-mode :host github :repo "jrblevin/markdown-mode" :protocol ssh
+                       :ref "c765b73b370f0fcaaa3cee28b2be69652e2d2c39")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3686) sets markdown-command to "marked";
+  ;; the config below does not touch it, but today custom runs LAST while under elpaca this body
+  ;; runs post-init -- override direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:251-259 --
+  ;;
+  ;; Markdown mode
+  ;;
+
+  (autoload 'markdown-mode "markdown-mode"
+     "Major mode for editing Markdown files" t)
+  (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; evil  [dir evil | cfg neph-init.el:261-266 | hub —]
+;;; Pinned to the emacsmirror mirror of evil, not the emacs-evil upstream repo.
+;; TODO-elpaca: the repo ships evil-pkg.el, which sorts before evil.el and therefore becomes
+;; the main file; its define-package form requires (goto-chg "1.6"), which is not among the
+;; pinned packages. The repo vendors lib/goto-chg.el, but the default :files directive does
+;; not link lib/*.el, and elpaca resolves dependencies by id, not by file — so this
+;; declaration will fail with "failed dependency: goto-chg" unless goto-chg is supplied, or
+;; :main "evil.el" is set (evil.el itself carries no Package-Requires header).
+;; TODO-elpaca: the commented require below names neph-evil-autoload, an autoload file
+;; generated by emacs.d/compile.sh; under elpaca autoloads are generated by the build.
+(elpaca (evil :host github :repo "emacsmirror/evil"
+              :ref "2ce03d412c4e93b0b89eb43d796c991806415b8a")
+  ;; -- lifted verbatim from neph-init.el:261-266 --
+  ;;
+  ;; Evil
+  ;;
+
+  ;(require 'neph-evil-autoload)
+  ;(global-set-key (kbd "C-z C-M-SPC") 'evil-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; indent-bars  [dir indent-bars | cfg neph-init.el:268-287 | hub —]
+(elpaca (indent-bars :host github :repo "jdtsmith/indent-bars" :protocol ssh
+                     :ref "aa07a3d812c64445d44796b85fca07044864f64b")
+  ;; -- lifted verbatim from neph-init.el:268-287 --
+  ;;
+  ;; Indent bars
+  ;;
+  (require 'indent-bars)
+  (require 'indent-bars-ts)
+  (setq indent-bars-width-frac 0.05)
+
+  (setq indent-bars-treesit-support t)
+  (setq indent-bars-treesit-wrap '((python argument_list parameters
+                                           list list_comprehension
+                                           dictionary dictionary_comprehension
+                                           parenthesized_expression subscript)))
+  (setq indent-bars-treesit-ignore-blank-lines-types '("module"))
+
+  (setq indent-bars-prefer-character nil)
+  (setq indent-bars-depth-update-delay 0.0)
+
+  ;; SiGnIfiCaNt WhItEsPaCe
+  (add-hook 'python-mode-hook 'indent-bars-mode)
+  (add-hook 'python-ts-mode-hook 'indent-bars-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; highlight-symbol  [dir highlight-symbol | cfg neph-init.el:289-311,355 | hub neph-init.el:313-354,2423]
+(elpaca (highlight-symbol :host github :repo "nschum/highlight-symbol.el"
+                          :ref "7a789c779648c55b16e43278e51be5898c121b3a")
+  ;; -- lifted verbatim from neph-init.el:289-311 --
+  ;;
+  ;; Highlight Symbol
+  ;;
+  (require 'highlight-symbol)
+
+  ;; This hack fixes highlight-symbol-mode perf, but breaks the explicit commands
+  ;; See https://github.com/nschum/highlight-symbol.el/issues/26
+  ;(defun highlight-symbol-add-symbol-with-face (symbol face)
+  ;  (save-excursion
+  ;    (goto-char (point-min))
+  ;    (while (re-search-forward symbol nil t)
+  ;      (let ((ov (make-overlay (match-beginning 0)
+  ;                              (match-end 0))))
+  ;        (overlay-put ov 'highlight-symbol t)
+  ;        (overlay-put ov 'face face)))))
+  ;
+  ;(defun highlight-symbol-remove-symbol (_symbol)
+  ;  (dolist (ov (overlays-in (point-min) (point-max)))
+  ;    (when (overlay-get ov 'highlight-symbol)
+  ;      (delete-overlay ov))))
+
+  ;; TODO Should this merge with highlight-symbol? mostly I want highlight-phrase and highlight-regexp but with
+  ;; highlight-symbol's added functionality, it's odd that highlight-symbol didn't build on the former.
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:355 --
+  (setq highlight-symbol-idle-delay 0.3)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; rust-mode  [dir rust-mode | cfg neph-init.el:— (rust-indent-offset at 365 is lifted in the
+;;;            rustic block; rust-mode is pulled in as a rustic dependency) | hub neph-init.el:—]
+(elpaca (rust-mode :host github :repo "rust-lang/rust-mode"
+                   :ref "9915b3a585a7a75e9126df9e0e9d1df8057ae3cf"))
+
+;;; ------------------------------------------------------------------
+;;; rustic  [dir rustic | cfg neph-init.el:357-365 | hub neph-init.el:2526, 3677]
+(elpaca (rustic :host github :repo "brotzeit/rustic" :protocol ssh
+                :ref "ad6f3061ff287fe6a9391a67b59c77c4622a2c1b")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3677) sets
+  ;; lsp-rust-analyzer-server-display-inlay-hints to t (an lsp-mode variable, rust-specific);
+  ;; today custom runs LAST, under elpaca bodies run post-init -- override direction may flip at
+  ;; wiring time.
+  ;; -- lifted verbatim from neph-init.el:357-365 --
+  ;;
+  ;; Rust mode
+  ;;
+
+  (require 'rustic)
+
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
+  (setq rustic-indent-offset 2)
+  (setq rust-indent-offset 2)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; lua-mode  [dir lua-mode | cfg neph-init.el:367-376 | hub neph-init.el:2462]
+(elpaca (lua-mode :host github :repo "immerrr/lua-mode"
+                  :ref "ad639c62e38a110d8d822c4f914af3e20b40ccc4")
+  ;; -- lifted verbatim from neph-init.el:367-376 --
+  ;;
+  ;; Lua mode
+  ;;
+
+  (autoload 'lua-mode "lua-mode"
+     "Major mode for editing Lua files" t)
+  (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+
+  ;; Defaults to 3. What in the goddamn.
+  (setq lua-indent-level 2)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; htmlize  [dir htmlize | cfg neph-init.el:441-505 | hub neph-init.el:507-553]
+(elpaca (htmlize :host github :repo "hniksic/emacs-htmlize"
+                 :ref "8db0aa6aab77475a732b7363f0d57bd3933c18fd")
+  ;; -- lifted verbatim from neph-init.el:441-505 --
+  ;;
+  ;; Htmlize
+  ;;
+
+  (autoload 'htmlize-buffer "htmlize" "htmlize" t)
+
+  ;; Hacky thing to htmlize a region and send it straight to browser
+  ;;(defun neph-html-region ()
+  ;;  (interactive)
+  ;;  (let* ((regionp (region-active-p))
+  ;;         (beg (and regionp (region-beginning)))
+  ;;         (end (and regionp (region-end)))
+  ;;         (buf (current-buffer))
+  ;;         ;; poor man's with-temp-killring (requires let*)
+  ;;         (kill-ring (list "temp kill ring"))
+  ;;         (kill-ring-yank-pointer kill-ring))
+  ;;    (with-temp-buffer
+  ;;      ;;(switch-to-buffer (current-buffer) nil t)
+  ;;      (rename-buffer "*Neph HTMLIZE Temp Buffer*" t)
+  ;;      (font-lock-mode -1) ;; We want to keep the face properties from the source buffer always
+  ;;      (insert-buffer-substring-as-yank buf beg end)
+  ;;      (with-current-buffer (htmlize-buffer)
+  ;;        (write-file "~/.emacs.d/htmlize-temp.htm"))))
+  ;;        ;;(kill-buffer)))
+  ;;    ;; This is the way the help actually suggests you prevent it from opening this buffer.
+  ;;    (let ((display-buffer-alist (cons '("\\*Async Shell Command\\*" (display-buffer-no-window))
+  ;;                                      display-buffer-alist)))
+  ;;      (async-shell-command "chromium ~/.emacs.d/htmlize-temp.htm")))
+
+  (defun neph-html-region ()
+    (interactive)
+    (require 'htmlize)
+    (with-current-buffer
+        (htmlize-region (point) (mark))
+      (write-file "~/.emacs.d/htmlize-temp.htm"))
+    ;;(kill-buffer)))
+    ;; FIXME font from (face-attribute 'default :family)
+    ;; FIXME charset utf-8?
+    (start-process-shell-command "neph-html-region" nil "xdg-open ~/.emacs.d/htmlize-temp.htm"))
+
+  (defun neph-html-copy ()
+    "Copy the selected region to the clipboard as html.  Requires awk and xclip be available."
+    (interactive)
+    (require 'htmlize)
+    ;; Detect some modes that clash with htmlize, set mode to inline-css for maximal CnP compatibility
+    (let ((ghl (and (boundp 'global-hl-line-mode) global-hl-line-mode))
+          (htmlize-output-type 'inline-css)
+          (htmlize-pre-style 't))
+      ;; Disable incompatible modes, run htmlize, re-enable
+      (when ghl (global-hl-line-mode -1))
+      (with-current-buffer
+          (htmlize-region (region-beginning) (region-end))
+        (write-file "~/.emacs.d/htmlize-temp.htm"))
+      (when ghl (global-hl-line-mode 1)))
+    ;; Awful awk script to skip all the doctype/html/body/head document tags and just select the 'pre'
+    ;; tag, then stuff it onto the clipboard
+    (start-process-shell-command "neph-html-copy" nil
+                                 (concat "awk -i inplace '/^ *<pre/ { inpre=1; };"
+                                         "  /^ *<\\/pre/ { inpre=0; print };"
+                                         "  inpre { print };'"
+                                         "  ~/.emacs.d/htmlize-temp.htm && "
+                                         "xclip -quiet -i -selection clipboard -target text/html"
+                                         "  ~/.emacs.d/htmlize-temp.htm")))
+
+  ;(global-set-key (kbd "C-z M-w") 'neph-html-copy)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; auto-complete  [dir auto-complete | cfg neph-init.el:— | hub neph-init.el:—]
+;; NOTE: this dir and the six that follow it (js2-mode, polymode, skewer-mode, emacs-web-server,
+;; emacs-websocket, emacs-ipython-notebook/lisp) were added to `load-path' through a
+;; `~/neph/emacs.d/...' prefix at ~/.emacs:38-44, unlike every other package, which used
+;; `~/.emacs.d/...'.  Both prefixes resolve to the same checkouts; the distinction disappears here.
+;; TODO-elpaca: `ac-dictionary-directories' defaults to the "ac-dict"/"dict" directory sitting next
+;; to auto-complete.el; the default :files directive does not link "dict" into the build dir, so it
+;; is requested explicitly.
+(elpaca (auto-complete :host github :repo "auto-complete/auto-complete"
+                       :ref "2e83566ddfa758c69afe50b8a1c62a66f47471e3"
+                       :files (:defaults "dict")))
+
+;;; ------------------------------------------------------------------
+;;; js2-mode  [dir js2-mode | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (js2-mode :host github :repo "mooz/js2-mode"
+                  :ref "5165f4dc3805add174e48f0d64c5617d10ac3507"))
+
+;;; ------------------------------------------------------------------
+;;; polymode  [dir polymode | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (polymode :host github :repo "polymode/polymode"
+                  :ref "291e2fed6e723d857a5eac59c375aad6fbddf473"))
+
+;;; ------------------------------------------------------------------
+;;; skewer-mode  [dir skewer-mode | cfg neph-init.el:— | hub neph-init.el:—]
+;; TODO-elpaca: `skewer-data-root' is the directory holding skewer-mode.el; skewer.js (served to the
+;; browser by `httpd/skewer') and example.html (used by `skewer-demo') are read from there and are
+;; not covered by the default :files directive, so they are requested explicitly.
+(elpaca (skewer-mode :host github :repo "skeeto/skewer-mode"
+                     :ref "a381049acc4fa2087615b4b3b26c0865841386bd"
+                     :files (:defaults "skewer.js" "example.html")))
+
+;;; ------------------------------------------------------------------
+;;; simple-httpd  [dir emacs-web-server | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (simple-httpd :host github :repo "skeeto/emacs-web-server"
+                      :ref "08535d0fad6a32fdc03d725ec74e10a754bb9c7a"))
+
+;;; ------------------------------------------------------------------
+;;; websocket  [dir emacs-websocket | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (websocket :host github :repo "ahyatt/emacs-websocket"
+                   :ref "d8ef1b764a7047b1163e8b9664bac5bd819058ed"))
+
+;;; ------------------------------------------------------------------
+;;; ein  [dir emacs-ipython-notebook | cfg neph-init.el:577-610 | hub neph-init.el:3664]
+;; TODO-elpaca: the package's elisp lives under lisp/ (this is the directory that was on
+;; `load-path'), so the main file is named explicitly.  Left implicit, lisp/ein-pkg.el would win the
+;; main-file search (it sorts before lisp/ein.el) and its `define-package' requires `request' and
+;; `deferred' — whose submodule load-paths are commented out at ~/.emacs:66-68, i.e. they have no
+;; active declaration — and polymode "20190426.1729", while the pinned polymode declares
+;; Version 0.1.5; dependency resolution and the version check would fail the package.
+;; lisp/ein.el carries no Package-Requires header, so neither scan applies.
+;; TODO-elpaca: `ein:source-dir' is the directory holding ein-core.el; ein_remote_safe.py and
+;; ein_inspector.py are read from there by ein-pytools/ein-inspector and are not covered by the
+;; default :files directive, so lisp/*.py is requested explicitly.
+;; TODO-elpaca: custom-set-variables (neph-init:3664) sets ein:completion-backend to
+;; 'ein:use-company-backend, i.e. the notebook completion path routes through company; that entry
+;; stays in the custom block and is not lifted here.
+(elpaca (ein :host github :repo "millejoh/emacs-ipython-notebook"
+             :ref "7c7691c26d735aab3ebb642f898a9e878d2df212"
+             :main "lisp/ein.el"
+             :files (:defaults "lisp/*.py"))
+  ;; -- lifted verbatim from neph-init.el:577-610 --
+  ;;
+  ;; Emacs Interactive Notebook (jupyter)
+  ;;
+
+  ;; FIXME This should autoload, but the janky-AF http proxy disabling needs to be looked at
+  ;; (something inherits it during the load process and I can't stop it)
+  (defun neph-load-ein ()
+    "Janky function to load ein late."
+    (interactive)
+    (setenv "HTTP_PROXY" nil)
+    (setenv "HTTPS_PROXY" nil)
+    (setenv "http_proxy" nil)
+    (setenv "https_proxy" nil)
+    (require 'ein-notebook)
+    (define-key ein:notebook-mode-map (kbd "C-c <C-return>") 'ein:worksheet-execute-autoexec-cells)
+    (define-key ein:notebook-mode-map (kbd "C-c <C-S-return>") 'neph-ein-restart-and-autoexec))
+
+  (defun neph-ein-restart-and-autoexec ()
+    "Restart the current notebook's kernel and then execute all autoexec cells."
+    (interactive)
+    ;; This inlines ein:kernel-restart-session since it doesn't take a callback.
+    (ein:aif ein:%notebook%
+      (let ((kernel (ein:$notebook-kernel it)))
+        (ein:kernel-delete-session
+         kernel
+         (lambda (kernel)
+           (ein:events-trigger (ein:$kernel-events kernel) 'status_restarting.Kernel)
+           (ein:kernel-retrieve-session
+            kernel 0
+            (lambda (kernel)
+              (ein:events-trigger (ein:$kernel-events kernel)
+                                  'status_restarted.Kernel)
+              (ein:notebook-execute-autoexec-cells ein:%notebook%))))))
+      (message "Not in notebook buffer")))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:45): ecb  [dir ecb | cfg neph-init.el:613-627]
+;; NOTE: emacsmirror mirror of the long-abandoned upstream ECB.
+;; NOTE: ecb.el carries no Package-Requires header, so this package has no
+;;       elpaca dependencies; its requires (CEDET/semantic, speedbar, imenu)
+;;       are all built in to Emacs.
+;; (elpaca (ecb :host github :repo "emacsmirror/ecb"
+;;              :ref "1330a44cf3c171781083b0b926ab7622f64e6e81"))
+
+;;; ------------------------------------------------------------------
+;;; color-identifiers-mode  [dir color-identifiers-mode | cfg neph-init.el:629-633
+;;;                          | hub neph-init.el:2432, 2482 (neph mode-cfg hub fns);
+;;;                                3584-3585 (theme loader, lifted in the ample-zen-theme block)]
+(elpaca (color-identifiers-mode :host github :repo "ankurdave/color-identifiers-mode"
+                                :ref "e35ee05588d84517193db07d94ce7f29ace10ef6")
+  ;; -- lifted verbatim from neph-init.el:629-633 --
+  ;;
+  ;; Color identifiers mode
+  ;;
+
+  (require 'color-identifiers-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; consult  [dir consult | cfg neph-init.el:635-642 | hub neph-init.el:644-651]
+(elpaca (consult :host github :repo "minad/consult"
+                 :ref "45fdad7b234141ea572267024c8f4b08dd2e1022")
+  ;; NOTE: every form in this region is commented out; the body evaluates nothing.
+  ;; The region also carries the commented requires for vertico (641) and
+  ;; counsel-projectile (642), which have no config of their own.
+  ;; -- lifted verbatim from neph-init.el:635-642 --
+  ;;
+  ;; Consult/Vertico
+  ;;
+
+  ;; WIP
+  ;;(require 'consult)
+  ;;(require 'vertico)
+  ;;(require 'counsel-projectile)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; vertico  [dir vertico | cfg neph-init.el:641 (lifted in consult block) | hub neph-init.el:—]
+(elpaca (vertico :host github :repo "minad/vertico"
+                 :ref "67c73b7ae3079e24b5369b54a740d79eb9d2b978"))
+
+;;; ------------------------------------------------------------------
+;;; counsel-projectile  [dir counsel-projectile | cfg neph-init.el:642 (lifted in consult block) | hub neph-init.el:—]
+(elpaca (counsel-projectile :host github :repo "ericdanan/counsel-projectile"
+                            :ref "40d1e1d4bb70acb00fddd6f4df9778bf2c52734b"))
+
+;;; ------------------------------------------------------------------
+;;; async  [dir emacs-async | cfg neph-init.el:— | hub —]
+;;; No config in neph-init.el; load-path comment at ~/.emacs:50 reads "helm dep".
+(elpaca (async :host github :repo "jwiegley/emacs-async"
+               :ref "0d52411d3accc3e11a2c64838703a8ce9755c77c"))
+
+;;; ------------------------------------------------------------------
+;;; helm  [dir helm | cfg neph-init.el:653-696 | hub neph-init.el:2745-2747]
+;; NOTE: further helm-referencing config lives in the blocks of packages
+;; declared later: helm-ag (neph-init:841-843), projectile (2242-2247) and
+;; helm-projectile (2307, 2313).
+;; TODO-elpaca: helm was built by running its own Makefile
+;; (emacs.d/compile.sh: make with LOADPATH="-L . -L ../emacs-async/"); elpaca's
+;; default build (autoloads + byte-compile of the linked *.el) replaces that.
+;; Verify helm-autoloads and friends at wiring time.
+;; TODO-elpaca: helm.el Package-Requires names wfnames "1.2"; wfnames is absent
+;; today and sits on elpaca-ignored-dependencies (see header), so it is not
+;; installed.  helm-ff-wfnames cl-asserts (require 'wfnames nil t) at call time,
+;; which fails exactly as it does today.
+;; TODO-elpaca: custom-set-variables (neph-init:3666-3667) sets
+;; helm-candidate-number-limit to 1000 and helm-move-to-line-cycle-in-source to
+;; nil; no form below duplicates them, but custom runs during init while this
+;; body runs post-init, so custom no longer runs last relative to this config.
+(elpaca (helm :host github :repo "emacs-helm/helm"
+              :ref "cbbaff3c5a76b3ab91ba297844acce11980f55fd")
+  ;; -- lifted verbatim from neph-init.el:653-696 --
+  ;;
+  ;; Helm
+  ;;
+
+  ;;(require 'helm-autoloads)
+  (require 'helm)
+  (require 'helm-mode)
+  (require 'helm-command)
+  (require 'helm-bookmark)
+  ;; Not sure what I'm configuring wrong but autoloads doesn't always
+  (require 'helm-for-files)
+  ;;(require 'helm-config)
+  (require 'helm-for-files)
+
+  (helm-mode 1)
+
+  ;; Since 215005e25718 helm's default score func is just crazy broken
+  ;; and puts really-fuzzy matches above extremely-direct matches
+  (setq helm-fuzzy-default-score-fn 'helm-fuzzy-helm-style-score)
+  ;;Default: (setq helm-fuzzy-default-score-fn 'helm-fuzzy-flex-style-score)
+
+  (global-set-key (kbd "C-z F") (lambda () (interactive) (helm-find-1 (read-directory-name "Run find in directory: " nil "" t))))
+  (global-set-key (kbd "M-x") 'helm-M-x)
+
+  (global-set-key (kbd "C-z b") 'helm-mini)
+  (global-set-key (kbd "C-z C-b") 'helm-filtered-bookmarks)
+  (global-set-key (kbd "C-z C-o") 'helm-occur)
+  (global-set-key (kbd "C-z C-S-o") 'occur)
+  (global-set-key (kbd "C-M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-z <C-tab>") 'helm-imenu)
+
+  ;; Blows up helm on emacs 25 right now
+  ;; (setq helm-follow-mode-persistent nil)
+
+  (define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
+  (define-key isearch-mode-map (kbd "C-S-o") 'isearch-occur)
+
+  (when (executable-find "ack-grep")
+    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"
+          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color --smart-case --type-set IGNORED:ext:P,map --noIGNORED %p %f"))
+
+  ;; helm-grep ripgrep ;; -color=always --colors 'match:fg:black' --colors 'match:bg:yellow'
+  (setq helm-grep-ag-command "rg --smart-case --no-heading --line-number %s %s %s")
+  (setq helm-grep-ag-pipe-cmd-switches '())
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; fzf  [dir fzf | cfg neph-init.el:756-772 | hub —]
+(elpaca (fzf :host github :repo "bling/fzf.el"
+             :ref "3a55b983921c620fb5a2cc811f42aa4daaad8266")
+  ;; NOTE: the two setenv calls are order-critical and must precede (require 'fzf);
+  ;; the lift preserves that order.
+  ;; -- lifted verbatim from neph-init.el:756-772 --
+  ;;
+  ;; FZF
+  ;;
+
+  ;; FIXME Ignore stuff like .ccls-cache by customizing process-environment with defadvice:
+  ;;   (let ((process-environment
+  ;;         (cons (concat "FZF_DEFAULT_COMMAND=git ls-files")
+  ;;               process-environment))
+
+  (setenv "FZF_DEFAULT_COMMAND" "rg --files --no-ignore-vcs --hidden")
+  (setenv "FZF_DEFAULT_OPTS" nil)
+  (require 'fzf)
+  (global-set-key (kbd "C-z C-S-f") 'fzf)
+  (global-set-key (kbd "C-z C-S-M-f") 'fzf-find-file-in-dir)
+  (setq fzf/args "--no-hscroll --print-query -x --no-unicode")
+
+  (setq fzf/window-height 50)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; helm-swoop  [dir helm-swoop | cfg neph-init.el:774-780 | hub —]
+(elpaca (helm-swoop :host github :repo "emacsorphanage/helm-swoop"
+                    :ref "df90efd4476dec61186d80cace69276a95b834d2")
+  ;; -- lifted verbatim from neph-init.el:774-780 --
+  ;;
+  ;; Helm Swoop
+  ;;
+  (require 'helm-swoop)
+
+  (global-set-key (kbd "C-z M-s") 'helm-swoop)
+  (global-set-key (kbd "C-z M-S") 'helm-multi-swoop-all)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; helm-ag  [dir helm-ag | cfg neph-init.el:782-786,828-892 | hub neph-init.el:894, 2259-2340]
+;;; NOTE: this body reads helm-find-files-map and helm-sources-using-default-as-input;
+;;; helm is declared earlier, so helm's body (which requires helm-files et al) runs first.
+(elpaca (helm-ag :host github :repo "syohex/emacs-helm-ag"
+                 :ref "67c572ae398506dc7e5e89657c1eebd532deff30")
+  ;; -- lifted verbatim from neph-init.el:782-786 --
+  ;;
+  ;; Helm AG and Helm RG and RG they're all different
+  ;;
+
+  (require 'helm-ag)
+  ;; -- end lift --
+
+  ;; -- lifted verbatim from neph-init.el:828-843 --
+  (setq helm-ag-insert-at-point t)
+  ;; (setq helm-ag-always-set-extra-option t)
+
+  (defun helm-ff-helm-do-ag ()
+    (interactive)
+    (with-helm-alive-p
+      (helm-exit-and-execute-action '(lambda (basedir)
+                                       (let ((parent (file-name-directory (directory-file-name basedir)))
+                                             (default-directory nil))
+                                         (helm-do-ag nil (list parent)))))))
+  ;; FIXME not needed?
+  ;; (put 'helm-ff-helm-do-ag 'helm-only nil)
+
+  (define-key helm-find-files-map (kbd "M-g") 'helm-ff-run-grep-ag)
+  (add-to-list 'helm-sources-using-default-as-input helm-source-do-ag)
+  (add-to-list 'helm-sources-using-default-as-input 'helm-ag-source)
+  ;; -- end lift --
+
+  ;; TODO-elpaca: the helm-ag-base-command form below is a non-idempotent
+  ;; read-modify-write (concat of " --noaffinity" onto the current value); it must run
+  ;; exactly once. Elpaca evaluates this body once, post-init, but any re-evaluation of
+  ;; the block would append the flag again.
+  ;; -- lifted verbatim from neph-init.el:844-892 --
+  ;; Helm's auto-affinity thing seems to massively slow it down when the system is
+  ;; under heavy load, even if that load is in low priority compilation cgroups.
+  ;;
+  ;; A common query with all files in cache goes from 20s -> 2s for me with this,
+  ;; similar to running the query on an idle system. It sounds like this affinity
+  ;; thing is trying to work around poor OS-level behavior to begin with, but with
+  ;; it disabled the Right Thing™ seems to happen on my systems.
+  (setq helm-ag-base-command (concat helm-ag-base-command " --noaffinity"))
+
+  ;; Keys to walk a visible helm-ag buffer
+  (defun neph-helm-ag-next (arg)
+    (interactive "P")
+    (let* ((direction (if arg -1 1))
+           (agbuf (or (get-buffer "*helm ag results*") (get-buffer "*hgrep*")))
+           (agwin (get-buffer-window agbuf)))
+      (flet ((notdone () (if (and (looking-at "$") (looking-back "^"))
+                             (progn (message "End of results") nil)
+                           t))
+             (move () (next-logical-line direction) (beginning-of-line)))
+        (when agbuf
+          (if agwin
+              (progn (select-window agwin)
+                     (move)
+                     (when (notdone)
+                       (helm-ag-mode-jump-other-window)))
+            (switch-to-buffer agbuf)
+            (move)
+            (when (notdone)
+              (helm-ag-mode-jump)))))))
+  (defun neph-helm-ag-prev (arg)
+    (interactive "P")
+    (neph-helm-ag-next (if arg nil 1)))
+  (defun neph-helm-ag-update ()
+    (interactive)
+    (let ((agbuf (get-buffer "*helm ag results*")))
+      (when agbuf
+        (with-current-buffer agbuf
+          (helm-ag--update-save-results)))))
+  (global-set-key (kbd "C-M-z C-M-n") 'neph-helm-ag-next)
+  (global-set-key (kbd "C-M-z C-M-p") 'neph-helm-ag-prev)
+  (global-set-key (kbd "C-M-z C-M-g") 'neph-helm-ag-update)
+
+
+  ;; RG version (needs helm-projectile-ag fix)
+  ;(setq helm-ag-base-command "rg --vimgrep --no-heading")
+  ;; Older fix:
+  ;;(setq helm-ag-base-command "rg --color=never --with-filename --no-heading")
+  ;;(defun helm-ag--construct-ignore-option (pattern)
+  ;;  (concat "-g !" pattern))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; helm-rg  [dir helm-rg | cfg neph-init.el:787,790-826 | hub neph-init.el:2259-2340, 3694-3772]
+;;; NOTE: fork of cosmicexplorer/helm-rg (the URL in the recipe is the fork; upstream is
+;;; unmaintained), so the recipe must keep pointing at the fork.
+(elpaca (helm-rg :host github :repo "nephyrin/helm-rg"
+                 :ref "f2cb5d3649c1f77f97ce4f8a2cb51578b863c9be")
+  ;; -- lifted verbatim from neph-init.el:787 --
+  (require 'helm-rg)
+  ;; -- end lift --
+
+  ;; TODO-elpaca: custom-set-variables (neph-init:3668) sets helm-rg-input-min-search-chars
+  ;; to 1. Nothing below duplicates it, but today custom-set-variables runs LAST while under
+  ;; elpaca this body runs post-init — confirm the relative ordering at wiring time.
+  ;; -- lifted verbatim from neph-init.el:790-826 --
+  (setq helm-rg-default-extra-args '("--max-columns=120" "--max-columns-preview"))
+
+  ;; Define a minor mode to lock rg bounce buffers into read-only and provide some quick access keys
+  ;;
+  ;; Pressing the default bind (C-c C-e) will turn off this mode and unlock helm-rg--bounce's editing mode, which is
+  ;; useful, but not by default when I just want a persistent buffer to visit search results.
+  (defun neph-rg-bounce-navigation-mode-handler ()
+    "Default hook for neph-rg-bounce-navigation-mode."
+    (if neph-rg-bounce-navigation-mode
+        (progn
+          (message "Neph: Visit Mode")
+          (read-only-mode 1))
+      (message "Neph: Edit Mode")
+      (read-only-mode -1)))
+  (define-minor-mode neph-rg-bounce-navigation-mode
+    "Mode that puts helm-rg bounce buffers into read-only navigation rather than editing."
+    :keymap '())
+  (add-hook 'neph-rg-bounce-navigation-mode-hook 'neph-rg-bounce-navigation-mode-handler)
+  (define-key helm-rg--bounce-mode-map (kbd "C-c C-e") #'neph-rg-bounce-navigation-mode)
+
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "g") #'helm-rg--bounce-refresh)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "r") #'helm-rg--bounce-refresh-current-file)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "d") #'helm-rg--bounce-dump)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "D") #'helm-rg--bounce-dump-current-file)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "RET")
+    ;; This function always calls 'alternate-method', so let bind that to normal method for the "normal visit" keybind.
+    (lambda () (interactive)
+      (let ((helm-rg-display-buffer-alternate-method
+             helm-rg-display-buffer-normal-method))
+        (helm-rg--visit-current-file-for-bounce))))
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "C-o") #'helm-rg--visit-current-file-for-bounce)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "e") #'helm-rg--expand-match-context)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "E") #'helm-rg--spread-match-context)
+  (define-key neph-rg-bounce-navigation-mode-map (kbd "q") #'kill-this-buffer)
+
+  ;; Defaults on
+  (add-hook 'helm-rg--bounce-mode-hook 'neph-rg-bounce-navigation-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; wgrep  [dir wgrep | cfg neph-init.el:— | hub —]
+;;; NOTE: no config of its own; pulled in for rg.el (see the "For rg.el" comment on the
+;;; wgrep load-path line in the emacs init file) and named in rg's Package-Requires.
+(elpaca (wgrep :host github :repo "mhayashi1120/Emacs-wgrep" :protocol ssh
+               :ref "f9687c28bbc2e84f87a479b6ce04407bb97cfb23"))
+
+;;; ------------------------------------------------------------------
+;;; rg  [dir rg.el | cfg neph-init.el:788 | hub —]
+(elpaca (rg :host github :repo "dajva/rg.el" :protocol ssh
+            :ref "a614e7d7709c7bf5c5accff4003d351c3f28ee98")
+  ;; -- lifted verbatim from neph-init.el:788 --
+  (require 'rg)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; multiple-cursors  [dir multiple-cursors | cfg neph-init.el:896-906 | hub neph-init.el:—]
+(elpaca (multiple-cursors :host github :repo "magnars/multiple-cursors.el"
+                          :ref "c870c18462461df19382ecd2f9374c8b902cd804")
+  ;; -- lifted verbatim from neph-init.el:896-906 --
+  ;;
+  ;; multiple-cursors
+  ;;
+
+  (require 'multiple-cursors)
+
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-.") 'mc/unmark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-,") 'mc/unmark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; phi-search  [dir phi-search | cfg neph-init.el:908-934 | hub neph-init.el:3689]
+(elpaca (phi-search :host github :repo "zk-phi/phi-search"
+                    :ref "40b86bfe9ae15377fbee842b1de3d93c2eb7dd69")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3689) sets phi-search-limit to 5000; the
+  ;; lifted region below does not set it, but today custom runs LAST while under elpaca these
+  ;; bodies run post-init — override direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:908-932 --
+  ;;
+  ;; phi-search
+  ;;
+
+  (autoload 'phi-search "phi-search" "Phi Search." t)
+
+  (global-set-key (kbd "C-S-s") 'phi-search)
+  (global-set-key (kbd "C-S-r") 'phi-search-backward)
+
+  ;; See also
+  ;;phi-search-additional-keybinds
+  ;;phi-replace-additional-keybinds
+  ;; -- NOT keymaps tho, see doc
+  (defun kill-phisearch-match ()
+      "Kill the current isearch match string and continue searching."
+      (interactive)
+      (when phi-search--selection
+        ;; In phisearch, we're in the minibuffer by default, and there are N
+        ;; search-overlays of which we are centered on index
+        ;; phi-search--selection, if any.
+        (phi-search--with-target-buffer
+         (let ((ov (nth phi-search--selection phi-search--overlays)))
+           (kill-region (overlay-end ov) (overlay-start ov)))))
+      (phi-search-complete))
+
+  ;; -- end lift --
+  ;; TODO-elpaca: the feature name below is "phisearch", but the package provides `phi-search';
+  ;; this with-eval-after-load never fires, so the C-. binding is never installed. Kept verbatim.
+  ;; -- lifted verbatim from neph-init.el:933-934 --
+  (with-eval-after-load "phisearch"
+    (define-key phi-search-default-map (kbd "C-.") 'kill-phisearch-match))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; ivy  [dir swiper | cfg neph-init.el:936-957 | hub neph-init.el:1343-1347]
+(elpaca (ivy :host github :repo "abo-abo/swiper"
+             :ref "c97ea72285f2428ed61b519269274d27f2b695f9")
+  ;; NOTE: neph-swiper-current-word below calls neph-mark-current-word, a general-purpose
+  ;; editing helper defined in neph-init.el:3288 that stays outside these declarations.
+  ;; NOTE: the `swiper' autoload names the library "swiper", which this repo ships alongside
+  ;; ivy.el; the default :files directive links it into this package's build directory.
+  ;; -- lifted verbatim from neph-init.el:936-957 --
+  ;;
+  ;; Swiper
+  ;;
+
+  (defun neph-swiper-current-word ()
+    "Start swiper with the current word"
+    (interactive)
+    (let ((current-word (save-excursion
+                           (neph-mark-current-word)
+                           (buffer-substring (mark) (point)))))
+      (swiper current-word)))
+
+  (autoload 'swiper "swiper" "Swiper popup thing" t)
+  (global-set-key (kbd "C-z s") 'swiper)
+
+  (defun isearch-to-swiper ()
+      "Drop into swiper with current isearch"
+      (interactive)
+      (isearch-exit)
+      (swiper isearch-string))
+
+  (define-key isearch-mode-map (kbd "C-z s") 'isearch-to-swiper)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; company  [dir company-mode | cfg neph-init.el:959-977,1553-1559 | hub neph-init.el:1003,1009,1039,1377,1404-1412,3651-3654]
+(elpaca (company :host github :repo "company-mode/company-mode"
+                 :ref "3ec40b0a0ea751b6c48f24abd58c8304deb53014")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3651-3654) sets company-backends
+  ;; to '(company-capf company-irony ... company-dabbrev), naming backends from
+  ;; other packages (company-irony); nothing lifted below touches that variable,
+  ;; but custom runs LAST today while under elpaca these body forms run post-init
+  ;; — override direction may flip at wiring time.
+  ;; NOTE: `neph-company-setup' below calls `company-quickhelp-mode'; the
+  ;; matching (require 'company-quickhelp) is neph-init.el:1040, lifted with the
+  ;; lsp-mode block. The defun only runs from mode hooks, so ordering is fine.
+  ;; -- lifted verbatim from neph-init.el:959-977 --
+  ;;
+  ;; Company mode
+  ;;
+  ;;(require 'neph-company-autoload)
+  (require 'company)
+
+  (defun neph-company-setup ()
+    (interactive)
+    (company-mode t)
+    (company-quickhelp-mode t)
+    ;;(semantic-mode t)
+    (local-set-key (kbd "<C-tab>") 'company-complete))
+
+  ;; Turn on in these modes
+  (add-hook 'c-mode-common-hook   'neph-company-setup)
+  (add-hook 'python-mode-hook     'neph-company-setup)
+  (add-hook 'python-ts-mode-hook  'neph-company-setup)
+  (add-hook 'lisp-mode-hook       'neph-company-setup)
+  (add-hook 'emacs-lisp-mode-hook 'neph-company-setup)
+  ;; -- end lift --
+
+  ;; NOTE: `~/.emacs.d/moz_objdir.sh' is a script shipped by this dotfiles repo,
+  ;; not a package submodule path, so the hardcoded path is unaffected here.
+  ;; -- lifted verbatim from neph-init.el:1553-1559 --
+  (defun company-mode-moz ()
+    (setq company-clang-arguments (split-string
+                                   (shell-command-to-string
+                                    (concat "~/.emacs.d/moz_objdir.sh "
+                                            (buffer-file-name)))))
+    (company-mode t)
+    (local-set-key (kbd "<C-tab>") 'company-complete))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; company-quickhelp  [dir company-quickhelp | cfg neph-init.el:968 (lifted in the company block), 1040 + 1142 (lifted in the lsp-mode block) | hub neph-init.el:1378,3655]
+;; TODO-elpaca: Package-Requires names pos-tip 0.4.6; pos-tip is a vendored
+;; non-submodule directory today and is on the appended
+;; `elpaca-ignored-dependencies' list, so elpaca will neither install nor
+;; version-check it — pos-tip must still be reachable on load-path at wiring time.
+;; TODO-elpaca: custom-set-variables (neph-init:3655) sets
+;; company-quickhelp-color-background to "black", duplicating the setq at
+;; neph-init.el:1142 (lifted verbatim inside the lsp-mode block); today custom
+;; runs LAST, under elpaca bodies run post-init — override direction may flip at
+;; wiring time.
+(elpaca (company-quickhelp :host github :repo "expez/company-quickhelp"
+                           :ref "9505fb09d064581da142d75c139d48b5cf695bd5"))
+
+;;; ------------------------------------------------------------------
+;;; copilot  [dir copilot | cfg neph-init.el:979-993 | hub neph-init.el:3657]
+;; TODO-elpaca: copilot.el computes `copilot--base-dir' from `load-file-name' and
+;; spawns "<base-dir>/dist/agent.js" with node; the default :files directive links
+;; only elisp into the build dir, so the repo's dist/ directory is linked
+;; explicitly below. Verify at wiring time that dist/ resolves next to the built
+;; copilot.el.
+(elpaca (copilot :host github :repo "zerolfx/copilot.el" :protocol ssh
+                 :ref "8f5e45405ead77fcbe85b5c02193f23449d2d518"
+                 :files (:defaults "dist"))
+  ;; TODO-elpaca: custom-set-variables (neph-init:3657) sets copilot-max-char to
+  ;; 1000000; nothing lifted below sets it, but custom runs LAST today while under
+  ;; elpaca these body forms run post-init — override direction may flip at wiring
+  ;; time.
+  ;; -- lifted verbatim from neph-init.el:979-993 --
+  ;;
+  ;; Copilot
+  ;;
+  (require 'copilot)
+
+  (global-set-key (kbd "C-M-<tab>") 'copilot-panel-complete)
+  ;; This is apparently C-S-<tab>
+  (global-set-key (kbd "C-<iso-lefttab>") 'copilot-complete)
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "C-e") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "C-k") 'copilot-clear-overlay)
+  (define-key copilot-completion-map (kbd "C-M-n") 'copilot-accept-completion-by-line)
+  (define-key copilot-completion-map (kbd "M-f") 'copilot-accept-completion-by-word)
+  (define-key copilot-completion-map (kbd "M-n") 'copilot-next-completion)
+  (define-key copilot-completion-map (kbd "M-p") 'copilot-previous-completion)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:66): deferred  [dir emacs-deferred | cfg neph-init.el:—]
+;; NOTE: pinned only as part of the disabled ycmd stack (ycmd's
+;;       Package-Requires names deferred); no config of its own.
+;;       The commented ycmd config sits at neph-init.el:995-1012.
+;; (elpaca (deferred :host github :repo "kiwanami/emacs-deferred"
+;;                   :ref "2239671d94b38d92e9b28d4e12fd79814cfb9c16"))
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:67): request  [dir emacs-request | cfg neph-init.el:—]
+;; NOTE: pinned only as part of the disabled ycmd stack; no config of its own.
+;;       The commented ycmd config sits at neph-init.el:995-1012.
+;; NOTE: this repo also ships request-deferred.el, a sibling feature that gets
+;;       no declaration of its own (see the ycmd block).
+;; (elpaca (request :host github :repo "tkf/emacs-request"
+;;                  :ref "db88fd21d25399ff9940c208173665b12493992b"))
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:68): ycmd  [dir emacs-ycmd | cfg neph-init.el:995-1012]
+;; NOTE: Package-Requires: emacs 24.4, dash 2.13.0, s 1.11.0, deferred 0.5.1,
+;;       cl-lib 0.6.1, let-alist 1.0.5, request 0.3.0, request-deferred 0.3.0,
+;;       pkg-info 0.6.
+;; TODO-elpaca: request-deferred is a sibling feature shipped by the
+;;       emacs-request repo, so it gets no declaration; if this block is ever
+;;       enabled it must be appended to elpaca-ignored-dependencies, otherwise
+;;       ycmd fails with "failed dependency: request-deferred".
+;; NOTE: this repo also ships company-ycmd.el, flycheck-ycmd.el and
+;;       ycmd-eldoc.el; the commented config uses company-ycmd.
+;; (elpaca (ycmd :host github :repo "abingham/emacs-ycmd"
+;;               :ref "ef87d020d3314efbac2e8925c115d0ac5c128c2a"))
+
+;;; ------------------------------------------------------------------
+;;; yasnippet  [dir yasnippet | cfg neph-init.el:1014-1018 | hub neph-init.el:2390]
+(elpaca (yasnippet :host github :repo "joaotavora/yasnippet"
+                   :ref "1bee3a33c77d1a61c331461750e01c4f6fa85417")
+  ;; -- lifted verbatim from neph-init.el:1014-1018 --
+  ;;
+  ;; Yasnippet
+  ;;
+
+  (require 'yasnippet)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; flycheck  [dir flycheck | cfg neph-init.el:1020-1024 | hub neph-init.el:1296, 2420]
+(elpaca (flycheck :host github :repo "flycheck/flycheck"
+                  :ref "1d7c1b20782ccbaa6f97e37f5e1d0cee3d5eda8a")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3665) sets
+  ;; flycheck-checker-error-threshold to nil; there is no equivalent form in this
+  ;; body, but today custom runs LAST, under elpaca bodies run post-init --
+  ;; relative ordering may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1020-1024 --
+  ;;
+  ;; Flycheck
+  ;;
+
+  (autoload 'flycheck-mode "flycheck" "flycheck-mode" t)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; epl  [dir epl | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (epl :host github :repo "cask/epl"
+             :ref "78ab7a85c08222cd15582a298a364774e3282ce6"))
+
+;;; ------------------------------------------------------------------
+;;; pkg-info  [dir pkg-info | cfg neph-init.el:1037 | hub neph-init.el:—]
+(elpaca (pkg-info :host github :repo "emacsorphanage/pkg-info"
+                  :ref "76ba7415480687d05a4353b27fea2ae02b8d9d61")
+  ;; NOTE: single line taken out of the C++/LSP section's require run
+  ;; (neph-init.el:1030-1060); the neighbouring requires belong to other packages.
+  ;; -- lifted verbatim from neph-init.el:1037 --
+  (require 'pkg-info)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; hydra  [dir hydra | cfg neph-init.el:— | hub —]
+;;; No config; pulled in as a dependency (lsp-mode requires lv, which this repo ships).
+(elpaca (hydra :host github :repo "abo-abo/hydra"
+               :ref "317e1de33086637579a7aeb60f77ed0405bf359b"))
+
+;;; ------------------------------------------------------------------
+;;; ace-window  [dir ace-window | cfg neph-init.el:— | hub —]
+;;; No config; only a load-path entry (~/.emacs:74) — never required or bound.
+(elpaca (ace-window :host github :repo "abo-abo/ace-window"
+                    :ref "77115afc1b0b9f633084cf7479c767988106c196"))
+
+;;; ------------------------------------------------------------------
+;;; pfuture  [dir pfuture | cfg neph-init.el:— | hub —]
+;;; No config; treemacs dependency.
+(elpaca (pfuture :host github :repo "Alexander-Miller/pfuture"
+                 :ref "19b53aebbc0f2da31de6326c495038901bffb73c"))
+
+;;; ------------------------------------------------------------------
+;;; avy  [dir avy | cfg neph-init.el:3457-3478 (lifted in ace-jump-mode block) | hub —]
+;;; The avy lines (3476 require, 3478 bind) interleave with ace-jump-mode's; the whole
+;;; region lives in the ace-jump-mode body, which is declared later (~/.emacs:115 vs :76).
+(elpaca (avy :host github :repo "abo-abo/avy"
+             :ref "cf95ba9582121a1c2249e3c5efdc51acd566d190"))
+
+;;; ------------------------------------------------------------------
+;;; yaml  [dir yaml.el | cfg neph-init.el:— | hub —]
+;;; No config; pure-elisp YAML parser (distinct from yaml-mode). Submodule URL is ssh.
+(elpaca (yaml :host github :repo "zkry/yaml.el" :protocol ssh
+              :ref "73fde9d8fbbaf2596449285df9eb412ae9dd74d9"))
+
+;;; ------------------------------------------------------------------
+;;; lsp-mode  [dir lsp-mode | cfg neph-init.el:1026-1028,1038-1040,1068-1106,1108-1146,1172,1175-1177,1227-1241,1243-1248 | hub neph-init.el:1320-1333,3671-3675,3678]
+(elpaca (lsp-mode :host github :repo "emacs-lsp/lsp-mode"
+                  :ref "0c8f043eb3d1d516f46e3c50c78fbab22f0612a9"
+                  :files (:defaults "clients/*.el"))
+  ;; -- lifted verbatim from neph-init.el:1026-1028 --
+  ;;
+  ;; C++ Helper mode(s) : Company/lsp and associated helper libraries
+  ;;
+  ;; -- end lift --
+  ;; NOTE: 1039-1040 require company and company-quickhelp; they sit inside this
+  ;; require run and are kept here so the original load order is preserved.
+  ;; -- lifted verbatim from neph-init.el:1038-1040 --
+  (require 'lsp-mode)
+  (require 'company)
+  (require 'company-quickhelp)
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1068-1106 --
+  (defun neph-hook-client-init (client func)
+    "Add a post-call hook FUNC to the given lsp CLIENT."
+    (message "HOOK")
+    (let ((original-init-fn (lsp--client-initialized-fn client)))
+      (setf (lsp--client-initialized-fn client)
+            `(lambda (workspace)
+               (when ,original-init-fn
+                 (funcall ,original-init-fn workspace))
+               (funcall ,func workspace)))))
+
+  ;; Strip semantic tokens from lsp-clangd, set ccls to be an addon with only semantic tokens
+  ;; Lets us use both with ccls just providing superior semantic highlighting
+  ;;(let ((clangd-client (gethash 'clangd lsp-clients))
+  ;;      (ccls-client (gethash 'ccls lsp-clients)))
+  ;;  ;; clangd: remove semantic tokens
+  ;;  (when clangd-client
+  ;;    (neph-hook-client-init
+  ;;     clangd-client
+  ;;     (lambda (workspace)
+  ;;       (-> workspace
+  ;;           (lsp--workspace-server-capabilities)
+  ;;           (lsp:set-server-capabilities-semantic-tokens-provider? nil))
+  ;;       (message "lsp-clangd capabilities stripped of semanticTokensProvider")))
+  ;;    (message "lsp-clangd client configuration updated"))
+  ;;  ;; ccls: set to addon mode, hook init to replace all caps with just semantic tokens
+  ;;  (when ccls-client
+  ;;    (setf (lsp--client-priority ccls-client) -3)
+  ;;    (setf (lsp--client-add-on? ccls-client) t)
+  ;;    (neph-hook-client-init
+  ;;     ccls-client
+  ;;     (lambda (workspace)
+  ;;       (let* ((caps (lsp--workspace-server-capabilities workspace))
+  ;;              (semantic-tokens (plist-get caps :semanticTokensProvider)))
+  ;;         (setq caps nil)
+  ;;         (when semantic-tokens
+  ;;           (setq caps (plist-put caps :semanticTokensProvider semantic-tokens)))
+  ;;         (setf (lsp--workspace-server-capabilities workspace) caps)
+  ;;         (message "CCLS capabilities limited to semanticTokensProvider"))))
+  ;;    (message "lsp-clangd client configuration updated")))
+  ;; -- end lift --
+  ;; TODO-elpaca: custom-set-variables (neph-init:3655) sets
+  ;; company-quickhelp-color-background to "black", duplicating the setq at 1142 in the
+  ;; region below; today custom runs LAST, under elpaca bodies run post-init — override
+  ;; direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1108-1146 --
+  ;; Lsp booster (chunk of lisp from their setup steps)
+  ;;
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+              (setcar orig-result command-from-exec-path))
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        (message "NOT using lsp-booster")
+        orig-result)))
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+  (setq company-quickhelp-color-background "black")
+
+  ;; LSP performance recommended
+  (setq read-process-output-max 1048576)
+  (setq gc-cons-threshold 100000000)
+  ;; -- end lift --
+  ;; TODO-elpaca: custom-set-variables (neph-init:3671,3672,3678) sets
+  ;; lsp-enable-file-watchers nil, lsp-enable-on-type-formatting nil and
+  ;; lsp-semantic-tokens-enable t; today custom runs LAST, under elpaca bodies run
+  ;; post-init — override direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1172 --
+  (setq lsp-lens-enable nil)
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1175-1177 --
+  ;; FIXME?
+  ;;(with-eval-after-load 'lsp-mode
+  ;;  (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1227-1241 --
+  ;; ~/.config/clangd/config.yaml:
+  ;; # https://clangd.llvm.org/config
+  ;;   CompileFlags:
+  ;;     Add: [-Wall]
+  (setq lsp-clients-clangd-args '("--header-insertion-decorators=1" "--query-driver=/usr/bin/**/clang-*,/usr/bin/**/clang++-*,/usr/bin/**/gcc-*,/usr/bin/**/g++-*,/usr/bin/g++,/usr/bin/gcc,/usr/bin/clang,/usr/bin/clang++" "--enable-config"
+                                  "-j" "50" "--log=info"
+                                  "--all-scopes-completion" "--background-index" "--rename-file-limit=0"
+                                  "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
+
+  (defun neph-clear-text-properties ()
+    "Reset all text properties in the buffer."
+    (interactive)
+    (with-silent-modifications
+      (delete-all-overlays)
+      (set-text-properties (buffer-end 0) (buffer-end 1) nil)))
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1243-1248 --
+  (defun neph-lsp-reset ()
+    "Reconnects to LSP, fixing annoying CCLS highlighting bug."
+    (interactive)
+    (lsp-disconnect)
+    (neph-clear-text-properties)
+    (lsp))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; lsp-docker  [dir lsp-docker | cfg neph-init.el:— | hub neph-init.el:—]
+;; NOTE: nothing in the config ever requires this package; its only wiring was the `load-path'
+;; entry at ~/.emacs:80.
+(elpaca (lsp-docker :host github :repo "emacs-lsp/lsp-docker" :protocol ssh
+                    :ref "81ddb3fc68e1930352b6ca006d0ea609760be7d1"))
+
+;;; ------------------------------------------------------------------
+;;; treemacs  [dir treemacs | cfg neph-init.el:1034-1036,1041 | hub —]
+;; TODO-elpaca: Package-Requires names cfrs, which is not among the pinned packages;
+;; it must be on elpaca-ignored-dependencies or this package fails to resolve.
+(elpaca (treemacs :host github :repo "Alexander-Miller/treemacs"
+                  :ref "aa0944a29eee48302fd76b6c3a59c5aece114fa6"
+                  :main "src/elisp/treemacs.el"
+                  :files ("src/elisp/*.el" "src/extra/*.el" "icons"
+                          "src/scripts/treemacs*.py"))
+  ;; -- lifted verbatim from neph-init.el:1034-1036 --
+  (require 'treemacs)
+  (require 'treemacs-mouse-interface)
+  (require 'treemacs-hydras)
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1041 --
+  ;;(require 'treemacs-projectile)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; ccls  [dir emacs-ccls | cfg neph-init.el:1059-1060,1148-1165,1181-1197,1199-1200,1202-1225,1250-1286 | hub neph-init.el:3790-3791]
+(elpaca (ccls :host github :repo "MaskRay/emacs-ccls"
+              :ref "8648238a92e5fd1ca1b693c99d2824f8804736b0")
+  ;; -- lifted verbatim from neph-init.el:1059-1060 --
+  ;;(require 'lsp-clangd)
+  (require 'ccls)
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1148-1165 --
+  ;; Block ccls autoregister, register it ourself
+  ;; TODO Example hook from gpt might work
+  ;; (defun my-ccls-setup (workspace)
+  ;;   "Customize CCLS server capabilities."
+  ;;   (let ((caps (lsp--workspace-server-capabilities workspace)))
+  ;;     (lsp:set-server-capabilities-document-symbol-provider? caps nil)
+  ;;     (lsp:set-server-capabilities-completion-provider? caps nil)
+  ;;     (lsp:set-server-capabilities-hover-provider? caps nil)))
+
+  ;; FIXME I think it's slightly wrong, i want to hook make-lsp-client...
+  ;; (defun my-lsp-register-client-advice (orig-fun &rest args)
+  ;;   "Advice to modify LSP client registration for CCLS."
+  ;;   (let ((client (apply orig-fun args)))
+  ;;     (when (eq (plist-get client :server-id) 'ccls)
+  ;;       (plist-put client :initialized-fn #'my-ccls-setup))
+  ;;    client))
+
+  ;;(advice-add 'lsp-register-client :around #'my-lsp-register-client-advice)
+  ;; -- end lift --
+  ;; TODO-elpaca: custom-set-faces (neph-init:3790-3791) styles ccls-code-lens-face and
+  ;; ccls-code-lens-mouse-face; today custom runs LAST, under elpaca bodies run post-init —
+  ;; override direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1181-1197 --
+  (with-eval-after-load 'ccls
+    (setq ccls-executable "/usr/bin/ccls")
+    (ccls-use-default-rainbow-sem-highlight)
+    (setq ccls-sem-highlight-method 'font-lock)
+  ;;(setq ccls-sem-highlight-method nil)
+  ;; We'll set these from the theme.  Uncomment for random themes.
+    (setq ccls-args
+          (list
+           (concat "--init=" (json-encode
+                              (ht
+                               ;; ("index" (ht ("multiVersion" 1))) ;; 80G+ memory usage and doesn't work well
+                               ;; Clang args that trip things up, and include /usr/lib/glib-2.0 in compiles
+                               ("clang" (ht ("extraArgs" [-ferror-limit=0 -I/usr/lib/glib-2.0/include/])
+                                            ("excludeArgs" ["-frounding-math" "-march=pentium4"]))))))
+           ;; Extra logging
+           "-log-file=/tmp/ccls.log"
+           "-v=1")))
+  ;; -- end lift --
+  ;; NOTE: lsp-disabled-clients is an lsp-mode variable; the entry exists only to keep the
+  ;; ccls client off by default, so it lives with ccls.
+  ;; -- lifted verbatim from neph-init.el:1199-1200 --
+  ;; Default off
+  (add-to-list 'lsp-disabled-clients 'ccls)
+  ;; -- end lift --
+  ;; NOTE: neph-toggle-ccls-reload calls neph-clear-text-properties, which is defined in
+  ;; the lsp-mode block (neph-init:1236-1241).
+  ;; -- lifted verbatim from neph-init.el:1202-1225 --
+  (defun neph-toggle-ccls-client (&optional force)
+    "Toggle the ccls LSP client.
+  If FORCE is 'nil, enable ccls (remove from disabled list).
+  If FORCE is 't, disable ccls (add to disabled list).
+  If FORCE is not specified, toggle the current state."
+    (interactive)
+    (let* ((is-disabled (memq 'ccls lsp-disabled-clients))
+           (should-disable (if (null force)
+                              (not is-disabled)
+                            force)))
+      (if should-disable
+          (progn
+            (setq lsp-semantic-tokens-enable t)
+            (add-to-list 'lsp-disabled-clients 'ccls))
+        (setq lsp-semantic-tokens-enable nil)
+        (setq lsp-disabled-clients (remove 'ccls lsp-disabled-clients)))
+      (message "ccls LSP client %s" (if should-disable "disabled" "enabled"))))
+
+  (defun neph-toggle-ccls-reload ()
+    "Toggle the enabled state of the ccls client, and then reload the current lsp workspace."
+    (interactive)
+    (neph-toggle-ccls-client)
+    (neph-clear-text-properties)
+    (call-interactively 'lsp-workspace-restart))
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1250-1286 --
+  (defun neph-ccls-reformat-definition ()
+    "Reformat the definition under the cursor according to how LSP parsed it."
+    (interactive)
+    (let* ((hover-response (-some->> (lsp--text-document-position-params)
+                                     (lsp--make-request "textDocument/hover")
+                                     (lsp--send-request)))
+           (hover-contents (plist-get hover-response :contents))
+           (hover-text (if (vectorp hover-contents)
+                           (plist-get (aref hover-contents 0) :value)
+                         (plist-get hover-contents :value)))
+           ;; Request the location/textual-range of the definition for the thing under cursor.
+           (def-response (-some->> (lsp--text-document-position-params)
+                                   (lsp--make-request "textDocument/definition")
+                                   (lsp--send-request)
+                                   (car)))
+           (target-range (plist-get def-response :targetRange))
+           (start-pos (plist-get target-range :start))
+           (end-pos (plist-get target-range :end)))
+
+      ;; Debug output
+      (message "Debug: hover-contents: %s" hover-contents)
+      (message "Debug: hover-text: %s" hover-text)
+      (message "Debug: def-response: %S" def-response)
+      (message "Debug: target-range: %S" target-range)
+      (message "Debug: start-pos: %S, end-pos: %S" start-pos end-pos)
+
+      (if (and start-pos end-pos)
+          (let ((def-start (lsp--position-to-point start-pos))
+                (def-end (lsp--position-to-point end-pos)))
+            (message "Debug: def-start: %s, def-end: %s, current-point: %s" def-start def-end (point))
+            (if (and hover-text def-start def-end (<= def-start (point) def-end))
+                (save-excursion
+                  (goto-char def-start)
+                  (delete-region def-start def-end)
+                  (insert hover-text))
+              (message "No valid definition range or hover text found.")))
+        (message "No definition range recognized. (save file, and make sure you're on the type name)"))))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; dap-mode  [dir dap-mode | cfg neph-init.el:1051-1055 | hub neph-init.el:3658-3659]
+(elpaca (dap-mode :host github :repo "emacs-lsp/dap-mode"
+                  :ref "b407773ebca56e3bd8e6a4643854e91cbde0c35e"
+                  :files (:defaults "icons"))
+  ;; TODO-elpaca: custom-set-variables (neph-init:3658-3659) sets
+  ;; dap-auto-configure-features to '(sessions locals breakpoints expressions repl controls
+  ;; tooltip); today custom runs LAST, under elpaca bodies run post-init — override
+  ;; direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1051-1055 --
+  (require 'dap-mode)
+  ;;(require 'dap-cpptools)
+  (require 'dap-ui)
+  (require 'dap-mouse)
+  (require 'dap-hydra)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; jsonrpc  [dir jsonrpc | cfg neph-init.el:1056 | hub —]
+;;; Single require lifted out of the LSP/company section (neph-init.el:1026-1318, otherwise
+;;; owned by the lsp cluster); it sits between the dap-mode and dape requires there.
+(elpaca (jsonrpc :host github :repo "emacs-straight/jsonrpc"
+                 :ref "74268ee45494f40b3534164001b994e315490c27")
+  ;; -- lifted verbatim from neph-init.el:1056 --
+  (require 'jsonrpc)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; dape  [dir dape | cfg neph-init.el:1057,1063-1066 | hub —]
+(elpaca (dape :host github :repo "svaante/dape"
+              :ref "9df3ea8db0206e58c245ed3a3cbabc37b01e7b55")
+  ;; -- lifted verbatim from neph-init.el:1057 --
+  (require 'dape)
+  ;; -- end lift --
+  ;; TODO-elpaca: 1066 sets dape-cwd-function to a projectile function; projectile is
+  ;; declared later in this file. The symbol is quoted, so the setq is safe regardless, and
+  ;; bodies run post-init after the whole queue has built — verify at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1063-1066 --
+  ;; Dape config
+  (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+  (setq dape-inlay-hints t)
+  (setq dape-cwd-function 'projectile-project-root)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; posframe  [dir posframe | cfg neph-init.el:— | hub —]
+;;; No config; dependency (lsp-treemacs / dap-mode). Submodule URL is ssh.
+(elpaca (posframe :host github :repo "tumashu/posframe" :protocol ssh
+                  :ref "06b939cfb06168782fc378043ff35bd7fec203b8"))
+
+;;; ------------------------------------------------------------------
+;;; lsp-ui  [dir lsp-ui | cfg neph-init.el:1042-1046,1171,1179 | hub —]
+(elpaca (lsp-ui :host github :repo "emacs-lsp/lsp-ui"
+                :ref "030d36960338fd633a98b332bc3734c412c25ca6")
+  ;; -- lifted verbatim from neph-init.el:1042-1046 --
+  (require 'lsp-ui)
+  (require 'lsp-ui-flycheck)
+  (require 'lsp-headerline)
+  (require 'lsp-modeline)
+  (require 'lsp-diagnostics)
+  ;; -- end lift --
+  ;; TODO-elpaca: custom-set-variables (neph-init:3679-3682,3684-3685) sets
+  ;; lsp-ui-doc-alignment 'window, lsp-ui-doc-header t, lsp-ui-doc-include-signature t,
+  ;; lsp-ui-doc-position 'top, lsp-ui-peek-list-width 70 and
+  ;; lsp-ui-sideline-show-code-actions t; today custom runs LAST, under elpaca bodies run
+  ;; post-init — override direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1171 --
+  (setq lsp-ui-doc-show-with-cursor t)
+  ;; -- end lift --
+  ;; TODO-elpaca: custom-set-variables (neph-init:3683) sets lsp-ui-peek-always-show to nil,
+  ;; the opposite of the setq below; today custom runs LAST so nil wins, under elpaca bodies
+  ;; run post-init so t would win — override direction flips at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1179 --
+  (setq lsp-ui-peek-always-show t)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; lsp-pyright  [dir lsp-pyright | cfg neph-init.el:1031-1032,1048-1050 | hub neph-init.el:1030,3676]
+(elpaca (lsp-pyright :host github :repo "emacs-lsp/lsp-pyright"
+                     :ref "3756ff971797ae04fc43ca29c66ba4d854eff038")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3676) also sets lsp-pyright-multi-root to
+  ;; nil, duplicating the setqs below; today custom runs LAST, under elpaca bodies run
+  ;; post-init — override direction may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1031-1032 --
+  (setq lsp-pyright-multi-root nil)
+  (setq lsp-pyright-langserver-command "pyright")
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1048-1050 --
+  ;; Pyright settings are snapshot on library load??
+  (setq lsp-pyright-multi-root nil)
+  (require 'lsp-pyright)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; lsp-treemacs  [dir lsp-treemacs | cfg neph-init.el:1033,1170 | hub —]
+(elpaca (lsp-treemacs :host github :repo "emacs-lsp/lsp-treemacs"
+                      :ref "3e5550f278db74f15ebe34add0138b138207ec08"
+                      :files (:defaults "icons"))
+  ;; -- lifted verbatim from neph-init.el:1033 --
+  (require 'lsp-treemacs)
+  ;; -- end lift --
+  ;; -- lifted verbatim from neph-init.el:1170 --
+  (lsp-treemacs-sync-mode 1)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; helm-lsp  [dir helm-lsp | cfg neph-init.el:1058,1167-1168,1288-1318 | hub —]
+(elpaca (helm-lsp :host github :repo "emacs-lsp/helm-lsp"
+                  :ref "c2c6974dadfac459b1a69a1217441283874cea92")
+  ;; -- lifted verbatim from neph-init.el:1058 --
+  (require 'helm-lsp)
+  ;; -- end lift --
+  ;; NOTE: this define-key targets lsp-mode-map; helm-lsp is declared after lsp-mode, so the
+  ;; map exists by the time this runs.
+  ;; -- lifted verbatim from neph-init.el:1167-1168 --
+  ;; Use helm-lsp-workspace-symbol to replace xref-find-apropos (recommended by helm-lsp readme)
+  (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+  ;; -- end lift --
+  ;; NOTE: mixed lsp-mode / lsp-ui / ccls / flycheck / helm-lsp key bindings, placed here
+  ;; because helm-lsp is declared last of everything they reference.
+  ;; -- lifted verbatim from neph-init.el:1288-1318 --
+  (global-set-key (kbd "C-z M-l")   'neph-ccls-reformat-definition)
+  ;; LSP UI keys, some are not used but reserved from equivalents in rtags configuration
+  (global-set-key (kbd "C-z C-,")   'lsp-ui-peek-find-references)
+  (global-set-key (kbd "C-z C-.")   'xref-find-definitions)
+  (global-set-key (kbd "M-.")       'lsp-ui-peek-find-definitions)
+  (global-set-key (kbd "C-z C-<")   'ccls-call-hierarchy)
+  (global-set-key (kbd "C-z ,")     'lsp-find-references)
+  (global-set-key (kbd "C-z <tab>") 'lsp-ui-imenu)
+  (global-set-key (kbd "C-z D")     'flycheck-list-errors)
+  (global-set-key (kbd "C-z C-l")   'neph-lsp-reset)
+  (global-set-key (kbd "C-z C-S-l") 'neph-toggle-ccls-reload)
+  (global-set-key (kbd "C-z RET")   'helm-lsp-code-actions)
+  (global-set-key (kbd "C-z .")     'helm-lsp-workspace-symbol)        ;; Menu to find symbol in project
+  ;; (global-set-key (kbd "C-z >")     'helm-lsp-global-workspace-symbol) ;; Menu to find symbol in open projects
+  ;; (global-set-key (kbd "C-z C-.")           'rtags-find-symbol-at-point)
+  ;; (global-set-key (kbd "C-z M-r")           'rtags-reparse-file)
+  ;; (global-set-key (kbd "C-z C->")           'rtags-find-virtuals-at-point)
+  ;; (global-set-key (kbd "C-z C-/")           'delete-xrefs-window-or-something) ;; Was the rtags bind to dismiss the references
+  ;; (global-set-key (kbd "C-z C-n")           'xref-next-line)
+  ;; (global-set-key (kbd "C-z C-p")           'xref-prev-line)
+  ;; (global-set-key (kbd "C-z i")             'rtags-fixit)
+  ;; (global-set-key (kbd "C-z I")             'rtags-fix-fixit-at-point)
+  ;; (global-set-key (kbd "C-z DEL")           'rtags-location-stack-back)
+  ;; (global-set-key (kbd "C-z <S-backspace>") 'rtags-location-stack-back)
+  ;; (global-set-key (kbd "C-z C-S-R")         'rtags-rename-symbol)
+
+  ;; Navigate? needs better binds.
+  (global-set-key (kbd "C-z <C-left>")  (lambda () (interactive) (ccls-navigate "U")))
+  (global-set-key (kbd "C-z <C-right>") (lambda () (interactive) (ccls-navigate "D")))
+  (global-set-key (kbd "C-z <C-up>")    (lambda () (interactive) (ccls-navigate "L")))
+  (global-set-key (kbd "C-z <C-down>")  (lambda () (interactive) (ccls-navigate "R")))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; irony  [dir irony-mode | cfg neph-init.el:1335-1363 | hub neph-init.el:1380-1381, 1491-1536]
+;; TODO-elpaca: `irony-install-server' builds the bundled CMake sources found at
+;; "server/" relative to the directory holding irony.el; the default :files
+;; directive links elisp only, so "server" is added to keep that path resolvable
+;; from the build directory.
+(elpaca (irony :host github :repo "Sarcasm/irony-mode"
+               :ref "c3ae899b61124a747ebafc705086345e460ac08e"
+               :files (:defaults "server"))
+  ;; TODO-elpaca: custom-set-variables (neph-init:3670) sets
+  ;; irony-completion-availability-filter to
+  ;; '(available deprecated notaccessible notavailable); no equivalent form in
+  ;; this body, but today custom runs LAST, under elpaca bodies run post-init --
+  ;; relative ordering may flip at wiring time.
+  ;; NOTE: `counsel' below is a sibling feature of the swiper/ivy repo, not a
+  ;; declaration of its own; the (require 'counsel nil t) is soft-failing and
+  ;; runs from the hook, so load order does not matter.
+  ;; NOTE: the neph-flycheck-irony-setup defun and the two commented activation
+  ;; lines below are the whole of the flycheck-irony configuration; they live
+  ;; here because this region is contiguous in neph-init.el.
+  ;; -- lifted verbatim from neph-init.el:1335-1363 --
+  ;;
+  ;; Irony-mode (deprecated)
+  ;;   DEPRECATED - going to drop if ccls + lsp keeps working well
+  ;;
+  ;;(require 'neph-irony-autoload)
+
+  ;; Bonus key to use counsel-irony if available
+  (defun irony-mode-counsel-hook ()
+    (when (require 'counsel nil t)
+      (define-key irony-mode-map
+        ;;[remap completion-at-point] 'counsel-irony)
+        ;;[remap complete-symbol] 'counsel-irony)
+        (kbd "<C-M-tab>") 'counsel-irony)))
+  (add-hook 'irony-mode-hook 'irony-mode-counsel-hook)
+
+  ;; FIXME irony-mode breaks on headers due to that missing (car found)
+
+  ;; Load flycheck-irony if both flycheck and irony get enabled
+  (defun neph-flycheck-irony-setup ()
+    "Load flycheck-irony if both irony and flycheck are loaded."
+    (when (and (featurep 'flycheck)
+               (featurep 'irony)
+               (not (featurep 'flycheck-irony)))
+      (require 'flycheck-irony)
+      (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+
+  ;; Disabled by default - flycheck-irony is incredibly laggy for some reason, rtags provides better diagnostics
+  ;;(with-eval-after-load "flycheck" (neph-flycheck-irony-setup))
+  ;;(with-eval-after-load "irony" (neph-flycheck-irony-setup))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; company-irony  [dir company-irony | cfg neph-init.el:— | hub neph-init.el:3651-3654]
+;; TODO-elpaca: custom-set-variables (neph-init:3651-3654) lists company-irony in
+;; company-backends; that entry is the only reference to this package and is not
+;; lifted here. Today custom runs LAST, under elpaca bodies run post-init --
+;; relative ordering may flip at wiring time.
+(elpaca (company-irony :host github :repo "Sarcasm/company-irony"
+                       :ref "b44711dfce445610c1ffaec4951c6ff3882b216a"))
+
+;;; ------------------------------------------------------------------
+;;; flycheck-irony  [dir flycheck-irony | cfg neph-init.el:1352-1363 (lifted in irony block) | hub: —]
+(elpaca (flycheck-irony :host github :repo "Sarcasm/flycheck-irony"
+                        :ref "34940ae5ab8f4c721d9c1118ebfc3496d7e67a84"))
+
+;;; ------------------------------------------------------------------
+;;; popup  [dir popup-el | cfg neph-init.el:1370-1371 | hub neph-init.el:1365-1369, 1373-1536]
+;;; hub = the deprecated rtags section: its banner and the `(if (require 'rtags-disabled nil t) ...)`
+;;; form, which never runs and which holds the popup-tip redefinition at 1383-1402.
+(elpaca (popup :host github :repo "auto-complete/popup-el"
+               :ref "2af1c6c8a33ffa44e99d0e4df8769ca3d4098dd9")
+  ;; TODO-elpaca: at this pin `popup' is a cl-defstruct name in popup.el, not a function, so
+  ;; this autoload never resolves to anything; elpaca also generates popup-autoloads.el, and
+  ;; this body runs post-init, after that file is loaded. Kept verbatim.
+  ;; -- lifted verbatim from neph-init.el:1370-1371 --
+  ;; popup.el for rtags tooltips (needed anymore?)
+  (autoload 'popup "popup" "Popup tooltip thing." t)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:96): function-args  [dir function-args | cfg neph-init.el:1548-1551]
+;; NOTE: neph-init.el:1563 (commented moo-jump-local binding, inside the
+;;       "Keys for C++ completion" block) also references this package and
+;;       stays behind.
+;; NOTE: Package-Requires: swiper 0.2.0 — the swiper feature shipped by the
+;;       ivy repo, which is on the ignored-dependencies list.
+;; (elpaca (function-args :host github :repo "abo-abo/function-args"
+;;                        :ref "33ed7e45027b6ce2e455467f7a1a05ca4abdd078"))
+
+;;; ------------------------------------------------------------------
+;;; smart-tabs-mode  [dir smarttabs | cfg neph-init.el:1697-1702 | hub neph-init.el:2391,2456]
+(elpaca (smart-tabs-mode :host github :repo "jcsalomon/smarttabs"
+                         :ref "cd19892677ec9a2c378c828aa7cef9a2b2bd1c0e")
+  ;; -- lifted verbatim from neph-init.el:1697-1702 --
+  ;;
+  ;; Smart Tabs
+  ;;
+
+  (require 'smart-tabs-mode)
+  (smart-tabs-insinuate 'c 'javascript 'c++)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:98): gdb-mi  [dir emacs-gdb | cfg neph-init.el:1767-1776]
+;; NOTE: the repo's main file is gdb-mi.el, so the package id is gdb-mi — it
+;;       deliberately shadows the built-in gdb-mi feature. Declaring the id
+;;       also removes gdb-mi from elpaca-ignored-dependencies.
+;; NOTE: Package-Requires: emacs 26.1 (builtin), hydra 0.14.0 (declared).
+;; TODO-elpaca: this repo ships a C dynamic module (gdb-module.c + Makefile);
+;;       elpaca's default build steps never run make, so enabling this block
+;;       needs a separate module build.
+;; TODO-elpaca: emacs.d/compile.sh generates autoloads for this dir under the
+;;       name weirdnox-gdb (neph-weirdnox-gdb-autoload, referenced by the
+;;       commented neph-init.el:1775); under elpaca the file is gdb-mi-autoloads.
+;; (elpaca (gdb-mi :host github :repo "weirdNox/emacs-gdb"
+;;                 :ref "985423594e91a4fb774d4dc5322d4b9750393419"))
+
+;;; ------------------------------------------------------------------
+;;; ido-vertical-mode  [dir ido-vertical-mode | cfg neph-init.el:1778-1797 | hub —]
+(elpaca (ido-vertical-mode :host github :repo "gempesaw/ido-vertical-mode.el"
+                           :ref "b42e4227ed5d37b5d840a9d9d1cdaabf50e189b1")
+  ;; TODO-elpaca: custom-set-variables (neph-init:3669) sets ido-vertical-define-keys to
+  ;; 'C-n-and-C-p-only, and (ido-vertical-mode 1) below reads that variable when it installs
+  ;; its keys; today custom runs LAST, under elpaca this body runs post-init — the relative
+  ;; order may flip at wiring time.
+  ;; -- lifted verbatim from neph-init.el:1778-1797 --
+  ;;
+  ;; ido
+  ;;
+
+  (require 'ido)
+  (require 'ido-vertical-mode)
+  ;(autoload 'ido "ido" "Ido thing." t)
+  ;(autoload 'ido-vertical-mode "ido-vertical-mode" "ido-vertical-mode" t)
+  (ido-vertical-mode 1)
+
+  ;; global ido-mode is incompatible with helm mode, but we just want it for find file.  Which, annoyingly, gets
+  ;; intercepted by helm...
+  (defun neph-ido-find-file ()
+    "Call 'ido-find-file' with ido enabled, then return to previous state."
+    (interactive)
+    (let ((was-ido-mode ido-mode))
+      (ido-mode t)
+      (unwind-protect (call-interactively 'ido-find-file)
+        (when (not was-ido-mode) (ido-mode -1)))))
+  (global-set-key (kbd "C-x C-f") 'neph-ido-find-file)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; rainbow-delimiters  [dir rainbow-delimiters | cfg neph-init.el:1799-1803 | hub neph-init.el:2430,3623-3632]
+(elpaca (rainbow-delimiters :host github :repo "Fanael/rainbow-delimiters"
+                            :ref "93cd2dc873e7fedca7abc599cd97d46db4376ac7")
+  ;; -- lifted verbatim from neph-init.el:1799-1803 --
+  ;;
+  ;; Rainbow Delimiters
+  ;;
+
+  (autoload 'rainbow-delimiters-mode "rainbow-delimiters" "rainbow-delimiters" t)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; minimap  [dir minimap | cfg neph-init.el:1805-1814 | hub neph-init.el:—]
+(elpaca (minimap :host github :repo "dengste/minimap"
+                 :ref "fc33fbfd802b167de85158e38a505b76708c4e3a")
+  ;; -- lifted verbatim from neph-init.el:1805-1814 --
+  ;;
+  ;; Minimap
+  ;;
+
+  (autoload 'minimap-mode "minimap" "minimap" t)
+
+  (with-eval-after-load "minimap"
+                (set-face-attribute 'minimap-font-face nil :family "Droid Sans Mono" :height 10 :weight 'ultrabold)
+                (setq minimap-window-location (quote right))
+                (setq minimap-width-fraction 0.01))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; god-mode  [dir god-mode | cfg neph-init.el:2033-2038 | hub neph-init.el:—]
+(elpaca (god-mode :host github :repo "chrisdone/god-mode"
+                  :ref "3ba1fea8ed3d7bddb4197f13b1fc0c33965f7841")
+  ;; -- lifted verbatim from neph-init.el:2033-2038 --
+  ;;
+  ;; God mode
+  ;;
+
+  (autoload 'god-mode "god-mode" "god-mode" t)
+  (global-set-key (kbd "C-z C-z") 'god-local-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; fic-mode  [dir fic-mode.git | cfg neph-init.el:2065-2071 | hub neph-init.el:2433]
+;; NOTE: the "Misc modes" section banner at neph-init:2065-2067 heads the whole
+;; 2065-2076 stretch (fic-mode, the git-gutter trio and rainbow-mode); it is
+;; carried here with the first package of that stretch.
+(elpaca (fic-mode :host github :repo "lewang/fic-mode"
+                  :ref "206fdfc96eed9ee42fdff21e25e4d26495d4854a")
+  ;; -- lifted verbatim from neph-init.el:2065-2071 --
+  ;;
+  ;; Misc modes
+  ;;
+
+  (autoload 'fic-mode "fic-mode" "fic-mode" t)
+  (with-eval-after-load "fic-mode"
+    (add-to-list 'fic-highlighted-words "XXX"))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; git-gutter-fringe  [dir git-gutter-fringe | cfg neph-init.el:2075 (lifted in the fringe-helper block) | hub neph-init.el:—]
+;; NOTE: the (require 'git-gutter-fringe) at neph-init:2075 is part of the
+;; three-package region 2073-2075, lifted whole into the fringe-helper block
+;; (last declared of the three).
+(elpaca (git-gutter-fringe :host github :repo "syohex/emacs-git-gutter-fringe"
+                           :ref "c12179ece35538c94d7928572f523a7145f1fb49"))
+
+;;; ------------------------------------------------------------------
+;;; git-gutter  [dir git-gutter | cfg neph-init.el:2074 (lifted in the fringe-helper block) | hub neph-init.el:2148,2416]
+;; NOTE: the (require 'git-gutter) at neph-init:2074 is part of the three-package
+;; region 2073-2075, which is lifted whole into the fringe-helper block (last
+;; declared of the three).  `git-gutter-mode' calls in neph-ediff-mode
+;; (neph-init:2148) and neph-base-cfg (neph-init:2416) stay behind with those
+;; hub functions.
+(elpaca (git-gutter :host github :repo "syohex/emacs-git-gutter"
+                    :ref "1ede3a688f3c60bd915d890a06d1509c7236167c"))
+
+;;; ------------------------------------------------------------------
+;;; fringe-helper  [dir fringe-helper | cfg neph-init.el:2073-2075 | hub neph-init.el:—]
+(elpaca (fringe-helper :host github :repo "nschum/fringe-helper.el"
+                       :ref "c02fae16cda709f102dee56338075e257240b385")
+  ;; NOTE: this region requires three packages (fringe-helper, git-gutter,
+  ;; git-gutter-fringe) and the order inside it is load-bearing: git-gutter-fringe
+  ;; needs both of the others.  It is hosted here because fringe-helper is the
+  ;; last-declared of the three (~/.emacs load-path order: git-gutter-fringe,
+  ;; git-gutter, fringe-helper), so all three are activated by the time this body
+  ;; runs post-init.
+  ;; -- lifted verbatim from neph-init.el:2073-2075 --
+  (require 'fringe-helper)
+  (require 'git-gutter)
+  (require 'git-gutter-fringe)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; rainbow-mode  [dir rainbow-mode | cfg neph-init.el:2076 | hub neph-init.el:2417]
+(elpaca (rainbow-mode :host github :repo "emacsmirror/rainbow-mode"
+                      :ref "1ef059c1c670adf58a82f86839d8fb568c128a16")
+  ;; -- lifted verbatim from neph-init.el:2076 --
+  (autoload 'rainbow-mode "rainbow-mode" "Rainbow Mode." t)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; p4  [dir p4.el | cfg neph-init.el:2082-2083 | hub neph-init.el:2078-2081,2084-2141,3125-3136]
+(elpaca (p4 :host github :repo "gareth-rees/p4.el"
+            :ref "eff047caa75dbe4965defca9d1212454cdb755d5")
+  ;; -- lifted verbatim from neph-init.el:2082-2083 --
+  ;; p4.el
+  (autoload 'p4 "p4" "p4" t)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; flyspell-lazy  [dir flyspell-lazy | cfg neph-init.el:2176-2193 | hub —]
+(elpaca (flyspell-lazy :host github :repo "rolandwalker/flyspell-lazy"
+                       :ref "31786fe04a4732d2f845e1c7e96fcb030182ef10")
+  ;; -- lifted verbatim from neph-init.el:2176-2193 --
+  ;;
+  ;; Flyspell-lazy
+  (require 'flyspell-lazy)
+  (setq flyspell-lazy-idle-seconds 1)
+  (setq flyspell-lazy-window-idle-seconds 1)
+
+  ;; With the lazy mode window timer set
+  (defun flyspell-lazy-toggle (arg)
+    "Toggle flyspell lazy mode"
+    (interactive "p")
+    (if (and (boundp 'flyspell-mode) flyspell-mode)
+        (progn
+          (flyspell-mode 0)
+          (flyspell-lazy-mode 0))
+      (flyspell-lazy-mode t)
+      (flyspell-mode t)
+      (flyspell-lazy-check-visible)))
+  (global-set-key (kbd "C-c M-l") 'flyspell-lazy-toggle)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; projectile  [dir projectile | cfg neph-init.el:2195-2204,2212-2229,2231-2247,2250-2256 | hub neph-init.el:648,894,1041,1066,1671,1839-1844,1850-1853,2469-2473,2535-2542]
+(elpaca (projectile :host github :repo "bbatsov/projectile"
+                    :ref "f12fdae30a36e3614fa6944969bf37dec9998301")
+  ;; TODO-elpaca: projectile's Package-Requires names (compat "30"); the pinned
+  ;; compat.el submodule declares Version: 28.1.1.0.  No version checking exists
+  ;; today and none is enabled here, so this is informational only.
+  ;; NOTE: the `helm-projectile-fuzzy-match' setq below must precede the loading of
+  ;; helm-projectile (see the original comment).  Bodies run post-init in declaration
+  ;; order and helm-projectile is declared after projectile, so the ordering holds.
+  ;; -- lifted verbatim from neph-init.el:2195-2204 --
+  ;;
+  ;; Projectile
+  ;;
+
+
+  ;; Must be set before loading helm-projectile according to help text. Makes it not super slow.
+  (setq helm-projectile-fuzzy-match nil)
+
+  ;; In server mode, let's just load it synchronously
+  (require 'projectile)
+  ;; -- end lift --
+
+  ;; -- lifted verbatim from neph-init.el:2212-2229 --
+  (setq projectile-switch-project-action 'projectile-find-file)
+
+  ;; If -alt appears in the path preceeding the final component, append -alt to the name
+  ;; e.g. ~/git-alt/project shows up differently from ~/git/project
+  ;; (Incredibly specific to the author's workflow)
+  ;; A more robust version would be to feed known projects into uniquify
+  (defun neph-projectile-project-name (root)
+    "Neph hook for projectile-project-name"
+    (let ((default-name
+            (if (string-match "/main/$" root)
+                (concat
+                 (projectile-default-project-name
+                  (replace-regexp-in-string "/main/$" "" root))
+                 "-main")
+              (projectile-default-project-name root))))
+      (if (string-match "-alt.*/" root)
+          (concat default-name "-alt")
+          default-name)))
+  ;; -- end lift --
+
+  ;; -- lifted verbatim from neph-init.el:2231-2247 --
+  (with-eval-after-load "projectile"
+    (setq projectile-project-root-files
+          (remove "?*.sln" projectile-project-root-files))
+    (setq projectile-completion-system 'helm)
+    (setq projectile-generic-command "fd . -E '/.*cache' --hidden -0")
+    (setq projectile-indexing-method 'alien)
+    (setq projectile-project-name-function 'neph-projectile-project-name)
+    (setq projectile-enable-caching 'persistent)
+    ;; caching big projects still very slow even with fd
+    ;(setq projectile-files-cache-expire 3600)
+    (projectile-global-mode t)
+    (with-eval-after-load "helm"
+      ;; This just wraps some stuff with 'helpers' like helm-projectile-find-file which is hella slow because it tries to
+      ;; pull in dired too and such.  Should bind/turn on those things one and a time if they're handy, otherwise projectile
+      ;; commands already use the helm completion backend.
+      ;;(helm-projectile-on)
+      ))
+  ;; -- end lift --
+
+  ;; -- lifted verbatim from neph-init.el:2250-2256 --
+  ;;(let ((neph-ignored-patterns '("*.dwo" "*.o" "*.P" "*.dSYM" "*.vtx" "*.vtf" "*.wav" "*.mdl" "*.vvd"
+  ;;                               "*.mp3" "*.png" "*.phy" "*.jpg" "*.pyc" "*.lib" "*.psd" "*.tga"
+  ;;                               "*.dll" "*.vcs" "*.bsp" "*.zip" "*.exe")))
+  ;;  (setq projectile-generic-command (concat "find . -type f "
+  ;;                                           (mapconcat (lambda (x) (concat "-not -iname '" x "'"))
+  ;;                                                      neph-ignored-patterns " -and ")
+  ;;                                           " -print0")))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; helm-projectile  [dir helm-projectile | cfg neph-init.el:2205,2208-2211,2259-2340 | hub neph-init.el:887,3693-3780]
+(elpaca (helm-projectile :host github :repo "bbatsov/helm-projectile"
+                         :ref "0ffb6b5f09c1d65d721c1111ebfa6cec0ba63234")
+  ;; -- lifted verbatim from neph-init.el:2205 --
+  (require 'helm-projectile)
+  ;; -- end lift --
+
+  ;; TODO-elpaca: the autoloads below name the hardcoded path
+  ;; "~/.emacs.d/helm-projectile/helm-projectile"; under elpaca the built package is on
+  ;; load-path, so the bare library name "helm-projectile" is the replacement (and the
+  ;; package ships its own autoloads, making these three forms redundant).
+  ;; -- lifted verbatim from neph-init.el:2208-2211 --
+  ;; Additional autoloads for helm-projectile
+  (autoload 'helm-projectile-ag "~/.emacs.d/helm-projectile/helm-projectile")
+  (autoload 'helm-projectile-switch-to-buffer "~/.emacs.d/helm-projectile/helm-projectile")
+  (autoload 'helm-projectile-switch-project "~/.emacs.d/helm-projectile/helm-projectile")
+  ;; -- end lift --
+
+  ;; NOTE: the region below also drives packages declared earlier: helm-ag
+  ;; (helm-ag-base-command), helm-rg (helm-rg-default-extra-args) and helm
+  ;; (helm-do-ag-buffers, helm-buffers-list, with-helm-alive-p).  helm-projectile is the
+  ;; last-declared package it references.  It also calls `neph-mark-current-word', a
+  ;; general editing helper that stays in neph-init.el.
+  ;; -- lifted verbatim from neph-init.el:2259-2340 --
+  ;; helm projectile-ag/rg with default args
+  (defun helm-projectile-ag-cpp()
+    (interactive)
+    (require 'helm-projectile)
+    (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
+      (helm-projectile-ag)))
+  (defun helm-projectile-rg-cpp()
+    (interactive)
+    (require 'helm-projectile)
+    (let ((helm-rg-default-extra-args (append helm-rg-default-extra-args (split-string-and-unquote "-t cpp -t c"))))
+      (call-interactively 'helm-projectile-rg)))
+  (defun helm-projectile-rg-php()
+    (interactive)
+    (require 'helm-projectile)
+    (let ((helm-rg-default-extra-args (append helm-rg-default-extra-args (split-string-and-unquote "-t php"))))
+      (call-interactively 'helm-projectile-rg)))
+  (defun helm-projectile-ag-cpp-this-word()
+    (interactive)
+    (require 'helm-projectile)
+    (save-excursion
+      (neph-mark-current-word)
+      (let ((helm-ag-base-command (concat helm-ag-base-command " --cpp --cc")))
+        (helm-projectile-ag))))
+  (defun helm-projectile-ag-this-word()
+    (require 'helm-projectile)
+    (interactive)
+    (save-excursion
+      (neph-mark-current-word)
+      (helm-projectile-ag)))
+  (defadvice helm-projectile-find-file (around helm-projectile-find-file-no-case activate)
+    (let ((helm-case-fold-search nil))
+      ad-do-it))
+  (defadvice projectile-find-file (around projectile-find-file-no-case activate)
+    (let ((helm-case-fold-search nil))
+      ad-do-it))
+  (defadvice projectile-find-file-in-known-projects (around projectile-find-file-in-known-projects-no-case activate)
+    (let ((helm-case-fold-search nil))
+      ad-do-it))
+  (defadvice helm-projectile-find-file-in-known-projects (around helm-projectile-find-file-in-known-projects-no-case activate)
+    (let ((helm-case-fold-search nil))
+      ad-do-it))
+
+  ;; WIP migrating to project.el as possible
+  (global-set-key (kbd "C-z M-f") 'projectile-find-file)
+  (global-set-key (kbd "C-c p a") 'projectile-find-other-file) ;; did projectile drop this bind or did I break loading its map, who knows
+  (global-set-key (kbd "C-z M-F") 'projectile-find-file-in-known-projects)
+  (global-set-key (kbd "C-z M-g") 'helm-projectile-rg-cpp)
+  (global-set-key (kbd "C-z M-G") 'helm-projectile-ag-cpp-this-word)
+  (global-set-key (kbd "C-z C-M-G") 'helm-do-ag-buffers)
+  (global-set-key (kbd "C-z g") 'helm-projectile-rg)
+  (global-set-key (kbd "C-z G") 'helm-projectile-ag-this-word)
+  ;; Non-incremental, but can be faster and supports prefix arg for filename globbing
+  (global-set-key (kbd "C-z C-G") 'projectile-grep)
+  (global-set-key (kbd "C-z b") 'helm-projectile-switch-to-buffer)
+  (global-set-key (kbd "C-z B") 'helm-buffers-list)
+  (global-set-key (kbd "C-z p") 'projectile-switch-project)
+  ;; No, this is used as a prefix elsewhere
+  ;;(global-set-key (kbd "C-z C-p") 'helm-projectile)
+
+  ;; Switch project action
+  (defun neph-projectile-switch-and-rg ()
+    (interactive)
+    (let ((projectile-switch-project-action 'helm-projectile-rg))
+      (call-interactively 'helm-projectile-switch-project)))
+  (defun neph-projectile-switch-and-rg-cpp ()
+    (interactive)
+    (let ((projectile-switch-project-action 'helm-projectile-rg-cpp))
+      (call-interactively 'helm-projectile-switch-project)))
+
+  (global-set-key (kbd "C-z C-p g") 'neph-projectile-switch-and-rg)
+  (global-set-key (kbd "C-z C-p M-g") 'neph-projectile-switch-and-rg-cpp)
+
+  (with-eval-after-load "helm-projectile"
+    (define-key helm-projectile-find-file-map (kbd "M-g") (lambda ()
+                                                            (interactive)
+                                                            (with-helm-alive-p
+                                                              ;; For some reason we need to have a lambda swallow the options string or helm-ag breaks
+                                                              (helm-exit-and-execute-action (lambda (&optional options)
+                                                                                              (interactive)
+                                                                                              (helm-projectile-ag)))))))
+  ;; Default. Setting this to helm-projectile-find-file seems to make it laggy?
+  ;; (setq projectile-switch-project-action 'projectile-find-file)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; php-mode  [dir php-mode | cfg neph-init.el:2342-2349
+;;;            | hub neph-init.el:1327, 2270-2273, 3673-3675, 3696-3772]
+(elpaca (php-mode :host github :repo "emacs-php/php-mode" :protocol ssh
+                  :main "lisp/php-mode.el"
+                  :ref "4792988a120d6ac515ba16605278d04cb8be0d69")
+  ;; NOTE: the hooks below call neph-tab-cfg (neph-init:2452-2467) and neph-lsp-if-projectile
+  ;; (neph-init:2469-2474), which are general hub functions and stay outside this block.
+  ;; -- lifted verbatim from neph-init.el:2342-2349 --
+  ;;
+  ;; php-mode
+  ;;
+  (require 'php-mode)
+
+  (add-to-list 'auto-mode-alist '("\\.php\\'" . php-mode))
+  (add-hook 'php-mode-hook 'neph-tab-cfg)
+  (add-hook 'php-mode-hook 'neph-lsp-if-projectile)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; web-mode  [dir web-mode | cfg neph-init.el:2351-2365, 2546-2563
+;;;            | hub neph-init.el:2413-2415, 2465-2467, 3621]
+(elpaca (web-mode :host github :repo "fxbois/web-mode"
+                  :ref "005aa62d6f41fbf9bc045cac3b3b772716ee8ba7")
+  ;; -- lifted verbatim from neph-init.el:2351-2365 --
+  ;;
+  ;; Web-mode
+  ;;
+
+  (require 'web-mode)
+  (setq web-mode-indent-style 1)
+  (setq web-mode-script-padding 2)
+  (setq web-mode-style-padding 2)
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-block-face t)
+  (setq web-mode-enable-part-face t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-auto-pairing t)
+  (add-to-list 'auto-mode-alist '(".html?$" . web-mode))
+  ;; -- end lift --
+
+  ;; NOTE: the following defuns exist solely to drive web-mode, so they move with it; they call
+  ;; neph-tab-cfg / neph-space-cfg (neph-init:2436-2467), which stay behind as hub functions.
+  ;; -- lifted verbatim from neph-init.el:2546-2563 --
+  ;; For web mode in tabs, we want to disable whitespace tabs because they conflict with the
+  ;; php-background-coloring.  In space mode we can just use neph-space-cfg, as we want to highlight
+  ;; errant tabs.  BUT - whitespace mode needs to be re-started when screwing with this variable.
+  (defun neph-web-tab-cfg ()
+    (interactive)
+    (let ((filtered-whitespace-style (remove 'tabs whitespace-style)))
+      (setq-local whitespace-style filtered-whitespace-style))
+    (whitespace-mode nil)
+    (whitespace-mode t)
+    (neph-tab-cfg))
+  (defun neph-web-space-cfg ()
+    (interactive)
+    (kill-local-variable 'whitespace-style)
+    (whitespace-mode nil)
+    (whitespace-mode t)
+    (neph-space-cfg))
+
+  (add-hook 'web-mode-hook 'neph-web-tab-cfg)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; yaml-mode  [dir yaml-mode | cfg neph-init.el:2666-2673 | hub —]
+(elpaca (yaml-mode :host github :repo "yoshiki/yaml-mode"
+                   :ref "40067a10ac1360f0b9533f0bbbb2eea128e2574d")
+  ;; NOTE: neph-space-cfg is a generic personal defun and stays in neph-init.el.
+  ;; -- lifted verbatim from neph-init.el:2666-2673 --
+  ;;
+  ;; Yaml mode
+  ;;
+  (require 'yaml-mode)
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.sls\\'" . yaml-mode)) ;; Salt
+  (with-eval-after-load "yaml-mode"
+    (add-hook 'yaml-mode-hook 'neph-space-cfg))
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; ace-jump-mode  [dir ace-jump-mode | cfg neph-init.el:3457-3478 | hub —]
+(elpaca (ace-jump-mode :host github :repo "winterTTr/ace-jump-mode"
+                       :ref "c60f7d2e84c9eb283627e30d1949462f403d877b")
+  ;; NOTE: this region also holds avy's config (3476, 3478); avy is declared earlier
+  ;; (~/.emacs:76 vs :115), so the interleaved region is hosted here, last-declared.
+  ;; -- lifted verbatim from neph-init.el:3457-3478 --
+  ;;
+  ;; ace-jump-mode
+  ;;
+
+  (autoload
+    'ace-jump-mode
+    "ace-jump-mode"
+    "Emacs quick move minor mode"
+    t)
+
+  (autoload
+    'ace-jump-mode-pop-mark
+    "ace-jump-mode"
+    "Ace jump back:-)"
+    t)
+  (eval-after-load "ace-jump-mode"
+    '(ace-jump-mode-enable-mark-sync))
+
+  ;; TODO Drop ace-jump?
+  (require 'avy)
+  (define-key global-map (kbd "C-z C-c") 'ace-jump-mode-pop-mark)
+  (define-key global-map (kbd "C-z C-x") 'avy-goto-word-1)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; mmm-mode  [dir mmm-mode | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (mmm-mode :host github :repo "purcell/mmm-mode"
+                  :ref "1b4ada30ae6d35a7c9156fb7a706607eb7566592"))
+
+;;; ------------------------------------------------------------------
+;;; mmm-jinja2  [dir mmm-jinja2 | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (mmm-jinja2 :host github :repo "glynnforrest/mmm-jinja2"
+                    :ref "c8cb763174fa2fb61b9a0e5e0ff8cb0210f8492f"))
+
+;;; ------------------------------------------------------------------
+;;; salt-mode  [dir salt-mode | cfg neph-init.el:3515-3518 | hub —]
+(elpaca (salt-mode :host github :repo "glynnforrest/salt-mode"
+                   :ref "5ed02dabe0c5c58f51959a48b559f7fc5425ea2c")
+  ;; -- lifted verbatim from neph-init.el:3515-3518 --
+  ;;
+  ;; mmm/jinja/salt mode
+  ;;
+  (require 'salt-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; git-modes  [dir git-modes | cfg neph-init.el:— | hub —]
+;;; No config: the package is load-path'd only; gitconfig/gitignore/gitattributes
+;;; auto-mode-alist entries come from its own autoloads.
+(elpaca (git-modes :host github :repo "magit/git-modes"
+                   :ref "96abfb732d695cbd2075ba701254651a7b28d693"))
+
+;;; ------------------------------------------------------------------
+;;; llama  [dir llama | cfg neph-init.el:— | hub neph-init.el:—]
+;; NOTE: ~/.emacs load-path comment for this dir reads "dep of magit".
+(elpaca (llama :host github :repo "tarsius/llama"
+               :ref "2a89ba755b0459914a44b1ffa793e57f759a5b85"))
+
+;;; ------------------------------------------------------------------
+;;; cond-let  [dir cond-let | cfg neph-init.el:— | hub neph-init.el:—]
+;; NOTE: ~/.emacs load-path comment for this dir reads "dep of magit".
+(elpaca (cond-let :host github :repo "tarsius/cond-let"
+                  :ref "0430bd1eb3493ea90d69feb6b7eb7dac3e10d0ba"))
+
+;;; ------------------------------------------------------------------
+;;; transient  [dir magit-transient | cfg neph-init.el:— | hub —]
+;;; No config; pinned submodule shadows the Emacs-bundled transient.
+(elpaca (transient :host github :repo "magit/transient" :main "lisp/transient.el"
+                   :ref "150e9d625ba28747812a7243f79d61ea927aacc6"))
+
+;;; ------------------------------------------------------------------
+;;; magit-popup  [dir magit-popup | cfg neph-init.el:— | hub —]
+;;; No config.  Obsolete upstream (superseded by transient); kept pinned.
+;;; Nothing in neph-init.el requires or references it.
+(elpaca (magit-popup :host github :repo "magit/magit-popup"
+                     :ref "d8585fa39f88956963d877b921322530257ba9f5"))
+
+;;; ------------------------------------------------------------------
+;;; ghub  [dir magit-ghub | cfg neph-init.el:— | hub —]
+;;; No config.  lisp/ghub.el carries no Package-Requires header at this pin; the
+;;; committed root ghub-pkg.el is the only dependency/version source, so it is
+;;; named as :main (which is also the file elpaca's default main-file search
+;;; picks, since it matches "<name>-pkg.el" at the repo root).
+(elpaca (ghub :host github :repo "magit/ghub" :main "ghub-pkg.el"
+              :ref "0d7c81eee3ba0c6e029605e545173721c39947d7"))
+
+;;; ------------------------------------------------------------------
+;;; magit  [dir magit | cfg neph-init.el:2604-2606,3540-3551 (lifted in the
+;;;         with-editor block) | hub —]
+;;; The Magit config region requires both magit and with-editor; with-editor is
+;;; the last-declared of the two (~/.emacs load-path order: magit L125,
+;;; with-editor L127), so it hosts the lift.
+(elpaca (magit :host github :repo "magit/magit" :main "lisp/magit.el"
+               :ref "afefc998149a9baae62c670ef05d1ebaf6713cfe"))
+
+;;; ------------------------------------------------------------------
+;;; treepy  [dir treepy | cfg neph-init.el:— | hub neph-init.el:—]
+(elpaca (treepy :host github :repo "volrath/treepy.el"
+                :ref "3ac940e97f3d03e48ca9d7fcd74916a9b01c72f3"))
+
+;;; ------------------------------------------------------------------
+;;; with-editor  [dir with-editor | cfg neph-init.el:2604-2606,3540-3551 | hub —]
+;;; Hosts the whole Magit config: the region requires both magit and with-editor,
+;;; and with-editor is the last-declared of the two (~/.emacs load-path order:
+;;; magit L125, with-editor L127).
+(elpaca (with-editor :host github :repo "magit/with-editor"
+                     :main "lisp/with-editor.el"
+                     :ref "f514f23258af67a10fc8e1c431bfe94702b6e65b")
+  ;; Provenance: this pair of lines lives in the Tramp section of neph-init.el,
+  ;; far from the Magit section below, and sets a magit variable.
+  ;; -- lifted verbatim from neph-init.el:2604-2606 --
+  ;; Fix magit in that mode
+  ;; https://github.com/magit/magit/issues/5220
+  (setq magit-tramp-pipe-stty-settings 'pty)
+  ;; -- end lift --
+
+  ;; -- lifted verbatim from neph-init.el:3540-3551 --
+  ;;
+  ;; Magit
+  ;;
+
+  (require 'with-editor)
+  (require 'magit)
+  (require 'magit-blame)
+  (global-set-key (kbd "C-z C-<return>") 'magit-status)
+  (global-set-key (kbd "C-z L") 'magit-blame-mode)
+  (global-set-key (kbd "C-z x") 'magit)
+  (global-set-key (kbd "C-z X") 'magit-ediff-stage)
+  (global-set-key (kbd "C-z C") 'magit-commit)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:130): color-theme-sunburst  [dir sunburst-theme | cfg neph-init.el:3557]
+;; NOTE: NOT a deftheme package — the repo's only elisp file,
+;;       color-theme-sunburst.el, defines a color-theme.el-era theme function
+;;       and contains no deftheme, no provide and no autoload cookie. The
+;;       commented ~/.emacs:130 custom-theme-load-path entry and the commented
+;;       (load-theme 'sunburst t) at neph-init.el:3557 would not have worked
+;;       with it as-is.
+;; NOTE: no Package-Requires header, so elpaca sees no dependencies.
+;; TODO-elpaca: the file's eval-when-compile (require 'color-theme) names
+;;       color-theme.el, which is neither declared nor built in — byte-compiling
+;;       this package would error there if the block is ever enabled.
+;; (elpaca (color-theme-sunburst :host github :repo "neomantic-zz/Emacs-Sunburst-Color-Theme"
+;;                               :ref "5b54dec51e031fd44c1af142dbe2bf3aa1411318"))
+
+;;; ------------------------------------------------------------------
+;;; ample-zen-theme  [dir ample-zen | cfg neph-init.el:3553-3600 | hub neph-init.el:3602-3607]
+;; TODO-elpaca: the whole region below (incl. the top-level call at neph-init:3590,
+;; `(load-neph-theme default-neph-theme)') runs at init time today; as an elpaca body it
+;; runs post-init, after the entire queue has finished building — expect an unthemed
+;; frame until then (visible flash), and note that a build failure of this package
+;; silently drops the body, leaving no theme loaded at all.
+;; TODO-elpaca: ample-zen-theme.el's `;;;###autoload' footer adds its own directory to
+;; `custom-theme-load-path'; elpaca evaluates cached autoloads with `load-file-name'
+;; bound to the build-dir autoloads file and does so BEFORE body forms, so
+;; `(load-theme 'ample-zen t)' below resolves against the build dir. The explicit
+;; `custom-theme-load-path' entry for ~/.emacs.d/ample-zen (~/.emacs:132) becomes
+;; redundant at wiring time.
+;; TODO-elpaca: `(load-theme 'neph-ample-zen t)' below loads the LOCAL theme file
+;; emacs.d/neph/neph-ample-zen-theme.el, which reaches `custom-theme-load-path' via
+;; ~/.emacs:131 (not an elpaca package) — that header line must stay.
+;; TODO-elpaca: the region calls `color-identifiers:refresh' (color-identifiers-mode,
+;; declared separately) guarded by `boundp'; both bodies run in the same post-init pass,
+;; so the guard, not declaration order, decides.
+(elpaca (ample-zen-theme :host github :repo "mjwall/ample-zen"
+                         :ref "3f360c177b7a487d580ed2538a6750535a57e361")
+  ;; -- lifted verbatim from neph-init.el:3553-3600 --
+  ;;
+  ;; Theme
+  ;;
+
+  ;(load-theme 'sunburst t)
+
+  ;; See also neph-ample-zen-theme.el
+
+  ;;
+  ;; Load theme selected by env
+  ;;
+  (setq default-neph-theme (let ((envtheme (getenv "NEPH_EMACS_THEME")))
+                             (if envtheme envtheme
+                               "ample-zen")))
+
+  (defun load-neph-theme (neph-theme)
+    "Load the given theme, possibly with neph wrapper"
+    (interactive (list (read-string "Theme: ")))
+    ;; Disable all existing
+    (dolist (elem custom-enabled-themes)
+      (disable-theme elem))
+    ;; Custom handlers
+    (if (string= neph-theme "ample-zen")
+        (progn
+          (load-theme 'ample-zen t)
+          (load-theme 'neph-ample-zen t))
+      ;; Safe handlers
+      (if (string= neph-theme "tango")
+          (load-theme 'tango t)
+        ;; Else just forward to load-theme
+        (load-theme (intern neph-theme))))
+    (when (and (boundp 'color-identifiers-mode) color-identifiers-mode)
+      (color-identifiers:refresh))
+    (when (and (boundp 'display-line-numbers-mode) display-line-numbers-mode)
+      (display-line-numbers-mode nil)
+      (display-line-numbers-mode t))
+    (redisplay))
+  (load-neph-theme default-neph-theme)
+
+  (defun neph-whiteboard-mode ()
+    "Enter or exit whiteboard mode"
+    (interactive)
+    (if (member 'ample-zen custom-enabled-themes)
+        (progn (load-neph-theme "whiteboard")
+               (global-whitespace-mode -1))
+      (load-neph-theme "ample-zen")
+      (global-whitespace-mode t)))
+  (global-set-key (kbd "C-z C-S-W") 'neph-whiteboard-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; DISABLED (commented at ~/.emacs:133): purple-haze-theme  [dir purple-haze-theme | cfg neph-init.el:3611-3644]
+;; NOTE: fork of jasonm23/emacs-purple-haze-theme.
+;; NOTE: a real deftheme, and purple-haze-theme.el:245-248 carries the standard
+;;       ;;;###autoload custom-theme-load-path cookie, so under elpaca the
+;;       generated autoloads register the build dir themselves — the commented
+;;       ~/.emacs:133 custom-theme-load-path line has no elpaca equivalent.
+;; NOTE: Package-Requires: emacs 24.0 (builtin).
+;; NOTE: the commented config at neph-init.el:3611-3644 also sets
+;;       rainbow-delimiters, web-mode and whitespace faces.
+;; (elpaca (purple-haze-theme :host github :repo "Nephyrin/emacs-purple-haze-theme"
+;;                            :ref "1fa0e55a68d8a92c2dcdef0428dec0b7b9df752b"))
+
+;;; ------------------------------------------------------------------
+;;; auto-compile  [dir auto-compile | cfg ~/.emacs (emacs):143-148 | hub ~/.emacs (emacs):4-5, 11-16, 135, 137-141]
+;; TODO-elpaca: this config is bootstrap-critical today — ~/.emacs requires auto-compile
+;; and turns on `auto-compile-on-load-mode' at line 144-147, BEFORE `(require 'neph-init)'
+;; at line 152, so every library loaded afterwards is covered. As an elpaca body it runs
+;; post-init, after the whole queue has finished building, so it covers nothing that was
+;; loaded during startup; elpaca's own `elpaca-build-compile' step byte-compiles packages
+;; instead. Revisit placement/ordering at wiring time.
+;; TODO-elpaca: the manual `byte-recompile-directory' sweep over `neph-compile-stuff'
+;; (~/.emacs:137-141) and the load-path entry at ~/.emacs:135 stay behind; they exist
+;; because auto-compile refuses to compile sources with no existing .elc (see the comment
+;; at ~/.emacs:11-12).
+(elpaca (auto-compile :host github :repo "emacscollective/auto-compile"
+                      :ref "01844064e3f2bb9f109a8a064998baf89a864fbc")
+  ;; -- lifted verbatim from ~/.emacs (emacs):143-148 --
+  ;; Turn on autocompile for everything else
+  (require 'auto-compile)
+  (setq auto-compile-verbose t)
+
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode)
+  ;; -- end lift --
+  )
+
+;;; ------------------------------------------------------------------
+;;; ORPHANED: powerline  [dir powerline | cfg neph-init.el:—]
+;; NOTE: pinned but never referenced — no load-path entry in ~/.emacs and no
+;;       mention anywhere in neph-init.el. The only textual reference in the
+;;       repo is the first-line comment of emacs.d/neph/neph-modeline-util.el,
+;;       noting that its hud code was derived from powerline-hud; that code is
+;;       local and does not load this package.
+;; NOTE: candidate for deletion at wiring time.
+;; NOTE: Package-Requires: cl-lib 0.2 (builtin).
+;; (elpaca (powerline :host github :repo "milkypostman/powerline"
+;;                    :ref "8a246902e86a0c59015bb897a9c59be9729ef5c4"))

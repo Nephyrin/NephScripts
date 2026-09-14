@@ -9,3 +9,6 @@ powerline
 
 # Emacs compiled cruft
 *.elc
+
+# elpaca's own directory: clones, builds, caches (managed state, not tracked)
+emacs.d/elpaca/
