@@ -46,3 +46,10 @@
 [submodule "zsh.d/plugins/fzf-tab"]
 	path = zsh.d/plugins/fzf-tab
 	url = https://github.com/Aloxaf/fzf-tab
+[submodule "emacs.d/vscode-wow-api"]
+	path = emacs.d/vscode-wow-api.git
+	url = https://github.com/Ketho/vscode-wow-api
+[submodule "emacs.d/framexml-annotations"]
+	path = emacs.d/framexml-annotations.git
+	url = https://github.com/NumyAddon/FramexmlAnnotations
+	branch = forever

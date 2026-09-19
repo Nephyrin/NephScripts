@@ -1314,6 +1314,64 @@ If FORCE is not specified, toggle the current state."
   (color-identifiers-mode 0)
   )
 
+;;
+;; Lua LSP: lua-language-server, with a WoW addon profile
+;;
+
+;; LuaLS settings that lsp-lua.el has no defcustom for.  Registered from ~/.emacs with
+;; lsp-register-custom-settings; nil means "don't send", so non-WoW lua projects keep the
+;; server defaults.
+(defvar neph-lsp-lua-runtime-builtin nil
+  "LuaLS `Lua.runtime.builtin': hash table, stock library -> \"enable\"/\"disable\".
+nil means don't send it.")
+(defvar neph-lsp-lua-workspace-check-third-party nil
+  "LuaLS `Lua.workspace.checkThirdParty'; :json-false stops its prompts.
+nil means don't send it.")
+
+(defvar neph-wow-lua-library nil
+  "Directories of LuaLS annotations describing the WoW client, set from ~/.emacs.")
+
+;; Set buffer-locally below.  Declared so the byte compiler doesn't see free variables: lsp-lua.el
+;; only loads once lsp starts, which is after the mode hook has run.
+(defvar lsp-lua-runtime-version)
+(defvar lsp-lua-workspace-library)
+
+(defun neph-wow-toc-file-p (file)
+  "Non-nil if FILE looks like a WoW addon .toc, not e.g. a LaTeX one.
+Checks for an \"## Interface\" line."
+  (with-temp-buffer
+    (insert-file-contents file nil 0 4096)
+    (re-search-forward "^## Interface" nil t)))
+
+(defun neph-wow-addon-project-p ()
+  "Non-nil if the projectile project root holds a WoW addon .toc file."
+  (when (and (featurep 'projectile) (projectile-project-p))
+    (let ((root (projectile-project-root)))
+      (and root
+           (seq-some #'neph-wow-toc-file-p (directory-files root t "\\.toc\\'" t))))))
+
+(defun neph-wow-lua-lsp-cfg ()
+  "Point lsp-mode's LuaLS settings at the WoW client, buffer-locally.
+lsp-mode answers workspace/configuration from one of the workspace's buffers, so
+every lua buffer of an addon project sets the same locals and the server sees
+them as the project's settings."
+  (interactive)
+  (setq-local lsp-lua-runtime-version "Lua 5.1")
+  ;; WoW replaces the stock libraries with its own; the annotations describe those instead.
+  (setq-local neph-lsp-lua-runtime-builtin
+              (let ((builtin (make-hash-table :test 'equal)))
+                (dolist (lib '("basic" "debug" "io" "math" "os" "package" "string" "table" "utf8") builtin)
+                  (puthash lib "disable" builtin))))
+  (setq-local neph-lsp-lua-workspace-check-third-party :json-false)
+  (setq-local lsp-lua-workspace-library
+              (apply #'vector (mapcar #'expand-file-name neph-wow-lua-library))))
+
+(defun neph-lua-mode-lsp ()
+  "lua-mode hook: WoW profile if in an addon project, then lsp if projectile."
+  (when (neph-wow-addon-project-p)
+    (neph-wow-lua-lsp-cfg))
+  (neph-lsp-if-projectile))
+
 (defun neph-bash-mode ()
   "Invokes 'sh-mode' but defaulting to bash."
   (sh-mode)

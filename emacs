@@ -426,6 +426,16 @@
 
   ;; Defaults to 3. What in the goddamn.
   (setq lua-indent-level 2)
+
+  ;; LSP via lua-language-server (server setup is in the lsp-mode block).  Projects with a WoW
+  ;; addon .toc at the projectile root also get the WoW profile (neph-wow-lua-lsp-cfg in neph-lib):
+  ;; Lua 5.1, stock libraries off, and these submodules as the library so the client API, widgets,
+  ;; XML templates and mixins resolve.  Other lua projects get plain LuaLS defaults.
+  ;;   vscode-wow-api.git/Annotations/Core  : C API (from Blizzard's API docs), widgets, events, enums, Ace3 (Ketho)
+  ;;   framexml-annotations.git/Annotations : XML templates, global frames, mixins (NumyAddon; branch forever)
+  (setq neph-wow-lua-library '("~/.emacs.d/vscode-wow-api.git/Annotations/Core"
+                               "~/.emacs.d/framexml-annotations.git/Annotations"))
+  (add-hook 'lua-mode-hook 'neph-lua-mode-lsp)
   )
 
 ;;
@@ -862,6 +872,22 @@
                                   "-j" "50" "--log=info"
                                   "--all-scopes-completion" "--background-index" "--rename-file-limit=0"
                                   "--background-index-priority=normal" "--limit-references=0" "--limit-results=0"))
+
+  ;; lua-language-server: use the system package when present.  Arch keeps the upstream layout
+  ;; under /usr/lib/lua-language-server/ and wraps it in /usr/bin with writable --logpath/--metapath;
+  ;; bin/main-location only satisfy lsp-lua's presence test, command is what actually runs.
+  ;; Without the package lsp-mode falls back to its own download (lsp-install-server).
+  (with-eval-after-load 'lsp-lua
+    (when (file-exists-p "/usr/lib/lua-language-server/main.lua")
+      (setq lsp-clients-lua-language-server-bin "/usr/lib/lua-language-server/bin/lua-language-server")
+      (setq lsp-clients-lua-language-server-main-location "/usr/lib/lua-language-server/main.lua")
+      (setq lsp-clients-lua-language-server-command '("/usr/bin/lua-language-server"))))
+  ;; LuaLS settings lsp-lua.el doesn't expose; the variables live in neph-lib and are only set
+  ;; (buffer-locally) by the WoW profile, see the lua-mode block.
+  (with-eval-after-load 'lsp-mode
+    (lsp-register-custom-settings
+     '(("Lua.runtime.builtin" neph-lsp-lua-runtime-builtin)
+       ("Lua.workspace.checkThirdParty" neph-lsp-lua-workspace-check-third-party))))
     ;; --
   )
 ;;
