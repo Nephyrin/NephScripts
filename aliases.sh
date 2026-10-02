@@ -30,15 +30,9 @@ lowprio() {
 }
 
 # Run a command detached from the shell, with no connection to the tty or return code, etc..
-# Can return failure if the given arguments don't map to a runnable command, and will still print the relevant error.
 #
-# Commands that parse to a valid file/function/etc, but cannot be launched -- e.g. due to permissions errors -- will
-# still silently succeed.  This is a limitation of bash/zsh as far as I can tell: that class of failure is simply the
-# same as the application failing early.
-#
-# Ex: A `chmod ugo=x` shell script will be parsed as valid by `command -v`, but hit a permissions error prior to bash
-# creating a child process to run it.  From the shell's perspective, that command simply failed quickly, and any
-# complaining the shell itself writes to stderr is part of the command's output.
+# Uses setsid for external commands or a forked and disowned subshell for aliases/etc.  (In the latter case, the
+# subprocess still is part of our tty/session, as bash has no way to setsid itself)
 #
 # The s() alias below is often a better way to do this in a systemd system.
 x() {
@@ -46,15 +40,23 @@ x() {
   # functions.
   [[ -z $NEPH_CGROUP ]] || ewarn "WARNING: In cgroup"
 
-  # If `command -v` doesn't think this parses as something runnable, just run it bare so the shell-level
-  # error/error-code occurs.  This means that `x some_typo --args` doesn't silently succeed, but errors exactly as
-  # `some_typo --args` would.
-  #
-  # See warning above -- some classes of command will silently fail
-  if command -v "${1-}" &>/dev/null; then
-    ( "$@" &>/dev/null & )
+  # Use setsid if our thing is a external command setsid could spawn
+  if { [[ -n ${BASH_VERSION-} ]] && type -P -- "$1" &>/dev/null; } \
+       || { [[ -n ${ZSH_VERSION-} ]]  && whence -p -- "$1" &>/dev/null; };
+  then
+    setsid -f -- "$@" &>/dev/null </dev/null
   else
-    "$@"
+    # Otherwise it may be a builtin, alias, etc, that we can try to run as a subshell
+    # If `command -v` doesn't think this parses as something runnable, just run it bare so the shell-level
+    # error/error-code occurs.  This means that `x some_typo --args` doesn't silently succeed, but errors exactly as
+    # `some_typo --args` would.
+    #
+    # See warning above -- some classes of command will silently fail
+    if command -v "${1-}" &>/dev/null; then
+      ( "$@" &>/dev/null </dev/null & )
+    else
+      "$@"
+    fi
   fi
 }
 
@@ -62,11 +64,10 @@ x() {
 # cgrouping and such like top-level apps enjoy.
 s()
 {
-  # --property=ExitType=cgroup - keep around until whole tree exits, not a well-behaved service process
-  # --user - as this user, not system-level command
+  # --user - as this user, not system-level unit
   # --same-dir - keep this working directory
   # --collect - don't leave failed units around for inspection
-  # --property=ExitType=cgroup - Don't tear down the whole tree when the initial pid exits
+  # --property=ExitType=cgroup - keep around until whole tree exits, not a well-behaved service process
   cmd systemd-run --user --same-dir --collect --property=ExitType=cgroup -- "$@"
 }
 
