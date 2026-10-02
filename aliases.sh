@@ -108,36 +108,12 @@ ereset() {
 # easier to type in a broke terminal
 alias rrr=ereset
 
-# zdir <archive> [dirname]
-#
-# Unarchive something into a directory named after the zip file (without extention, using `autounzip` utility from
-# nephscripts) in the current directory and then cd into it.
-#
-# Optionally specify the output dir name.
-zdir() {
-  [[ -n ${1-} && $# -le 2 && ( -n ${2-} || $# -lt 2 ) ]] || { eerr 'Usage: zdir <archive> [dirname]'; return 1; }
-  local archive=$1
-  local outdir=${2-}
-  archive=$(readlink -f "$archive")
-
-  if [[ -z $outdir ]]; then
-    outdir=$(basename -- "$archive")
-    outdir=${outdir%.*}
-  fi
-
-  [[ -n $outdir ]] || { eerr "Couldn't determine output name for archive \"$archive\""; return 1; }
-
-  einfo "Output dir $outdir"
-  cmd autounzip -- "$archive" "$outdir"
-  cmd cd -- "$outdir"
-}
-
 fdf() { fd -t f "$@"; }
 fdd() { fd -t d "$@"; }
 
 # marchive <archive> [<archive> ...]
 #
-# Moves the archive to $PWD and then runs autounzip on it.
+# Moves the archive to $PWD and then runs autoextract on it.
 #
 # Very specific, for pulling things out of ~/Downloads and archiving them elsewhere mostly.
 marchive() {
@@ -151,7 +127,7 @@ marchive() {
     base=$(basename -- "$archive")
     [[ -n $base && ! -e $base ]] || { eerr "Usage: Bad target to move archive to: \"$base\""; return 1; }
     cmd mv -v -- "$archive" "$base"
-    cmd autounzip "$base"
+    cmd autoextract "$base"
   done
 }
 

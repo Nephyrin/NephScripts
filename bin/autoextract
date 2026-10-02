@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+## Unzip or untar or whatnot an archive into a folder named after the archive or a given name.  Mostly an interactive
+## helper to avoid dancing around extracting archives that might not have a top-level folder.
+##
+##   mkdir Foo
+##   cd Foo
+##   unzip ../Foo.zip
+
+usage() {
+  local out=einfo
+  [[ -z ${1-} ]] || out=eerr
+  $out "Usage: autoextract archive <output_dir>"
+  $out "  Creates output_dir and expands an archive into it, using the appropriate command"
+  [[ -z ${1-} ]] || exit 1
+}
+
+parse_args autoextract '' '' "$@" || usage 1
+
+args=()
+eval args="($(get_args))"
+
+[[ ${#args[@]} -eq 1 || ${#args[@]} -eq 2 ]] || usage 1
+
+file="${args[0]}"
+[[ -n $file && -f $file ]] || die "Invalid archive: $(sh_quote "$file") does not exist or is a directory"
+
+if [[ ${#args[@]} -ge 2 ]]; then
+  output="${args[1]}"
+  [[ -n $output ]] || die "Invalid output directory name $(sh_quote "$output")"
+else
+  base="$(basename -- "$file")"
+  output="${base%.*}"
+  [[ -n $output ]] || die "Unable to determine output directory name for $(sh_quote "$file")"
+fi
+
+if [[ -e $output ]]; then
+  die "Output directory $(sh_quote "$output") already exists"
+fi
+
+## extract command
+extractor=()
+if ( shopt -s nocasematch && [[ $file =~ /\.tar\.[^a-zA-Z0-9]$ ]] ); then
+  extractor=(bsdtar xvf)
+else
+  extractor=(7z x)
+fi
+
+## Do it
+absfile="$(readlink -f -- "$file")"
+cmd mkdir -- "$output"
+cmd cd -- "$output"
+cmd "${extractor[@]}" "$absfile"
