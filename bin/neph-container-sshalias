@@ -2,23 +2,64 @@
 
 set -euo pipefail
 
-name=${1#pod-}
-
 die() { printf >&2 "\n\n%s\n" "!! $*"; exit 1; }
+
+# Prefix is stripped and used as the type
+# unless a type is specified in which case it is just stripped and ignored
+#
+# ssh config example:
+#   Host pod-*
+#     ProxyCommand /path/to/neph-container-sshalias %h
+#
+#   Host sbx-*
+#     ProxyCommand /path/to/neph-container-sshalias %h
+#
+#   Host agent-*
+#     User agent
+#     ProxyCommand /path/to/neph-container-sshalias %h sbx
+
+[[ $# -ge 1 && $# -le 2 ]] || die "Usage: $(basename -- "$0") prefix-containername [type]"
+
+prefix=${1%%-*}
+name=${1#*-}
+
+type=$prefix
+[[ $# -ge 2 ]] && type=$2
+
+# Supported types.
+# Must be compatible with the docker-esque exec syntax below
+#
+# Podman has special handling for krun/crun modes, the krun mode requires sshd be listening on localhost:22 already
+# since krun doesn't support exec (but will soon)
+tool=
+if [[ $type = pod || $type = podman ]]; then
+  tool=podman
+elif [[ $type = sbx ]]; then
+  tool=sbx
+else
+  die "Not sure how to deal with container type ${type@Q}"
+fi
 
 cmd=()
 
 {
-  json=$(podman inspect -- "$name") 2>/dev/null || die "No such container: $name"
-  runtime=$(jq '.[0].OCIRuntime' -r <<< "$json")
+  if [[ $tool = sbx ]]; then
+    "$tool" inspect -- "$name" &>/dev/null || die "No such sbx container: $name"
+    runtime=sbx
 
-  echo "[-] Found container, runtime $runtime"
+    echo "[-] Found sbx container ${name@Q}"
+  else
+    json=$("$tool" inspect -- "$name") 2>/dev/null || die "No such container: $name"
+    runtime=$(jq '.[0].OCIRuntime' -r <<< "$json")
+
+    echo "[-] Found container ${name@Q}, runtime $runtime"
+  fi
 
   if [[ $runtime = *krun ]]; then
     echo "[-] krun-based container, this will only work if you spawned sshd on port 2222"
     netns=$(jq '.[0].NetworkSettings.SandboxKey' -r <<< "$json")
     [[ -n $netns ]] || die "Couldn't determine network namespace for container"
-    cmd=(podman unshare nsenter --net="$netns" -- nc 127.0.0.1 2222)
+    cmd=("$tool" unshare nsenter --net="$netns" -- nc 127.0.0.1 2222)
   else
     provision() {
       set -euo pipefail
@@ -27,9 +68,20 @@ cmd=()
       flock "$lock"
 
       cat > /etc/authorized_keys.new
+      mkdir -p /etc/ssh/sshd_config.d/ /run/sshd/
       echo "AuthorizedKeysFile /etc/authorized_keys" > /etc/ssh/sshd_config.d/77-yolo.conf.new
 
-      [[ -x /usr/sbin/sshd ]] || pacman -S openssh --needed --noconfirm
+      if [[ ! -x /usr/sbin/sshd ]]; then
+        if command -v pacman &>/dev/null; then
+          pacman -S openssh --needed --noconfirm
+        elif command -v apt-get &>/dev/null; then
+          apt-get update && apt-get install -y openssh-server
+        else
+          echo >&2 "!! Don't know how to install openssh here"
+          exit 1
+        fi
+      fi
+
       ssh-keygen -A
 
       mv /etc/authorized_keys{.new,}
@@ -39,10 +91,10 @@ cmd=()
     echo "[-] Provisioning sshd in container '$name'"
 
     cat ~/.ssh/id_rsa.pub |
-      podman exec -u 0 -i "$name" bash -c "$(typeset -f provision) && provision" \
+      "$tool" exec -u 0 -i "$name" bash -c "$(typeset -f provision) && provision" \
         || die "Provisioning failed, see above"
 
-    cmd=(podman exec -u 0 -i "$name" /usr/sbin/sshd -i -e)
+    cmd=("$tool" exec -u 0 -i "$name" /usr/sbin/sshd -i -e)
   fi
 } >&2 <&-
 
