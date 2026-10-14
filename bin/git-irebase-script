@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+usage() {
+  local out=einfo
+  [[ -z ${1-} ]] || out=eerr
+  $out "Usage: git-irebase-script <file>"
+  $out "  Starts an interactive rebase from an existing script"
+  $out ""
+  $out "  --edit / -e   Pause for editing before sending it"
+  $out "  --break / -b  Insert a 'break' as the first command to start the rebase suspended"
+  $out "  --help / -h   Show this help"
+  [[ -z ${1-} ]] || exit 1
+}
+
+parse_args git-irebase-script 'ebh' 'edit,break,help' "$@" || usage 1
+
+eval args=\("$(get_args)"\)
+[[ ${#args[@]} -eq 1 ]] || usage 1
+
+[[ -n $(get_merged_option h help) ]] && { usage; exit 0; }
+
+edit=$(get_merged_option e edit)
+break=$(get_merged_option b break)
+
+file="${args[0]}"
+[[ -f $file ]] || die "File not found: $file"
+
+# Note that git runs things like EDITOR and GIT_SEQUENCE_EDITOR like `"$SHELL" -c "$EDITOR ${args[*]@Q}" -- "${args[@]}"
+# ... so the args are both pasted into the eval'd expression _and_ available as $1/$2 etc
+#
+# Here we just paste the contents of $EDITOR in to the end of our script so it is eval'd as it would be normally, while
+# taking advantage of $1 being set to pre-edit the file.
+#
+
+# Insert a break for --break or for --edit.  If both are passed we'll insert two, as I mean, you asked for it, and will
+# be shown it for editing with a single leading break.
+insert_break=""
+[[ -n $edit ]] && insert_break+="<(printf \"%s\\n\" break) "
+[[ -n $break ]] && insert_break+="<(printf \"%s\\n\" break) "
+estat "Starting rebase"
+cmd env GIT_SEQUENCE_EDITOR="cat -- $insert_break ${file@Q} > " git rebase -i HEAD
+
+if [[ -n $edit ]]; then
+  estat "Editing"
+  if ! cmd git rebase --edit-todo; then
+    eerr "Initial edit failed, aborting"
+    cmd git rebase --abort
+    exit 1
+  fi
+  estat "Beginning"
+  cmd exec git rebase --continue
+fi
