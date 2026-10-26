@@ -1,0 +1,32 @@
+# When using the container with --systemd we inject this to still have an initial command
+#
+# Then nepharch.init.sh carries our escaped command to /etc/nepharch/initial
+#
+# See also the drop-in
+#
+# So we can still support initial commands with --systemd
+
+[Unit]
+Description=Spawns initial command on the console from /etc/nepharch/initial for user %I
+ConditionPathExists=/etc/nepharch/initial
+After=systemd-user-sessions.service network-online.target
+Wants=network-online.target
+
+# Runs on the console then terminates the container on exit to mimic normal foreground-podman-run semantics
+
+SuccessAction=poweroff
+FailureAction=poweroff
+
+Conflicts=console-getty.service
+
+[Service]
+User=%I
+PAMName=login
+WorkingDirectory=~
+StandardInput=null
+StandardOutput=journal+console
+StandardError=inherit
+ExecStart=/etc/nepharch/initial
+
+[Install]
+WantedBy=multi-user.target

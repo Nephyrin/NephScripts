@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -euo pipefail
+. ~/bin/lib/util.sh
+
+cmd bwrap \
+    --unshare-all \
+    --unshare-user --unshare-cgroup \
+    --ro-bind / / \
+    --dev /dev \
+    --proc /proc \
+    --tmpfs /tmp --tmpfs /var/tmp \
+    --bind "$PWD" /tmp/data \
+    --uid 0 --gid 0 \
+    /bin/bash
