@@ -1,0 +1,10 @@
+[Unit]
+Description=Port 80 listener for forwarding to user %i
+PartOf=neph-port-80-to-user@%i.service
+
+[Socket]
+ListenStream=80
+Accept=no
+
+[Install]
+WantedBy=sockets.target

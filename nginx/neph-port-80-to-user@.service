@@ -1,0 +1,12 @@
+[Unit]
+Description=Forward port 80 to user %i as a .sock
+Requires=neph-port-80-to-user@%i.socket
+After=neph-port-80-to-user@%i.socket
+
+[Service]
+User=%i
+NoNewPrivileges=yes
+ExecStart=/bin/sh -c 'exec /usr/lib/systemd/systemd-socket-proxyd "/run/user/$(id -u)/neph-port/port80.sock"'
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,21 @@
+[Unit]
+Description=Development nginx under %i (rootless podman)
+
+[Service]
+Type=exec
+ExecStartPre=bash -c 'exec mkdir -pv -- /run/user/$(id -u)/neph-port/ "$(systemd-escape -u -- "$1")"/{www,certs}' -- %i
+ExecStart=bash -c 'exec /usr/bin/podman run --rm --replace --pull=never \
+                          --name neph-nginx \
+                          --volume /run/user/$(id -u)/neph-port:/neph-port \
+                          --volume "$(systemd-escape -u -- "$1")"/nginx.conf:/etc/nginx/nginx.conf:ro,Z \
+                          --volume "$(systemd-escape -u -- "$1")"/www:/www:ro,Z \
+                          --volume "$(systemd-escape -u -- "$1")"/certs:/etc/nginx/certs:ro,Z \
+                          localhost/nginx-dev:latest' -- %i
+ExecReload=/usr/bin/podman exec neph-nginx -s reload
+ExecStop=/usr/bin/podman stop --ignore --time 10 neph-nginx
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target
