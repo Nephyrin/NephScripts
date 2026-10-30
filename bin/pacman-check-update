@@ -1,0 +1,107 @@
+#!/bin/bash
+
+##
+## TODO This is still incomplete, it prints all new/upgrade targets but not what would be removed.
+##
+##      We could do `-Su` in the sandbox but there's no way to pretty-print what it's fully about to do.
+##
+##      We could use --dbonly to just fake the transaction and diff installed packages, but --dbonly forces downloading
+##      everything :(
+##
+
+set -euo pipefail
+
+readvar() { IFS= read -r -d '' "$1" || true; }
+
+unset tmpdir
+cleanup() { [[ -n $tmpdir && -d $tmpdir ]] && rm -rf --one-file-system -- "$tmpdir"; unset tmpdir; }
+trap cleanup exit
+tmpdir=$(mktemp -d --tmpdir pacman-check-update-XXX)
+[[ -d $tmpdir ]] || die
+
+##
+## helpers inlined from nephscripts / util.sh
+##
+_sh_c_colors=0
+if [[ -z ${NO_COLOR-} && -n ${TERM-} && ${TERM-} != dumb ]]; then
+  _sh_c_colors="$(tput colors 2>/dev/null || echo 0)"
+fi
+_sh_c()
+{
+  [[ $_sh_c_colors -gt 0 ]] || return 0
+  local args=("$@")
+  [[ ${#args[@]} -gt 0 ]] || args=(0)
+  ( IFS=\; && echo -n $'\e['"${args[*]}m"; );
+}
+sh_c() { :; };
+sh_c_err() { :; };
+[[ ! -t 1 ]] || sh_c() { _sh_c "$@"; }
+[[ ! -t 2 ]] || sh_c_err() { _sh_c "$@"; }
+sh_quote() {
+  local q=()
+  local i
+  local o
+  for i in "$@"; do
+    o="$(printf "%q" "$i")"
+    [[ $o = "$i" ]] || o="${i@Q}"
+    q+=("$o")
+  done
+  printf "%s\n" "${q[*]}"
+}
+ccmd_stderr=$(sh_c_err 30 1)
+cr_stderr=$(sh_c_err)
+cmd() { printf >&2 "%s+%s %s\n" "$ccmd_stderr" "$cr_stderr" "$(sh_quote "$@")"; "$@"; }
+##
+## /helpers
+##
+
+# This is just a function so shellcheck goes away, they're used by jq
+# shellcheck disable=SC2034
+colors() {
+  cadd=$(sh_c 32)
+  cupd=$(sh_c 33)
+  cdel=$(sh_c 31)
+  cp=$(sh_c 34)
+  cvold=$(sh_c 30)
+  cvnew=$(sh_c 2 30)
+  cr=$(sh_c 0)
+}; colors
+
+readvar jq_compare_script <<'EOF'
+. as [$old, $new]
+| ($new | keys).[] as $n
+| if $new[$n] | not then
+    "\($cdel)remove:\($cr) \($cp)\($n)\($cr) \($cvold)\($old[$n])\($cr)"
+  elif $old[$n] | not then
+    "\($cadd)   add:\($cr) \($cp)\($n)\($cr) \($cvnew)\($new[$n])\($cr)"
+  elif $new[$n] == $old[$n] | not then
+    "\($cupd)update:\($cr) \($cp)\($n)\($cr) \($cvold)\($old[$n])\($cr) -> \($cvnew)\($new[$n])\($cr)"
+  else null end
+| values
+EOF
+
+# Takes two jqize'd package lists on stdin, compares them, pretty-prints differences, using jq_compare_script above
+jq_compare() {
+  # All colors as vars for the script
+  local c
+  local compare_args=()
+  for c in cadd cupd cdel cp cvold cvnew cr; do
+    compare_args+=(--arg "$c" "${!c}")
+  done
+
+  jq -rs "${compare_args[@]}" -- "${jq_compare_script:?}"
+}
+
+jqize() {
+  jq -Rs 'split("\n")[:-1] | map(split(" ")) | reduce .[] as [$p,$v] ({}; . + {$p:$v})'
+}
+
+rsync -qrt /var/lib/pacman/* "$tmpdir"
+fakeroot pacman --disable-sandbox -Sy --dbpath "$tmpdir" &>/dev/null
+
+{
+  # Installed
+  pacman -Q | jqize
+  # Updates available
+  pacman --dbpath "$tmpdir" -Sup --print-format "%n %v" | jqize
+} | jq_compare
